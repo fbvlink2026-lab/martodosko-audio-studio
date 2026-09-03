@@ -47,7 +47,7 @@ jobs:
           echo "=========================================="
           find . -maxdepth 5 -type d | grep -v '.git' | sort
 
-      - name: 🔨 BUILD APK + BUONG LOG
+      - name: 🔨 BUILD APK — WALANG PANLABAS NA GRADLE
         id: do_build
         run: |
           mkdir -p /tmp
@@ -59,9 +59,9 @@ jobs:
 
           echo "=========================================="
           echo "🔨 TUMATAKBO ANG ./gradlew assembleDebug"
+          echo "Gagamitin ang Gradle na nasa proyekto — WALANG DINADAGDAG NA PANLABAS!"
           echo "=========================================="
 
-          # TANGGALIN ANG set -e PANSAMANTALA — PARA MAKITA ANG BUONG ERROR
           ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
           EXIT_CODE=${PIPESTATUS[0]}
 
@@ -111,7 +111,7 @@ jobs:
 
           exit $EXIT_CODE
 
-      - name: 📄 SIGURADUHIN TAMA ANG PAGSULAT SA docs/failed.md
+      - name: 📄 ISULAT SA docs/failed.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
