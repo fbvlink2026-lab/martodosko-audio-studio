@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Material3.Dark.NoActionBar" parent="Theme.Material3.Dark.NoActionBar" />
+    <style name="Theme.Martodosko" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="android:statusBarColor">@color/black</item>
+    </style>
 </resources>
