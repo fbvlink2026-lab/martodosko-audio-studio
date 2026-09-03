@@ -57,12 +57,18 @@ jobs:
           cd android
           chmod +x gradlew
 
-          # === HUWAG GUMAMIT NG PANLABAS NA GRADLE — GAMITIN ANG KASAMA SA PROYEKTO ===
-          echo "✅ TUMATAKBO NA ANG ASSEMBLEDEBUG — BUBUO NA NG APK!"
-          set +e
-          ./gradlew assembleDebug > ../build-log.txt 2>&1
-          EXIT_CODE=$?
-          set -e
+          echo "=========================================="
+          echo "🔨 TUMATAKBO ANG ./gradlew assembleDebug"
+          echo "=========================================="
+
+          # TANGGALIN ANG set -e PANSAMANTALA — PARA MAKITA ANG BUONG ERROR
+          ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
+          EXIT_CODE=${PIPESTATUS[0]}
+
+          echo ""
+          echo "=========================================="
+          echo "📤 EXIT CODE: $EXIT_CODE"
+          echo "=========================================="
 
           cd ..
           APK_FILE=$(find android -name "*.apk" -path "*/debug/*" 2>/dev/null | head -1)
@@ -73,6 +79,7 @@ jobs:
             echo "📂 LOKASYON:   android/app"
             echo "⏰ ORAS:       $(date '+%Y-%m-%d %H:%M:%S UTC')"
             echo "🏷️ BERSYON:    ${{ steps.version.outputs.tag }}"
+            echo "📤 EXIT CODE:  $EXIT_CODE"
             echo "=================================================="
             echo ""
 
@@ -91,7 +98,7 @@ jobs:
               echo "🔑 Exit Code: $EXIT_CODE"
               echo ""
               echo "📂 BUONG LISTA NG android/app/build:"
-              find android/app/build -type d 2>/dev/null | sort || echo "❌ Wala pang build folder"
+              ls -la android/app/build/ 2>/dev/null || echo "❌ Wala pang build folder"
             fi
 
             echo ""
