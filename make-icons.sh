@@ -5,76 +5,65 @@ set -e
 DOWNLOAD_DIR="android/download"
 RES_DIR="android/app/src/main/res"
 
-# 📌 5 LAKI NG ICON
+# 📌 5 LAKI NG ANDROID ICON
 declare -A SIZES=(
   ["mdpi"]=48   ["hdpi"]=72   ["xhdpi"]=96   ["xxhdpi"]=144   ["xxxhdpi"]=192
 )
 
 echo "=========================================="
-echo "   🎨 AWTO-GUMAGAWA NG ICONS — PINABILIS"
+echo "   🎨 AWTO-GUMAGAWA NG ICONS"
+echo "   KUKUNIN ANG PINAKABAGONG LITRATO — WALANG PILI"
 echo "=========================================="
+
 mkdir -p "$DOWNLOAD_DIR"
 
 # ==========================================
-# 📋 IPAKITA LANG ANG PETSA + NUMERO — WALANG MATAGAL NA HANAP
+# 🔍 KUNIN ANG PINAKABAGONG LITRATO — AWTOMATIKO
 # ==========================================
-echo ""
-echo "📂 MGA LITRATO SA: $DOWNLOAD_DIR/"
-echo "------------------------------------------"
+SOURCE_IMAGE=""
 
-# KUNIN LANG ANG PETSA AT PANGALAN — AYUS AYON SA PETSA (PINAKABAGO SA TAAS)
-mapfile -t FILES < <(find "$DOWNLOAD_DIR" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%T@|%Td-%Tb-%TY|%p\n" 2>/dev/null | sort -rn | cut -d'|' -f2-)
+# Hanapin ang lahat ng litrato, ayusin mula sa PINAKABAGO hanggang LUMA
+mapfile -t ALL_FILES < <(
+  find "$DOWNLOAD_DIR" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%T@ %p\n" 2>/dev/null \
+  | sort -rn \
+  | head -1 \
+  | cut -d' ' -f2-
+)
 
-if [ ${#FILES[@]} -eq 0 ]; then
-  echo "⚠️ Walang nakitang litrato."
-  echo "📤 Ilagay ang litrato sa: $DOWNLOAD_DIR/"
-  USE_DEFAULT=true
+if [ ${#ALL_FILES[@]} -gt 0 ] && [ -n "${ALL_FILES[0]}" ] && [ -f "${ALL_FILES[0]}" ]; then
+  SOURCE_IMAGE="${ALL_FILES[0]}"
+  FNAME=$(basename "$SOURCE_IMAGE")
+  FDATE=$(stat -c "%d-%b-%Y" "$SOURCE_IMAGE")
+  echo "✅ PINAKABAGO NA LITRATO: $FNAME  ($FDATE)"
+  USE_DEFAULT=false
 else
-  # IPASOK SA LISTAHAN — NUMERO + PETSA + PANGALAN LANG
-  INDEX=1
-  declare -A FILE_MAP
-
-  for ENTRY in "${FILES[@]}"; do
-    FDATE="${ENTRY#*|}"
-    FPATH="${ENTRY##*|}"
-    FNAME=$(basename "$FPATH")
-    echo "   [$INDEX]  $FDATE  →  $FNAME"
-    FILE_MAP[$INDEX]="$FPATH"
-    ((INDEX++))
-  done
-
-  echo "------------------------------------------"
-  echo "💡 Ilagay lang ang NUMERO (1 hanggang $((INDEX-1))):"
-  read -p "👉 Piliin mo: " CHOICE
-
-  if [ -z "${FILE_MAP[$CHOICE]}" ]; then
-    echo "❌ Maling numero — gagamit ng default na icon."
-    USE_DEFAULT=true
-  else
-    SOURCE_IMAGE="${FILE_MAP[$CHOICE]}"
-    echo "✅ Pinili: $SOURCE_IMAGE"
-    USE_DEFAULT=false
-  fi
+  echo "⚠️ Walang nakitang litrato sa: $DOWNLOAD_DIR/"
+  echo "🎨 Gagamit ng DEFAULT na asul na icon"
+  USE_DEFAULT=true
 fi
 
 # ==========================================
-# 🔨 GUMAGA NG 5 LAKI — ILAGAY SA TAMANG FOLDER
+# 🔨 BUMUO NG 5 LAKI — ILAGAY SA TAMANG FOLDER
 # ==========================================
 echo ""
 echo "🔨 Pinoproseso..."
+
 for DENSITY in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
   SIZE=${SIZES[$DENSITY]}
   FOLDER="$RES_DIR/mipmap-$DENSITY"
   mkdir -p "$FOLDER"
 
+  OUTPUT="$FOLDER/ic_launcher.png"
+
   if [ "$USE_DEFAULT" = true ]; then
     magick -size ${SIZE}x${SIZE} xc:"#2196F3" \
       -fill white -draw "circle $((SIZE/2)),$((SIZE/2)) $((SIZE/2)),$((SIZE*1/6))" \
-      "$FOLDER/ic_launcher.png"
+      "$OUTPUT"
   else
-    magick "$SOURCE_IMAGE" -resize "${SIZE}x${SIZE}^" -gravity center -extent "${SIZE}x${SIZE}" "$FOLDER/ic_launcher.png"
+    magick "$SOURCE_IMAGE" -resize "${SIZE}x${SIZE}^>" -background "#2196F3" -gravity center -extent "${SIZE}x${SIZE}" "$OUTPUT"
   fi
-  echo "   ✅ $DENSITY → ${SIZE}px"
+
+  echo "   ✅ $DENSITY  →  ${SIZE}x${SIZE}"
 done
 
 # ==========================================
@@ -112,4 +101,5 @@ cat > "$RES_DIR/values/themes.xml" <<'XML'
 XML
 
 echo ""
-echo "✅ TAPOS NA! 5 laki ng icon nalikha."
+echo "✅ TAPOS NA! Lahat ng icon nalikha."
+echo "📂 Lokasyon: $RES_DIR/mipmap-*/"
