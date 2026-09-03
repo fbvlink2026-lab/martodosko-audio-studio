@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write   # ✅ Bigyan ng karapatang magsulat
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,27 +24,30 @@ jobs:
 
       - name: Build APK
         id: build-step
-        continue-on-error: true
         run: |
           cd android
           ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
 
-      # === KAPAG BUMAGSAK — I-UPLOAD ANG LOG BILANG ARTIFACT ===
-      - name: I-upload ang Error Log
-        if: steps.build-step.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: BUILD-ERROR-LOG
-          path: build-log.txt
+      - name: Ipakita kung may APK ba talaga
+        run: |
+          echo "=== Listahan ng mga file ==="
+          ls -la android/app/build/outputs/apk/debug/ 2>/dev/null || echo "❌ WALANG APK NABUO — bumagsak ang build!"
+          echo "=== Build Log ==="
+          cat build-log.txt
 
-      - name: Itigil kung bumagsak
-        if: steps.build-step.outcome == 'failure'
-        run: exit 1
-
-      # === KAPAG TAGUMPAY — I-UPLOAD ANG APK ===
-      - name: I-upload ang APK
-        if: steps.build-step.outcome == 'success'
+      - name: I-upload ang APK kung nabuo
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Martodosko-Studio-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: I-upload ang BUONG LOG kapag may problema
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BUILD-ERROR-LOG
+          path: |
+            build-log.txt
+          if-no-files-found: warn
