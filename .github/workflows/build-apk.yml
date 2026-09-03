@@ -2,8 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -19,35 +18,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Grant execute permission
-        run: chmod +x ./android/gradlew
-
-      - name: Build APK
-        id: build-step
+      - name: Fix Gradle wrapper & permissions
         run: |
           cd android
-          ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
+          chmod +x gradlew
+          ls -la gradle/wrapper/
 
-      - name: Ipakita kung may APK ba talaga
+      - name: Build APK
         run: |
-          echo "=== Listahan ng mga file ==="
-          ls -la android/app/build/outputs/apk/debug/ 2>/dev/null || echo "❌ WALANG APK NABUO — bumagsak ang build!"
-          echo "=== Build Log ==="
-          cat build-log.txt
+          cd android
+          ./gradlew assembleDebug --stacktrace
 
-      - name: I-upload ang APK kung nabuo
-        if: success()
+      - name: Show APK file & path
+        run: |
+          echo "=== CHECKING APK ==="
+          APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
+          if [ -f "$APK_PATH" ]; then
+            echo "✅ APK FOUND!"
+            ls -lh "$APK_PATH"
+          else
+            echo "❌ APK NOT CREATED — LISTING FOLDERS:"
+            find android -type d -name "apk" 2>/dev/null || echo "No 'apk' folder at all"
+            find android -name "*.apk" 2>/dev/null || echo "No .apk files anywhere"
+          fi
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Martodosko-Studio-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-
-      - name: I-upload ang BUONG LOG kapag may problema
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: BUILD-ERROR-LOG
-          path: |
-            build-log.txt
-          if-no-files-found: warn
