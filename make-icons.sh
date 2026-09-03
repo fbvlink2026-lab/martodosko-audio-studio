@@ -11,39 +11,57 @@ declare -A SIZES=(
 )
 
 echo "=========================================="
-echo "   🎨 AWTO-GUMAGAWA NG ICONS"
-echo "   KUKUNIN ANG PINAKABAGONG LITRATO — WALANG PILI"
+echo "   🎨 GUMAGAWA NG ICONS — PUMILI KA"
 echo "=========================================="
 
 mkdir -p "$DOWNLOAD_DIR"
 
 # ==========================================
-# 🔍 KUNIN ANG PINAKABAGONG LITRATO — AWTOMATIKO
+# 📋 ILISTA — PINAKABAGO SA TAAS — NUMERO + PETSA + PANGALAN LANG
 # ==========================================
-SOURCE_IMAGE=""
-
-# Hanapin ang lahat ng litrato, ayusin mula sa PINAKABAGO hanggang LUMA
 mapfile -t ALL_FILES < <(
-  find "$DOWNLOAD_DIR" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%T@ %p\n" 2>/dev/null \
-  | sort -rn \
-  | head -1 \
-  | cut -d' ' -f2-
+  find "$DOWNLOAD_DIR" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%T@ %Td-%Tb-%TY|%p\n" 2>/dev/null | sort -rn | cut -d' ' -f2-
 )
 
-if [ ${#ALL_FILES[@]} -gt 0 ] && [ -n "${ALL_FILES[0]}" ] && [ -f "${ALL_FILES[0]}" ]; then
-  SOURCE_IMAGE="${ALL_FILES[0]}"
-  FNAME=$(basename "$SOURCE_IMAGE")
-  FDATE=$(stat -c "%d-%b-%Y" "$SOURCE_IMAGE")
-  echo "✅ PINAKABAGO NA LITRATO: $FNAME  ($FDATE)"
-  USE_DEFAULT=false
-else
+TOTAL=${#ALL_FILES[@]}
+
+if [ $TOTAL -eq 0 ]; then
   echo "⚠️ Walang nakitang litrato sa: $DOWNLOAD_DIR/"
   echo "🎨 Gagamit ng DEFAULT na asul na icon"
   USE_DEFAULT=true
+else
+  echo ""
+  echo "📂 MGA LITRATO SA: $DOWNLOAD_DIR/"
+  echo "------------------------------------------"
+
+  declare -A FILE_PATHS
+  NUM=1
+
+  for ENTRY in "${ALL_FILES[@]}"; do
+    FDATE="${ENTRY%|*}"
+    FPATH="${ENTRY#*|}"
+    FNAME=$(basename "$FPATH")
+    echo "   [$NUM]  $FDATE  →  $FNAME"
+    FILE_PATHS[$NUM]="$FPATH"
+    ((NUM++))
+  done
+
+  echo "------------------------------------------"
+  echo "💡 Ilagay ang NUMERO ng litrato:"
+  read -p "👉 Piliin mo: " CHOICE
+
+  if [ -z "${FILE_PATHS[$CHOICE]}" ]; then
+    echo "❌ Maling numero — gagamit ng default na icon."
+    USE_DEFAULT=true
+  else
+    SOURCE_IMAGE="${FILE_PATHS[$CHOICE]}"
+    echo "✅ NAPILI MO: $(basename "$SOURCE_IMAGE")"
+    USE_DEFAULT=false
+  fi
 fi
 
 # ==========================================
-# 🔨 BUMUO NG 5 LAKI — ILAGAY SA TAMANG FOLDER
+# 🔨 BUMUO NG 5 LAKI SA TAMANG FOLDER
 # ==========================================
 echo ""
 echo "🔨 Pinoproseso..."
@@ -52,7 +70,6 @@ for DENSITY in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
   SIZE=${SIZES[$DENSITY]}
   FOLDER="$RES_DIR/mipmap-$DENSITY"
   mkdir -p "$FOLDER"
-
   OUTPUT="$FOLDER/ic_launcher.png"
 
   if [ "$USE_DEFAULT" = true ]; then
@@ -101,5 +118,4 @@ cat > "$RES_DIR/values/themes.xml" <<'XML'
 XML
 
 echo ""
-echo "✅ TAPOS NA! Lahat ng icon nalikha."
-echo "📂 Lokasyon: $RES_DIR/mipmap-*/"
+echo "✅ TAPOS NA! Sigurado kang tama ang napili mo!"
