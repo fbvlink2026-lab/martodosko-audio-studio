@@ -47,7 +47,34 @@ jobs:
           echo "=========================================="
           find . -maxdepth 5 -type d | grep -v '.git' | sort
 
-      - name: 🔨 BUILD APK — GRADLE 8.2 LANG
+      - name: 🔍 TIGNAN KUNG MAY GRADLE WRAPPER NA
+        id: check_wrapper
+        run: |
+          cd android
+          if [ -f "./gradlew" ] && [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "✅ MERON NA ANG WRAPPER — walang babaguhin"
+            echo "has_wrapper=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ KULANG ANG WRAPPER — kailangang i-setup"
+            echo "has_wrapper=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Gradle 8.2 (KUNG KULANG LANG)
+        if: steps.check_wrapper.outputs.has_wrapper == 'false'
+        run: |
+          cd android
+          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp
+          export PATH=/tmp/gradle-8.2/bin:$PATH
+          gradle wrapper --gradle-version 8.2
+          chmod +x gradlew
+
+      - name: Siguraduhing Pwede ang gradlew
+        run: |
+          cd android
+          chmod +x ./gradlew 2>/dev/null || true
+
+      - name: 🔨 BUILD APK
         id: do_build
         run: |
           mkdir -p /tmp
@@ -55,16 +82,10 @@ jobs:
           > "$ERROR_FILE"
 
           cd android
-          chmod +x gradlew
-
-          echo "=========================================="
-          echo "🔨 GUMAGAMIT NG GRADLE SA PROYEKTO — WALANG BABAGUHIN!"
-          echo "=========================================="
-
           ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
           EXIT_CODE=${PIPESTATUS[0]}
-
           cd ..
+
           APK_FILE=$(find android -name "*.apk" -path "*/debug/*" 2>/dev/null | head -1)
 
           {
