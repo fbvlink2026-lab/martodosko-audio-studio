@@ -57,12 +57,8 @@ jobs:
           cd android
           chmod +x gradlew
 
-          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /tmp
-          export PATH=/tmp/gradle-8.2/bin:$PATH
-          gradle wrapper --gradle-version 8.2
-          chmod +x gradlew
-
+          # === HUWAG GUMAMIT NG PANLABAS NA GRADLE — GAMITIN ANG KASAMA SA PROYEKTO ===
+          echo "✅ TUMATAKBO NA ANG ASSEMBLEDEBUG — BUBUO NA NG APK!"
           set +e
           ./gradlew assembleDebug > ../build-log.txt 2>&1
           EXIT_CODE=$?
@@ -94,8 +90,8 @@ jobs:
               echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
               echo "🔑 Exit Code: $EXIT_CODE"
               echo ""
-              echo "📂 BUONG LISTA NG android/app/build FOLDER:"
-              find android/app/build -type f 2>/dev/null | head -30 || echo "Wala pang build folder"
+              echo "📂 BUONG LISTA NG android/app/build:"
+              find android/app/build -type d 2>/dev/null | sort || echo "❌ Wala pang build folder"
             fi
 
             echo ""
@@ -132,7 +128,6 @@ jobs:
           } > "$TEMP_FILE"
 
           cp "$TEMP_FILE" "$OUTPUT_FILE"
-
           echo "✅ docs/failed.md naisulat na!"
 
       - name: 📂 HUGUTIN SA UGAT
