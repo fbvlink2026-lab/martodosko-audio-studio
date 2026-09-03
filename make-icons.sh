@@ -11,27 +11,33 @@ declare -A SIZES=(
 )
 
 echo "=========================================="
-echo "   🎨 GUMAGAWA NG ICONS — PUMILI KA"
+echo "   🎨 GUMAGAWA NG ICONS — PUMILI MUNA BAGO GUMAGAWA"
 echo "=========================================="
 
 mkdir -p "$DOWNLOAD_DIR"
 
 # ==========================================
-# 📋 ILISTA — PINAKABAGO SA TAAS — NUMERO + PETSA + PANGALAN LANG
+# 📋 ILISTA MUNA — WALANG GAGAWIN HANGGA'T HINDI NAKAPILI
 # ==========================================
 mapfile -t ALL_FILES < <(
   find "$DOWNLOAD_DIR" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%T@ %Td-%Tb-%TY|%p\n" 2>/dev/null | sort -rn | cut -d' ' -f2-
 )
 
 TOTAL=${#ALL_FILES[@]}
+SOURCE_IMAGE=""
+USE_DEFAULT=false
 
 if [ $TOTAL -eq 0 ]; then
-  echo "⚠️ Walang nakitang litrato sa: $DOWNLOAD_DIR/"
-  echo "🎨 Gagamit ng DEFAULT na asul na icon"
+  echo ""
+  echo "⚠️ WALANG LITRATO SA: $DOWNLOAD_DIR/"
+  echo "📤 Ilagay muna ang litrato bago tumakbo."
+  echo "💡 Pindutin ang [Enter] para gumamit ng DEFAULT na asul na icon,"
+  echo "   o pindutin Ctrl+C para itigil at maglagay muna ng litrato."
+  read -r
   USE_DEFAULT=true
 else
   echo ""
-  echo "📂 MGA LITRATO SA: $DOWNLOAD_DIR/"
+  echo "📂 MGA LITRATO — PINAKABAGO SA TAAS:"
   echo "------------------------------------------"
 
   declare -A FILE_PATHS
@@ -47,24 +53,28 @@ else
   done
 
   echo "------------------------------------------"
-  echo "💡 Ilagay ang NUMERO ng litrato:"
-  read -p "👉 Piliin mo: " CHOICE
+  echo "❓ PUMILI KA MUNA — ILAGAY ANG NUMERO BAGO MAGPAPROSESO:"
 
-  if [ -z "${FILE_PATHS[$CHOICE]}" ]; then
-    echo "❌ Maling numero — gagamit ng default na icon."
-    USE_DEFAULT=true
-  else
-    SOURCE_IMAGE="${FILE_PATHS[$CHOICE]}"
-    echo "✅ NAPILI MO: $(basename "$SOURCE_IMAGE")"
-    USE_DEFAULT=false
-  fi
+  while true; do
+    read -p "👉 Ang iyong napiling numero: " CHOICE
+
+    # Suriin kung tama ang numero
+    if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ -n "${FILE_PATHS[$CHOICE]}" ]; then
+      SOURCE_IMAGE="${FILE_PATHS[$CHOICE]}"
+      FNAME=$(basename "$SOURCE_IMAGE")
+      echo "✅ NAPILI MO: $FNAME"
+      break
+    else
+      echo "⚠️ Walang numerong [$CHOICE] — subukan muli:"
+    fi
+  done
 fi
 
 # ==========================================
-# 🔨 BUMUO NG 5 LAKI SA TAMANG FOLDER
+# ✅ DITO LANG MAGSISIMULA ANG PAGPAPROSESO — PAGKATAPUS MONG PUMILI!
 # ==========================================
 echo ""
-echo "🔨 Pinoproseso..."
+echo "🔨 NAGSISIMULA NA ANG PAGPAPROSESO..."
 
 for DENSITY in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
   SIZE=${SIZES[$DENSITY]}
@@ -118,4 +128,4 @@ cat > "$RES_DIR/values/themes.xml" <<'XML'
 XML
 
 echo ""
-echo "✅ TAPOS NA! Sigurado kang tama ang napili mo!"
+echo "✅ TAPOS NA! Napili mo muna bago iproseso — sigurado ka!"
