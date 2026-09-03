@@ -61,6 +61,7 @@ jobs:
           unzip -q /tmp/gradle.zip -d /tmp
           export PATH=/tmp/gradle-8.2/bin:$PATH
           gradle wrapper --gradle-version 8.2
+          chmod +x gradlew
 
           set +e
           ./gradlew assembleDebug > ../build-log.txt 2>&1
@@ -68,7 +69,7 @@ jobs:
           set -e
 
           cd ..
-          APK_FILE=$(find android/app/build/outputs/apk/debug -name "*.apk" | head -1)
+          APK_FILE=$(find android -name "*.apk" -path "*/debug/*" 2>/dev/null | head -1)
 
           {
             echo "=================================================="
@@ -92,6 +93,9 @@ jobs:
             else
               echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
               echo "🔑 Exit Code: $EXIT_CODE"
+              echo ""
+              echo "📂 BUONG LISTA NG android/app/build FOLDER:"
+              find android/app/build -type f 2>/dev/null | head -30 || echo "Wala pang build folder"
             fi
 
             echo ""
