@@ -2,49 +2,124 @@ name: Build APK
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    permissions: write-all
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Fix Gradle wrapper & permissions
+      - name: 🏷️ KUNIN ANG BERSYON
+        id: version
         run: |
+          VERSION_TAG="v1.0.0"
+          VERSION_NAME="${VERSION_TAG#v}"
+          VERSION_CODE=$(echo "$VERSION_NAME" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+          echo "tag=$VERSION_TAG" >> $GITHUB_OUTPUT
+          echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
+
+      - name: 📋 LISTAHAN NG FOLDER
+        run: |
+          echo "=========================================="
+          echo "   📂 LAHAT NG FOLDER SA REPOSITORY"
+          echo "=========================================="
+          find . -maxdepth 5 -type d | grep -v '.git' | sort
+
+      - name: 🔨 BUILD APK + BUONG LOG
+        id: do_build
+        run: |
+          ERROR_FILE="/tmp/build-result.txt"
+          > "$ERROR_FILE"
+
           cd android
           chmod +x gradlew
-          ls -la gradle/wrapper/
 
-      - name: Build APK
+          ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
+          EXIT_CODE=${PIPESTATUS[0]}
+          cd ..
+
+          APK_FILE=$(find android/app/build/outputs/apk/debug -name "*.apk" 2>/dev/null | head -1)
+
+          {
+            echo "=================================================="
+            echo "📦 PROYEKTO: Martodosko Audio Studio"
+            echo "📂 LOKASYON:   android/app"
+            echo "⏰ ORAS:       $(date '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "🏷️ BERSYON:    ${{ steps.version.outputs.tag }}"
+            echo "=================================================="
+            echo ""
+
+            if [ -n "$APK_FILE" ] && [ -f "$APK_FILE" ]; then
+              APK_SIZE=$(du -h "$APK_FILE" | cut -f1)
+              echo "✅ TAGUMPAY — NABUO ANG APK!"
+              echo "📂 APK Daan:   $APK_FILE"
+              echo "📏 Laki:       $APK_SIZE"
+              mkdir -p docs
+              NEW_APK_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
+              cp "$APK_FILE" "docs/$NEW_APK_NAME"
+              echo "✅ Nasa: docs/$NEW_APK_NAME"
+            else
+              echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
+              echo "🔑 Exit Code: $EXIT_CODE"
+            fi
+
+            echo ""
+            echo "--------------------------------------------------"
+            echo "📋 BUONG LOG NG BUILD:"
+            echo "--------------------------------------------------"
+            cat build-log.txt
+            echo ""
+          } >> "$ERROR_FILE"
+
+          exit $EXIT_CODE
+
+      - name: 📄 ISULAT SA docs/failed.md
+        if: always()
         run: |
-          cd android
-          ./gradlew assembleDebug --stacktrace
+          DATE=$(date "+%Y-%m-%d %H:%M UTC")
+          OUTPUT_FILE="$GITHUB_WORKSPACE/docs/failed.md"
 
-      - name: Show APK file & path
-        run: |
-          echo "=== CHECKING APK ==="
-          APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
-          if [ -f "$APK_PATH" ]; then
-            echo "✅ APK FOUND!"
-            ls -lh "$APK_PATH"
-          else
-            echo "❌ APK NOT CREATED — LISTING FOLDERS:"
-            find android -type d -name "apk" 2>/dev/null || echo "No 'apk' folder at all"
-            find android -name "*.apk" 2>/dev/null || echo "No .apk files anywhere"
-          fi
+          {
+            echo "# 📋 Build Log — Martodosko Audio Studio"
+            echo ""
+            echo "> Copyright © 2026 — Developed by MARTODOSKO"
+            echo ""
+            echo "---"
+            echo "📅 **Petsa:** $DATE"
+            echo "🏷️ **Bersyon:** ${{ steps.version.outputs.tag }}"
+            echo "---"
+            echo ""
+            cat /tmp/build-result.txt
+            echo ""
+          } > "$OUTPUT_FILE"
 
-      - name: Upload APK
+          echo "✅ Naisulat na sa docs/failed.md"
+
+      - name: 📤 I-UPLOAD ANG APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Martodosko-Studio-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          path: docs/*.apk
+          retention-days: 30
+
+      - name: 📤 I-UPLOAD ANG LOG KUNG MAY PROBLEMA
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BUILD-ERROR-LOG
+          path: |
+            build-log.txt
+            docs/failed.md
+          retention-days: 30
