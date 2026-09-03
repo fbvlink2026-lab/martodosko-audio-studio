@@ -1,6 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Martodosko" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:windowBackground">@color/bg_dark</item>
-    </style>
+    <style name="Theme.Material3.Dark.NoActionBar" parent="Theme.Material3.Dark.NoActionBar" />
 </resources>
