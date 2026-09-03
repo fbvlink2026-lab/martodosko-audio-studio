@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Kulay ng Background -->
+    <color name="bg_dark">#121212</color>
+    
+    <!-- Kulay ng Teksto -->
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_silver">#C0C0C0</color>
+    
+    <!-- Kulay ng Panel / Kahon -->
+    <color name="panel">#1E1E1E</color>
+    
+    <!-- Mga Kulay ng Aksyon -->
+    <color name="red">#E53935</color>
+    <color name="green">#4CAF50</color>
+    <color name="accent">#2196F3</color>
+
+    <!-- Mga Kulay para sa Icon at Tema -->
     <color name="ic_launcher_background">#2196F3</color>
     <color name="ic_launcher_foreground">#FFFFFF</color>
     <color name="purple_500">#6200EE</color>

@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Pangalan ng App -->
     <string name="app_name">Martodosko Studio</string>
+    
+    <!-- Menu Items -->
+    <string name="menu_mixer">Mixer</string>
+    <string name="menu_effects">Guitar Effects</string>
+    <string name="menu_download">Download</string>
+    <string name="menu_update">Check Update</string>
+    <string name="menu_version">Version 1.0.0</string>
+    
+    <!-- Splash Screen -->
+    <string name="splash1">Martodosko Audio Studio</string>
+    <string name="splash2">© 2026 MartoDosko — All Rights Reserved</string>
 </resources>
