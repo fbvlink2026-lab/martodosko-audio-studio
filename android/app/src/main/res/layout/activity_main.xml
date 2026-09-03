@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="@color/bg_dark" android:gravity="center">
+        <TextView android:text="🎚️ Pumili sa Menu ☰" android:textColor="@color/text_white" android:textSize="20sp"/>
+        <Button android:id="@+id/btn_menu" android:text="☰" android:layout_width="50dp" android:layout_height="50dp"
+            android:layout_gravity="top|start" android:layout_margin="16dp" android:backgroundTint="@color/panel"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="280dp" android:layout_height="match_parent"
+        android:layout_gravity="start" android:background="@color/panel"
+        android:orientation="vertical" android:padding="20dp">
+        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <TextView android:text="MENU" android:textSize="20sp" android:textStyle="bold" android:textColor="@color/text_white"/>
+            <Button android:id="@+id/btn_close" android:text="❌" android:layout_width="40dp" android:layout_height="40dp"
+                android:layout_alignParentEnd="true" android:backgroundTint="@color/red"/>
+        </RelativeLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#444" android:layout_marginVertical="16dp"/>
+        <Button android:id="@+id/nav_mixer" android:text="@string/menu_mixer" android:layout_height="56dp" android:layout_marginVertical="4dp" android:backgroundTint="@color/accent"/>
+        <Button android:id="@+id/nav_effects" android:text="@string/menu_effects" android:layout_height="56dp" android:layout_marginVertical="4dp" android:backgroundTint="@color/accent"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#444" android:layout_marginVertical="16dp"/>
+        <Button android:text="@string/menu_download" android:layout_height="48dp" android:backgroundTint="@color/accent"/>
+        <Button android:text="@string/menu_update" android:layout_height="48dp" android:backgroundTint="@color/accent"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#444" android:layout_marginVertical="16dp"/>
+        <TextView android:text="@string/menu_version" android:textColor="@color/green" android:textSize="14sp"/>
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

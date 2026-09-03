@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<resources>
+    <color name="bg_dark">#121212</color>
+    <color name="panel">#1E1E1E</color>
+    <color name="accent">#2D2D2D</color>
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_silver">#CCCCCC</color>
+    <color name="green">#00C853</color>
+    <color name="red">#FF3B30</color>
+</resources>

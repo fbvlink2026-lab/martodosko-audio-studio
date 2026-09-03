@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/bg_dark">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp" android:orientation="vertical">
+        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp">
+            <Button android:id="@+id/btn_menu" android:text="☰" android:layout_width="40dp" android:layout_height="40dp" android:layout_alignParentStart="true" android:backgroundTint="@color/panel"/>
+            <TextView android:text="🎸 GUITAR EFFECTS" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/text_white" android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="8dp" android:layout_margin="4dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="OVERDRIVE" android:textStyle="bold" android:textColor="@color/text_white"/>
+                <ToggleButton android:textOn="ON" android:textOff="OFF" android:layout_width="70dp" android:layout_height="35dp" android:backgroundTint="@color/green"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="24dp" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="8dp" android:layout_margin="4dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="REVERB" android:textStyle="bold" android:textColor="@color/text_white"/>
+                <ToggleButton android:textOn="ON" android:textOff="OFF" android:layout_width="70dp" android:layout_height="35dp" android:backgroundTint="@color/green"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="24dp" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="8dp" android:layout_margin="4dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="DELAY" android:textStyle="bold" android:textColor="@color/text_white"/>
+                <ToggleButton android:textOn="ON" android:textOff="OFF" android:layout_width="70dp" android:layout_height="35dp" android:backgroundTint="@color/green"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="24dp" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

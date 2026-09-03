@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<resources>
+    <string name="app_name">Martodosko Studio</string>
+    <string name="splash1">MARTODOSKO</string>
+    <string name="splash2">MIXER + GUITAR EFFECTS</string>
+    <string name="copyright">Copyright © 2026\nDeveloped by MARTODOSKO\nAll Rights Reserved.</string>
+    <string name="menu_mixer">🎛️ MIXER</string>
+    <string name="menu_effects">🎸 GUITAR EFFECTS</string>
+    <string name="menu_download">📥 DOWNLOAD APK</string>
+    <string name="menu_update">🔄 CHECK FOR UPDATE</string>
+    <string name="menu_version">📋 APK VERSION: v1.0.0</string>
+</resources>

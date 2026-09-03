@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/bg_dark">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp" android:orientation="vertical">
+        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp">
+            <Button android:id="@+id/btn_menu" android:text="☰" android:layout_width="40dp" android:layout_height="40dp" android:layout_alignParentStart="true" android:backgroundTint="@color/panel"/>
+            <TextView android:text="🎛️ MAIN MIXER" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/text_white" android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="5" android:layout_marginTop="8dp">
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="4dp" android:layout_margin="2dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="CH1 🎤" android:textColor="@color/text_white"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="30dp" android:progress="70"/>
+                <Button android:text="MUTE" android:backgroundTint="@color/green" android:layout_width="match_parent"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="4dp" android:layout_margin="2dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="CH2 🎤" android:textColor="@color/text_white"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="30dp" android:progress="70"/>
+                <Button android:text="MUTE" android:backgroundTint="@color/green" android:layout_width="match_parent"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="4dp" android:layout_margin="2dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="CH3 🎸" android:textColor="@color/text_white"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="30dp" android:progress="70"/>
+                <Button android:text="MUTE" android:backgroundTint="@color/green" android:layout_width="match_parent"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="4dp" android:layout_margin="2dp" android:background="@color/panel" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="CH4 🎵" android:textColor="@color/text_white"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="30dp" android:progress="70"/>
+                <Button android:text="MUTE" android:backgroundTint="@color/green" android:layout_width="match_parent"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:padding="4dp" android:layout_margin="2dp" android:background="@color/accent" android:orientation="vertical" android:gravity="center">
+                <TextView android:text="MASTER" android:textStyle="bold" android:textColor="@color/text_white"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="60dp" android:progress="80"/>
+                <TextView android:text="💡 CLIP" android:textColor="@color/red"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
