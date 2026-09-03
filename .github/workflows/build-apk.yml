@@ -47,7 +47,7 @@ jobs:
           echo "=========================================="
           find . -maxdepth 5 -type d | grep -v '.git' | sort
 
-      - name: 🔨 BUILD APK — WALANG PANLABAS NA GRADLE
+      - name: 🔨 BUILD APK — GRADLE 8.2 LANG
         id: do_build
         run: |
           mkdir -p /tmp
@@ -58,17 +58,11 @@ jobs:
           chmod +x gradlew
 
           echo "=========================================="
-          echo "🔨 TUMATAKBO ANG ./gradlew assembleDebug"
-          echo "Gagamitin ang Gradle na nasa proyekto — WALANG DINADAGDAG NA PANLABAS!"
+          echo "🔨 GUMAGAMIT NG GRADLE SA PROYEKTO — WALANG BABAGUHIN!"
           echo "=========================================="
 
           ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
           EXIT_CODE=${PIPESTATUS[0]}
-
-          echo ""
-          echo "=========================================="
-          echo "📤 EXIT CODE: $EXIT_CODE"
-          echo "=========================================="
 
           cd ..
           APK_FILE=$(find android -name "*.apk" -path "*/debug/*" 2>/dev/null | head -1)
