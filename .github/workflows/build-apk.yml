@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # ✅ Bigyan ng karapatang magsulat
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,14 +31,19 @@ jobs:
           cd android
           ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
 
-      - name: Log pagkabigo sa docs/failed.md
+      # === KAPAG BUMAGSAK — I-UPLOAD ANG LOG BILANG ARTIFACT ===
+      - name: I-upload ang Error Log
         if: steps.build-step.outcome == 'failure'
-        run: ./.github/scripts/log-failure.sh
+        uses: actions/upload-artifact@v4
+        with:
+          name: BUILD-ERROR-LOG
+          path: build-log.txt
 
-      - name: Itigil ang trabaho kung bumagsak
+      - name: Itigil kung bumagsak
         if: steps.build-step.outcome == 'failure'
         run: exit 1
 
+      # === KAPAG TAGUMPAY — I-UPLOAD ANG APK ===
       - name: I-upload ang APK
         if: steps.build-step.outcome == 'success'
         uses: actions/upload-artifact@v4
