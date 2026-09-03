@@ -1,8 +1,14 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -e
 
-# 📌 DAAAN
-DOWNLOAD_DIR="android/download"
+# 📌 TAMA NA DAAAN — TUNAY NA STORAGE NG TELEPONO
+# Ito ang daan na nakikita ang iyong mga litrato sa telepono
+PHONE_STORAGE="/storage/emulated/0"
+DOWNLOAD_DIR="$PHONE_STORAGE/Download"
+# Pwede rin dito kung saan mo inilagay:
+# DOWNLOAD_DIR="$PHONE_STORAGE/Pictures"
+# DOWNLOAD_DIR="$PHONE_STORAGE/Download/Martodosko"
+
 RES_DIR="android/app/src/main/res"
 
 # 📌 5 LAKI NG ANDROID ICON
@@ -11,13 +17,36 @@ declare -A SIZES=(
 )
 
 echo "=========================================="
-echo "   🎨 GUMAGAWA NG ICONS — PUMILI MUNA BAGO GUMAGAWA"
+echo "   🎨 GUMAGAWA NG ICONS — MULA SA STORAGE NG TELEPONO"
 echo "=========================================="
+echo "📂 Daan na hinahanapan: $DOWNLOAD_DIR"
+echo ""
 
-mkdir -p "$DOWNLOAD_DIR"
+# === SURIIN KUNG NAKIKITA ANG STORAGE ===
+if [ ! -d "$DOWNLOAD_DIR" ]; then
+  echo "⚠️ HINDI MAKITA ANG DAAAN: $DOWNLOAD_DIR"
+  echo ""
+  echo "📌 MGA POSIBLENG DAAAN SA TELEPONO:"
+  echo "   1. Download       → /storage/emulated/0/Download"
+  echo "   2. Pictures       → /storage/emulated/0/Pictures"
+  echo "   3. Martodosko      → /storage/emulated/0/Download/Martodosko"
+  echo ""
+  read -p "👉 Ilagay ang NUMERO kung saan mo inilagay ang litrato: " PILI
+
+  case "$PILI" in
+    1) DOWNLOAD_DIR="$PHONE_STORAGE/Download" ;;
+    2) DOWNLOAD_DIR="$PHONE_STORAGE/Pictures" ;;
+    3) DOWNLOAD_DIR="$PHONE_STORAGE/Download/Martodosko" ;;
+    *) echo "❌ Maling numero — susubok sa proyekto folder"; DOWNLOAD_DIR="android/download" ;;
+  esac
+  echo "✅ Gagamitin na: $DOWNLOAD_DIR"
+fi
+
+# === SIGURADUHIN MAY FOLDER ===
+mkdir -p "$DOWNLOAD_DIR" 2>/dev/null || true
 
 # ==========================================
-# 📋 ILISTA MUNA — WALANG GAGAWIN HANGGA'T HINDI NAKAPILI
+# 📋 ILISTA ANG MGA LITRATO — HIHINTAYIN ANG PAGPILI MO
 # ==========================================
 mapfile -t ALL_FILES < <(
   find "$DOWNLOAD_DIR" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) -printf "%T@ %Td-%Tb-%TY|%p\n" 2>/dev/null | sort -rn | cut -d' ' -f2-
@@ -30,14 +59,14 @@ USE_DEFAULT=false
 if [ $TOTAL -eq 0 ]; then
   echo ""
   echo "⚠️ WALANG LITRATO SA: $DOWNLOAD_DIR/"
-  echo "📤 Ilagay muna ang litrato bago tumakbo."
-  echo "💡 Pindutin ang [Enter] para gumamit ng DEFAULT na asul na icon,"
-  echo "   o pindutin Ctrl+C para itigil at maglagay muna ng litrato."
+  echo "💡 Ilagay muna ang litrato sa folder na iyon."
+  echo "   Pindutin Enter = gumamit ng DEFAULT na asul na icon"
+  echo "   Pindutin Ctrl+C = itigil at ilagay muna ang litrato"
   read -r
   USE_DEFAULT=true
 else
   echo ""
-  echo "📂 MGA LITRATO — PINAKABAGO SA TAAS:"
+  echo "📂 MGA LITRATO SA: $DOWNLOAD_DIR"
   echo "------------------------------------------"
 
   declare -A FILE_PATHS
@@ -53,12 +82,11 @@ else
   done
 
   echo "------------------------------------------"
-  echo "❓ PUMILI KA MUNA — ILAGAY ANG NUMERO BAGO MAGPAPROSESO:"
+  echo "❓ PUMILI KA MUNA BAGO MAGPAPROSESO — ILAGAY ANG NUMERO:"
 
   while true; do
     read -p "👉 Ang iyong napiling numero: " CHOICE
 
-    # Suriin kung tama ang numero
     if [[ "$CHOICE" =~ ^[0-9]+$ ]] && [ -n "${FILE_PATHS[$CHOICE]}" ]; then
       SOURCE_IMAGE="${FILE_PATHS[$CHOICE]}"
       FNAME=$(basename "$SOURCE_IMAGE")
@@ -71,7 +99,7 @@ else
 fi
 
 # ==========================================
-# ✅ DITO LANG MAGSISIMULA ANG PAGPAPROSESO — PAGKATAPUS MONG PUMILI!
+# 🔨 DITO LANG MAGSISIMULA ANG PAGPAPROSESO
 # ==========================================
 echo ""
 echo "🔨 NAGSISIMULA NA ANG PAGPAPROSESO..."
@@ -128,4 +156,4 @@ cat > "$RES_DIR/values/themes.xml" <<'XML'
 XML
 
 echo ""
-echo "✅ TAPOS NA! Napili mo muna bago iproseso — sigurado ka!"
+echo "✅ TAPOS NA! Mula sa storage ng telepono → nabuo ang 5 laki ng icon!"
