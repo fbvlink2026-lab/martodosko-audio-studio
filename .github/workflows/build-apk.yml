@@ -1,6 +1,8 @@
 name: Build APK
+
 on:
-  push: { branches: [main] }
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -21,30 +23,32 @@ jobs:
 
       - name: Build APK
         id: build-step
+        continue-on-error: true
         run: |
           cd android
           ./gradlew assembleDebug 2>&1 | tee ../build-log.txt
-        continue-on-error: true
 
-      # === KAPAG BUMAGSAK — AWTO-UPDATE ANG docs/failed.md ===
       - name: Log Failure to docs/failed.md
         if: steps.build-step.outcome == 'failure'
         run: |
           cd $GITHUB_WORKSPACE
+          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S UTC')
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
           cat > docs/failed.md <<MDEND
 # 📋 Build Failure Log — Martodosko Audio Studio
 
-> AWTO GENERATED — Huling na-update: $(date '+%Y-%m-%d %H:%M:%S UTC')
+> AWTO GENERATED — Huling na-update: ${TIMESTAMP}
 
 ---
 
 ## ❌ Huling Pagkabigo
-**Petsa:** $(date '+%Y-%m-%d')
-**Workflow Run:** $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+- **Petsa:** ${TIMESTAMP}
+- **Workflow Run:** ${RUN_URL}
 
 ### Buong Error Log:
 \`\`\`
-$(cat build-log.txt)
+$(cat build-log.txt 2>/dev/null || echo "Walang log na nabasa")
 \`\`\`
 
 ---
@@ -65,7 +69,7 @@ MDEND
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/failed.md
-          git commit -m "📝 AWTO-LOG: Naitala ang pagkabigo sa build" || true
+          git commit -m "📝 AWTO-LOG: Naitala ang pagkabigo sa build" --allow-empty || true
           git push || true
 
       - name: Fail the job kung bumagsak
