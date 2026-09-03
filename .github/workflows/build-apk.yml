@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🏷️ KUNIN ANG BERSYON
+      - name: 🏷️ KUNIN ANG BERSYON — AWTO BAWAT BUILD
         id: version
         run: |
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
@@ -33,13 +33,16 @@ jobs:
           echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
 
-      - name: ✍️ ISULAT SA build.gradle
+      - name: ✍️ ISULAT SA build.gradle.kts — TAMA NA ANG SED
         run: |
           FILE="android/app/build.gradle.kts"
-          if [ -f "$FILE" ]; then
-            sed -i "s/versionCode [0-9]*/versionCode ${{ steps.version.outputs.code }}/" "$FILE"
-            sed -i "s/versionName \"[^\"]*\"/versionName \"${{ steps.version.outputs.name }}\"/" "$FILE"
-          fi
+          CODE="${{ steps.version.outputs.code }}"
+          NAME="${{ steps.version.outputs.name }}"
+          # TAMA NA: palitan nang buong linya — walang sira
+          sed -i "s/versionCode *= *[0-9]*/versionCode = $CODE/" "$FILE"
+          sed -i "s/versionName *= *\"[^\"]*\"/versionName = \"$NAME\"/" "$FILE"
+          # I-verify na tama
+          grep -E "versionCode|versionName" "$FILE"
 
       - name: 📋 LISTAHAN NG FOLDER
         run: |
@@ -105,7 +108,7 @@ jobs:
 
           exit $EXIT_CODE
 
-      - name: 📄 SIGURADUHIN TAMA ANG PAGSULAT SA docs/failed.md
+      - name: 📄 ISULAT SA docs/failed.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
@@ -129,10 +132,9 @@ jobs:
           } > "$TEMP_FILE"
 
           cp "$TEMP_FILE" "$OUTPUT_FILE"
-
           echo "✅ docs/failed.md naisulat na!"
 
-      - name: 📂 HUGUTIN SA UGAT
+      - name: 📂 KUNIN ANG APK
         if: always()
         run: |
           mkdir -p /tmp/APK_ROOT
@@ -143,16 +145,16 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Martodosko-Studio-APK-${{ steps.version.outputs.tag }}
+          name: Martodosko-APK-${{ steps.version.outputs.tag }}
           path: /tmp/APK_ROOT/
           retention-days: 30
 
-      - name: ✅ I-COMMIT
+      - name: ✅ I-COMMIT ANG VERSION UPDATE
         if: always()
         continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/failed.md docs/*.apk 2>/dev/null || true
-          git commit -m "📦 Build: ${{ steps.version.outputs.tag }}" || true
+          git add android/app/build.gradle.kts docs/failed.md docs/*.apk 2>/dev/null || true
+          git commit -m "🔄 Auto-update version: ${{ steps.version.outputs.tag }}" || true
           git push || true
