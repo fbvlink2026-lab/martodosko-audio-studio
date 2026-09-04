@@ -3,20 +3,20 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-04 19:00 UTC
+📅 **Petsa:** 2026-09-04 19:08 UTC
 🏷️ **Bersyon:** v1.0.0
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   android/app
-⏰ ORAS:       2026-09-04 19:00:48 UTC
+⏰ ORAS:       2026-09-04 19:08:05 UTC
 🏷️ BERSYON:    v1.0.0
-📤 EXIT CODE:  1
+📤 EXIT CODE:  0
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
-🔑 Exit Code: 1
+🔑 Exit Code: 0
 
 --------------------------------------------------
 ## 💥 MGA TIYAK NA DAHILAN NG PAGKA-CRASH NG APP:
@@ -37,12 +37,6 @@
 ## 🚨 LAHAT NG ERROR NA NAKITA:
 
 17:> Task :app:checkKotlinGradlePluginConfigurationErrors
-23:> Task :app:mergeDebugResources FAILED
-24:ERROR: [style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/styles.xml [style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/themes.xml: Resource and asset merger: Duplicate resources
-26:FAILURE: Build failed with an exception.
-29:Execution failed for task ':app:mergeDebugResources'.
-30:> [style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/styles.xml	[style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/themes.xml: Error: Duplicate resources
-38:BUILD FAILED in 59s
 
 ---
 
@@ -69,24 +63,44 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:mergeDebugJniLibFolders
+> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:mergeLibDexDebug
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeExtDexDebug
+> Task :app:processDebugResources
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
 
-> Task :app:mergeDebugResources FAILED
-ERROR: [style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/styles.xml [style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/themes.xml: Resource and asset merger: Duplicate resources
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':app:mergeDebugResources'.
-> [style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/styles.xml	[style/Theme.Martodosko] /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/res/values/themes.xml: Error: Duplicate resources
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 59s
-5 actionable tasks: 5 executed
+BUILD SUCCESSFUL in 1m 55s
+33 actionable tasks: 33 executed
 ```
 
 ---
