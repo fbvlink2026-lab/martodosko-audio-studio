@@ -3,27 +3,38 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-04 17:13 UTC
+📅 **Petsa:** 2026-09-04 17:32 UTC
 🏷️ **Bersyon:** v1.0.0
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   android/app
-⏰ ORAS:       2026-09-04 17:13:44 UTC
+⏰ ORAS:       2026-09-04 17:32:42 UTC
 🏷️ BERSYON:    v1.0.0
 📤 EXIT CODE:  0
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK!
-📂 APK Daan:   android/app/build/outputs/apk/debug/app-debug.apk
-📏 Laki:       5.4M
-📤 Kopyahin sa docs/...
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 0
+
+--------------------------------------------------
+## 💥 MGA TIYAK NA DAHILAN NG PAGKA-CRASH NG APP:
+
+> Ito ang mga partikular na isyu na magiging sanhi ng pag-crash kapag binuksan ang aplikasyon:
+
+30:Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+
+---
+
+## ⚠️ MGA BABALA AT IMPORMASYON:
+
+31:Recommendation: remove package="com.martodosko.studio" from the source AndroidManifest.xml: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/AndroidManifest.xml.
 
 --------------------------------------------------
 🚨 MGA DETALYE NG ERROR:
 --------------------------------------------------
-## 🚨 MGA ERROR NA NAKITA:
+## 🚨 LAHAT NG ERROR NA NAKITA:
 
 17:> Task :app:checkKotlinGradlePluginConfigurationErrors
 
@@ -93,7 +104,7 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 2m 13s
+BUILD SUCCESSFUL in 2m 1s
 33 actionable tasks: 33 executed
 ```
 
