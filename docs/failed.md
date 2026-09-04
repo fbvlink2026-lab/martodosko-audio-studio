@@ -3,14 +3,14 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-04 17:55 UTC
+📅 **Petsa:** 2026-09-04 17:58 UTC
 🏷️ **Bersyon:** v1.0.0
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   android/app
-⏰ ORAS:       2026-09-04 17:55:20 UTC
+⏰ ORAS:       2026-09-04 17:58:03 UTC
 🏷️ BERSYON:    v1.0.0
 📤 EXIT CODE:  1
 ==================================================
@@ -41,7 +41,7 @@
 29:FAILURE: Build failed with an exception.
 32:Execution failed for task ':app:processDebugMainManifest'.
 33:> com.android.manifmerger.ManifestMerger2$MergeFailureException: Error parsing /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/android/app/src/main/AndroidManifest.xml
-41:BUILD FAILED in 1m 16s
+41:BUILD FAILED in 1m 25s
 
 ---
 
@@ -87,7 +87,7 @@ Execution failed for task ':app:processDebugMainManifest'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 16s
+BUILD FAILED in 1m 25s
 10 actionable tasks: 10 executed
 ```
 
