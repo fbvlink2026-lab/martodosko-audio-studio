@@ -1,16 +1,16 @@
-# 📋 Build Failure Log — Martodosko Audio Studio
+# 📋 Build Log — Martodosko Audio Studio
 
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-04 16:40 UTC
+📅 **Petsa:** 2026-09-04 16:53 UTC
 🏷️ **Bersyon:** v1.0.0
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   android/app
-⏰ ORAS:       2026-09-04 16:40:04 UTC
+⏰ ORAS:       2026-09-04 16:53:56 UTC
 🏷️ BERSYON:    v1.0.0
 📤 EXIT CODE:  0
 ==================================================
@@ -19,11 +19,18 @@
 📂 APK Daan:   android/app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.4M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.0.apk
 
 --------------------------------------------------
-📋 BUONG LOG NG BUILD:
+🚨 MGA DETALYE NG ERROR:
 --------------------------------------------------
+## 🚨 MGA ERROR NA NAKITA:
+
+17:> Task :app:checkKotlinGradlePluginConfigurationErrors
+
+---
+
+## 📋 BUONG BUILD LOG:
+```
 Downloading https://services.gradle.org/distributions/gradle-8.3-bin.zip
 ............10%............20%.............30%............40%.............50%............60%.............70%............80%.............90%............100%
 
@@ -59,6 +66,7 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:processDebugManifest
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
+> Task :app:processDebugManifestForPackage
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
@@ -67,12 +75,11 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeDebugJniLibFolders
 > Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugNativeLibs NO-SOURCE
-> Task :app:stripDebugDebugSymbols NO-SOURCE
-> Task :app:processDebugManifestForPackage
-> Task :app:mergeLibDexDebug
 > Task :app:processDebugResources
-> Task :app:validateSigningDebug
 > Task :app:mergeExtDexDebug
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:mergeLibDexDebug
+> Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:compileDebugKotlin
@@ -86,9 +93,9 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 57s
+BUILD SUCCESSFUL in 1m 53s
 33 actionable tasks: 33 executed
-
+```
 
 ---
 ✅ **Katapusan ng Talaan**
