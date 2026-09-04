@@ -78,7 +78,7 @@ jobs:
           chmod +x ./gradlew 2>/dev/null || true
 
       # ==========================================
-      # 🔨 BUILD APK — KUKUHA NG BUONG LOG + ILISTA ANG FOLDER
+      # 🔨 BUILD APK — KOPYAHIN AGAD + KUKUHA NG DAHILAN NG CRASH
       # ==========================================
       - name: 🔨 BUILD APK
         id: do_build
@@ -87,38 +87,64 @@ jobs:
           LOG_FILE="/tmp/build-full.log"
           ERROR_FILE="/tmp/errors-content.txt"
           ERROR_LINES_FILE="/tmp/error-lines.txt"
+          CRASH_CAUSES_FILE="/tmp/crash-causes.txt"
+          APK_SAVE="/tmp/app-debug.apk"
           > "$ERROR_FILE"
           > "$ERROR_LINES_FILE"
+          > "$CRASH_CAUSES_FILE"
 
           cd android
           set +e
           ./gradlew assembleDebug 2>&1 | tee "$LOG_FILE"
           EXIT_CODE=${PIPESTATUS[0]}
           set -e
-          cd ..
 
-          # 📋 ILISTA ANG android/app/build — MAKIKITA KUNG NABUO TALAGA
-          echo ""
-          echo "📂 --- SURIIN ANG android/app/ ---"
-          ls -la android/app/
-          echo ""
-          if [ -d "android/app/build" ]; then
-            echo "✅ MERON build folder!"
-            echo "📂 --- SURIIN ANG android/app/build/ ---"
-            find android/app/build -name "*.apk" 2>/dev/null || echo "❌ WALANG APK SA LOOB"
+          # 🚨 KOPYAHIN AGAD — HABANG NASA LOOB PA!
+          if [ $EXIT_CODE -eq 0 ]; then
+            APK_BUILD_PATH="app/build/outputs/apk/debug/app-debug.apk"
+            if [ -f "$APK_BUILD_PATH" ]; then
+              cp "$APK_BUILD_PATH" "$APK_SAVE"
+              echo "✅ APK NAKOPYA AGAD SA: $APK_SAVE"
+              echo "APK_FOUND=true" >> $GITHUB_ENV
+            else
+              echo "❌ HINDI MAHANAP ANG APK — posibleng sanhi ng CRASH: walang nalikhang file"
+              echo "APK_FOUND=false" >> $GITHUB_ENV
+            fi
           else
-            echo "❌ WALANG build folder — HINDI NABUO ANG APK!"
+            echo "❌ BUILD FAILED — Exit Code: $EXIT_CODE"
+            echo "APK_FOUND=false" >> $GITHUB_ENV
           fi
 
-          # ✅ HANAPIN ANG APK — SA BUONG android/ — HINDI LANG SA TINDIYAK NA DAAN
-          APK_FILE=$(find android -name "*.apk" 2>/dev/null | head -1)
+          cd ..
 
           # ==========================================================
-          # 🚨 KUKUHA NG MGA PULANG LINYA — ERROR / FAILURE / EXCEPTION
+          # 🚨 KUKUHA NG MGA TIYAK NA DAHILAN NG PAGKA-CRASH NG APP
           # ==========================================================
-          echo "🚨 KINUKUHA ANG MGA ERROR SA LOG..."
+          echo "🚨 KINUKUHA ANG MGA DAHILAN NG CRASH..."
           {
-            echo "## 🚨 MGA ERROR NA NAKITA:"
+            echo "## 💥 MGA TIYAK NA DAHILAN NG PAGKA-CRASH NG APP:"
+            echo ""
+            echo "> Ito ang mga partikular na isyu na magiging sanhi ng pag-crash kapag binuksan ang aplikasyon:"
+            echo ""
+            # Mga tiyak na sanhi ng pagka-crash
+            grep -n -iE \
+              'resource.*not found|ClassNotFoundException|NoClassDefFoundError|UnsatisfiedLinkError|InstantiationException|VerifyError|AndroidRuntime|FATAL EXCEPTION|NullPointerException|ActivityNotFoundException|INSTALL_FAILED|parsing error|manifest.*error|versionCode|minSdk|targetSdk|namespace|package.*not supported' \
+              "$LOG_FILE" || echo "*Walang direktang nakitang sanhi ng crash — pero suriin ang babala sa ibaba*"
+
+            echo ""
+            echo "---"
+            echo ""
+            echo "## ⚠️ MGA BABALA AT IMPORMASYON:"
+            echo ""
+            grep -n -iE 'warning|deprecated|recommendation|should be removed|no signing config' "$LOG_FILE" || echo "*Walang babala*"
+          } > "$CRASH_CAUSES_FILE"
+
+          # ==========================================================
+          # 🚨 KUKUHA NG LAHAT NG ERROR / PULANG LINYA
+          # ==========================================================
+          echo "🚨 KINUKUHA ANG LAHAT NG ERROR SA LOG..."
+          {
+            echo "## 🚨 LAHAT NG ERROR NA NAKITA:"
             echo ""
             grep -n -iE 'error|failed|failure|exception|caused by|unable to|cannot|could not|BUILD FAILED' "$LOG_FILE" || echo "*Walang nakitang tiyak na salitang error*"
             echo ""
@@ -131,7 +157,7 @@ jobs:
           } > "$ERROR_LINES_FILE"
 
           # ==========================================================
-          # 📄 BUUIN ANG BUONG TALAAN
+          # 📄 BUUIN ANG BUONG TALAAN — HINDI BINABAGO ANG PORMAT!
           # ==========================================================
           {
             echo "=================================================="
@@ -143,21 +169,18 @@ jobs:
             echo "=================================================="
             echo ""
 
-            if [ -n "$APK_FILE" ] && [ -f "$APK_FILE" ]; then
-              APK_SIZE=$(du -h "$APK_FILE" | cut -f1)
+            if [ "${{ env.APK_FOUND }}" = "true" ] && [ -f "$APK_SAVE" ]; then
+              APK_SIZE=$(du -h "$APK_SAVE" | cut -f1)
               echo "✅ TAGUMPAY — NABUO ANG APK!"
-              echo "📂 APK Daan:   $APK_FILE"
-              echo "📏 Laki:       $APK_SIZE"
-              echo "📤 Kopyahin sa docs/..."
-              echo "APK_FOUND=true" >> $GITHUB_ENV
+              echo "📂 APK Lokasyon:  $APK_SAVE"
+              echo "📏 Laki:          $APK_SIZE"
             else
               echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
               echo "🔑 Exit Code: $EXIT_CODE"
-              echo ""
-              echo "📂 BUONG LISTA NG android/app/:"
-              ls -la android/app/ 2>/dev/null || echo "❌ Wala pang android/app folder"
-              echo "APK_FOUND=false" >> $GITHUB_ENV
             fi
+            echo ""
+            echo "--------------------------------------------------"
+            cat "$CRASH_CAUSES_FILE"
             echo ""
             echo "--------------------------------------------------"
             echo "🚨 MGA DETALYE NG ERROR:"
@@ -168,27 +191,23 @@ jobs:
           exit $EXIT_CODE
 
       # ==========================================================
-      # 🛡️ PROTEKTAHAN ANG docs/ — HINDI MABUBURA
+      # 🛡️ PROTEKTAHAN ANG docs/ — KOPYAHIN MULA SA /tmp/
       # ==========================================================
-      - name: 🛡️ PROTECT — Kopyahin APK lang, HINDI BURAHIN ANG docs/
+      - name: 🛡️ PROTECT — Kopyahin APK MULA SA /tmp/ papuntang docs/
         if: env.APK_FOUND == 'true'
         run: |
           DOCS_DIR="./docs"
+          APK_SOURCE="/tmp/app-debug.apk"
           BACKUP="/tmp/docs-FULL-backup"
 
-          # 💾 I-BACKUP MUNA ANG BUONG docs/
           mkdir -p "$BACKUP"
-          cp -R "$DOCS_DIR"/. "$BACKUP/" 2>/dev/null || true
-          echo "✅ NAI-BACKUP ANG BUONG docs/"
-
-          # 📤 KOPYAHIN ANG APK SA docs/ — HANAPIN MUNA ULIT PARA SIGURADO
           mkdir -p "$DOCS_DIR"
-          APK_FILE=$(find android -name "*.apk" 2>/dev/null | head -1)
+          cp -R "$DOCS_DIR"/. "$BACKUP/" 2>/dev/null || true
+
           NEW_APK_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
-          cp "$APK_FILE" "$DOCS_DIR/$NEW_APK_NAME"
+          cp "$APK_SOURCE" "$DOCS_DIR/$NEW_APK_NAME"
           echo "✅ APK NAKOPYA SA: docs/$NEW_APK_NAME"
 
-          # ✅ version.json — Auto-Update
           cat > "$DOCS_DIR/version.json" <<JSON
           {
             "versionTag": "${{ steps.version.outputs.tag }}",
@@ -200,12 +219,11 @@ jobs:
           }
           JSON
 
-          # 🔄 IBALIK ANG LAHAT MULA SA BACKUP — WALANG NABURA!
           cp -R "$BACKUP"/. "$DOCS_DIR/" 2>/dev/null || true
           echo "✅ LAHAT SA docs/ — LIGTAS AT BUO!"
 
       # ==========================================================
-      # 📄 ISULAT LAHAT NG LOG + ERROR SA docs/failed.md — HINDI GINALAW ANG IBA
+      # 📄 ISULAT SA docs/failed.md — HINDI GINALAW ANG PORMAT!
       # ==========================================================
       - name: 📄 ISULAT SA docs/failed.md — BUONG LOG + MGA ERROR
         if: always()
@@ -233,7 +251,7 @@ jobs:
           } > "$TEMP_FILE"
 
           cp "$TEMP_FILE" "$OUTPUT_FILE"
-          echo "✅ docs/failed.md NAISULAT — KASAMA ANG LAHAT NG ERROR AT LOG!"
+          echo "✅ docs/failed.md NAISULAT — KASAMA ANG LAHAT NG DETALYE!"
 
       # ==========================================================
       # 📤 I-UPLOAD
@@ -247,7 +265,7 @@ jobs:
           retention-days: 30
 
       # ==========================================================
-      # ✅ I-COMMIT — docs/ LAHAT KASAMA APK + LOG + ERROR
+      # ✅ I-COMMIT
       # ==========================================================
       - name: ✅ I-COMMIT ANG docs/
         if: always()
@@ -263,5 +281,5 @@ jobs:
           else
             git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + Log + Errors" || true
             git push || true
-            echo "✅ NAI-COMMIT — APK + LOG + ERROR NASA docs/ NA SA GITHUB!"
+            echo "✅ NAI-COMMIT — NASA docs/ NA SA GITHUB!"
           fi
