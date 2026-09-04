@@ -78,7 +78,7 @@ jobs:
           chmod +x ./gradlew 2>/dev/null || true
 
       # ==========================================
-      # 🔨 BUILD APK — KOPYAHIN AGAD + KUKUHA NG DAHILAN NG CRASH
+      # 🔨 BUILD APK — KOPYAHIN AGAD + MAS MALAWAK NA PAGHANAP
       # ==========================================
       - name: 🔨 BUILD APK
         id: do_build
@@ -99,15 +99,21 @@ jobs:
           EXIT_CODE=${PIPESTATUS[0]}
           set -e
 
-          # 🚨 KOPYAHIN AGAD — HABANG NASA LOOB PA!
+          # 🚨 KOPYAHIN AGAD — HANAPIN SA LAHAT NG LUGAR HINDI LANG SA TINDIYAK NA DAAN!
           if [ $EXIT_CODE -eq 0 ]; then
-            APK_BUILD_PATH="app/build/outputs/apk/debug/app-debug.apk"
-            if [ -f "$APK_BUILD_PATH" ]; then
+            echo "✅ BUILD SUCCESS — hinahanap ang APK..."
+            
+            # ✅ HANAPIN SA BUONG app/build/ — KAHIT SAAN ITO ILAGAY NG GRADLE
+            APK_BUILD_PATH=$(find app/build -name "*.apk" 2>/dev/null | head -1)
+            
+            if [ -n "$APK_BUILD_PATH" ] && [ -f "$APK_BUILD_PATH" ]; then
+              echo "✅ NAHANAP ANG APK SA: $APK_BUILD_PATH"
               cp "$APK_BUILD_PATH" "$APK_SAVE"
-              echo "✅ APK NAKOPYA AGAD SA: $APK_SAVE"
+              ls -lh "$APK_SAVE"
               echo "APK_FOUND=true" >> $GITHUB_ENV
             else
-              echo "❌ HINDI MAHANAP ANG APK — posibleng sanhi ng CRASH: walang nalikhang file"
+              echo "❌ HINDI MAHANAP ANG APK — ILISTA ANG BUILD FOLDER:"
+              ls -la app/build/ 2>/dev/null || echo "❌ WALANG build folder"
               echo "APK_FOUND=false" >> $GITHUB_ENV
             fi
           else
@@ -116,6 +122,19 @@ jobs:
           fi
 
           cd ..
+
+          # 📋 I-LISTA PARA MAKITA — NAWALA BA TALAGA O NASA IBA LUGAR?
+          echo ""
+          echo "📂 --- SURIIN ANG android/app/build/ ---"
+          if [ -d "android/app/build" ]; then
+            echo "✅ MERON build folder!"
+            find android/app/build -name "*.apk" 2>/dev/null
+          else
+            echo "⚠️ WALANG build folder — kaya KOPYA AGAD SA /tmp ang solusyon!"
+          fi
+          echo ""
+          echo "📂 --- APK NA NAKOPYA SA /tmp/ ---"
+          ls -lh "$APK_SAVE" 2>/dev/null || echo "❌ Wala sa /tmp"
 
           # ==========================================================
           # 🚨 KUKUHA NG MGA TIYAK NA DAHILAN NG PAGKA-CRASH NG APP
@@ -126,7 +145,6 @@ jobs:
             echo ""
             echo "> Ito ang mga partikular na isyu na magiging sanhi ng pag-crash kapag binuksan ang aplikasyon:"
             echo ""
-            # Mga tiyak na sanhi ng pagka-crash
             grep -n -iE \
               'resource.*not found|ClassNotFoundException|NoClassDefFoundError|UnsatisfiedLinkError|InstantiationException|VerifyError|AndroidRuntime|FATAL EXCEPTION|NullPointerException|ActivityNotFoundException|INSTALL_FAILED|parsing error|manifest.*error|versionCode|minSdk|targetSdk|namespace|package.*not supported' \
               "$LOG_FILE" || echo "*Walang direktang nakitang sanhi ng crash — pero suriin ang babala sa ibaba*"
@@ -191,7 +209,7 @@ jobs:
           exit $EXIT_CODE
 
       # ==========================================================
-      # 🛡️ PROTEKTAHAN ANG docs/ — KOPYAHIN MULA SA /tmp/
+      # 🛡️ PROTEKTAHAN ANG docs/ — KOPYAHIN MULA SA /tmp/ HINDI SA BUILD
       # ==========================================================
       - name: 🛡️ PROTECT — Kopyahin APK MULA SA /tmp/ papuntang docs/
         if: env.APK_FOUND == 'true'
@@ -207,6 +225,7 @@ jobs:
           NEW_APK_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
           cp "$APK_SOURCE" "$DOCS_DIR/$NEW_APK_NAME"
           echo "✅ APK NAKOPYA SA: docs/$NEW_APK_NAME"
+          ls -lh "$DOCS_DIR/"
 
           cat > "$DOCS_DIR/version.json" <<JSON
           {
@@ -251,7 +270,7 @@ jobs:
           } > "$TEMP_FILE"
 
           cp "$TEMP_FILE" "$OUTPUT_FILE"
-          echo "✅ docs/failed.md NAISULAT — KASAMA ANG LAHAT NG DETALYE!"
+          echo "✅ docs/failed.md NAISULAT!"
 
       # ==========================================================
       # 📤 I-UPLOAD
