@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Tema ng Martodosko Studio -->
     <style name="Theme.Martodosko" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">#2196F3</item>
         <item name="android:windowBackground">@color/bg_dark</item>
+        <item name="android:colorBackground">@color/bg_dark</item>
+        <item name="colorPrimary">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_white</item>
+        <item name="android:textColorSecondary">@color/text_silver</item>
     </style>
 </resources>
