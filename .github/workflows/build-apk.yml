@@ -46,32 +46,45 @@ jobs:
       - name: 🔨 BUILD APK
         id: do_build
         run: |
-          # ✅ Nasa ugat na — WALANG cd android!
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug 2>&1 > /tmp/build.log || BUILD_EXIT=$?
 
-          # ✅ TAMA NA ANG DAAN — app/build/ HINDI android/app/build/
-          APK_FILE=$(find app/build/outputs/apk/debug -maxdepth 2 -name "*.apk" 2>/dev/null | head -1)
+          APK_FILE=$(find app/build/outputs/apk/debug -maxdepth 2 -name "app-debug.apk" -type f 2>/dev/null | head -1)
 
           if [ -f "$APK_FILE" ]; then
             echo "✅ Nahanap ang APK: $APK_FILE"
             echo "apk_found=true" >> $GITHUB_OUTPUT
             echo "apk_path=$APK_FILE" >> $GITHUB_OUTPUT
+            echo "build_exit=0" >> $GITHUB_ENV
           else
             echo "❌ Hindi mahanap ang APK"
             echo "apk_found=false" >> $GITHUB_OUTPUT
+            echo "build_exit=1" >> $GITHUB_ENV
             exit 1
           fi
 
-      - name: 📤 KOPYAHIN ANG APK SA docs/
+      - name: 📤 KOPYAHIN ANG APK SA docs/ — HINDI ZIP, TOTOONG APK LANG!
         if: steps.do_build.outputs.apk_found == 'true'
         run: |
           mkdir -p docs
           APK_PATH="${{ steps.do_build.outputs.apk_path }}"
           NEW_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
+
+          # ✅ KOPYAHIN LANG — WALANG ZIP, WALANG I-COMPRESS!
           cp "$APK_PATH" "docs/$NEW_NAME"
-          echo "✅ Nakopya sa docs/$NEW_NAME"
-          ls -lh docs/*.apk
+
+          # ✅ SIGURADUHIN — TOTOONG APK BA ITO?
+          FILE_TYPE=$(file "docs/$NEW_NAME")
+          if echo "$FILE_TYPE" | grep -qi "Zip archive"; then
+            echo "⚠️  BABALA: Mukhang ZIP — HINDI TAMA!"
+            exit 1
+          else
+            echo "✅ TOTOONG APK FILE — HINDI ZIP!"
+          fi
+
+          echo "✅ Nakopya — docs/$NEW_NAME"
+          ls -lh docs/
+          file "docs/$NEW_NAME"
 
           cat > docs/version.json <<JSON
           {
@@ -82,22 +95,52 @@ jobs:
             "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           }
           JSON
-          echo "✅ Nalikha ang docs/version.json"
 
-      - name: 📄 BUUIN ANG BUILD LOG
+      - name: 📄 ISULAT SA docs/failed.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
           mkdir -p docs
-          cat > docs/build-log.md <<EOF
-          # 📋 Build Log — Martodosko Audio Studio
-          > Created & Developed by MartoDosko © Copyright 2026
-          ---
-          📅 **Petsa:** $DATE
-          🏷️ **Bersyon:** ${{ steps.version.outputs.tag }}
-          ---
-          ✅ APK: Martodosko-Studio-${{ steps.version.outputs.tag }}.apk
-          EOF
+          APK_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
+
+          {
+            echo "# 📋 Build Log — Martodosko Audio Studio"
+            echo ""
+            echo "> Created & Developed by MartoDosko © Copyright 2026"
+            echo ""
+            echo "---"
+            echo "📅 **Petsa:** $DATE"
+            echo "🏷️ **Bersyon:** ${{ steps.version.outputs.tag }}"
+            echo "---"
+            echo ""
+            echo "=================================================="
+            echo "📦 APLIKASYON: Martodosko Audio Studio"
+            echo "📂 LOKASYON:   app/"
+            echo "⏰ ORAS:       $DATE"
+            echo "🏷️ BERSYON:    ${{ steps.version.outputs.tag }}"
+            echo "=================================================="
+            echo ""
+
+            if [ "${{ steps.do_build.outputs.apk_found }}" = "true" ]; then
+              echo "✅ **TAGUMPAY — NABUO ANG APK!**"
+              echo "📂 Pangalan:   \`$APK_NAME\`"
+              echo "📏 Laki:       $(du -h docs/$APK_NAME 2>/dev/null | cut -f1 || echo '—')"
+              echo "📄 Uri ng File: **TOTOONG APK — HINDI ZIP** ✅"
+              echo "📥 I-download: **Artifacts** sa itaas"
+            else
+              echo "❌ **NABIGO — Hindi nabuo o hindi mahanap ang APK**"
+              echo "🔑 Exit Code: ${{ env.build_exit }}"
+            fi
+
+            echo ""
+            echo "---"
+            echo "## 🚨 MGA ERROR:"
+            echo "\`\`\`"
+            grep -iE "error|failed|exception|failure" /tmp/build.log 2>/dev/null || echo "*Walang nakitang error*"
+            echo "\`\`\`"
+            echo ""
+            echo "✅ **Katapusan ng Talaan**"
+          } > docs/failed.md
 
       - name: 📤 I-UPLOAD BILANG ARTIFACT
         if: steps.do_build.outputs.apk_found == 'true'
@@ -106,14 +149,16 @@ jobs:
           name: Martodosko-APK-${{ steps.version.outputs.tag }}
           path: docs/
           retention-days: 30
+          # ✅ WALANG COMPRESS — PERO ANG ARTIFACT NG GITHUB AY LAGING ZIP — KAYA MAY SOLUSYON:
 
-      - name: ✅ I-COMMIT ANG docs/ SA GITHUB
+      # 💡 SOLUSYON: KUNG GUSTO MO NG DIREKTANG APK SA DOWNLOAD — I-COMMIT SA docs/
+      - name: ✅ I-COMMIT SA docs/ — DIREKTANG APK SA REPO
         if: steps.do_build.outputs.apk_found == 'true'
         continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/
-          git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + version.json" || true
           git pull origin main --rebase 2>/dev/null || true
+          git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + Log" || true
           git push || true
