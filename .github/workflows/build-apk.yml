@@ -2,8 +2,7 @@ name: Build APK
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -12,9 +11,27 @@ jobs:
     permissions: write-all
 
     steps:
-      - uses: actions/checkout@v4
+      # ✅ AYUSIN: SIGURADUHIN NA TAMA ANG CHECKOUT
+      - name: 📥 KUNIN ANG SOURCE CODE
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: main
+          fetch-depth: 1   # mas mabilis at sigurado — HINDI 0!
+
+      - name: ✅ SURIIN — NAKUHA BA ANG SOURCE CODE?
+        run: |
+          echo "=== MGA FILE SA ROOT ==="
+          ls -la
+          echo ""
+          echo "=== android/app/src/main/res/values/ ==="
+          ls -la android/app/src/main/res/values/ 2>/dev/null || echo "❌ WALANG FOLDER — HINDI NABUNGA ANG SOURCE!"
+          echo ""
+          if [ -f "android/app/src/main/res/values/strings.xml" ]; then
+            echo "✅ strings.xml — NANDYAN!"
+          else
+            echo "❌ strings.xml — WALA! KAYA LUMANG APK LANG!"
+            exit 1
+          fi
 
       - uses: actions/setup-java@v4
         with:
@@ -24,18 +41,14 @@ jobs:
       - name: 🏷️ KUNIN ANG BERSYON
         id: version
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            VERSION_TAG="${GITHUB_REF#refs/tags/}"
-          else
-            VERSION_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-          fi
+          VERSION_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
           VERSION_NAME="${VERSION_TAG#v}"
           VERSION_CODE=$(echo "$VERSION_NAME" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
           echo "tag=$VERSION_TAG" >> $GITHUB_OUTPUT
           echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
 
-      - name: ✍️ ISULAT SA build.gradle.kts
+      - name: ✍️ I-UPDATE ANG BERSYON SA GRADLE
         run: |
           FILE="android/app/build.gradle.kts"
           if [ -f "$FILE" ]; then
@@ -48,10 +61,8 @@ jobs:
         run: |
           cd android
           if [ -f "./gradlew" ] && [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-            echo "✅ MERON NA ANG WRAPPER"
             echo "has_wrapper=true" >> $GITHUB_ENV
           else
-            echo "⚠️ KULANG ANG WRAPPER"
             echo "has_wrapper=false" >> $GITHUB_ENV
           fi
 
@@ -65,79 +76,41 @@ jobs:
           gradle wrapper --gradle-version 8.2
           chmod +x gradlew
 
-      - name: ✅ Siguraduhing Pwede ang gradlew
+      - name: 🔨 BUILD ANG APK
+        id: build_step
         run: |
           cd android
-          chmod +x ./gradlew 2>/dev/null || true
-
-      # ==========================================
-      # 🔨 BUILD — HANAPIN ANG APK SA TOTOONG LUGAR
-      # ==========================================
-      - name: 🔨 BUILD APK
-        id: do_build
-        run: |
-          mkdir -p /tmp
-          LOG_FILE="/tmp/build-full.log"
-          APK_SAVE="/tmp/app-debug.apk"
-          > "$LOG_FILE"
-
-          cd android
-          set +e
-          ./gradlew assembleDebug 2>&1 | tee "$LOG_FILE"
-          EXIT_CODE=${PIPESTATUS[0]}
-          set -e
-
-          if [ $EXIT_CODE -eq 0 ]; then
-            echo "✅ BUILD TAGUMPAY — hinahanap ang APK..."
-
-            # ✅ HANAPIN SA BUONG android/app/build/ — KAHIT SAAN ILAGAY
-            APK_BUILD_PATH=$(find app/build -name "app-debug.apk" -type f 2>/dev/null | head -1)
-
-            if [ -n "$APK_BUILD_PATH" ] && [ -f "$APK_BUILD_PATH" ]; then
-              echo "✅ NAKITA ANG APK SA: $APK_BUILD_PATH"
-              cp "$APK_BUILD_PATH" "$APK_SAVE"
-              ls -lh "$APK_SAVE"
-              echo "APK_FOUND=true" >> $GITHUB_ENV
-              echo "APK_REAL_PATH=$APK_BUILD_PATH" >> $GITHUB_ENV
-            else
-              echo "❌ HINDI MAHANAP ANG APK — ITO ANG LAMAN NG build/:"
-              find app/build -name "*.apk" 2>/dev/null || echo "❌ WALANG APK FILE"
-              echo "APK_FOUND=false" >> $GITHUB_ENV
-            fi
-          else
-            echo "❌ BUILD NABIGO — Exit Code: $EXIT_CODE"
-            echo "APK_FOUND=false" >> $GITHUB_ENV
-          fi
-
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+          EXIT_CODE=$?
           cd ..
-          echo "EXIT_CODE=$EXIT_CODE" >> $GITHUB_ENV
+          exit $EXIT_CODE
 
-      # ==========================================
-      # 📤 KOPYAHIN SA docs/ — TAMANG PANGALAN + BERSYON
-      # ==========================================
-      - name: 📤 KOPYAHIN APK PUNTA docs/
-        id: copy_apk
-        if: env.APK_FOUND == 'true'
+      - name: 📤 HANAPIN AT KOPYAHIN ANG APK
+        id: find_apk
         run: |
+          APK_BUILD=$(find android/app/build -name "app-debug.apk" -type f | head -1)
+          
+          if [ -z "$APK_BUILD" ]; then
+            echo "❌ HINDI MAHANAP ANG APK!"
+            exit 1
+          fi
+          
+          echo "✅ NAKITA: $APK_BUILD"
+          echo "APK_PATH=$APK_BUILD" >> $GITHUB_ENV
+          
           mkdir -p docs
-          NEW_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
-          cp /tmp/app-debug.apk "docs/$NEW_NAME"
-          echo "✅ NAKOPYA → docs/$NEW_NAME"
+          NEW_APK_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
+          cp "$APK_BUILD" "docs/$NEW_APK_NAME"
+          
+          echo "✅ NAKOPYA SA: docs/$NEW_APK_NAME"
+          echo "APK_NAME=$NEW_APK_NAME" >> $GITHUB_ENV
           ls -lh docs/
-          echo "APK_FILENAME=$NEW_NAME" >> $GITHUB_ENV
 
-      # ==========================================
-      # 📄 BUUIN ANG docs/failed.md
-      # ==========================================
-      - name: 📄 ISULAT SA docs/failed.md
+      - name: 📄 BUUIN ANG docs/failed.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
-          LOG_FILE="/tmp/build-full.log"
-          OUTPUT="./docs/failed.md"
-
-          mkdir -p docs
-
           {
             echo "# 📋 Build Log — Martodosko Audio Studio"
             echo ""
@@ -148,66 +121,29 @@ jobs:
             echo "🏷️ **Bersyon:** ${{ steps.version.outputs.tag }}"
             echo "---"
             echo ""
-            echo "=================================================="
-            echo "📦 APLIKASYON: Martodosko Audio Studio"
-            echo "📂 LOKASYON:   android/app"
-            echo "⏰ ORAS:       $DATE"
-            echo "🏷️ BERSYON:    ${{ steps.version.outputs.tag }}"
-            echo "📤 EXIT CODE:  ${{ env.EXIT_CODE }}"
-            echo "=================================================="
-            echo ""
-
-            if [ "${{ env.APK_FOUND }}" = "true" ]; then
-              echo "✅ TAGUMPAY — NABUO ANG APK!"
-              echo "📂 Pangalan:   ${{ env.APK_FILENAME }}"
-              echo "📏 Laki:       $(du -h docs/${{ env.APK_FILENAME }} | cut -f1)"
+            if [ -n "$APK_NAME" ]; then
+              echo "✅ **TAGUMPAY — NABUO ANG BAGONG APK!**"
+              echo "- 📂 Pangalan: \`$APK_NAME\`"
+              echo "- 📏 Laki: $(du -h docs/$APK_NAME | cut -f1)"
             else
-              echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
-              echo "🔑 Exit Code: ${{ env.EXIT_CODE }}"
+              echo "❌ **NABIGO — WALANG APK**"
             fi
             echo ""
-            echo "---"
-            echo "## 🚨 MGA ERROR:"
-            echo "\`\`\`"
-            grep -iE "error|failed|exception|failure" "$LOG_FILE" || echo "*Walang nakitang error*"
-            echo "\`\`\`"
-            echo ""
-            echo "---"
-            echo "## 📋 BUONG LOG:"
-            echo "\`\`\`"
-            cat "$LOG_FILE"
-            echo "\`\`\`"
-            echo ""
             echo "✅ **Katapusan ng Talaan**"
-          } > "$OUTPUT"
+          } > docs/failed.md
 
-          echo "✅ NAILAGAY SA docs/failed.md"
-
-      # ==========================================
-      # 📦 I-UPLOAD BILANG ARTIFACT
-      # ==========================================
-      - name: 📦 I-UPLOAD ARTIFACT
-        if: env.APK_FOUND == 'true'
+      - name: 📦 I-UPLOAD BILANG ARTIFACT
         uses: actions/upload-artifact@v4
         with:
           name: Martodosko-APK-${{ steps.version.outputs.tag }}
           path: docs/
           retention-days: 30
 
-      # ==========================================
-      # ✅ I-COMMIT docs/ papuntang GitHub
-      # ==========================================
-      - name: ✅ I-COMMIT docs/
-        if: always()
-        continue-on-error: true
+      # ✅ AYUSIN: HUWAG ITAGO ANG PAGKABIGO — TANGGALIN ANG || true
+      - name: ✅ I-COMMIT SA docs/
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/ 2>/dev/null || true
-          if git diff --staged --quiet; then
-            echo "ℹ️ Walang pagbabago"
-          else
-            git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + Log" || true
-            git push || true
-            echo "✅ NAI-COMMIT — NASA docs/ NA SA GITHUB!"
-          fi
+          git add docs/
+          git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + Log"
+          git push
