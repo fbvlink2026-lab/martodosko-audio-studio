@@ -11,33 +11,59 @@ jobs:
     permissions: write-all
 
     steps:
-      # ✅ AYUSIN: SIGURADUHIN NA TAMA ANG CHECKOUT
-      - name: 📥 KUNIN ANG SOURCE CODE
+      # ==========================================
+      # 📥 SIGURADUHIN NA TAMA ANG SOURCE CODE
+      # ==========================================
+      - name: 📥 KUNIN ANG PINAKABAGONG SOURCE CODE
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 1   # mas mabilis at sigurado — HINDI 0!
+          fetch-depth: 0   # Kumpletong history — siguradong tama
+          clean: true       # Linisin muna — walang lumang file na natira
 
-      - name: ✅ SURIIN — NAKUHA BA ANG SOURCE CODE?
+      - name: ✅ SURIIN — NANDYAN BA ANG MGA BAGONG FILE?
         run: |
-          echo "=== MGA FILE SA ROOT ==="
+          echo "=== 📂 Root ==="
           ls -la
           echo ""
-          echo "=== android/app/src/main/res/values/ ==="
-          ls -la android/app/src/main/res/values/ 2>/dev/null || echo "❌ WALANG FOLDER — HINDI NABUNGA ANG SOURCE!"
-          echo ""
-          if [ -f "android/app/src/main/res/values/strings.xml" ]; then
-            echo "✅ strings.xml — NANDYAN!"
-          else
-            echo "❌ strings.xml — WALA! KAYA LUMANG APK LANG!"
+          echo "=== 📂 android/app/src/main/res/values/ ==="
+          VALUES_DIR="android/app/src/main/res/values"
+          if [ ! -d "$VALUES_DIR" ]; then
+            echo "❌ WALANG values folder — MALING SOURCE!"
             exit 1
           fi
+          
+          # ✅ TIGNAN ANG LAHAT NG KAILANGANG FILE
+          ALL_OK=true
+          for f in strings.xml colors.xml styles.xml; do
+            if [ -f "$VALUES_DIR/$f" ]; then
+              echo "✅ $f — NANDYAN"
+            else
+              echo "❌ $f — WALA! KAYA HINDI BAGONG SOURCE ITO!"
+              ALL_OK=false
+            fi
+          done
+          
+          if [ "$ALL_OK" != "true" ]; then
+            echo ""
+            echo "🚨 HINDI TAMA ANG SOURCE CODE — ITIGIL DITO!"
+            echo "   Hindi pa naipush ang mga bagong file o mali ang checkout."
+            exit 1
+          fi
+          echo ""
+          echo "✅ LAHAT NG KAILANGANG FILE — NANDYAN NA! BAGONG BUILD ITO!"
 
+      # ==========================================
+      # ☕ JAVA
+      # ==========================================
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      # ==========================================
+      # 🏷️ BERSYON
+      # ==========================================
       - name: 🏷️ KUNIN ANG BERSYON
         id: version
         run: |
@@ -47,15 +73,11 @@ jobs:
           echo "tag=$VERSION_TAG" >> $GITHUB_OUTPUT
           echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "✅ Bersyon: $VERSION_TAG"
 
-      - name: ✍️ I-UPDATE ANG BERSYON SA GRADLE
-        run: |
-          FILE="android/app/build.gradle.kts"
-          if [ -f "$FILE" ]; then
-            sed -i "s/versionCode *= *[0-9]*/versionCode = ${{ steps.version.outputs.code }}/" "$FILE"
-            sed -i "s/versionName *= *\"[^\"]*\"/versionName = \"${{ steps.version.outputs.name }}\"/" "$FILE"
-          fi
-
+      # ==========================================
+      # 🔧 GRADLE SETUP
+      # ==========================================
       - name: 🔍 TIGNAN ANG GRADLE WRAPPER
         id: check_wrapper
         run: |
@@ -76,38 +98,60 @@ jobs:
           gradle wrapper --gradle-version 8.2
           chmod +x gradlew
 
+      # ==========================================
+      # 🔨 BUILD APK — KUNG MAY MALI → ITIGIL AGAD
+      # ==========================================
       - name: 🔨 BUILD ANG APK
-        id: build_step
+        id: build_apk
         run: |
           cd android
           chmod +x ./gradlew
-          ./gradlew assembleDebug
-          EXIT_CODE=$?
-          cd ..
-          exit $EXIT_CODE
+          ./gradlew clean assembleDebug   # ✅ "clean" → TANGGALIN ANG LUMANG BUILD!
+          echo "BUILD_EXIT=0" >> $GITHUB_ENV
 
+      # ==========================================
+      # 📤 HANAPIN AT KOPYAHIN — TIGNAN KUNG TALAGANG BAGO
+      # ==========================================
       - name: 📤 HANAPIN AT KOPYAHIN ANG APK
-        id: find_apk
+        id: copy_apk
         run: |
+          # ✅ HANAPIN — SAAN MAN
           APK_BUILD=$(find android/app/build -name "app-debug.apk" -type f | head -1)
           
-          if [ -z "$APK_BUILD" ]; then
-            echo "❌ HINDI MAHANAP ANG APK!"
+          if [ -z "$APK_BUILD" ] || [ ! -f "$APK_BUILD" ]; then
+            echo "❌ HINDI MAHANAP ANG APK — WALANG NABUO!"
             exit 1
           fi
           
-          echo "✅ NAKITA: $APK_BUILD"
-          echo "APK_PATH=$APK_BUILD" >> $GITHUB_ENV
+          echo "✅ NAKITA ANG APK SA: $APK_BUILD"
           
+          # ✅ KUMPARE SA LUMANG APK — PAREHO BA?
           mkdir -p docs
-          NEW_APK_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
-          cp "$APK_BUILD" "docs/$NEW_APK_NAME"
+          NEW_NAME="Martodosko-Studio-${{ steps.version.outputs.tag }}.apk"
+          TARGET="docs/$NEW_NAME"
           
-          echo "✅ NAKOPYA SA: docs/$NEW_APK_NAME"
-          echo "APK_NAME=$NEW_APK_NAME" >> $GITHUB_ENV
+          if [ -f "$TARGET" ]; then
+            OLD_HASH=$(sha256sum "$TARGET" | awk '{print $1}')
+            NEW_HASH=$(sha256sum "$APK_BUILD" | awk '{print $1}')
+            if [ "$OLD_HASH" = "$NEW_HASH" ]; then
+              echo "⚠️  PAREHO ANG LAMAN — HINDI BAGO ANG BUILD!"
+            else
+              echo "✅ BAGONG APK — IBA ANG LAMAN!"
+            fi
+          fi
+          
+          cp "$APK_BUILD" "$TARGET"
+          echo "✅ NAKOPYA → $TARGET"
+          
           ls -lh docs/
+          
+          echo "APK_NAME=$NEW_NAME" >> $GITHUB_ENV
+          echo "APK_PATH=$TARGET" >> $GITHUB_ENV
 
-      - name: 📄 BUUIN ANG docs/failed.md
+      # ==========================================
+      # 📄 BUUIN ANG LOG
+      # ==========================================
+      - name: 📄 ISULAT SA docs/failed.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
@@ -121,17 +165,16 @@ jobs:
             echo "🏷️ **Bersyon:** ${{ steps.version.outputs.tag }}"
             echo "---"
             echo ""
-            if [ -n "$APK_NAME" ]; then
-              echo "✅ **TAGUMPAY — NABUO ANG BAGONG APK!**"
-              echo "- 📂 Pangalan: \`$APK_NAME\`"
-              echo "- 📏 Laki: $(du -h docs/$APK_NAME | cut -f1)"
-            else
-              echo "❌ **NABIGO — WALANG APK**"
-            fi
+            echo "✅ **TAGUMPAY — BAGONG APK NABUO!**"
+            echo "- 📂 Pangalan: \`${{ env.APK_NAME }}\`"
+            echo "- 📏 Laki: $(du -h ${{ env.APK_PATH }} | cut -f1)"
             echo ""
             echo "✅ **Katapusan ng Talaan**"
           } > docs/failed.md
 
+      # ==========================================
+      # 📦 I-UPLOAD
+      # ==========================================
       - name: 📦 I-UPLOAD BILANG ARTIFACT
         uses: actions/upload-artifact@v4
         with:
@@ -139,11 +182,19 @@ jobs:
           path: docs/
           retention-days: 30
 
-      # ✅ AYUSIN: HUWAG ITAGO ANG PAGKABIGO — TANGGALIN ANG || true
-      - name: ✅ I-COMMIT SA docs/
+      # ==========================================
+      # ✅ I-COMMIT — KUNG MAY MALI → HINDI ITAGO
+      # ==========================================
+      - name: ✅ I-COMMIT docs/
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/
-          git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + Log"
-          git push
+          
+          if git diff --staged --quiet; then
+            echo "ℹ️ Walang pagbabago sa docs/"
+          else
+            git commit -m "📦 Build: ${{ steps.version.outputs.tag }} — APK + Log"
+            git push   # ❌ TINANGAL ANG || true — KUNG MAY MALI → SABIHIN AGAD!
+            echo "✅ NAI-COMMIT SA docs/"
+          fi
