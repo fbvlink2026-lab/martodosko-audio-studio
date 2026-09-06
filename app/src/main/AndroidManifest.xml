@@ -4,7 +4,7 @@
         android:label="Martodosko Studio"
         android:icon="@mipmap/ic_launcher"
         android:theme="@android:style/Theme.Material.Light.DarkActionBar">
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity android:name="android.app.Activity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
