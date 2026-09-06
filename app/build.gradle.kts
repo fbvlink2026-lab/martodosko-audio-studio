@@ -16,5 +16,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    externalNativeBuild { cmake { path "CMakeLists.txt" } }
 }
