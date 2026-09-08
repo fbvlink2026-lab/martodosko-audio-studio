@@ -2,31 +2,27 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.martodosko.studio">
 
-    <!-- ✅ Kailangan para makacheck ng update mula sa GitHub -->
+    <!-- ✅ Pahintulot — PANATILIHIN -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- ✅ Kailangan para makapag-download at mag-install ng APK -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- ❌ TINANGGAL NA ANG android:theme — DEFAULT NG ANDROID ANG GAGAMITIN ✅ -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Martodosko Studio"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:label="Martodosko Studio">
 
-        <!-- ✅ Splash — UNANG LALABAS -->
+        <!-- ❌ TINANGGAL NA ANG android:theme DITO RIN ✅ -->
         <activity
             android:name=".SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- ✅ Main Screen — LALABAS PAGKATAPUS NG SPLASH -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
