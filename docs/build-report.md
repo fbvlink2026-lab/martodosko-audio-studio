@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-08 23:34 UTC
-🏷️ **Bersyon:** v1.0.16
+📅 **Petsa:** 2026-09-08 23:46 UTC
+🏷️ **Bersyon:** v1.0.17
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-08 23:34:30 UTC
-🏷️ BERSYON:    v1.0.16
+⏰ ORAS:       2026-09-08 23:46:34 UTC
+🏷️ BERSYON:    v1.0.17
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -39,7 +39,7 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeDebugResources FAILED
 
 > Task :app:parseDebugLocalResources FAILED
-[Fatal Error] splash_screen.xml:3:45: Element type "LinearLayout" must be followed by either attribute specifications, ">" or "/>".
+[Fatal Error] splash_screen.xml:3:5: Element type "LinearLayout" must be followed by either attribute specifications, ">" or "/>".
 
 FAILURE: Build completed with 2 failures.
 
@@ -48,7 +48,7 @@ FAILURE: Build completed with 2 failures.
 * What went wrong:
 Execution failed for task ':app:mergeDebugResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
-   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/splash_screen.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[3,45]
+   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/splash_screen.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[3,5]
      Message: Element type "LinearLayout" must be followed by either attribute specifications, ">" or "/>".). Check logs for more details.
 
 * Try:
@@ -72,7 +72,7 @@ Execution failed for task ':app:parseDebugLocalResources'.
 > Get more help at https://help.gradle.org.
 ==============================================================================
 
-BUILD FAILED in 12s
+BUILD FAILED in 23s
 10 actionable tasks: 9 executed, 1 up-to-date
 
 ==================================================
