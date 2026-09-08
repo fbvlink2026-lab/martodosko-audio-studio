@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-08 22:15 UTC
-🏷️ **Bersyon:** v1.0.8
+📅 **Petsa:** 2026-09-08 22:22 UTC
+🏷️ **Bersyon:** v1.0.9
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-08 22:15:33 UTC
-🏷️ BERSYON:    v1.0.8
+⏰ ORAS:       2026-09-08 22:22:10 UTC
+🏷️ BERSYON:    v1.0.9
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -36,9 +36,9 @@ Daemon will be stopped at the end of the build
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
-> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
+> Task :app:mergeDebugResources
 > Task :app:parseDebugLocalResources
 
 > Task :app:processDebugMainManifest
@@ -70,10 +70,10 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:configureCMakeDebug[armeabi-v7a]
 > Task :app:buildCMakeDebug[armeabi-v7a]
 > Task :app:configureCMakeDebug[x86]
-> Task :app:processDebugManifestForPackage
 > Task :app:buildCMakeDebug[x86]
-> Task :app:configureCMakeDebug[x86_64]
+> Task :app:processDebugManifestForPackage
 > Task :app:mergeExtDexDebug
+> Task :app:configureCMakeDebug[x86_64]
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs
@@ -99,7 +99,7 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 58s
+BUILD FAILED in 1m 3s
 39 actionable tasks: 38 executed, 1 up-to-date
 
 ==================================================
