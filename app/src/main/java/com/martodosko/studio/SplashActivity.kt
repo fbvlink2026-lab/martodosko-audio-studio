@@ -5,18 +5,23 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 
 class SplashActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // ✅ IKABIT ANG SPLASH LAYOUT — DAHIL SIGURADO NA ANG FILE!
         setContentView(R.layout.splash_screen)
 
-        // ⏰ 2 Segundo → lumipat sa Main
+        // ✅ IKABIT ANG ANIMASYON
+        val rootView = findViewById<LinearLayout>(android.R.id.content)
+        val anim = AnimationUtils.loadAnimation(this, R.anim.splash_anim)
+        rootView.startAnimation(anim)
+
+        // ⏰ 2.5 Segundo bago lumipat
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, MainActivity::class.java))
             finish()
-        }, 2000)
+        }, 2500)
     }
 }
