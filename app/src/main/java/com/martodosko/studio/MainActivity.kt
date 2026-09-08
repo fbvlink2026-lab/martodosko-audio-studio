@@ -1,112 +1,71 @@
 package com.martodosko.studio
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
+import android.app.Activity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
 
-    private val GITHUB_VERSION_URL = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
-    private val GITHUB_APK_URL = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/Martodosko-Studio-v"
+    companion object {
+        // ✅ Dito ilalagay ang bersyon sa GitHub
+        private const val VERSION_URL = 
+            "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        
+        Toast.makeText(this, "Martodosko Studio — Gumagana!", Toast.LENGTH_SHORT).show()
+        Log.d("APP", "✅ Bumukas nang walang crash!")
 
-        // ✅ Pagbukas — agad tignan kung may bagong bersyon
-        checkForUpdate()
+        // ✅ Simulan ang pag-check ng update
+        checkForUpdates()
     }
 
-    // ==================================================
-    // ✅ AUTO-UPDATE DETECTOR
-    // ==================================================
-    private fun checkForUpdate() {
+    private fun checkForUpdates() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // 1. Kunin ang pinakabagong bersyon mula sa GitHub
-                val connection = URL(GITHUB_VERSION_URL).openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.connectTimeout = 10000
-                connection.readTimeout = 10000
+                Log.d("UPDATE", "🔍 Tinitignan kung may bagong bersyon...")
 
-                val reader = BufferedReader(InputStreamReader(connection.inputStream))
-                val response = StringBuilder()
+                val conn = URL(VERSION_URL).openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 8000
+                conn.readTimeout = 8000
+
+                val reader = BufferedReader(InputStreamReader(conn.inputStream))
+                val resp = StringBuilder()
                 var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
-                }
+                while (reader.readLine().also { line = it } != null) resp.append(line)
                 reader.close()
-                connection.disconnect()
+                conn.disconnect()
 
-                val json = JSONObject(response.toString())
-                val latestVersion = json.getString("version") // "1.0.2"
+                val json = JSONObject(resp.toString())
+                val latestVer = json.getString("version")
+                val currentVer = packageManager.getPackageInfo(packageName, 0).versionName
 
-                // 2. Kunin ang kasalukuyang bersyon sa telepono
-                val currentVersion = packageManager.getPackageInfo(packageName, 0).versionName
+                Log.d("UPDATE", "Kasalukuyan: v$currentVer  |  Pinakabago: v$latestVer")
 
-                Log.d("UPDATE", "Kasalukuyan: $currentVersion | Pinakabago: $latestVersion")
-
-                // 3. Ihambing — kung mas bago — ipakita ang mensahe
-                if (isNewerVersion(latestVersion, currentVersion)) {
-                    withContext(Dispatchers.Main) {
-                        showUpdateDialog(latestVersion, currentVersion)
+                if (latestVer != currentVer) {
+                    Log.d("UPDATE", "🔔 MAY BAGONG BERSYON! v$latestVer")
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "May bagong bersyon: v$latestVer", Toast.LENGTH_LONG).show()
                     }
+                    // ✅ Dito lalabas ang dialog + download mamaya
+                } else {
+                    Log.d("UPDATE", "✅ Nasa pinakabago na")
                 }
-
             } catch (e: Exception) {
-                Log.e("UPDATE", "Hindi macheck ang update", e)
+                Log.e("UPDATE", "⚠️ Hindi macheck: ${e.message}")
             }
         }
-    }
-
-    // ✅ Ihambing ang dalawang numero ng bersyon
-    private fun isNewerVersion(latest: String, current: String): Boolean {
-        val latestParts = latest.split(".").map { it.toInt() }
-        val currentParts = current.split(".").map { it.toInt() }
-
-        for (i in 0 until maxOf(latestParts.size, currentParts.size)) {
-            val l = if (i < latestParts.size) latestParts[i] else 0
-            val c = if (i < currentParts.size) currentParts[i] else 0
-            if (l > c) return true
-            if (l < c) return false
-        }
-        return false // Pareho lang — walang bago
-    }
-
-    // ✅ Ipakita ang mensahe — humingi ng pahintulot
-    private fun showUpdateDialog(latest: String, current: String) {
-        AlertDialog.Builder(this)
-            .setTitle("🔔 May Bagong Bersyon!")
-            .setMessage("Naka-install: v$current\nAvailable: v$latest\n\nGusto mo bang i-update ngayon?")
-            .setPositiveButton("✅ I-Update") { _, _ ->
-                downloadAndInstallApk(latest)
-            }
-            .setNegativeButton("⏳ Mamaya Na", null)
-            .setCancelable(true)
-            .show()
-    }
-
-    // ✅ I-download at i-install ang bagong APK
-    private fun downloadAndInstallApk(version: String) {
-        val apkUrl = "$GITHUB_APK_URL$version.apk"
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
-        startActivity(intent)
-
-        // 💡 Pagkatapos i-download — ang browser o file manager ang magtatanong:
-        // "I-install ang aplikasyon?" → Pahintulutan → I-install
     }
 }
