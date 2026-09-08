@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-08 21:54 UTC
-🏷️ **Bersyon:** v1.0.7
+📅 **Petsa:** 2026-09-08 22:15 UTC
+🏷️ **Bersyon:** v1.0.8
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-08 21:54:56 UTC
-🏷️ BERSYON:    v1.0.7
+⏰ ORAS:       2026-09-08 22:15:33 UTC
+🏷️ BERSYON:    v1.0.8
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -54,11 +54,7 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugManifestForPackage
 > Task :app:checkDebugDuplicateClasses
-> Task :app:processDebugResources
-> Task :app:mergeExtDexDebug
-> Task :app:mergeLibDexDebug
 
 > Task :app:configureCMakeDebug[arm64-v8a]
 Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
@@ -69,15 +65,19 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
 
+> Task :app:mergeLibDexDebug
 > Task :app:buildCMakeDebug[arm64-v8a]
 > Task :app:configureCMakeDebug[armeabi-v7a]
 > Task :app:buildCMakeDebug[armeabi-v7a]
 > Task :app:configureCMakeDebug[x86]
+> Task :app:processDebugManifestForPackage
 > Task :app:buildCMakeDebug[x86]
 > Task :app:configureCMakeDebug[x86_64]
+> Task :app:mergeExtDexDebug
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs
+> Task :app:processDebugResources
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
@@ -99,7 +99,7 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 54s
+BUILD FAILED in 58s
 39 actionable tasks: 38 executed, 1 up-to-date
 
 ==================================================
