@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-08 23:30 UTC
-🏷️ **Bersyon:** v1.0.15
+📅 **Petsa:** 2026-09-08 23:34 UTC
+🏷️ **Bersyon:** v1.0.16
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-08 23:30:32 UTC
-🏷️ BERSYON:    v1.0.15
+⏰ ORAS:       2026-09-08 23:34:30 UTC
+🏷️ BERSYON:    v1.0.16
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -36,59 +36,44 @@ Daemon will be stopped at the end of the build
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
-> Task :app:mergeDebugResources
-> Task :app:createDebugCompatibleScreenManifests
-> Task :app:extractDeepLinksDebug
-> Task :app:parseDebugLocalResources
+> Task :app:mergeDebugResources FAILED
 
-> Task :app:processDebugMainManifest
-package="com.martodosko.studio" found in source AndroidManifest.xml: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml.
-Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
-Recommendation: remove package="com.martodosko.studio" from the source AndroidManifest.xml: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml.
+> Task :app:parseDebugLocalResources FAILED
+[Fatal Error] splash_screen.xml:3:45: Element type "LinearLayout" must be followed by either attribute specifications, ">" or "/>".
 
-> Task :app:processDebugManifest
-> Task :app:javaPreCompileDebug
-> Task :app:mergeDebugShaders
-> Task :app:compileDebugShaders NO-SOURCE
-> Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:mergeDebugAssets
-> Task :app:compressDebugAssets
-> Task :app:desugarDebugFileDependencies
-> Task :app:processDebugManifestForPackage
-> Task :app:checkDebugDuplicateClasses
-> Task :app:processDebugResources
-> Task :app:mergeExtDexDebug
-> Task :app:mergeLibDexDebug
+FAILURE: Build completed with 2 failures.
 
-> Task :app:configureCMakeDebug[arm64-v8a]
-Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
-License for package CMake 3.22.1 accepted.
-Preparing "Install CMake 3.22.1 v.3.22.1".
-
-> Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/SplashActivity.kt:17:58 Unresolved reference: splash_root
-
-> Task :app:configureCMakeDebug[arm64-v8a]
-"Install CMake 3.22.1 v.3.22.1" ready.
-Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
-"Install CMake 3.22.1 v.3.22.1" complete.
-"Install CMake 3.22.1 v.3.22.1" finished.
-
-FAILURE: Build failed with an exception.
-
+1: Task failed with an exception.
+-----------
 * What went wrong:
-Execution failed for task ':app:compileDebugKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+Execution failed for task ':app:mergeDebugResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
+   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/splash_screen.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[3,45]
+     Message: Element type "LinearLayout" must be followed by either attribute specifications, ">" or "/>".). Check logs for more details.
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
 > Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
+==============================================================================
 
-BUILD FAILED in 47s
-26 actionable tasks: 25 executed, 1 up-to-date
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:parseDebugLocalResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.ParseLibraryResourcesTask$ParseResourcesRunnable
+   > Failed to parse XML file '/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/intermediates/packaged_res/debug/layout/splash_screen.xml'
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 12s
+10 actionable tasks: 9 executed, 1 up-to-date
 
 ==================================================
 
