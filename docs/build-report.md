@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-08 23:09 UTC
-🏷️ **Bersyon:** v1.0.13
+📅 **Petsa:** 2026-09-08 23:22 UTC
+🏷️ **Bersyon:** v1.0.14
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-08 23:09:17 UTC
-🏷️ BERSYON:    v1.0.13
+⏰ ORAS:       2026-09-08 23:22:59 UTC
+🏷️ BERSYON:    v1.0.14
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.13.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.14.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -54,21 +54,10 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugResources
 > Task :app:checkDebugDuplicateClasses
-> Task :app:compileDebugKotlin
-> Task :app:compileDebugJavaWithJavac NO-SOURCE
-> Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics
-> Task :app:processDebugJavaRes
-> Task :app:mergeLibDexDebug
-> Task :app:mergeProjectDexDebug
-> Task :app:mergeDebugJavaResource
-> Task :app:mergeExtDexDebug
 
 > Task :app:configureCMakeDebug[arm64-v8a]
 Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
@@ -79,6 +68,7 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
 
+> Task :app:mergeLibDexDebug
 > Task :app:buildCMakeDebug[arm64-v8a]
 > Task :app:configureCMakeDebug[armeabi-v7a]
 > Task :app:buildCMakeDebug[armeabi-v7a]
@@ -88,15 +78,25 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs
+> Task :app:processDebugManifestForPackage
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:stripDebugDebugSymbols
+> Task :app:mergeExtDexDebug
+> Task :app:processDebugResources
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 49s
+BUILD SUCCESSFUL in 1m 7s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
