@@ -2,24 +2,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:orientation="vertical"
     android:gravity="center"
-    android:orientation="vertical">
+    android:background="#121212">
 
+    <!-- 🖼️ Logo ng App -->
+    <ImageView
+        android:id="@+id/splash_logo"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <!-- 📌 Pangalan ng App -->
     <TextView
+        android:id="@+id/splash_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Martodosko Audio Studio"
-        android:textColor="@color/text_white"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="26sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="24dp"
+        android:textStyle="bold" />
 
+    <!-- 📌 Subtitle -->
     <TextView
+        android:id="@+id/splash_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mixer • Guitar Effects"
+        android:textSize="15sp"
+        android:textColor="#B0B0B0"
+        android:layout_marginTop="8dp" />
+
+    <!-- 📌 Copyright -->
+    <TextView
+        android:id="@+id/splash_copy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="© 2026 MartoDosko — All Rights Reserved"
-        android:textColor="@color/text_silver"
-        android:textSize="14sp"/>
+        android:textSize="13sp"
+        android:textColor="#2196F3"
+        android:layout_marginTop="32dp" />
 
 </LinearLayout>
