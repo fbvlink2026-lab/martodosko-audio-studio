@@ -53,14 +53,13 @@ jobs:
           fi
 
       # ==================================================
-      # ✅ AWTOMATIKONG TUMAAS ANG BERSYON — BINABASA MUNA ANG LUMANG FILE
+      # ✅ AWTOMATIKONG TUMAAS ANG BERSYON
       # ==================================================
       - name: 🏷️ Bumuo ng Bersyon — AWTOMATIKONG TUMAAS
         id: version
         run: |
           mkdir -p docs
           
-          # ✅ BASAHIN MUNA ANG KASALUKUYANG BERSYON MULA SA docs/version.json
           if [ -f docs/version.json ]; then
             CURRENT_VER=$(grep -o '"version":"[^"]*"' docs/version.json | head -1 | cut -d'"' -f4)
             echo "📖 Kasalukuyang Bersyon: v$CURRENT_VER"
@@ -75,7 +74,6 @@ jobs:
             VERSION_PATCH=0
           fi
           
-          # ✅ TAASIN ANG PATCH NUMBER
           VERSION_PATCH=$((VERSION_PATCH + 1))
           VERSION_NAME="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
           VERSION_CODE=$((VERSION_MAJOR * 10000 + VERSION_MINOR * 100 + VERSION_PATCH))
@@ -84,7 +82,6 @@ jobs:
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "filename=Martodosko-Studio-v$VERSION_NAME.apk" >> $GITHUB_OUTPUT
           
-          # ✅ ISULAT ANG BAGONG BERSYON
           echo "{\"version\":\"$VERSION_NAME\",\"released\":\"$(date +%Y-%m-%d)\"}" > docs/version.json
           echo "✅ Bagong Bersyon: v$VERSION_NAME  (Code: $VERSION_CODE)"
           cat docs/version.json
@@ -177,21 +174,31 @@ jobs:
           find . -name "*.apk"
           ls -la docs/*.apk 2>/dev/null || true
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Martodosko-Studio-APK
-          path: docs/
-          if-no-files-found: warn
-          retention-days: 30
+      # ==================================================
+      # 🚀 TINANGGAL NA ANG ARTIFACT — HINDI NA MAG-ZIP!
+      # ==================================================
+      # ❌ TINANGGAL: actions/upload-artifact — hindi na kailangan
+      # ✅ Direktang nasa docs/ — 5.51 MB lang — direkta download na!
 
-      - name: ✅ I-COMMIT — Report + Log + APK sa docs/
+      # ==================================================
+      # ✅ I-COMMIT AT I-PUSH — docs/ papuntang GitHub
+      # ==================================================
+      - name: ✅ I-COMMIT AT I-PUSH — docs/ papuntang GitHub
         if: always()
         continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull origin main -X theirs --no-edit || true
+          
+          # ✅ Kunin muna ang pinakabago mula sa remote
+          git fetch origin main
+          git pull --no-rebase -X theirs --allow-unrelated-histories origin/main || true
+          
+          # ✅ Idagdag ang lahat ng bago sa docs/
           git add docs/build-report.md docs/version.json docs/*.apk 2>/dev/null || true
-          git commit -m "📝 Update: Build v${{ steps.version.outputs.name }}" || true
-          git push origin main || true
+          
+          # ✅ I-commit — kung may pagbabago
+          git commit -m "📝 Auto-update: Build v${{ steps.version.outputs.name }}" --allow-empty || true
+          
+          # ✅ I-push — kung nabigo, babala lang lang
+          git push origin main || echo "⚠️ Hindi maipush sa main — pero nasa docs/ na sa runner!"
