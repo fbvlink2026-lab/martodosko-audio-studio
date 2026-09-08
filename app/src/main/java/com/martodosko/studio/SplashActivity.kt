@@ -13,15 +13,15 @@ class SplashActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
 
-        // ✅ IKABIT ANG ANIMASYON
-        val rootView = findViewById<LinearLayout>(android.R.id.content)
-        val anim = AnimationUtils.loadAnimation(this, R.anim.splash_anim)
-        rootView.startAnimation(anim)
+        // ✅ TAMA NA — TUMUTUKOY SA SARILING LAYOUT MO
+        val rootLayout = findViewById<LinearLayout>(R.id.splash_root)
+        val animation = AnimationUtils.loadAnimation(this, R.anim.splash_anim)
+        rootLayout.startAnimation(animation)
 
-        // ⏰ 2.5 Segundo bago lumipat
+        // ⏰ Lumipat pagkatapos
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, MainActivity::class.java))
             finish()
-        }, 2500)
+        }, 2000)
     }
 }
