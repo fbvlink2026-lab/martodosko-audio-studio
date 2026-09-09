@@ -29,17 +29,17 @@ Bersyon: 1.0.0
 --- II. ISTRUKTURA NG PROYEKTO ---
 
 martodosko-audio-studio/
-├── android/
-│   ├── app/src/main/
-│   │   ├── java/com/martodosko/studio/
-│   │   │   ├── MainActivity.kt          ← Pangunahing pahina
-│   │   │   └── AutoUpdateManager.kt     ← 🔧 NAGHAHANAP AT NAG-IINSTALL NG BAGONG BERSYON
-│   │   ├── res/
-│   │   │   ├── mipmap-*/                ← 5 laki ng icon
-│   │   │   ├── values/                  ← kulay, tema, teksto
-│   │   │   └── layout/                  ← disenyo
-│   │   ├── AndroidManifest.xml          ← pahintulot sa Internet at Pag-install
-│   │   └── build.gradle.kts             ← bersyon at dependencies
+
+├── app/src/main/
+│   ├── java/com/martodosko/studio/
+│   │   ├── MainActivity.kt          ← Pangunahing pahina
+│   │   └── AutoUpdateManager.kt     ← 🔧 NAGHAHANAP AT NAG-IINSTALL NG BAGONG BERSYON
+│   ├── res/
+│   │   ├── mipmap-*/                ← 5 laki ng icon
+│   │   ├── values/                  ← kulay, tema, teksto
+│   │   └── layout/                  ← disenyo
+│   ├── AndroidManifest.xml          ← pahintulot sa Internet at Pag-install
+│   └── build.gradle.kts             ← bersyon at dependencies
 │   ├── gradle.properties                ← AndroidX = ON
 │   └── gradlew                          ← Gradle wrapper
 ├── .github/workflows/
@@ -47,7 +47,7 @@ martodosko-audio-studio/
 ├── docs/                                ← 📂 LAGAYAN NG APK AT BERSYON SA GITHUB
 │   ├── version.json                     ← ← ← DITO TINITINGNAN NG APP KUNG MAY BAGO
 │   └── Martodosko-Studio-*.apk          ← ← ← DITO KUKUNIN ANG BAGONG APK
-├── android/download/                    ← orihinal na litrato para sa icon
+├                                        ← orihinal na litrato para sa icon
 ├── make-icons.sh                        ← gumawa ng icon mula sa litrato ng telepono
 └── README.md                            ← plano at dokumentasyon
 
