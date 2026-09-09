@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-09 00:18 UTC
-🏷️ **Bersyon:** v1.0.20
+📅 **Petsa:** 2026-09-09 00:42 UTC
+🏷️ **Bersyon:** v1.0.21
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-09 00:18:43 UTC
-🏷️ BERSYON:    v1.0.20
+⏰ ORAS:       2026-09-09 00:42:00 UTC
+🏷️ BERSYON:    v1.0.21
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.20.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.21.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -75,9 +75,9 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:configureCMakeDebug[x86]
 > Task :app:buildCMakeDebug[x86]
 > Task :app:configureCMakeDebug[x86_64]
+> Task :app:processDebugManifestForPackage
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
-> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugNativeLibs
 > Task :app:mergeExtDexDebug
 > Task :app:processDebugResources
@@ -96,7 +96,7 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m
+BUILD SUCCESSFUL in 1m 3s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
