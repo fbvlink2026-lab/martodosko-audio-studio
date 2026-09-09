@@ -13,15 +13,13 @@ class SplashActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
 
-        // ✅ Logo lang ang inaanimate, hindi ang buong background
         val logo = findViewById<ImageView>(R.id.splash_logo)
         val animation = AnimationUtils.loadAnimation(this, R.anim.splash_anim)
         logo.startAnimation(animation)
 
-        // ⏰ Lumipat pagkatapos ng 2 segundo
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, MainActivity::class.java))
             finish()
-        }, 2000)
+        }, 2500)
     }
 }
