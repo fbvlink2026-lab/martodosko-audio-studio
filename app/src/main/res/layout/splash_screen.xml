@@ -7,14 +7,14 @@
     android:gravity="center"
     android:background="#121212">
 
-    <!-- Logo ng App -->
+    <!-- Logo ng App - ITO LANG ANG GAGALAW -->
     <ImageView
         android:id="@+id/splash_logo"
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:src="@mipmap/ic_launcher" />
 
-    <!-- Pangalan ng App -->
+    <!-- Pangalan ng App - HINDI GAGALAW -->
     <TextView
         android:id="@+id/splash_title"
         android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
         android:layout_marginTop="24dp"
         android:textStyle="bold" />
 
-    <!-- Subtitle -->
+    <!-- Subtitle - HINDI GAGALAW -->
     <TextView
         android:id="@+id/splash_sub"
         android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
         android:textColor="#B0B0B0"
         android:layout_marginTop="8dp" />
 
-    <!-- Copyright -->
+    <!-- Copyright - HINDI GAGALAW -->
     <TextView
         android:id="@+id/splash_copy"
         android:layout_width="wrap_content"
