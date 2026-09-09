@@ -6,19 +6,19 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.animation.AnimationUtils
-import android.widget.LinearLayout
+import android.widget.ImageView
 
 class SplashActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
 
-        // ✅ TAMA NA — TUMUTUKOY SA SARILING LAYOUT MO
-        val rootLayout = findViewById<LinearLayout>(R.id.splash_root)
+        // ✅ Logo lang ang inaanimate, hindi ang buong background
+        val logo = findViewById<ImageView>(R.id.splash_logo)
         val animation = AnimationUtils.loadAnimation(this, R.anim.splash_anim)
-        rootLayout.startAnimation(animation)
+        logo.startAnimation(animation)
 
-        // ⏰ Lumipat pagkatapos
+        // ⏰ Lumipat pagkatapos ng 2 segundo
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, MainActivity::class.java))
             finish()
