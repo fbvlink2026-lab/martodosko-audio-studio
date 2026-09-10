@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-10 19:08 UTC
-🏷️ **Bersyon:** v1.0.25
+📅 **Petsa:** 2026-09-10 19:47 UTC
+🏷️ **Bersyon:** v1.0.26
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-10 19:08:02 UTC
-🏷️ BERSYON:    v1.0.25
+⏰ ORAS:       2026-09-10 19:47:34 UTC
+🏷️ BERSYON:    v1.0.26
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.25.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.26.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -39,10 +39,10 @@ Daemon will be stopped at the end of the build
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
-> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:parseDebugLocalResources
+> Task :app:mergeDebugResources
 
 > Task :app:processDebugMainManifest
 package="com.martodosko.studio" found in source AndroidManifest.xml: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml.
@@ -75,10 +75,10 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:configureCMakeDebug[x86]
 > Task :app:processDebugManifestForPackage
 > Task :app:buildCMakeDebug[x86]
-> Task :app:mergeExtDexDebug
 > Task :app:configureCMakeDebug[x86_64]
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
+> Task :app:mergeExtDexDebug
 > Task :app:mergeDebugNativeLibs
 > Task :app:processDebugResources
 > Task :app:validateSigningDebug
@@ -96,7 +96,7 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 57s
+BUILD SUCCESSFUL in 1m 5s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
