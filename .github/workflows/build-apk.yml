@@ -1,9 +1,12 @@
 name: Build Martodosko APK
 
 on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch: {}  # ✅ Tumatakbo kapag pinindot sa Actions tab
+  # ❌ TINANGGAL — hindi na kusang tatakbo kapag nag-push
+  # push:
+  #   branches: [ main, master ]
+  
+  # ✅ ITO LANG — kapag PININDOT MO LANG sa Actions tab
+  workflow_dispatch: {}
 
 jobs:
   build:
