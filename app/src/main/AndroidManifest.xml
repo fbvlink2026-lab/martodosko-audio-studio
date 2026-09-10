@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.martodosko.studio">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- ✅ Kailangan para makacheck ng update mula sa GitHub -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    
     <!-- ✅ Kailangan para makapag-download at mag-install ng APK -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Martodosko Studio"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
+        
         <!-- ✅ Splash — UNANG LALABAS -->
         <activity
             android:name=".SplashActivity"
@@ -25,11 +25,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        
         <!-- ✅ Main Screen — LALABAS PAGKATAPUS NG SPLASH -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
 
+        <!-- ✅ FileProvider — KAILANGAN PARA MA-INSTALL ANG APK sa Android 7+ -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>
