@@ -3,7 +3,7 @@ name: Build Martodosko APK
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch: {}
+  workflow_dispatch: {}  # ✅ Tumatakbo kapag pinindot sa Actions tab
 
 jobs:
   build:
@@ -53,7 +53,7 @@ jobs:
           fi
 
       # ==================================================
-      # ✅ AWTOMATIKONG TUMAAS ANG BERSYON
+      # 🏷️ KUNIN AT TAASIN ANG BERSYON
       # ==================================================
       - name: 🏷️ Bumuo ng Bersyon — AWTOMATIKONG TUMAAS
         id: version
@@ -61,35 +61,36 @@ jobs:
           mkdir -p docs
           
           if [ -f docs/version.json ]; then
-            CURRENT_VER=$(grep -o '"version":"[^"]*"' docs/version.json | head -1 | cut -d'"' -f4)
-            echo "📖 Kasalukuyang Bersyon: v$CURRENT_VER"
-            
-            VERSION_MAJOR=$(echo "$CURRENT_VER" | cut -d. -f1)
-            VERSION_MINOR=$(echo "$CURRENT_VER" | cut -d. -f2)
-            VERSION_PATCH=$(echo "$CURRENT_VER" | cut -d. -f3)
+              CURRENT_VER=$(grep -o '"version":"[^"]*"' docs/version.json | head -1 | cut -d'"' -f4)
+              echo "📖 Kasalukuyang Bersyon: v$CURRENT_VER"
+              
+              VERSION_MAJOR=$(echo "$CURRENT_VER" | cut -d. -f1)
+              VERSION_MINOR=$(echo "$CURRENT_VER" | cut -d. -f2)
+              VERSION_PATCH=$(echo "$CURRENT_VER" | cut -d. -f3)
           else
-            echo "🆕 Walang nakitang version.json — Magsisimula sa v1.0.1"
-            VERSION_MAJOR=1
-            VERSION_MINOR=0
-            VERSION_PATCH=0
+              echo "🆕 Walang nakitang version.json — Magsisimula sa v1.0.1"
+              VERSION_MAJOR=1
+              VERSION_MINOR=0
+              VERSION_PATCH=0
           fi
           
           VERSION_PATCH=$((VERSION_PATCH + 1))
           VERSION_NAME="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
           VERSION_CODE=$((VERSION_MAJOR * 10000 + VERSION_MINOR * 100 + VERSION_PATCH))
+          APK_FILENAME="Martodosko-Studio-v$VERSION_NAME.apk"
           
           echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "filename=Martodosko-Studio-v$VERSION_NAME.apk" >> $GITHUB_OUTPUT
+          echo "apk_filename=$APK_FILENAME" >> $GITHUB_OUTPUT
           
-          echo "{\"version\":\"$VERSION_NAME\",\"released\":\"$(date +%Y-%m-%d)\"}" > docs/version.json
+          echo "{\"version\":\"$VERSION_NAME\",\"apkFile\":\"$APK_FILENAME\",\"released\":\"$(date +%Y-%m-%d)\"}" > docs/version.json
           echo "✅ Bagong Bersyon: v$VERSION_NAME  (Code: $VERSION_CODE)"
           cat docs/version.json
 
       # ==================================================
-      # ✅ IDINAGDAG LANG ITO — Isulat sa build.gradle.kts
+      # ✅ I-UPDATE ANG build.gradle.kts — KUSANG PALITAN
       # ==================================================
-      - name: ✅ I-update ang numero sa build.gradle.kts
+      - name: ✅ Isulat ang bagong bersyon sa build.gradle.kts
         run: |
           VERSION_NAME="${{ steps.version.outputs.name }}"
           VERSION_CODE="${{ steps.version.outputs.code }}"
@@ -100,7 +101,10 @@ jobs:
           echo "✅ Na-update: versionName=$VERSION_NAME, versionCode=$VERSION_CODE"
           grep "versionName\|versionCode" app/build.gradle.kts
 
-      - name: 📦 Bumuo ng APK + BUONG LOG
+      # ==================================================
+      # 📦 BUUIN ANG APK
+      # ==================================================
+      - name: 📦 Bumuo ng APK
         id: build-step
         run: |
           mkdir -p /tmp
@@ -134,8 +138,8 @@ jobs:
               echo "📏 Laki:       $APK_SIZE"
               echo "📤 Kopyahin sa docs/..."
               mkdir -p docs
-              cp "$APK_FILE" "docs/${{ steps.version.outputs.filename }}"
-              echo "✅ Nasa: docs/${{ steps.version.outputs.filename }}"
+              cp "$APK_FILE" "docs/${{ steps.version.outputs.apk_filename }}"
+              echo "✅ Nasa: docs/${{ steps.version.outputs.apk_filename }}"
             else
               echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
               echo "🔑 Exit Code: $EXIT_CODE"
@@ -148,12 +152,14 @@ jobs:
             cat "$LOG_FILE"
             echo ""
             echo "=================================================="
-            echo ""
           } >> "$ERROR_FILE"
 
           echo "EXIT_CODE=$EXIT_CODE" >> $GITHUB_OUTPUT
 
-      - name: 📄 SIGURADUHIN TAMA ANG PAGSULAT SA build-report.md
+      # ==================================================
+      # 📄 BUILD REPORT
+      # ==================================================
+      - name: 📄 Isulat ang build-report.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
@@ -179,40 +185,23 @@ jobs:
           } > "$TEMP_FILE"
 
           cp "$TEMP_FILE" "$OUTPUT_FILE"
-
           echo "✅ build-report.md naisulat na!"
-          cat "$OUTPUT_FILE"
-
-      - name: 🔍 Tignan kung nabuo ang APK
-        run: |
-          find . -name "*.apk"
-          ls -la docs/*.apk 2>/dev/null || true
 
       # ==================================================
-      # 🚀 TINANGGAL NA ANG ARTIFACT — HINDI NA MAG-ZIP!
+      # ✅ I-COMMIT AT I-PUSH
       # ==================================================
-      # ❌ TINANGGAL: actions/upload-artifact — hindi na kailangan
-      # ✅ Direktang nasa docs/ — 5.51 MB lang — direkta download na!
-
-      # ==================================================
-      # ✅ I-COMMIT AT I-PUSH — docs/ papuntang GitHub
-      # ==================================================
-      - name: ✅ I-COMMIT AT I-PUSH — docs/ papuntang GitHub
+      - name: ✅ I-commit at i-push ang mga pagbabago
         if: always()
         continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # ✅ Kunin muna ang pinakabago mula sa remote
           git fetch origin main
           git pull --no-rebase -X theirs --allow-unrelated-histories origin/main || true
           
-          # ✅ Idagdag ang lahat ng bago sa docs/
-          git add docs/build-report.md docs/version.json docs/*.apk 2>/dev/null || true
+          git add docs/version.json docs/build-report.md docs/*.apk app/build.gradle.kts 2>/dev/null || true
           
-          # ✅ I-commit — kung may pagbabago
-          git commit -m "📝 Auto-update: Build v${{ steps.version.outputs.name }}" --allow-empty || true
+          git commit -m "🏷️ Build v${{ steps.version.outputs.name }}" --allow-empty || true
           
-          # ✅ I-push — kung nabigo, babala lang lang
-          git push origin main || echo "⚠️ Hindi maipush sa main — pero nasa docs/ na sa runner!"
+          git push origin main || echo "⚠️ Hindi maipush — pero nasa docs/ na sa runner!"
