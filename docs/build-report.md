@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-10 19:04 UTC
-🏷️ **Bersyon:** v1.0.24
+📅 **Petsa:** 2026-09-10 19:08 UTC
+🏷️ **Bersyon:** v1.0.25
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-10 19:04:56 UTC
-🏷️ BERSYON:    v1.0.24
+⏰ ORAS:       2026-09-10 19:08:02 UTC
+🏷️ BERSYON:    v1.0.25
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.24.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.25.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -57,11 +57,7 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugManifestForPackage
 > Task :app:checkDebugDuplicateClasses
-> Task :app:processDebugResources
-> Task :app:mergeExtDexDebug
-> Task :app:mergeLibDexDebug
 
 > Task :app:configureCMakeDebug[arm64-v8a]
 Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
@@ -72,15 +68,19 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
 
+> Task :app:mergeLibDexDebug
 > Task :app:buildCMakeDebug[arm64-v8a]
 > Task :app:configureCMakeDebug[armeabi-v7a]
 > Task :app:buildCMakeDebug[armeabi-v7a]
 > Task :app:configureCMakeDebug[x86]
+> Task :app:processDebugManifestForPackage
 > Task :app:buildCMakeDebug[x86]
+> Task :app:mergeExtDexDebug
 > Task :app:configureCMakeDebug[x86_64]
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs
+> Task :app:processDebugResources
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
@@ -96,7 +96,7 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 37s
+BUILD SUCCESSFUL in 57s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
