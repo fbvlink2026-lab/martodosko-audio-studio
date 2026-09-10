@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-09 00:42 UTC
-🏷️ **Bersyon:** v1.0.21
+📅 **Petsa:** 2026-09-10 15:44 UTC
+🏷️ **Bersyon:** v1.0.22
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-09 00:42:00 UTC
-🏷️ BERSYON:    v1.0.21
+⏰ ORAS:       2026-09-10 15:44:50 UTC
+🏷️ BERSYON:    v1.0.22
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.21.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.22.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -70,17 +70,17 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 
 > Task :app:mergeLibDexDebug
 > Task :app:buildCMakeDebug[arm64-v8a]
+> Task :app:processDebugManifestForPackage
 > Task :app:configureCMakeDebug[armeabi-v7a]
 > Task :app:buildCMakeDebug[armeabi-v7a]
 > Task :app:configureCMakeDebug[x86]
 > Task :app:buildCMakeDebug[x86]
+> Task :app:processDebugResources
 > Task :app:configureCMakeDebug[x86_64]
-> Task :app:processDebugManifestForPackage
+> Task :app:mergeExtDexDebug
 > Task :app:buildCMakeDebug[x86_64]
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs
-> Task :app:mergeExtDexDebug
-> Task :app:processDebugResources
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
@@ -96,7 +96,7 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 3s
+BUILD SUCCESSFUL in 56s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
