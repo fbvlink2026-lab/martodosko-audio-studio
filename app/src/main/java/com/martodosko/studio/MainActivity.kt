@@ -36,7 +36,6 @@ class MainActivity : Activity() {
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
         
         private const val PERMISSION_STORAGE = 1001
-        private const val PERMISSION_INSTALL = 1002
         
         private var downloadId: Long = -1
         private var apkFileName = ""
@@ -48,15 +47,12 @@ class MainActivity : Activity() {
 
         Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
         
-        // ✅ HINGI NG PAHINTULOT MUNA
         checkPermissions()
     }
 
-    // ✅ HAKBANG 1 — HINGI NG PAHINTULOT
     private fun checkPermissions() {
         val neededPermissions = mutableListOf<String>()
         
-        // Storage permission
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
             ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) 
             != PackageManager.PERMISSION_GRANTED) {
@@ -86,7 +82,6 @@ class MainActivity : Activity() {
         }
     }
 
-    // ✅ HAKBANG 2 — TIGNAN ANG BERSYON
     private fun checkForUpdates() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -127,12 +122,10 @@ class MainActivity : Activity() {
         }
     }
 
-    // ✅ LINIS ANG BERSYON — TANGGALIN ANG "v"
     private fun cleanVersion(v: String): String {
         return v.trim().removePrefix("v").removePrefix("V").replace(Regex("[^0-9.]"), "")
     }
 
-    // ✅ TUMPAK NA PAGHAMBING — NUMERO HINDI TEKSTO
     private fun isUpdateAvailable(latest: String, current: String): Boolean {
         val lParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
         val cParts = current.split(".").map { it.toIntOrNull() ?: 0 }
@@ -146,11 +139,10 @@ class MainActivity : Activity() {
         return false
     }
 
-    // ✅ HAKBANG 3 — DIALOG: "I-DOWNLOAD BA?"
     private fun showUpdateDialog(version: String) {
         AlertDialog.Builder(this)
             .setTitle("🔔 May Bagong Bersyon — v$version")
-            .setMessage("Gusto mo bang i-download at i-install ang pinakabagong bersyon?")
+            .setMessage("Gusto mo bang i-download at i-install ang pinakabagong bersyon?\n\n⚠️ Kung lalabas ang 'Package Conflict' — burahin muna ang lumang bersyon nang isang beses lang. Mula noon, kusang mag-a-update na!")
             .setPositiveButton("✅ I-download") { _, _ ->
                 downloadApk()
             }
@@ -159,7 +151,6 @@ class MainActivity : Activity() {
             .show()
     }
 
-    // ✅ HAKBANG 4 — I-DOWNLOAD ANG APK
     private fun downloadApk() {
         val downloadUrl = "$BASE_APK_URL$apkFileName"
         Log.d("UPDATE", "📥 Nagda-download: $downloadUrl")
@@ -177,13 +168,11 @@ class MainActivity : Activity() {
         val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         downloadId = dm.enqueue(request)
 
-        // ✅ MAGHINTAY HANGGANG MATAPOS ANG DOWNLOAD
         registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         
         Toast.makeText(this, "📥 Nagsimula ang pag-download — tignan ang abiso", Toast.LENGTH_LONG).show()
     }
 
-    // ✅ HAKBANG 5 — PAGKATAPOS MAG-DOWNLOAD → BUKAS ANG INSTALLER
     private val downloadReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: -1
@@ -195,7 +184,6 @@ class MainActivity : Activity() {
         }
     }
 
-    // ✅ HAKBANG 6 — BUKAS ANG INSTALLER
     private fun openInstaller() {
         try {
             val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -220,6 +208,7 @@ class MainActivity : Activity() {
                 setDataAndType(uri, "application/vnd.android.package-archive")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                putExtra("REPLACE_EXISTING_PACKAGE", true) // ✅ Subukang palitan nang kusa
             }
             startActivity(installIntent)
             Toast.makeText(this, "📦 Hinihingi ang pahintulot sa pag-install...", Toast.LENGTH_LONG).show()
