@@ -1,11 +1,7 @@
 name: Build Martodosko APK
 
 on:
-  # ❌ TINANGGAL — HINDI NA TUMATAKBO KAPAG NAG-PUSH
-  # push:
-  #   branches: [ main, master ]
-
-  # ✅ ITO LANG — KAPAG PININDOT MO LANG SA ACTIONS TAB
+  # ✅ TUMATAKBO LANG KAPAG PININDOT SA ACTIONS TAB — hindi kusang tumatakbo
   workflow_dispatch: {}
 
 jobs:
@@ -56,7 +52,7 @@ jobs:
           fi
 
       # ==================================================
-      # 🏷️ KUNIN AT TAASIN ANG BERSYON
+      # 🏷️ KUNIN AT TAASIN ANG BERSYON — AWTOMATIKO
       # ==================================================
       - name: 🏷️ Bumuo ng Bersyon — AWTOMATIKONG TUMAAS
         id: version
@@ -70,6 +66,10 @@ jobs:
               VERSION_MAJOR=$(echo "$CURRENT_VER" | cut -d. -f1)
               VERSION_MINOR=$(echo "$CURRENT_VER" | cut -d. -f2)
               VERSION_PATCH=$(echo "$CURRENT_VER" | cut -d. -f3)
+              # ✅ Siguradong numero — kung wala, 0
+              [ -z "$VERSION_MAJOR" ] && VERSION_MAJOR=1
+              [ -z "$VERSION_MINOR" ] && VERSION_MINOR=0
+              [ -z "$VERSION_PATCH" ] && VERSION_PATCH=0
           else
               echo "🆕 Walang nakitang version.json — Magsisimula sa v1.0.1"
               VERSION_MAJOR=1
@@ -191,7 +191,7 @@ jobs:
           echo "✅ build-report.md naisulat na!"
 
       # ==================================================
-      # ✅ I-COMMIT AT I-PUSH
+      # ✅ I-COMMIT AT I-PUSH — WALANG PIPIGILAN KAHIT ANO
       # ==================================================
       - name: ✅ I-commit at i-push ang mga pagbabago
         if: always()
@@ -199,9 +199,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git fetch origin main
-          git pull --no-rebase -X theirs --allow-unrelated-histories origin/main || true
           
           git add docs/version.json docs/build-report.md docs/*.apk app/build.gradle.kts 2>/dev/null || true
           
