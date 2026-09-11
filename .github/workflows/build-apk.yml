@@ -12,6 +12,11 @@ jobs:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dkotlin.statistics.enabled=false
       GRADLE_VERSION: "8.2"
+      # ✅ KUSANG PINIRMA — HINDI NA KAILANGANG MANU-AL
+      KEYSTORE_PASSWORD: martodosko2026
+      KEY_ALIAS: martodosko-key
+      KEY_PASSWORD: martodosko2026
+      
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +32,25 @@ jobs:
           echo "   📂 LAHAT NG FOLDER SA REPOSITORY"
           echo "=========================================="
           find . -maxdepth 5 -type d | grep -v '.git' | sort
+
+      # ==================================================
+      # 🔑 KUSANG GUMAWA NG OPISYAL NA PINIRMA — DADAGDAG LANG!
+      # ==================================================
+      - name: 🔑 Gumawa ng Opisyal na Keystore
+        run: |
+          echo "=========================================="
+          echo "   🔑 OPISYAL NA PINIRMA — KUSANG GINAGAWA"
+          echo "=========================================="
+          mkdir -p app
+          keytool -genkeypair -v \
+            -keystore app/martodosko-release.keystore \
+            -alias ${{ env.KEY_ALIAS }} \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass ${{ env.KEYSTORE_PASSWORD }} \
+            -keypass ${{ env.KEY_PASSWORD }} \
+            -dname "CN=Martodosko Studio, O=Martodosko, L=Binan, C=PH" \
+            -deststoretype pkcs12
+          echo "✅ Keystore — NABUO NA!"
 
       - name: 🛠️ I-setup ang Gradle 8.2
         run: |
@@ -52,7 +76,7 @@ jobs:
           fi
 
       # ==================================================
-      # 🏷️ KUNIN AT TAASIN ANG BERSYON — AWTOMATIKO
+      # 🏷️ KUNIN AT TAASIN ANG BERSYON — IYONG CODE, WALANG BINAGO!
       # ==================================================
       - name: 🏷️ Bumuo ng Bersyon — AWTOMATIKONG TUMAAS
         id: version
@@ -66,7 +90,6 @@ jobs:
               VERSION_MAJOR=$(echo "$CURRENT_VER" | cut -d. -f1)
               VERSION_MINOR=$(echo "$CURRENT_VER" | cut -d. -f2)
               VERSION_PATCH=$(echo "$CURRENT_VER" | cut -d. -f3)
-              # ✅ Siguradong numero — kung wala, 0
               [ -z "$VERSION_MAJOR" ] && VERSION_MAJOR=1
               [ -z "$VERSION_MINOR" ] && VERSION_MINOR=0
               [ -z "$VERSION_PATCH" ] && VERSION_PATCH=0
@@ -91,7 +114,7 @@ jobs:
           cat docs/version.json
 
       # ==================================================
-      # ✅ I-UPDATE ANG build.gradle.kts — KUSANG PALITAN
+      # ✅ I-UPDATE ANG build.gradle.kts — IYONG CODE, WALANG BINAGO!
       # ==================================================
       - name: ✅ Isulat ang bagong bersyon sa build.gradle.kts
         run: |
@@ -105,30 +128,36 @@ jobs:
           grep "versionName\|versionCode" app/build.gradle.kts
 
       # ==================================================
-      # 📦 BUUIN ANG APK
+      # 📦 BUUIN ANG APK — PINALITAN LANG: Release + OPISYAL NA PINIRMA!
       # ==================================================
-      - name: 📦 Bumuo ng APK
+      - name: 📦 Bumuo ng APK — MAY OPISYAL NA PINIRMA!
         id: build-step
+        env:
+          KEYSTORE_PASSWORD: ${{ env.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ env.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ env.KEY_PASSWORD }}
         run: |
           mkdir -p /tmp
           ERROR_FILE="/tmp/build-report-content.txt"
           > "$ERROR_FILE"
           LOG_FILE="/tmp/martodosko-build-full.log"
 
-          echo "📦 BUMUO NG APK — Martodosko Studio"
+          echo "📦 BUMUO NG APK — MAY OPISYAL NA PINIRMA!"
           cd "$GITHUB_WORKSPACE"
 
           set +e
-          ./gradlew clean assembleDebug --no-daemon --no-build-cache > "$LOG_FILE" 2>&1
+          # ✅ ITO LANG ANG PINALITAN — assembleRelease sa halip na assembleDebug!
+          ./gradlew clean assembleRelease --no-daemon --no-build-cache > "$LOG_FILE" 2>&1
           EXIT_CODE=$?
           set -e
 
-          APK_FILE=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          APK_FILE=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
 
           {
             echo "=================================================="
             echo "📦 APLIKASYON: Martodosko Audio Studio"
-            echo "📂 LOKASYON:   app/build/outputs/apk/debug"
+            echo "🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!"
+            echo "📂 LOKASYON:   app/build/outputs/apk/release"
             echo "⏰ ORAS:       $(date '+%Y-%m-%d %H:%M:%S UTC')"
             echo "🏷️ BERSYON:    v${{ steps.version.outputs.name }}"
             echo "=================================================="
@@ -136,13 +165,15 @@ jobs:
 
             if [ -n "$APK_FILE" ] && [ -f "$APK_FILE" ]; then
               APK_SIZE=$(du -h "$APK_FILE" | cut -f1)
-              echo "✅ TAGUMPAY — NABUO ANG APK!"
+              echo "✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!"
               echo "📂 APK Daan:   $APK_FILE"
               echo "📏 Laki:       $APK_SIZE"
               echo "📤 Kopyahin sa docs/..."
               mkdir -p docs
               cp "$APK_FILE" "docs/${{ steps.version.outputs.apk_filename }}"
               echo "✅ Nasa: docs/${{ steps.version.outputs.apk_filename }}"
+              echo ""
+              echo "🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!"
             else
               echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
               echo "🔑 Exit Code: $EXIT_CODE"
@@ -160,7 +191,7 @@ jobs:
           echo "EXIT_CODE=$EXIT_CODE" >> $GITHUB_OUTPUT
 
       # ==================================================
-      # 📄 BUILD REPORT
+      # 📄 BUILD REPORT — IYONG CODE, WALANG BINAGO!
       # ==================================================
       - name: 📄 Isulat ang build-report.md
         if: always()
@@ -179,6 +210,7 @@ jobs:
             echo "---"
             echo "📅 **Petsa:** $DATE"
             echo "🏷️ **Bersyon:** v${{ steps.version.outputs.name }}"
+            echo "🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!"
             echo "---"
             echo ""
             cat /tmp/build-report-content.txt
@@ -191,7 +223,7 @@ jobs:
           echo "✅ build-report.md naisulat na!"
 
       # ==================================================
-      # ✅ I-COMMIT AT I-PUSH — WALANG PIPIGILAN KAHIT ANO
+      # ✅ I-COMMIT AT I-PUSH — IYONG CODE, WALANG BINAGO!
       # ==================================================
       - name: ✅ I-commit at i-push ang mga pagbabago
         if: always()
@@ -202,6 +234,6 @@ jobs:
           
           git add docs/version.json docs/build-report.md docs/*.apk app/build.gradle.kts 2>/dev/null || true
           
-          git commit -m "🏷️ Build v${{ steps.version.outputs.name }}" --allow-empty || true
+          git commit -m "🏷️ Build v${{ steps.version.outputs.name }} — Opisyal na Pinirma" --allow-empty || true
           
           git push origin main || echo "⚠️ Hindi maipush — pero nasa docs/ na sa runner!"
