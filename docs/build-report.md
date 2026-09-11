@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-11 12:58 UTC
-🏷️ **Bersyon:** v1.0.35
+📅 **Petsa:** 2026-09-11 13:49 UTC
+🏷️ **Bersyon:** v1.0.36
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-11 12:58:57 UTC
-🏷️ BERSYON:    v1.0.35
+⏰ ORAS:       2026-09-11 13:49:51 UTC
+🏷️ BERSYON:    v1.0.36
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -53,11 +53,10 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
-> Task :app:desugarDebugFileDependencies
 > Task :app:processDebugManifestForPackage
-> Task :app:checkDebugDuplicateClasses
+> Task :app:desugarDebugFileDependencies
 > Task :app:processDebugResources FAILED
-> Task :app:mergeExtDexDebug
+> Task :app:checkDebugDuplicateClasses
 
 FAILURE: Build failed with an exception.
 
@@ -74,8 +73,8 @@ Execution failed for task ':app:processDebugResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 54s
-23 actionable tasks: 22 executed, 1 up-to-date
+BUILD FAILED in 22s
+22 actionable tasks: 21 executed, 1 up-to-date
 
 ==================================================
 
