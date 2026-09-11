@@ -11,20 +11,18 @@ android {
         applicationId = "com.martodosko.studio"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10055       // ✅ Tumaas — v1.0.53
-        versionName = "1.0.55"    // ✅ Tumaas — v1.0.53
+        versionCode = 10055       // ✅ v1.0.55 — PINAKABAGO!
+        versionName = "1.0.55"    // ✅ v1.0.55 — PINAKABAGO!
 
-        // ✅ Kailangan para sa C++ Audio Engine
-        externalNativeBuild {
-            cmake {
-                cppFlags += "-std=c++17 -O3 -fvisibility=hidden"
-            }
-        }
+        // ⏸️ IKOMENTO MUNA — WALANG C++ PA!
+        // externalNativeBuild {
+        //     cmake {
+        //         cppFlags += "-std=c++17 -O3 -fvisibility=hidden"
+        //     }
+        // }
     }
 
-    // ==================================================
     // ✅ OPISYAL NA PINIRMA — NANDOON PA RIN!
-    // ==================================================
     signingConfigs {
         create("release") {
             storeFile = file("martodosko-release.keystore")
@@ -45,12 +43,12 @@ android {
         }
     }
 
-    // ✅ Dito nakaturo ang C++ — NANDOON PA RIN!
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
-    }
+    // ⏸️ IKOMENTO MUNA — WALANG C++ PA!
+    // externalNativeBuild {
+    //     cmake {
+    //         path = file("src/main/cpp/CMakeLists.txt")
+    //     }
+    // }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -62,12 +60,10 @@ android {
     }
 }
 
-// ==================================================
-// ✅ DADAGDAG LANG — 2 LINYA PARA SA SIDE MENU!
-// ==================================================
+// ✅ SIDE MENU — TAMA LAHAT!
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")              // ✅ KAILANGAN — AppCompatActivity
-    implementation("com.google.android.material:material:1.11.0")       // ✅ KAILANGAN — Material Icons
-    implementation("androidx.drawerlayout:drawerlayout:1.2.0")          // ✅ KAILANGAN — Side Menu!
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
 }
