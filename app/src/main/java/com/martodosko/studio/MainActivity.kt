@@ -34,7 +34,7 @@ import java.net.URL
 class MainActivity : Activity() {
 
     // ==================================================
-    // ✅ SIDE MENU
+    // ✅ SIDE MENU — PANANATILIHAN
     // ==================================================
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var btnHamburger: ImageView
@@ -42,7 +42,7 @@ class MainActivity : Activity() {
     private lateinit var tvVersion: TextView
 
     // ==================================================
-    // ✅ AUTO-UPDATE — NANDOON PA RIN!
+    // ✅ AUTO-UPDATE — PANANATILIHAN
     // ==================================================
     companion object {
         private const val VERSION_URL =
@@ -60,7 +60,7 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         // ==============================================
-        // ✅ SIDE MENU SETUP
+        // ✅ SIDE MENU SETUP — PANANATILIHAN
         // ==============================================
         drawerLayout = findViewById(R.id.drawer_layout)
         btnHamburger = findViewById(R.id.btn_hamburger)
@@ -86,11 +86,11 @@ class MainActivity : Activity() {
         }
 
         // ==============================================
-        // ✅ MENU OPTIONS — KUMPLETO NA! MAY HELP + JOIN US!
+        // ✅ MENU OPTIONS — KUMPLETO NA! MAY MIXER NA!
         // ==============================================
         findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
-            Toast.makeText(this, "🎚️ Mixer — Bubukas...", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, MixerActivity::class.java))
         }
 
         findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
@@ -104,7 +104,7 @@ class MainActivity : Activity() {
             checkForUpdates()
         }
 
-        // ✅ HELP — BUKAS ANG README.MD MULA SA GITHUB
+        // ✅ HELP — BUKAS ANG README.MD
         findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
             val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
@@ -126,14 +126,14 @@ class MainActivity : Activity() {
         }
 
         // ==============================================
-        // ✅ SIMULA — WALANG BINAGO!
+        // ✅ SIMULA — PANANATILIHAN
         // ==============================================
         Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
         checkPermissions()
     }
 
     // ==================================================
-    // ✅ LAHAT NG AUTO-UPDATE — NANDOON PA RIN! WALANG BINAGO!
+    // ✅ PERMISSIONS — PANANATILIHAN
     // ==================================================
     private fun checkPermissions() {
         val neededPermissions = mutableListOf<String>()
@@ -157,6 +157,9 @@ class MainActivity : Activity() {
         if (requestCode == PERMISSION_STORAGE) checkForUpdates()
     }
 
+    // ==================================================
+    // ✅ AUTO-UPDATE — PANANATILIHAN
+    // ==================================================
     private fun checkForUpdates() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
