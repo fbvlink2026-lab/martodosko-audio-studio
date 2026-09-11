@@ -11,8 +11,8 @@ android {
         applicationId = "com.martodosko.studio"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10028       // ✅ Tumaas — v1.0.2
-        versionName = "1.0.28"      // ✅ Tumaas — v1.0.2
+        versionCode = 10029       // ✅ Tumaas — v1.0.2
+        versionName = "1.0.29"      // ✅ Tumaas — v1.0.2
 
         // ✅ Kailangan para sa C++ Audio Engine
         externalNativeBuild {
