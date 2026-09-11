@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-11 15:30 UTC
-🏷️ **Bersyon:** v1.0.42
+📅 **Petsa:** 2026-09-11 15:39 UTC
+🏷️ **Bersyon:** v1.0.43
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-11 15:30:30 UTC
-🏷️ BERSYON:    v1.0.42
+⏰ ORAS:       2026-09-11 15:39:15 UTC
+🏷️ BERSYON:    v1.0.43
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.42.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.43.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -39,10 +39,10 @@ Daemon will be stopped at the end of the build
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
+> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:parseDebugLocalResources
-> Task :app:mergeDebugResources
 
 > Task :app:processDebugMainManifest
 package="com.martodosko.studio" found in source AndroidManifest.xml: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml.
@@ -55,20 +55,9 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
-> Task :app:processDebugManifestForPackage
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugResources
 > Task :app:checkDebugDuplicateClasses
-> Task :app:compileDebugKotlin
-> Task :app:compileDebugJavaWithJavac NO-SOURCE
-> Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics
-> Task :app:processDebugJavaRes
-> Task :app:mergeLibDexDebug
-> Task :app:mergeProjectDexDebug
-> Task :app:mergeDebugJavaResource
-> Task :app:mergeExtDexDebug
 
 > Task :app:configureCMakeDebug[arm64-v8a]
 Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
@@ -79,10 +68,14 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
 
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeLibDexDebug
 > Task :app:buildCMakeDebug[arm64-v8a]
 > Task :app:configureCMakeDebug[armeabi-v7a]
 > Task :app:buildCMakeDebug[armeabi-v7a]
+> Task :app:processDebugResources
 > Task :app:configureCMakeDebug[x86]
+> Task :app:mergeExtDexDebug
 > Task :app:buildCMakeDebug[x86]
 > Task :app:configureCMakeDebug[x86_64]
 > Task :app:buildCMakeDebug[x86_64]
@@ -92,11 +85,18 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:stripDebugDebugSymbols
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 55s
+BUILD SUCCESSFUL in 1m 17s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
