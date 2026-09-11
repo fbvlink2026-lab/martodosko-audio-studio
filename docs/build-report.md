@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-11 15:51 UTC
-🏷️ **Bersyon:** v1.0.44
+📅 **Petsa:** 2026-09-11 16:18 UTC
+🏷️ **Bersyon:** v1.0.45
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-11 15:51:55 UTC
-🏷️ BERSYON:    v1.0.44
+⏰ ORAS:       2026-09-11 16:18:28 UTC
+🏷️ BERSYON:    v1.0.45
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -54,9 +54,7 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:processDebugManifestForPackage
 > Task :app:checkDebugDuplicateClasses
-> Task :app:processDebugResources
 
 > Task :app:configureCMakeDebug[arm64-v8a]
 Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
@@ -67,11 +65,26 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
 
-> Task :app:compileDebugKotlin
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:47:33 Unresolved reference: activity_main
+> Task :app:mergeLibDexDebug
+> Task :app:buildCMakeDebug[arm64-v8a]
+> Task :app:configureCMakeDebug[armeabi-v7a]
+> Task :app:buildCMakeDebug[armeabi-v7a]
+> Task :app:configureCMakeDebug[x86]
+> Task :app:buildCMakeDebug[x86]
+> Task :app:configureCMakeDebug[x86_64]
+> Task :app:buildCMakeDebug[x86_64]
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugJniLibFolders
+> Task :app:mergeDebugNativeLibs
+> Task :app:mergeExtDexDebug
+> Task :app:processDebugResources
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:stripDebugDebugSymbols
 
 > Task :app:compileDebugKotlin FAILED
-> Task :app:mergeExtDexDebug
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:47:33 Unresolved reference: activity_main
 
 FAILURE: Build failed with an exception.
 
@@ -86,8 +99,8 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 4s
-25 actionable tasks: 24 executed, 1 up-to-date
+BUILD FAILED in 1m 8s
+39 actionable tasks: 38 executed, 1 up-to-date
 
 ==================================================
 
