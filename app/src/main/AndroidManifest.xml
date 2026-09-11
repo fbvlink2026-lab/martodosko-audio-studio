@@ -33,6 +33,12 @@
             android:name=".MainActivity"
             android:exported="false" />
 
+        <!-- ✅ Mixer Screen — BAGONG DAGDAG! 🎚️ -->
+        <activity
+            android:name=".MixerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <!-- ✅ FileProvider — KAILANGAN PARA MA-INSTALL ANG APK sa Android 7+ -->
         <provider
             android:name="androidx.core.content.FileProvider"
