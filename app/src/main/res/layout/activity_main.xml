@@ -21,7 +21,7 @@
             android:background="#1E1E2F"
             android:paddingHorizontal="16dp">
 
-            <!-- ✅ HAMBURGER BUTTON — 3 GUHIT → BUKAS ANG MENU -->
+            <!-- ✅ HAMBURGER BUTTON → BUKAS ANG MENU -->
             <ImageView
                 android:id="@+id/btn_hamburger"
                 android:layout_width="32dp"
@@ -44,7 +44,7 @@
                 android:id="@+id/tv_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="v1.0.51"
+                android:text="v1.0.55"
                 android:textColor="#666666"
                 android:textSize="12sp"/>
         </LinearLayout>
@@ -100,7 +100,7 @@
             android:layout_height="1dp"
             android:background="#333344"/>
 
-        <!-- ✅ MENU OPTIONS -->
+        <!-- ✅ MENU OPTIONS — DAGDAG ANG HELP + JOIN US! -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -135,6 +135,28 @@
                 android:layout_height="56dp"
                 android:text="🔄  Check Update"
                 android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
+
+            <TextView
+                android:id="@+id/menu_help"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="❓  Help / Readme"
+                android:textColor="#40E0D0"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
+
+            <TextView
+                android:id="@+id/menu_join"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="🌐  Join Us — Facebook"
+                android:textColor="#00BFFF"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
                 android:paddingStart="24dp"
