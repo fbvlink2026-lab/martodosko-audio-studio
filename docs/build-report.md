@@ -3,15 +3,15 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-11 10:38 UTC
-🏷️ **Bersyon:** v1.0.30
+📅 **Petsa:** 2026-09-11 10:48 UTC
+🏷️ **Bersyon:** v1.0.31
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-11 10:38:17 UTC
-🏷️ BERSYON:    v1.0.30
+⏰ ORAS:       2026-09-11 10:48:47 UTC
+🏷️ BERSYON:    v1.0.31
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -47,8 +47,8 @@ Setting the namespace via the package attribute in the source AndroidManifest.xm
 Recommendation: remove package="com.martodosko.studio" from the source AndroidManifest.xml: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml.
 
 > Task :app:processDebugManifest
-> Task :app:javaPreCompileDebug
 > Task :app:processDebugManifestForPackage
+> Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
@@ -58,9 +58,10 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:processDebugResources
 > Task :app:checkDebugDuplicateClasses
 
-> Task :app:compileDebugKotlin FAILED
+> Task :app:compileDebugKotlin
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:55:33 Unresolved reference: activity_main
 
+> Task :app:compileDebugKotlin FAILED
 > Task :app:mergeExtDexDebug
 
 FAILURE: Build failed with an exception.
@@ -76,7 +77,7 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 52s
+BUILD FAILED in 48s
 24 actionable tasks: 23 executed, 1 up-to-date
 
 ==================================================
