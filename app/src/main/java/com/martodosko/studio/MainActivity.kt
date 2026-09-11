@@ -107,7 +107,7 @@ class MainActivity : Activity() {
         // ✅ HELP — BUKAS ANG README.MD MULA SA GITHUB
         findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
-            val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/README.md"
+            val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(readmeUrl)))
             Toast.makeText(this, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
         }
@@ -115,7 +115,7 @@ class MainActivity : Activity() {
         // ✅ JOIN US — BUKAS ANG FB PAGE
         findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
-            val fbUrl = "https://fb.me/martodosko-studio"
+            val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fbUrl)))
             Toast.makeText(this, "🌐 Binubuksan ang Facebook...", Toast.LENGTH_SHORT).show()
         }
