@@ -2,11 +2,11 @@ package com.martodosko.studio
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.ToggleButton
-import android.widget.ImageView
-import android.view.animation.OvershootInterpolator
 import kotlin.math.roundToInt
 
 class MixerActivity : Activity() {
@@ -16,70 +16,137 @@ class MixerActivity : Activity() {
         setContentView(R.layout.fragment_mixer)
 
         // ==============================================
-        // ✅ CHANNEL 1 — VOCAL / MIC
+        // ✅ CHANNEL 1 — 🎤 VOCALS / MIC — 7 KNOBS, WALANG SLIDER!
         // ==============================================
-        val ch1Volume = findViewById<SeekBar>(R.id.ch1_volume)
-        val ch1VolumeText = findViewById<TextView>(R.id.ch1_volume_text)
+        setupKnobControl(R.id.voc_treble, R.id.voc_treble_val, -12, 12, "dB")
+        setupKnobControl(R.id.voc_mid, R.id.voc_mid_val, -12, 12, "dB")
+        setupKnobControl(R.id.voc_bass, R.id.voc_bass_val, -12, 12, "dB")
+        setupKnobControl(R.id.voc_reverb, R.id.voc_reverb_val, 0, 100, "%")
+        setupKnobControl(R.id.voc_delay, R.id.voc_delay_val, 0, 800, "ms")
+        setupKnobControl(R.id.voc_decay, R.id.voc_decay_val, 0, 100, "%")
+        setupKnobControl(R.id.voc_vol, R.id.voc_vol_val, -48, 12, "dB")
 
-        ch1Volume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val db = ((progress - 50) * 0.6).roundToInt()
-                ch1VolumeText.text = if (db >= 0) "+$db dB" else "$db dB"
+        // ✅ CH 1 — Mute
+        findViewById<ToggleButton>(R.id.voc_mute)?.setOnCheckedChangeListener { _, isChecked ->
+            setChannelAlpha("voc_", if (isChecked) 0.3f else 1.0f)
+        }
+
+        // ==============================================
+        // ✅ CHANNEL 2 — 🎸 INSTRUMENTS — 7 KNOBS, WALANG SLIDER!
+        // ==============================================
+        setupKnobControl(R.id.inst_treble, R.id.inst_treble_val, -12, 12, "dB")
+        setupKnobControl(R.id.inst_mid, R.id.inst_mid_val, -12, 12, "dB")
+        setupKnobControl(R.id.inst_bass, R.id.inst_bass_val, -12, 12, "dB")
+        setupKnobControl(R.id.inst_reverb, R.id.inst_reverb_val, 0, 100, "%")
+        setupKnobControl(R.id.inst_delay, R.id.inst_delay_val, 0, 800, "ms")
+        setupKnobControl(R.id.inst_decay, R.id.inst_decay_val, 0, 100, "%")
+        setupKnobControl(R.id.inst_vol, R.id.inst_vol_val, -48, 12, "dB")
+
+        // ✅ CH 2 — Mute
+        findViewById<ToggleButton>(R.id.inst_mute)?.setOnCheckedChangeListener { _, isChecked ->
+            setChannelAlpha("inst_", if (isChecked) 0.3f else 1.0f)
+        }
+
+        // ==============================================
+        // ✅ CHANNEL 3 — 🎵 MUSIC / BACKGROUND — 7 KNOBS, WALANG SLIDER!
+        // ==============================================
+        setupKnobControl(R.id.mus_treble, R.id.mus_treble_val, -12, 12, "dB")
+        setupKnobControl(R.id.mus_mid, R.id.mus_mid_val, -12, 12, "dB")
+        setupKnobControl(R.id.mus_bass, R.id.mus_bass_val, -12, 12, "dB")
+        setupKnobControl(R.id.mus_reverb, R.id.mus_reverb_val, 0, 100, "%")
+        setupKnobControl(R.id.mus_delay, R.id.mus_delay_val, 0, 800, "ms")
+        setupKnobControl(R.id.mus_decay, R.id.mus_decay_val, 0, 100, "%")
+        setupKnobControl(R.id.mus_vol, R.id.mus_vol_val, -48, 12, "dB")
+
+        // ✅ CH 3 — Mute
+        findViewById<ToggleButton>(R.id.mus_mute)?.setOnCheckedChangeListener { _, isChecked ->
+            setChannelAlpha("mus_", if (isChecked) 0.3f else 1.0f)
+        }
+
+        // ==============================================
+        // ✅ KANAN — STEREO SLIDERS — LEFT / RIGHT / MASTER — ITO LANG MAY SLIDER!
+        // ==============================================
+        val sliderLeft = findViewById<SeekBar>(R.id.slider_left)
+        val sliderRight = findViewById<SeekBar>(R.id.slider_right)
+        val btnMono = findViewById<ToggleButton>(R.id.btn_mono)
+
+        btnMono.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sliderLeft.progress = 50
+                sliderRight.progress = 50
+                sliderLeft.isEnabled = false
+                sliderRight.isEnabled = false
+            } else {
+                sliderLeft.isEnabled = true
+                sliderRight.isEnabled = true
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        }
+
+        // ✅ MASTER VOLUME SLIDER — PINAKAHULI SA KANAN!
+        val sliderMaster = findViewById<SeekBar>(R.id.slider_master)
+        val masterVolVal = findViewById<TextView>(R.id.master_vol_val)
+        sliderMaster.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                val db = ((p - 65) * 0.3).roundToInt()
+                masterVolVal.text = if (db >= 0) "+$db dB" else "$db dB"
+            }
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
 
-        // ✅ CH 1 — Mute + Solo
-        findViewById<ToggleButton>(R.id.ch1_mute).setOnCheckedChangeListener { _, isChecked ->
-            ch1Volume.alpha = if (isChecked) 0.3f else 1.0f
+        // ==============================================
+        // ✅ MUTE ALL + BYPASS
+        // ==============================================
+        findViewById<ToggleButton>(R.id.btn_mute_all)?.setOnCheckedChangeListener { _, isChecked ->
+            val alpha = if (isChecked) 0.3f else 1.0f
+            setChannelAlpha("voc_", alpha)
+            setChannelAlpha("inst_", alpha)
+            setChannelAlpha("mus_", alpha)
         }
 
-        // ==============================================
-        // ✅ CHANNEL 2 — GUITAR / IN
-        // ==============================================
-        val ch2Volume = findViewById<SeekBar>(R.id.ch2_volume)
-        val ch2VolumeText = findViewById<TextView>(R.id.ch2_volume_text)
+        findViewById<ToggleButton>(R.id.btn_bypass)?.setOnCheckedChangeListener { button, isChecked ->
+            button?.setBackgroundColor(if (isChecked) 0xFF40E0D0.toInt() else 0xFF2A2A3C.toInt())
+        }
+    }
 
-        ch2Volume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val db = ((progress - 50) * 0.6).roundToInt()
-                ch2VolumeText.text = if (db >= 0) "+$db dB" else "$db dB"
+    // ==============================================
+    // ✅ KNOB TOUCH CONTROL — HAWAKIN AT I-UP/DOWN PARA MAGBAGO!
+    // ==============================================
+    private fun setupKnobControl(knobId: Int, valueId: Int, min: Int, max: Int, unit: String) {
+        val knob = findViewById<View>(knobId)
+        val valueText = findViewById<TextView>(valueId)
+        val range = max - min
+        var currentValue = (min + max) / 2
+
+        fun updateValue() {
+            valueText.text = when (unit) {
+                "dB" -> if (currentValue >= 0) "+$currentValue dB" else "$currentValue dB"
+                else -> "$currentValue $unit"
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        findViewById<ToggleButton>(R.id.ch2_mute).setOnCheckedChangeListener { _, isChecked ->
-            ch2Volume.alpha = if (isChecked) 0.3f else 1.0f
         }
 
-        // ==============================================
-        // ✅ MASTER VOLUME
-        // ==============================================
-        val masterVolume = findViewById<SeekBar>(R.id.master_volume)
-        val masterVolumeText = findViewById<TextView>(R.id.master_volume_text)
+        updateValue()
 
-        masterVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val db = ((progress - 50) * 0.6).roundToInt()
-                masterVolumeText.text = "MASTER: ${if (db >= 0) "+$db" else "$db"} dB"
+        knob.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
+                val y = event.y
+                val height = knob.height.toFloat()
+                val percent = 1f - (y / height).coerceIn(0f, 1f)
+                currentValue = (min + percent * range).roundToInt()
+                updateValue()
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
+            true
+        }
+    }
 
-        // ==============================================
-        // ✅ EFFECTS — Reverb / Delay / Distortion
-        // ==============================================
-        findViewById<ToggleButton>(R.id.effect_reverb).setOnCheckedChangeListener { button, isChecked ->
-            button.setBackgroundColor(if (isChecked) 0xFF40E0D0.toInt() else 0xFF2A2A3C.toInt())
-        }
-        findViewById<ToggleButton>(R.id.effect_delay).setOnCheckedChangeListener { button, isChecked ->
-            button.setBackgroundColor(if (isChecked) 0xFF40E0D0.toInt() else 0xFF2A2A3C.toInt())
-        }
-        findViewById<ToggleButton>(R.id.effect_distortion).setOnCheckedChangeListener { button, isChecked ->
-            button.setBackgroundColor(if (isChecked) 0xFFFF6B6B.toInt() else 0xFF2A2A3C.toInt())
+    // ==============================================
+    // ✅ HELPER — MUTE EFFECT SA BUONG CHANNEL
+    // ==============================================
+    private fun setChannelAlpha(prefix: String, alpha: Float) {
+        val ids = listOf("treble", "mid", "bass", "reverb", "delay", "decay", "vol")
+        ids.forEach { idName ->
+            val resId = resources.getIdentifier("${prefix}$idName", "id", packageName)
+            if (resId != 0) findViewById<View>(resId).alpha = alpha
         }
     }
 }
