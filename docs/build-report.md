@@ -3,22 +3,22 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-11 17:07 UTC
-🏷️ **Bersyon:** v1.0.48
+📅 **Petsa:** 2026-09-11 17:14 UTC
+🏷️ **Bersyon:** v1.0.49
 ---
 
 ==================================================
 📦 APLIKASYON: Martodosko Audio Studio
 📂 LOKASYON:   app/build/outputs/apk/debug
-⏰ ORAS:       2026-09-11 17:07:40 UTC
-🏷️ BERSYON:    v1.0.48
+⏰ ORAS:       2026-09-11 17:14:33 UTC
+🏷️ BERSYON:    v1.0.49
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK!
 📂 APK Daan:   app/build/outputs/apk/debug/app-debug.apk
 📏 Laki:       5.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.48.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.49.apk
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -55,11 +55,9 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
-> Task :app:processDebugManifestForPackage
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
 > Task :app:checkDebugDuplicateClasses
-> Task :app:processDebugResources
 
 > Task :app:configureCMakeDebug[arm64-v8a]
 Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
@@ -70,21 +68,14 @@ Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
 
-> Task :app:compileDebugKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:165:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
-
-> Task :app:mergeExtDexDebug
-> Task :app:compileDebugJavaWithJavac NO-SOURCE
-> Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics
-> Task :app:processDebugJavaRes
+> Task :app:processDebugManifestForPackage
 > Task :app:mergeLibDexDebug
 > Task :app:buildCMakeDebug[arm64-v8a]
-> Task :app:mergeProjectDexDebug
 > Task :app:configureCMakeDebug[armeabi-v7a]
-> Task :app:mergeDebugJavaResource
 > Task :app:buildCMakeDebug[armeabi-v7a]
+> Task :app:processDebugResources
 > Task :app:configureCMakeDebug[x86]
+> Task :app:mergeExtDexDebug
 > Task :app:buildCMakeDebug[x86]
 > Task :app:configureCMakeDebug[x86_64]
 > Task :app:buildCMakeDebug[x86_64]
@@ -94,11 +85,21 @@ w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:stripDebugDebugSymbols
+
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:165:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
+
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics
+> Task :app:processDebugJavaRes
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
-BUILD SUCCESSFUL in 1m 9s
+BUILD SUCCESSFUL in 1m 6s
 46 actionable tasks: 45 executed, 1 up-to-date
 
 ==================================================
