@@ -13,10 +13,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.drawerlayout.widget.DrawerLayout
+import android.view.Gravity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +33,17 @@ import java.net.URL
 
 class MainActivity : Activity() {
 
+    // ==================================================
+    // ✅ SIDE MENU — DADAGDAG LANG
+    // ==================================================
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var btnHamburger: ImageView
+    private lateinit var btnCloseMenu: ImageView
+    private lateinit var tvVersion: TextView
+
+    // ==================================================
+    // ✅ IYONG AUTO-UPDATE CODE — NANDOON PA RIN!
+    // ==================================================
     companion object {
         private const val VERSION_URL =
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
@@ -45,11 +60,66 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // ==============================================
+        // ✅ SIDE MENU SETUP — DADAGDAG LANG
+        // ==============================================
+        drawerLayout = findViewById(R.id.drawer_layout)
+        btnHamburger = findViewById(R.id.btn_hamburger)
+        btnCloseMenu = findViewById(R.id.btn_close_menu)
+        tvVersion = findViewById(R.id.tv_version)
+
+        // ✅ Ipakita ang bersyon sa itaas
+        @Suppress("DEPRECATION")
+        val currentVer = packageManager.getPackageInfo(packageName, 0).versionName
+        tvVersion.text = "v$currentVer"
+
+        // ✅ Hamburger → BUKAS ang menu
+        btnHamburger.setOnClickListener {
+            if (!drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.openDrawer(Gravity.START)
+            }
+        }
+
+        // ✅ X → ISARA ang menu
+        btnCloseMenu.setOnClickListener {
+            if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START)
+            }
+        }
+
+        // ✅ Menu Options
+        findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "🎚️ Mixer — Bubukas...", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
+            checkForUpdates()
+        }
+
+        findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
+        }
+
+        // ==============================================
+        // ✅ IYONG ORIHINAL NA CODE — WALANG BINAGO!
+        // ==============================================
         Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
         
         checkPermissions()
     }
 
+    // ==================================================
+    // ✅ LAHAT NG IYONG ORIHINAL NA FUNCTIONS — NANDOON PA RIN!
+    // ==================================================
     private fun checkPermissions() {
         val neededPermissions = mutableListOf<String>()
         
@@ -208,7 +278,7 @@ class MainActivity : Activity() {
                 setDataAndType(uri, "application/vnd.android.package-archive")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra("REPLACE_EXISTING_PACKAGE", true) // ✅ Subukang palitan nang kusa
+                putExtra("REPLACE_EXISTING_PACKAGE", true)
             }
             startActivity(installIntent)
             Toast.makeText(this, "📦 Hinihingi ang pahintulot sa pag-install...", Toast.LENGTH_LONG).show()
