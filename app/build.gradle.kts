@@ -11,8 +11,8 @@ android {
         applicationId = "com.martodosko.studio"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10053       // ✅ Tumaas — v1.0.51
-        versionName = "1.0.53"    // ✅ Tumaas — v1.0.51
+        versionCode = 10053       // ✅ Tumaas — v1.0.53
+        versionName = "1.0.53"    // ✅ Tumaas — v1.0.53
 
         // ✅ Kailangan para sa C++ Audio Engine
         externalNativeBuild {
@@ -23,7 +23,7 @@ android {
     }
 
     // ==================================================
-    // ✅ DADAGDAG LANG — OPISYAL NA PINIRMA!
+    // ✅ OPISYAL NA PINIRMA — NANDOON PA RIN!
     // ==================================================
     signingConfigs {
         create("release") {
@@ -36,16 +36,16 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release") // ✅ OPISYAL NA PINIRMA
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
         }
         debug {
-            signingConfig = signingConfigs.getByName("release") // ✅ PAREHO ANG PINIRMA!
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
         }
     }
 
-    // ✅ TAMA — Dito nakaturo ang C++
+    // ✅ Dito nakaturo ang C++ — NANDOON PA RIN!
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
@@ -62,8 +62,12 @@ android {
     }
 }
 
+// ==================================================
+// ✅ DADAGDAG LANG — 2 LINYA PARA SA SIDE MENU!
+// ==================================================
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")  // ✅ Idinagdag — kailangan sa UI
+    implementation("androidx.appcompat:appcompat:1.6.1")              // ✅ KAILANGAN — AppCompatActivity
+    implementation("com.google.android.material:material:1.11.0")       // ✅ KAILANGAN — Material Icons
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")          // ✅ KAILANGAN — Side Menu!
 }
