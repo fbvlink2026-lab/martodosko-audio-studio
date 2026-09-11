@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-11 19:24 UTC
-🏷️ **Bersyon:** v1.0.55
+📅 **Petsa:** 2026-09-11 19:40 UTC
+🏷️ **Bersyon:** v1.0.56
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,12 +12,17 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-11 19:24:37 UTC
-🏷️ BERSYON:    v1.0.55
+⏰ ORAS:       2026-09-11 19:40:06 UTC
+🏷️ BERSYON:    v1.0.56
 ==================================================
 
-❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
-🔑 Exit Code: 1
+✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
+📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
+📏 Laki:       4.5M
+📤 Kopyahin sa docs/...
+✅ Nasa: docs/Martodosko-Studio-v1.0.56.apk
+
+🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -26,8 +31,6 @@ Downloading https://services.gradle.org/distributions/gradle-8.2-bin.zip
 ............10%............20%............30%.............40%............50%............60%............70%.............80%............90%............100%
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.2/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
-> Task :app:externalNativeBuildCleanDebug
-> Task :app:externalNativeBuildCleanRelease
 > Task :app:clean UP-TO-DATE
 > Task :app:buildKotlinToolingMetadata
 > Task :app:checkKotlinGradlePluginConfigurationErrors
@@ -51,62 +54,49 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:processReleaseManifest
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
-
-> Task :app:configureCMakeRelWithDebInfo[arm64-v8a]
-Checking the license for package CMake 3.22.1 in /usr/local/lib/android/sdk/licenses
-License for package CMake 3.22.1 accepted.
-Preparing "Install CMake 3.22.1 v.3.22.1".
-"Install CMake 3.22.1 v.3.22.1" ready.
-Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
-"Install CMake 3.22.1 v.3.22.1" complete.
-"Install CMake 3.22.1 v.3.22.1" finished.
-
-> Task :app:buildCMakeRelWithDebInfo[arm64-v8a] FAILED
-C/C++: ninja: Entering directory `/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/.cxx/RelWithDebInfo/m6f4m373/arm64-v8a'
-C/C++: /usr/local/lib/android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android24 --sysroot=/usr/local/lib/android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Dmartodosko_EXPORTS -I/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/.cxx/RelWithDebInfo/m6f4m373/arm64-v8a/_deps/oboe-src/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -O3 -fvisibility=hidden -O2 -g -DNDEBUG -fPIC -MD -MT CMakeFiles/martodosko.dir/main.cpp.o -MF CMakeFiles/martodosko.dir/main.cpp.o.d -o CMakeFiles/martodosko.dir/main.cpp.o -c /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/cpp/main.cpp
-C/C++: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/cpp/main.cpp:95:43: error: no member named 'InputOutput' in 'oboe::Direction'
-C/C++:     builder.setDirection(oboe::Direction::InputOutput)
-C/C++:                          ~~~~~~~~~~~~~~~~~^
-C/C++: 1 error generated.
-
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:desugarReleaseFileDependencies
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
 > Task :app:processReleaseManifestForPackage
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseResources
+> Task :app:mergeExtDexRelease
+> Task :app:optimizeReleaseResources
 
-FAILURE: Build failed with an exception.
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:235:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
 
-* What went wrong:
-Execution failed for task ':app:buildCMakeRelWithDebInfo[arm64-v8a]'.
-> com.android.ide.common.process.ProcessException: ninja: Entering directory `/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/.cxx/RelWithDebInfo/m6f4m373/arm64-v8a'
-  [1/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/aaudio/AAudioLoader.cpp.o
-  [2/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/common/AdpfWrapper.cpp.o
-  [3/65] Building CXX object CMakeFiles/martodosko.dir/main.cpp.o
-  FAILED: CMakeFiles/martodosko.dir/main.cpp.o 
-  /usr/local/lib/android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android24 --sysroot=/usr/local/lib/android/sdk/ndk/25.1.8937393/toolchains/llvm/prebuilt/linux-x86_64/sysroot -Dmartodosko_EXPORTS -I/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/.cxx/RelWithDebInfo/m6f4m373/arm64-v8a/_deps/oboe-src/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -O3 -fvisibility=hidden -O2 -g -DNDEBUG -fPIC -MD -MT CMakeFiles/martodosko.dir/main.cpp.o -MF CMakeFiles/martodosko.dir/main.cpp.o.d -o CMakeFiles/martodosko.dir/main.cpp.o -c /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/cpp/main.cpp
-  /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/cpp/main.cpp:95:43: error: no member named 'InputOutput' in 'oboe::Direction'
-      builder.setDirection(oboe::Direction::InputOutput)
-                           ~~~~~~~~~~~~~~~~~^
-  1 error generated.
-  [4/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/common/AudioSourceCaller.cpp.o
-  [5/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/aaudio/AudioStreamAAudio.cpp.o
-  [6/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/common/Utilities.cpp.o
-  [7/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/common/AudioStream.cpp.o
-  [8/65] Building CXX object _deps/oboe-build/CMakeFiles/oboe.dir/src/common/AudioStreamBuilder.cpp.o
-  ninja: build stopped: subcommand failed.
-  
-  C++ build system [build] failed while executing:
-      /usr/local/lib/android/sdk/cmake/3.22.1/bin/ninja \
-        -C \
-        /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/.cxx/RelWithDebInfo/m6f4m373/arm64-v8a \
-        martodosko
-    from /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app
+> Task :app:compileReleaseJavaWithJavac NO-SOURCE
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:dexBuilderRelease
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :app:processReleaseJavaRes
+> Task :app:mergeReleaseJavaResource
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:assembleRelease
 
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 33s
-20 actionable tasks: 19 executed, 1 up-to-date
+BUILD SUCCESSFUL in 1m 13s
+44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
 
