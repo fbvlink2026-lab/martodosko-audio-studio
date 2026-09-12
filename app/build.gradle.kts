@@ -1,8 +1,3 @@
-// ==================================================
-// FILE: build.gradle.kts
-// VERSION: 1.0.61
-// UPDATED: 2026-09-12
-// ==================================================
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -16,8 +11,8 @@ android {
         applicationId = "com.martodosko.studio"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10065       // ✅ v1.0.55 — PINAKABAGO!
-        versionName = "1.0.65"    // ✅ v1.0.55 — PINAKABAGO!
+        versionCode = 10059       // ✅ v1.0.55 — PINAKABAGO!
+        versionName = "1.0.59"    // ✅ v1.0.55 — PINAKABAGO!
 
         // ⏸️ IKOMENTO MUNA — WALANG C++ PA!
         // externalNativeBuild {
