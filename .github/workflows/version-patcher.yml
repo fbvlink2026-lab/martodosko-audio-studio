@@ -1,84 +1,66 @@
 # ==================================================
-# 📄 FILE: version-patcher.yml
-# 🏷️ VERSION: 1.0.16 — GINAYA ANG ESTILO NG BUILD.YML!
-# 📅 UPDATED: 2026-09-12
-# 🎯 PURPOSE: Add/update headers — app/ folder only
+# FILE: version-patcher.yml
+# VERSION: 1.0.17 — FIXED PUSH PERMISSION
+# UPDATED: 2026-09-12
+# PURPOSE: Add/update headers — app/ folder only — SAFE PUSH
 # ==================================================
 
 name: Version Header Patcher
 
 on:
-  # ✅ TUMATAKBO LANG KAPAG PININDOT SA ACTIONS TAB — hindi kusang tumatakbo
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Piliin — all_app (lahat sa app/) o specific_app (partikular na files)'
+        description: 'Piliin — all_app o specific_app'
         default: 'all_app'
       specific_files:
-        description: 'Kung specific_app — ilagay ang path, hal: app/src/main/AndroidManifest.xml'
+        description: 'Kung specific_app — path ng file'
         default: ''
 
 jobs:
   patch-headers:
     name: Add Version Headers
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      # ✅ NAGDAGDAG NG TOKEN — ITO ANG SIKRETO NG PAG-PUSH!
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ==================================================
-      # 📖 BASAHIN ANG VERSION MULA SA version.json
-      # ==================================================
       - name: 📖 Basahin ang Bersyon mula sa version.json
         id: get-version
         run: |
-          echo "=========================================="
-          echo "   📖 BASAHIN ANG BERSYON"
-          echo "=========================================="
-          
           if [ -f "docs/version.json" ]; then
             VERSION_NAME=$(grep -o '"versionName"[[:space:]]*:[[:space:]]*"[^"]*"' docs/version.json | cut -d'"' -f4)
             VERSION="${VERSION_NAME:-1.0.0}"
-            echo "✅ Bersyon mula sa version.json: v$VERSION"
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           else
             VERSION="1.0.0"
-            echo "⚠️ Walang version.json — gagamitin: v1.0.0"
             echo "version=$VERSION" >> $GITHUB_OUTPUT
           fi
-          
           DATE=$(date +%Y-%m-%d)
           echo "date=$DATE" >> $GITHUB_OUTPUT
-          echo "✅ Petsa: $DATE"
+          echo "✅ Target Version: v$VERSION"
 
-      # ==================================================
-      # 🔄 PROSESO NG MGA FILE — ADD O UPDATE HEADER
-      # ==================================================
-      - name: 🔄 Proseso ng mga File — Lagyan o I-update ang Header
+      - name: 🔄 Proseso ng mga File
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
           DATE="${{ steps.get-version.outputs.date }}"
           MODE="${{ github.event.inputs.mode }}"
           SPECIFIC_INPUT="${{ github.event.inputs.specific_files }}"
           
-          echo "=========================================="
-          echo "   🔄 SIMULAN ANG PAGPROSESO"
-          echo "=========================================="
-          echo "🎯 Target Bersyon: v$VERSION"
-          echo "📂 Mode: $MODE"
-          echo ""
-          
           process_file() {
             local file="$1"
             local filename=$(basename "$file")
             
-            # ✅ app/ folder lang — hindi iba pang folder
             [[ ! "$file" == app/* ]] && return
-            # ✅ Suportadong file types lang
             [[ "$file" != *.xml && "$file" != *.kt && "$file" != *.kts && "$file" != *.gradle ]] && return
             
-            # ✅ May header na? I-check ang version
             if grep -q "VERSION:" "$file"; then
               CURRENT_VER=$(grep -o 'VERSION: *[^ ]*' "$file" | head -n1 | sed 's/VERSION: *//')
               if [ "$CURRENT_VER" = "$VERSION" ]; then
@@ -86,15 +68,13 @@ jobs:
                 return
               else
                 echo "🔄 UPDATE: $filename — v$CURRENT_VER → v$VERSION"
-                # ✅ GINAYA ANG SED FORMAT MULA SA BUILD.YML — SIGURADONG GUMAGANA!
-                sed -i.bak "s/VERSION: *[^ ]*/VERSION: $VERSION/" "$file"
-                sed -i.bak "s/UPDATED: *[0-9-]*/UPDATED: $DATE/" "$file"
-                rm -f "$file.bak"
+                # ✅ MAS LIGTAS NA SED — walang .bak na file
+                sed -i'' "s/VERSION: *[^ ]*/VERSION: $VERSION/" "$file"
+                sed -i'' "s/UPDATED: *[0-9-]*/UPDATED: $DATE/" "$file"
                 return
               fi
             fi
             
-            # ✅ Walang header — IDADAGDAG NG BAGONG HEADER
             echo "➕ ADD: $filename — new header v$VERSION"
             local first_line=$(head -n 1 "$file")
             
@@ -120,9 +100,8 @@ jobs:
             fi
           }
           
-          # ✅ Ayon sa pinili — all_app o specific_app
           if [ "$MODE" = "specific_app" ] && [ -n "$SPECIFIC_INPUT" ]; then
-            echo "📂 Proseso ng mga partikular na file..."
+            echo "📂 Specific files mode..."
             IFS=',' read -ra FILES <<< "$SPECIFIC_INPUT"
             for fname in "${FILES[@]}"; do
               fname=$(echo "$fname" | xargs)
@@ -130,38 +109,22 @@ jobs:
               [ -f "$fname" ] && process_file "$fname"
             done
           else
-            echo "📂 Proseso ng lahat ng files sa app/ folder..."
+            echo "📂 All app/ files mode..."
             find ./app -type f \( -name "*.xml" -o -name "*.kt" -o -name "*.kts" -o -name "*.gradle" \) \
               -not -path "*/build/*" -not -path "*/.git/*" | while read file; do
               process_file "$file"
             done
           fi
-          
-          echo ""
-          echo "✅ TAPOS NA ANG PAGPROSESO!"
 
       # ==================================================
-      # ✅ I-COMMIT AT I-PUSH — GINAYA ANG BUILD.YML!
+      # ✅ GINAMIT ANG GITHUB'S OWN COMMIT ACTION — SIGURADONG GUMAGANA!
       # ==================================================
-      - name: ✅ I-commit at i-push ang mga pagbabago
+      - name: ✅ I-commit at i-push — SAFE METHOD
+        uses: stefanzweifel/git-auto-commit-action@v5
         if: always()
-        continue-on-error: true
-        run: |
-          echo "=========================================="
-          echo "   ✅ I-COMMIT AT I-PUSH"
-          echo "=========================================="
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          git add -A
-          
-          VERSION="${{ steps.get-version.outputs.version }}"
-          
-          if git diff --staged --quiet; then
-            echo "✅ WALANG PAGBABAGO — lahat tama na!"
-          else
-            git commit -m "🤖 Update headers — v$VERSION" --allow-empty
-            git push origin main
-            echo "✅ TAPOS NA! Headers updated to v$VERSION"
-          fi
+        with:
+          commit_message: "🤖 Update headers — v${{ steps.get-version.outputs.version }}"
+          branch: main
+          file_pattern: 'app/**'
+          skip_fetch: true
+          skip_checkout: true
