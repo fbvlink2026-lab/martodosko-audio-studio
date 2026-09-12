@@ -1,7 +1,7 @@
 # ==================================================
-# 📄 FILE: version-patcher.yml — MAY PAGPIPILIAN NA ULIT!
+# 📄 FILE: version-patcher.yml — ISANG PARAAN NA LANG!
 # 🎯 PURPOSE: Add/update version headers — app/ folder only
-# ✅ MAY PAGPIPILIAN: all_app o specific_app — SIMPLE LANG!
+# ✅ SIMPLE: May nakalagay → specific file | Wala → lahat ng app/
 # ==================================================
 
 name: Version Header Patcher
@@ -9,11 +9,9 @@ name: Version Header Patcher
 on:
   workflow_dispatch:
     inputs:
-      mode:
-        description: 'Piliin — all_app (lahat sa app/) o specific_app (partikular na file)'
-        default: 'all_app'
-      specific_files:
-        description: 'Kung specific_app — ilagay ang path, hal: app/src/main/AndroidManifest.xml'
+      target_file:
+        description: 'Ipasok ang path ng file — hal: app/src/main/AndroidManifest.xml | (iwanang walang laman = LAHAT NG FILE SA app/)'
+        required: false
         default: ''
 
 jobs:
@@ -46,21 +44,18 @@ jobs:
           echo "date=$DATE" >> $GITHUB_OUTPUT
 
       # ==================================================
-      # 🔄 PROSESO NG MGA FILE — MAY PAGPIPILIAN!
+      # 🔄 PROSESO — SIMPLE LANG! MAY NAKALAGAY → ISA LANG | WALA → LAHAT!
       # ==================================================
-      - name: 🔄 Proseso ng mga File — Lagyan o I-update ang Header
+      - name: 🔄 Proseso ng File(s) — Lagyan o I-update ang Header
         run: |
           VERSION_NAME="${{ steps.version.outputs.name }}"
           DATE="${{ steps.version.outputs.date }}"
-          MODE="${{ github.event.inputs.mode }}"
-          SPECIFIC_INPUT="${{ github.event.inputs.specific_files }}"
+          TARGET_FILE="${{ github.event.inputs.target_file }}"
           
           echo "=========================================="
           echo "   🔄 SIMULAN ANG PAGPROSESO"
           echo "=========================================="
           echo "🎯 Bersyon: v$VERSION_NAME"
-          echo "📂 Mode: $MODE"
-          echo ""
           
           process_file() {
             local file="$1"
@@ -76,6 +71,7 @@ jobs:
                 return
               else
                 echo "🔄 UPDATE: $filename — v$CURRENT_VER → v$VERSION_NAME"
+                # ✅ EKSAKTONG SED FORMAT — KATULAD NG BUILD.YML! WALANG '' WALANG .bak!
                 sed -i "s/VERSION: *[^ ]*/VERSION: $VERSION_NAME/" "$file"
                 sed -i "s/UPDATED: *[0-9-]*/UPDATED: $DATE/" "$file"
                 return
@@ -107,17 +103,12 @@ jobs:
             fi
           }
           
-          # ✅ MAY PAGPIPILIAN — all_app o specific_app
-          if [ "$MODE" = "specific_app" ] && [ -n "$SPECIFIC_INPUT" ]; then
-            echo "📂 Specific files mode..."
-            IFS=',' read -ra FILES <<< "$SPECIFIC_INPUT"
-            for fname in "${FILES[@]}"; do
-              fname=$(echo "$fname" | xargs)
-              [[ ! "$fname" == app/* ]] && fname="app/$fname"
-              [ -f "$fname" ] && process_file "$fname"
-            done
+          # ✅ SIMPLE NA — MAY NAKALAGAY → ISA LANG | WALA → LAHAT NG app/
+          if [ -n "$TARGET_FILE" ]; then
+            echo "📂 Specific File Mode: $TARGET_FILE"
+            [ -f "$TARGET_FILE" ] && process_file "$TARGET_FILE" || echo "⚠️ Hindi mahanap: $TARGET_FILE"
           else
-            echo "📂 All app/ files mode..."
+            echo "📂 ALL Files Mode — lahat ng sa app/ folder..."
             find ./app -type f \( -name "*.xml" -o -name "*.kt" -o -name "*.kts" -o -name "*.gradle" \) \
               -not -path "*/build/*" -not -path "*/.git/*" | while read file; do
               process_file "$file"
