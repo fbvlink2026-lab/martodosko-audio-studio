@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-12 16:26 UTC
-🏷️ **Bersyon:** v1.0.70
+📅 **Petsa:** 2026-09-12 16:49 UTC
+🏷️ **Bersyon:** v1.0.71
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-12 16:26:31 UTC
-🏷️ BERSYON:    v1.0.70
+⏰ ORAS:       2026-09-12 16:49:44 UTC
+🏷️ BERSYON:    v1.0.71
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.70.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.71.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -61,7 +61,10 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseArtProfile
+> Task :app:processReleaseResources
+> Task :app:mergeExtDexRelease
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
@@ -72,9 +75,6 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseManifestForPackage
-> Task :app:processReleaseResources
-> Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
 
 > Task :app:compileReleaseKotlin
@@ -95,7 +95,7 @@ w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 > Task :app:lintVitalRelease
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 1m 15s
+BUILD SUCCESSFUL in 1m 18s
 44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
