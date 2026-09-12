@@ -1,0 +1,195 @@
+# ==================================================
+# 📄 FILE: version-patcher.yml
+# 🏷️ VERSION: 1.0.5 — APP FOLDER ONLY!
+# 📅 UPDATED: 2026-09-12
+# 🎯 PURPOSE: Add headers — ONLY inside app/ folder!
+# ⚠️ RULES:
+#   🔴 MANUAL RUN ONLY — click "Run workflow"
+#   📋 ASKS: ALL in app/ folder or SPECIFIC files?
+#   📂 ONLY processes: app/ — NEVER .github/, docs/, build/
+#   🏷️ VERSION FROM: docs/version.json
+#   ✅ HEADER ONLY — NEVER changes existing code
+# ==================================================
+
+name: Version Header Patcher
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '📋 ANONG FILES ANG IPAPALAGAYAN NG HEADER?'
+        required: true
+        default: 'all_app'
+        type: choice
+        options:
+          - all_app
+          - specific_app
+      specific_files:
+        description: '📂 KUNG "specific_app" — ILAGAY ANG PATH (hal: app/src/main/res/layout/activity_mixer.xml)'
+        required: false
+        default: ''
+
+jobs:
+  patch-headers:
+    name: Add Version Headers
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 📖 READ VERSION FROM docs/version.json
+        id: get-version
+        run: |
+          if [ -f "docs/version.json" ]; then
+            VERSION_NAME=$(grep -o '"versionName"[[:space:]]*:[[:space:]]*"[^"]*"' docs/version.json | cut -d'"' -f4)
+            VERSION="${VERSION_NAME:-1.0.0}"
+            echo "✅ VERSION: v$VERSION (mula docs/version.json)"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            VERSION="1.0.0"
+            echo "⚠️ NO version.json — default v1.0.0"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          fi
+          DATE=$(date +%Y-%m-%d)
+          echo "date=$DATE" >> $GITHUB_OUTPUT
+
+      - name: 📋 KUMPIRMA — APP FOLDER LANG ANG TARGET!
+        run: |
+          MODE="${{ github.event.inputs.mode }}"
+          SPECIFIC="${{ github.event.inputs.specific_files }}"
+          VERSION="${{ steps.get-version.outputs.version }}"
+          
+          echo "=================================================="
+          echo "✅ PININDOT MO ANG RUN WORKFLOW!"
+          echo "🏷️ GAGAMITING VERSION: v$VERSION"
+          echo "📂 TARGET FOLDER: app/  —  ITO LANG ANG BABAGUHIN!"
+          echo "❌ HINDI KASAMA: .github/  docs/  build/  .git/"
+          echo "=================================================="
+          
+          if [ "$MODE" = "all_app" ]; then
+            echo "📋 MODE: LAHAT NG FILES SA LOOB NG app/ FOLDER"
+          elif [ "$MODE" = "specific_app" ] && [ -n "$SPECIFIC" ]; then
+            echo "📋 MODE: MGA PINILING FILE LANG SA app/ — $SPECIFIC"
+          else
+            echo "⚠️ WALANG FILE NA NILAGAY — WALA GAGAWIN!"
+            exit 0
+          fi
+          
+          echo "🛡️ HEADER LANG ANG IDADAGDAG — WALANG CODE NA BABAGUHIN!"
+          echo "=================================================="
+
+      - name: 🔒 IPALAGAY ANG HEADER — APP FOLDER LANG!
+        run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
+          DATE="${{ steps.get-version.outputs.date }}"
+          MODE="${{ github.event.inputs.mode }}"
+          SPECIFIC_INPUT="${{ github.event.inputs.specific_files }}"
+          
+          # ✅ FUNCTION: LAGYAN NG HEADER ANG FILE
+          add_header() {
+            local file="$1"
+            if [ ! -f "$file" ]; then
+              echo "⚠️ HINDI MAKITA: $file — LALAGPASAN"
+              return
+            fi
+            # ✅ SIGURADUHIN — NASA app/ LANG!
+            if [[ ! "$file" == app/* ]]; then
+              echo "🚫 HINDI NASA app/ — LALAGPASAN: $file"
+              return
+            fi
+            if grep -q "FILE:" "$file"; then
+              echo "⏭️ SKIP (may header na): $file"
+              return
+            fi
+            
+            filename=$(basename "$file")
+            first_line=$(head -n 1 "$file")
+            
+            # ✅ XML — PANATILIHIN ANG <?xml ...?>
+            if [[ "$file" == *.xml ]]; then
+              if [[ "$first_line" == "<?xml"* ]]; then
+                rest=$(tail -n +2 "$file")
+                header="<!-- ================================================== -->
+<!-- 📄 FILE: $filename -->
+<!-- 🏷️ VERSION: $VERSION -->
+<!-- 📅 UPDATED: $DATE -->
+<!-- ================================================== -->
+"
+                echo "$first_line" > "$file"
+                echo "$header" >> "$file"
+                echo "$rest" >> "$file"
+              else
+                header="<!-- ================================================== -->
+<!-- 📄 FILE: $filename -->
+<!-- 🏷️ VERSION: $VERSION -->
+<!-- 📅 UPDATED: $DATE -->
+<!-- ================================================== -->
+
+"
+                echo "$header$(cat "$file")" > "$file"
+              fi
+            # ✅ KOTLIN / GRADLE
+            else
+              header="// ==================================================
+// 📄 FILE: $filename
+// 🏷️ VERSION: $VERSION
+// 📅 UPDATED: $DATE
+// ==================================================
+
+"
+              echo "$header$(cat "$file")" > "$file"
+            fi
+            echo "✅ HEADER ADDED: $file → v$VERSION"
+          }
+          
+          # ✅ AYON SA PINILI MO
+          if [ "$MODE" = "specific_app" ] && [ -n "$SPECIFIC_INPUT" ]; then
+            echo "🔧 PROSESO NG MGA PINILING FILE SA app/..."
+            IFS=',' read -ra FILES <<< "$SPECIFIC_INPUT"
+            for fname in "${FILES[@]}"; do
+              fname=$(echo "$fname" | xargs)
+              # ✅ Kung hindi nagsisimula sa app/ — idagdag na
+              if [[ ! "$fname" == app/* ]]; then
+                fname="app/$fname"
+              fi
+              if [ -f "$fname" ]; then
+                add_header "$fname"
+              else
+                echo "⚠️ HINDI MAHANAP: $fname"
+              fi
+            done
+          else
+            echo "🔧 PROSESO NG LAHAT NG FILE SA LOOB NG app/ FOLDER..."
+            find ./app -type f \( -name "*.xml" -o -name "*.kt" -o -name "*.kts" -o -name "*.gradle" \) -not -path "*/build/*" -not -path "*/.git/*" | while read file; do
+              add_header "$file"
+            done
+          fi
+
+      - name: 📋 REVIEW — TIGNAN MO MUNA ANG BABAGO!
+        run: |
+          echo "=================================================="
+          echo "📋 MGA BABAGUHIN — NASA app/ FOLDER LANG!"
+          echo "=================================================="
+          git diff --stat
+          echo ""
+          echo "⚠️ HEADER LANG — WALANG CODE NA BINABAGO!"
+          echo "=================================================="
+
+      - name: ✅ COMMIT & PUSH
+        run: |
+          git config --global user.name "Martodosko Bot"
+          git config --global user.email "martodosko-studio@users.noreply.github.com"
+          git add -A
+          
+          VERSION="${{ steps.get-version.outputs.version }}"
+          MODE="${{ github.event.inputs.mode }}"
+          
+          if git diff --staged --quiet; then
+            echo "✅ WALANG KAILANGANG BAGUHIN — LAHAT MAY HEADER NA!"
+          else
+            git commit -m "🤖 Add version headers — v$VERSION — $MODE — app/ folder only"
+            git push
+            echo "✅ TAPOS NA! NASA app/ LANG ANG BABAGO — v$VERSION!"
+          fi
