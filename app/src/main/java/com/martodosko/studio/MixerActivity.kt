@@ -1,152 +1,275 @@
 package com.martodosko.studio
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
-import android.widget.SeekBar
+import android.os.Environment
+import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.ToggleButton
-import kotlin.math.roundToInt
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.drawerlayout.widget.DrawerLayout
+import android.view.Gravity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
-class MixerActivity : Activity() {
+class MainActivity : Activity() {
+
+    // ==================================================
+    // ✅ SIDE MENU — PANANATILIHAN
+    // ==================================================
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var btnHamburger: ImageView
+    private lateinit var btnCloseMenu: ImageView
+    private lateinit var tvVersion: TextView
+
+    // ==================================================
+    // ✅ AUTO-UPDATE — PANANATILIHAN
+    // ==================================================
+    companion object {
+        private const val VERSION_URL =
+            "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
+        private const val BASE_APK_URL =
+            "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
+        
+        private const val PERMISSION_STORAGE = 1001
+        private var downloadId: Long = -1
+        private var apkFileName = ""
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_mixer)
+        setContentView(R.layout.activity_main)
 
         // ==============================================
-        // ✅ CHANNEL 1 — 🎤 VOCALS / MIC — 7 KNOBS, WALANG SLIDER!
+        // ✅ SIDE MENU SETUP — PANANATILIHAN
         // ==============================================
-        setupKnobControl(R.id.voc_treble, R.id.voc_treble_val, -12, 12, "dB")
-        setupKnobControl(R.id.voc_mid, R.id.voc_mid_val, -12, 12, "dB")
-        setupKnobControl(R.id.voc_bass, R.id.voc_bass_val, -12, 12, "dB")
-        setupKnobControl(R.id.voc_reverb, R.id.voc_reverb_val, 0, 100, "%")
-        setupKnobControl(R.id.voc_delay, R.id.voc_delay_val, 0, 800, "ms")
-        setupKnobControl(R.id.voc_decay, R.id.voc_decay_val, 0, 100, "%")
-        setupKnobControl(R.id.voc_vol, R.id.voc_vol_val, -48, 12, "dB")
+        drawerLayout = findViewById(R.id.drawer_layout)
+        btnHamburger = findViewById(R.id.btn_hamburger)
+        btnCloseMenu = findViewById(R.id.btn_close_menu)
+        tvVersion = findViewById(R.id.tv_version)
 
-        // ✅ CH 1 — Mute
-        findViewById<ToggleButton>(R.id.voc_mute)?.setOnCheckedChangeListener { _, isChecked ->
-            setChannelAlpha("voc_", if (isChecked) 0.3f else 1.0f)
+        @Suppress("DEPRECATION")
+        val currentVer = packageManager.getPackageInfo(packageName, 0).versionName
+        tvVersion.text = "v$currentVer"
+
+        // ✅ Hamburger → BUKAS
+        btnHamburger.setOnClickListener {
+            if (!drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.openDrawer(Gravity.START)
+            }
+        }
+
+        // ✅ X → ISARA
+        btnCloseMenu.setOnClickListener {
+            if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START)
+            }
         }
 
         // ==============================================
-        // ✅ CHANNEL 2 — 🎸 INSTRUMENTS — 7 KNOBS, WALANG SLIDER!
+        // ✅ MENU OPTIONS — KUMPLETO NA! MAY MIXER NA!
         // ==============================================
-        setupKnobControl(R.id.inst_treble, R.id.inst_treble_val, -12, 12, "dB")
-        setupKnobControl(R.id.inst_mid, R.id.inst_mid_val, -12, 12, "dB")
-        setupKnobControl(R.id.inst_bass, R.id.inst_bass_val, -12, 12, "dB")
-        setupKnobControl(R.id.inst_reverb, R.id.inst_reverb_val, 0, 100, "%")
-        setupKnobControl(R.id.inst_delay, R.id.inst_delay_val, 0, 800, "ms")
-        setupKnobControl(R.id.inst_decay, R.id.inst_decay_val, 0, 100, "%")
-        setupKnobControl(R.id.inst_vol, R.id.inst_vol_val, -48, 12, "dB")
+        findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            startActivity(Intent(this, MixerActivity::class.java))
+        }
 
-        // ✅ CH 2 — Mute
-        findViewById<ToggleButton>(R.id.inst_mute)?.setOnCheckedChangeListener { _, isChecked ->
-            setChannelAlpha("inst_", if (isChecked) 0.3f else 1.0f)
+        findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
+            checkForUpdates()
+        }
+
+        // ✅ HELP — BUKAS ANG README.MD
+        findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(readmeUrl)))
+            Toast.makeText(this, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
+        }
+
+        // ✅ JOIN US — BUKAS ANG FB PAGE
+        findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fbUrl)))
+            Toast.makeText(this, "🌐 Binubuksan ang Facebook...", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
+            drawerLayout.closeDrawer(Gravity.START)
+            Toast.makeText(this, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
         }
 
         // ==============================================
-        // ✅ CHANNEL 3 — 🎵 MUSIC / BACKGROUND — 7 KNOBS, WALANG SLIDER!
+        // ✅ SIMULA — PANANATILIHAN
         // ==============================================
-        setupKnobControl(R.id.mus_treble, R.id.mus_treble_val, -12, 12, "dB")
-        setupKnobControl(R.id.mus_mid, R.id.mus_mid_val, -12, 12, "dB")
-        setupKnobControl(R.id.mus_bass, R.id.mus_bass_val, -12, 12, "dB")
-        setupKnobControl(R.id.mus_reverb, R.id.mus_reverb_val, 0, 100, "%")
-        setupKnobControl(R.id.mus_delay, R.id.mus_delay_val, 0, 800, "ms")
-        setupKnobControl(R.id.mus_decay, R.id.mus_decay_val, 0, 100, "%")
-        setupKnobControl(R.id.mus_vol, R.id.mus_vol_val, -48, 12, "dB")
+        Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
+        checkPermissions()
+    }
 
-        // ✅ CH 3 — Mute
-        findViewById<ToggleButton>(R.id.mus_mute)?.setOnCheckedChangeListener { _, isChecked ->
-            setChannelAlpha("mus_", if (isChecked) 0.3f else 1.0f)
+    // ==================================================
+    // ✅ PERMISSIONS — PANANATILIHAN
+    // ==================================================
+    private fun checkPermissions() {
+        val neededPermissions = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) 
+            != PackageManager.PERMISSION_GRANTED) {
+            neededPermissions.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            neededPermissions.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
         }
+        if (neededPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, neededPermissions.toTypedArray(), PERMISSION_STORAGE)
+        } else {
+            checkForUpdates()
+        }
+    }
 
-        // ==============================================
-        // ✅ KANAN — STEREO SLIDERS — LEFT / RIGHT / MASTER — ITO LANG MAY SLIDER!
-        // ==============================================
-        val sliderLeft = findViewById<SeekBar>(R.id.slider_left)
-        val sliderRight = findViewById<SeekBar>(R.id.slider_right)
-        val btnMono = findViewById<ToggleButton>(R.id.btn_mono)
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_STORAGE) checkForUpdates()
+    }
 
-        btnMono.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                sliderLeft.progress = 50
-                sliderRight.progress = 50
-                sliderLeft.isEnabled = false
-                sliderRight.isEnabled = false
+    // ==================================================
+    // ✅ AUTO-UPDATE — PANANATILIHAN
+    // ==================================================
+    private fun checkForUpdates() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                Log.d("UPDATE", "🔍 Tinitignan ang update...")
+                val conn = URL("$VERSION_URL?t=${System.currentTimeMillis()}").openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 8000
+                conn.readTimeout = 8000
+                conn.setRequestProperty("Cache-Control", "no-cache")
+
+                val reader = BufferedReader(InputStreamReader(conn.inputStream))
+                val resp = StringBuilder()
+                var line: String?
+                while (reader.readLine().also { line = it } != null) resp.append(line)
+                reader.close()
+                conn.disconnect()
+
+                val json = JSONObject(resp.toString())
+                val latestVer = cleanVersion(json.getString("version"))
+                apkFileName = json.optString("apkFile", "Martodosko-Studio-v$latestVer.apk")
+
+                @Suppress("DEPRECATION")
+                val currentVer = cleanVersion(packageManager.getPackageInfo(packageName, 0).versionName)
+
+                if (isUpdateAvailable(latestVer, currentVer)) {
+                    runOnUiThread { showUpdateDialog(latestVer) }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "✅ Nasa pinakabago na — v$currentVer", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("UPDATE", "⚠️ Error: ${e.message}")
+            }
+        }
+    }
+
+    private fun cleanVersion(v: String) = v.trim().removePrefix("v").removePrefix("V").replace(Regex("[^0-9.]"), "")
+
+    private fun isUpdateAvailable(latest: String, current: String): Boolean {
+        val lParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
+        val cParts = current.split(".").map { it.toIntOrNull() ?: 0 }
+        val max = maxOf(lParts.size, cParts.size)
+        for (i in 0 until max) {
+            val l = lParts.getOrNull(i) ?: 0
+            val c = cParts.getOrNull(i) ?: 0
+            if (l > c) return true
+            if (l < c) return false
+        }
+        return false
+    }
+
+    private fun showUpdateDialog(version: String) {
+        AlertDialog.Builder(this)
+            .setTitle("🔔 May Bagong Bersyon — v$version")
+            .setMessage("Gusto mo bang i-download at i-install ang pinakabagong bersyon?\n\n⚠️ Kung lalabas ang 'Package Conflict' — burahin muna ang lumang bersyon nang isang beses lang. Mula noon, kusang mag-a-update na!")
+            .setPositiveButton("✅ I-download") { _, _ -> downloadApk() }
+            .setNegativeButton("❌ Mamaya na", null)
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun downloadApk() {
+        val downloadUrl = "$BASE_APK_URL$apkFileName"
+        val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
+            setTitle("Martodosko Update")
+            setDescription("Nagda-download...")
+            setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, apkFileName)
+            setMimeType("application/vnd.android.package-archive")
+            allowScanningByMediaScanner()
+        }
+        val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        downloadId = dm.enqueue(request)
+        registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        Toast.makeText(this, "📥 Nagsimula ang pag-download", Toast.LENGTH_LONG).show()
+    }
+
+    private val downloadReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: -1
+            if (id == downloadId) {
+                unregisterReceiver(this)
+                openInstaller()
+            }
+        }
+    }
+
+    private fun openInstaller() {
+        try {
+            val apkFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), apkFileName)
+            if (!apkFile.exists()) {
+                Toast.makeText(this, "⚠️ Hindi mahanap ang file", Toast.LENGTH_LONG).show()
+                return
+            }
+            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                FileProvider.getUriForFile(this, "$packageName.fileprovider", apkFile)
             } else {
-                sliderLeft.isEnabled = true
-                sliderRight.isEnabled = true
+                Uri.fromFile(apkFile)
             }
-        }
-
-        // ✅ MASTER VOLUME SLIDER — PINAKAHULI SA KANAN!
-        val sliderMaster = findViewById<SeekBar>(R.id.slider_master)
-        val masterVolVal = findViewById<TextView>(R.id.master_vol_val)
-        sliderMaster.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
-                val db = ((p - 65) * 0.3).roundToInt()
-                masterVolVal.text = if (db >= 0) "+$db dB" else "$db dB"
+            val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            override fun onStartTrackingTouch(sb: SeekBar?) {}
-            override fun onStopTrackingTouch(sb: SeekBar?) {}
-        })
-
-        // ==============================================
-        // ✅ MUTE ALL + BYPASS
-        // ==============================================
-        findViewById<ToggleButton>(R.id.btn_mute_all)?.setOnCheckedChangeListener { _, isChecked ->
-            val alpha = if (isChecked) 0.3f else 1.0f
-            setChannelAlpha("voc_", alpha)
-            setChannelAlpha("inst_", alpha)
-            setChannelAlpha("mus_", alpha)
-        }
-
-        findViewById<ToggleButton>(R.id.btn_bypass)?.setOnCheckedChangeListener { button, isChecked ->
-            button?.setBackgroundColor(if (isChecked) 0xFF40E0D0.toInt() else 0xFF2A2A3C.toInt())
-        }
-    }
-
-    // ==============================================
-    // ✅ KNOB TOUCH CONTROL — HAWAKIN AT I-UP/DOWN PARA MAGBAGO!
-    // ==============================================
-    private fun setupKnobControl(knobId: Int, valueId: Int, min: Int, max: Int, unit: String) {
-        val knob = findViewById<View>(knobId)
-        val valueText = findViewById<TextView>(valueId)
-        val range = max - min
-        var currentValue = (min + max) / 2
-
-        fun updateValue() {
-            valueText.text = when (unit) {
-                "dB" -> if (currentValue >= 0) "+$currentValue dB" else "$currentValue dB"
-                else -> "$currentValue $unit"
-            }
-        }
-
-        updateValue()
-
-        knob.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
-                val y = event.y
-                val height = knob.height.toFloat()
-                val percent = 1f - (y / height).coerceIn(0f, 1f)
-                currentValue = (min + percent * range).roundToInt()
-                updateValue()
-            }
-            true
-        }
-    }
-
-    // ==============================================
-    // ✅ HELPER — MUTE EFFECT SA BUONG CHANNEL
-    // ==============================================
-    private fun setChannelAlpha(prefix: String, alpha: Float) {
-        val ids = listOf("treble", "mid", "bass", "reverb", "delay", "decay", "vol")
-        ids.forEach { idName ->
-            val resId = resources.getIdentifier("${prefix}$idName", "id", packageName)
-            if (resId != 0) findViewById<View>(resId).alpha = alpha
+            startActivity(installIntent)
+            Toast.makeText(this, "📦 Hinihingi ang pahintulot...", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 }
