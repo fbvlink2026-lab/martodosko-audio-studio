@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-12 14:49 UTC
-🏷️ **Bersyon:** v1.0.63
+📅 **Petsa:** 2026-09-12 15:00 UTC
+🏷️ **Bersyon:** v1.0.64
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-12 14:49:37 UTC
-🏷️ BERSYON:    v1.0.63
+⏰ ORAS:       2026-09-12 15:00:35 UTC
+🏷️ BERSYON:    v1.0.64
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -72,7 +72,7 @@ Execution failed for task ':app:parseReleaseLocalResources'.
 > Get more help at https://help.gradle.org.
 ==============================================================================
 
-BUILD FAILED in 26s
+BUILD FAILED in 27s
 9 actionable tasks: 8 executed, 1 up-to-date
 
 ==================================================
