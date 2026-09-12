@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-12 17:41 UTC
-🏷️ **Bersyon:** v1.0.74
+📅 **Petsa:** 2026-09-12 17:56 UTC
+🏷️ **Bersyon:** v1.0.75
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-12 17:41:13 UTC
-🏷️ BERSYON:    v1.0.74
+⏰ ORAS:       2026-09-12 17:56:34 UTC
+🏷️ BERSYON:    v1.0.75
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.74.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.75.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -55,10 +55,10 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
 > Task :app:mergeReleaseJniLibFolders
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
@@ -95,7 +95,7 @@ w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 > Task :app:lintVitalRelease
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 1m 16s
+BUILD SUCCESSFUL in 1m 21s
 44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
