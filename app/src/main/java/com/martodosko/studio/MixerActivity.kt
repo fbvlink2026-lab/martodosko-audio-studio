@@ -1,3 +1,8 @@
+// ==================================================
+// FILE: MixerActivity.kt
+// VERSION: 1.0.61
+// UPDATED: 2026-09-12
+// ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
