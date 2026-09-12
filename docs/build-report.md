@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-12 10:03 UTC
-🏷️ **Bersyon:** v1.0.61
+📅 **Petsa:** 2026-09-12 14:38 UTC
+🏷️ **Bersyon:** v1.0.62
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-12 10:03:10 UTC
-🏷️ BERSYON:    v1.0.61
+⏰ ORAS:       2026-09-12 14:38:45 UTC
+🏷️ BERSYON:    v1.0.62
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -39,7 +39,7 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseResources FAILED
 
 > Task :app:parseReleaseLocalResources FAILED
-[Fatal Error] activity_mixer.xml:367:47: The entity name must immediately follow the '&' in the entity reference.
+[Fatal Error] activity_mixer.xml:263:47: The entity name must immediately follow the '&' in the entity reference.
 
 FAILURE: Build completed with 2 failures.
 
@@ -48,7 +48,7 @@ FAILURE: Build completed with 2 failures.
 * What went wrong:
 Execution failed for task ':app:mergeReleaseResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
-   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_mixer.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[367,47]
+   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_mixer.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[263,47]
      Message: The entity name must immediately follow the '&' in the entity reference.). Check logs for more details.
 
 * Try:
@@ -72,7 +72,7 @@ Execution failed for task ':app:parseReleaseLocalResources'.
 > Get more help at https://help.gradle.org.
 ==============================================================================
 
-BUILD FAILED in 23s
+BUILD FAILED in 24s
 9 actionable tasks: 8 executed, 1 up-to-date
 
 ==================================================
