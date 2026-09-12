@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt
-// VERSION: 1.0.61
+// FILE: MixerActivity.kt — ISANG CHANNEL LANG ✅
+// VERSION: 1.0.62 — PINAG-ISAHAN
 // UPDATED: 2026-09-12
 // ==================================================
 package com.martodosko.studio
@@ -18,58 +18,26 @@ class MixerActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_mixer)
+        setContentView(R.layout.activity_mixer) // ✅ SIGURADO: activity_mixer.xml
 
         // ==============================================
-        // ✅ CHANNEL 1 — 🎤 VOCALS / MIC — 7 KNOBS, WALANG SLIDER!
+        // ✅ ISANG CHANNEL LANG — 🎤 VOCALS / MIC — 11 KNOBS!
         // ==============================================
-        setupKnobControl(R.id.voc_treble, R.id.voc_treble_val, -12, 12, "dB")
-        setupKnobControl(R.id.voc_mid, R.id.voc_mid_val, -12, 12, "dB")
-        setupKnobControl(R.id.voc_bass, R.id.voc_bass_val, -12, 12, "dB")
-        setupKnobControl(R.id.voc_reverb, R.id.voc_reverb_val, 0, 100, "%")
-        setupKnobControl(R.id.voc_delay, R.id.voc_delay_val, 0, 800, "ms")
-        setupKnobControl(R.id.voc_decay, R.id.voc_decay_val, 0, 100, "%")
-        setupKnobControl(R.id.voc_vol, R.id.voc_vol_val, -48, 12, "dB")
-
-        // ✅ CH 1 — Mute
-        findViewById<ToggleButton>(R.id.voc_mute)?.setOnCheckedChangeListener { _, isChecked ->
-            setChannelAlpha("voc_", if (isChecked) 0.3f else 1.0f)
-        }
-
-        // ==============================================
-        // ✅ CHANNEL 2 — 🎸 INSTRUMENTS — 7 KNOBS, WALANG SLIDER!
-        // ==============================================
-        setupKnobControl(R.id.inst_treble, R.id.inst_treble_val, -12, 12, "dB")
-        setupKnobControl(R.id.inst_mid, R.id.inst_mid_val, -12, 12, "dB")
-        setupKnobControl(R.id.inst_bass, R.id.inst_bass_val, -12, 12, "dB")
-        setupKnobControl(R.id.inst_reverb, R.id.inst_reverb_val, 0, 100, "%")
-        setupKnobControl(R.id.inst_delay, R.id.inst_delay_val, 0, 800, "ms")
-        setupKnobControl(R.id.inst_decay, R.id.inst_decay_val, 0, 100, "%")
-        setupKnobControl(R.id.inst_vol, R.id.inst_vol_val, -48, 12, "dB")
-
-        // ✅ CH 2 — Mute
-        findViewById<ToggleButton>(R.id.inst_mute)?.setOnCheckedChangeListener { _, isChecked ->
-            setChannelAlpha("inst_", if (isChecked) 0.3f else 1.0f)
-        }
+        setupKnobControl(R.id.knob_gain, R.id.val_gain, -12, 12, "dB")
+        setupKnobControl(R.id.knob_bass, R.id.val_bass, -12, 12, "dB")
+        setupKnobControl(R.id.knob_lowmid, R.id.val_lowmid, -12, 12, "dB")
+        setupKnobControl(R.id.knob_mid, R.id.val_mid, -12, 12, "dB")
+        setupKnobControl(R.id.knob_highmid, R.id.val_highmid, -12, 12, "dB")
+        setupKnobControl(R.id.knob_treble, R.id.val_treble, -12, 12, "dB")
+        setupKnobControl(R.id.knob_presence, R.id.val_presence, -12, 12, "dB")
+        setupKnobControl(R.id.knob_reverb, R.id.val_reverb, 0, 100, "%")
+        setupKnobControl(R.id.knob_delay, R.id.val_delay, 0, 800, "ms")
+        setupKnobControl(R.id.knob_compressor, R.id.val_compressor, 0, 100, "%")
+        setupKnobControl(R.id.knob_pan, R.id.val_pan, -10, 10, "")
+        setupKnobControl(R.id.knob_vol, R.id.val_vol, -48, 12, "dB")
 
         // ==============================================
-        // ✅ CHANNEL 3 — 🎵 MUSIC / BACKGROUND — 7 KNOBS, WALANG SLIDER!
-        // ==============================================
-        setupKnobControl(R.id.mus_treble, R.id.mus_treble_val, -12, 12, "dB")
-        setupKnobControl(R.id.mus_mid, R.id.mus_mid_val, -12, 12, "dB")
-        setupKnobControl(R.id.mus_bass, R.id.mus_bass_val, -12, 12, "dB")
-        setupKnobControl(R.id.mus_reverb, R.id.mus_reverb_val, 0, 100, "%")
-        setupKnobControl(R.id.mus_delay, R.id.mus_delay_val, 0, 800, "ms")
-        setupKnobControl(R.id.mus_decay, R.id.mus_decay_val, 0, 100, "%")
-        setupKnobControl(R.id.mus_vol, R.id.mus_vol_val, -48, 12, "dB")
-
-        // ✅ CH 3 — Mute
-        findViewById<ToggleButton>(R.id.mus_mute)?.setOnCheckedChangeListener { _, isChecked ->
-            setChannelAlpha("mus_", if (isChecked) 0.3f else 1.0f)
-        }
-
-        // ==============================================
-        // ✅ KANAN — STEREO SLIDERS — LEFT / RIGHT / MASTER — ITO LANG MAY SLIDER!
+        // ✅ KANAN — SLIDERS & PINDUTAN — NANDOON PA RIN!
         // ==============================================
         val sliderLeft = findViewById<SeekBar>(R.id.slider_left)
         val sliderRight = findViewById<SeekBar>(R.id.slider_right)
@@ -87,7 +55,7 @@ class MixerActivity : Activity() {
             }
         }
 
-        // ✅ MASTER VOLUME SLIDER — PINAKAHULI SA KANAN!
+        // ✅ MASTER VOLUME SLIDER
         val sliderMaster = findViewById<SeekBar>(R.id.slider_master)
         val masterVolVal = findViewById<TextView>(R.id.master_vol_val)
         sliderMaster.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -99,14 +67,9 @@ class MixerActivity : Activity() {
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
 
-        // ==============================================
         // ✅ MUTE ALL + BYPASS
-        // ==============================================
         findViewById<ToggleButton>(R.id.btn_mute_all)?.setOnCheckedChangeListener { _, isChecked ->
-            val alpha = if (isChecked) 0.3f else 1.0f
-            setChannelAlpha("voc_", alpha)
-            setChannelAlpha("inst_", alpha)
-            setChannelAlpha("mus_", alpha)
+            findViewById<View>(R.id.knob_vol).alpha = if (isChecked) 0.3f else 1.0f
         }
 
         findViewById<ToggleButton>(R.id.btn_bypass)?.setOnCheckedChangeListener { button, isChecked ->
@@ -115,7 +78,7 @@ class MixerActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ KNOB TOUCH CONTROL — HAWAKIN AT I-UP/DOWN PARA MAGBAGO!
+    // ✅ KNOB TOUCH CONTROL — HAWAKIN AT I-UP/DOWN
     // ==============================================
     private fun setupKnobControl(knobId: Int, valueId: Int, min: Int, max: Int, unit: String) {
         val knob = findViewById<View>(knobId)
@@ -124,9 +87,15 @@ class MixerActivity : Activity() {
         var currentValue = (min + max) / 2
 
         fun updateValue() {
-            valueText.text = when (unit) {
-                "dB" -> if (currentValue >= 0) "+$currentValue dB" else "$currentValue dB"
-                else -> "$currentValue $unit"
+            valueText.text = when {
+                unit == "dB" && currentValue >= 0 -> "+$currentValue dB"
+                unit.isEmpty() -> when {
+                    currentValue < -3 -> "LEFT ${currentValue * -1}"
+                    currentValue > 3 -> "RIGHT $currentValue"
+                    else -> "CENTER"
+                }
+                unit.isNotEmpty() -> "$currentValue $unit"
+                else -> "$currentValue"
             }
         }
 
@@ -134,24 +103,11 @@ class MixerActivity : Activity() {
 
         knob.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
-                val y = event.y
-                val height = knob.height.toFloat()
-                val percent = 1f - (y / height).coerceIn(0f, 1f)
+                val percent = (1f - (event.y / knob.height).coerceIn(0f, 1f))
                 currentValue = (min + percent * range).roundToInt()
                 updateValue()
             }
             true
-        }
-    }
-
-    // ==============================================
-    // ✅ HELPER — MUTE EFFECT SA BUONG CHANNEL
-    // ==============================================
-    private fun setChannelAlpha(prefix: String, alpha: Float) {
-        val ids = listOf("treble", "mid", "bass", "reverb", "delay", "decay", "vol")
-        ids.forEach { idName ->
-            val resId = resources.getIdentifier("${prefix}$idName", "id", packageName)
-            if (resId != 0) findViewById<View>(resId).alpha = alpha
         }
     }
 }
