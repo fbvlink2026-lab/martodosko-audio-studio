@@ -1,3 +1,8 @@
+// ==================================================
+// FILE: MainActivity.kt — MAY BUONG DETALYE NG ERROR ✅
+// VERSION: 1.0.68 — IPAPAKITA NA ANG BUONG DAHILAN!
+// UPDATED: 2026-09-13
+// ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
@@ -33,17 +38,11 @@ import java.net.URL
 
 class MainActivity : Activity() {
 
-    // ==================================================
-    // ✅ SIDE MENU — PANANATILIHAN
-    // ==================================================
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var btnHamburger: ImageView
     private lateinit var btnCloseMenu: ImageView
     private lateinit var tvVersion: TextView
 
-    // ==================================================
-    // ✅ AUTO-UPDATE — PANANATILIHAN
-    // ==================================================
     companion object {
         private const val VERSION_URL =
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
@@ -59,9 +58,6 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ==============================================
-        // ✅ SIDE MENU SETUP — PANANATILIHAN
-        // ==============================================
         drawerLayout = findViewById(R.id.drawer_layout)
         btnHamburger = findViewById(R.id.btn_hamburger)
         btnCloseMenu = findViewById(R.id.btn_close_menu)
@@ -71,14 +67,12 @@ class MainActivity : Activity() {
         val currentVer = packageManager.getPackageInfo(packageName, 0).versionName
         tvVersion.text = "v$currentVer"
 
-        // ✅ Hamburger → BUKAS
         btnHamburger.setOnClickListener {
             if (!drawerLayout.isDrawerOpen(Gravity.START)) {
                 drawerLayout.openDrawer(Gravity.START)
             }
         }
 
-        // ✅ X → ISARA
         btnCloseMenu.setOnClickListener {
             if (drawerLayout.isDrawerOpen(Gravity.START)) {
                 drawerLayout.closeDrawer(Gravity.START)
@@ -86,7 +80,7 @@ class MainActivity : Activity() {
         }
 
         // ==============================================
-        // ✅ MENU OPTIONS — MAY ERROR TRAP NA ANG MIXER! 🎚️✅
+        // ✅ MIXER BUTTON — MAY BUONG DETALYE NG ERROR! 🎚️✅
         // ==============================================
         findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
@@ -94,9 +88,21 @@ class MainActivity : Activity() {
                 val intent = Intent(this, MixerActivity::class.java)
                 startActivity(intent)
             } catch (e: Exception) {
-                // ✅ HINDI NA MAG-CRASH — MAGPAPAKITA NG MENSAHE AT MANANATILI SA MAIN!
-                Toast.makeText(this, "⚠️ Hindi mabuksan ang Mixer — babalik sa Main", Toast.LENGTH_LONG).show()
-                Log.e("MIXER", "Error pagbukas ng Mixer: ${e.message}", e)
+                // ✅ BUONG DETALYE — IPAPAKITA ANG EKSATONG DAHILAN!
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true -> 
+                        "❌ MixerActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("res/drawable") == true || e.message?.contains("Resource") == true -> 
+                        "❌ Kulang na Drawable file — baka wala ang ic_knob.xml / ic_hamburger.xml / ic_close.xml"
+                    e.message?.contains("Binary XML") == true || e.message?.contains("inflate") == true -> 
+                        "❌ May mali sa fragment_mixer.xml — suriin ang mga tag at ID"
+                    e.message?.contains("id") == true -> 
+                        "❌ Mali o kulang na ID sa layout file"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                
+                Toast.makeText(this, fullError, Toast.LENGTH_LONG).show()
+                Log.e("MIXER", "❌ $fullError", e)
             }
         }
 
@@ -111,7 +117,6 @@ class MainActivity : Activity() {
             checkForUpdates()
         }
 
-        // ✅ HELP — BUKAS ANG README.MD
         findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
             val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
@@ -119,7 +124,6 @@ class MainActivity : Activity() {
             Toast.makeText(this, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ JOIN US — BUKAS ANG FB PAGE
         findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
             val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
@@ -132,16 +136,10 @@ class MainActivity : Activity() {
             Toast.makeText(this, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
         }
 
-        // ==============================================
-        // ✅ SIMULA — PANANATILIHAN
-        // ==============================================
         Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
         checkPermissions()
     }
 
-    // ==================================================
-    // ✅ PERMISSIONS — PANANATILIHAN
-    // ==================================================
     private fun checkPermissions() {
         val neededPermissions = mutableListOf<String>()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
@@ -164,9 +162,6 @@ class MainActivity : Activity() {
         if (requestCode == PERMISSION_STORAGE) checkForUpdates()
     }
 
-    // ==================================================
-    // ✅ AUTO-UPDATE — PANANATILIHAN
-    // ==================================================
     private fun checkForUpdates() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
