@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ================================================== -->
-<!-- FILE: activity_mixer.xml -->
-<!-- VERSION: 1.0.62 — ISANG CHANNEL LANG + DAGDAG NA PIHITAN! -->
-<!-- UPDATED: 2026-09-12 -->
-<!-- ================================================== -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -29,20 +24,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🎛️ MARTODOSKO MIXER — CHANNEL 1"
+                android:text="🎛️ MARTODOSKO 3-CHANNEL MIXER"
                 android:textColor="#40E0D0"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- 📌 PANGUNAHING LAYOUT — KNOBS SA KALIWA | SLIDERS SA KANAN -->
+        <!-- 📌 PANGUNAHING LAYOUT — 3 CHANNEL KNOBS SA KALIWA | SLIDERS SA KANAN -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <!-- ============================================== -->
-            <!-- ✅ KALIWA — ISANG CHANNEL LANG + 11 NA PIHITAN! -->
+            <!-- ✅ KALIWA — 3 CHANNEL, BAWAT MAY SARILING KNOBS! -->
             <!-- ============================================== -->
             <LinearLayout
                 android:layout_width="0dp"
@@ -59,7 +54,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:background="#1A1A2E"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:layout_marginBottom="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -68,185 +64,293 @@
                         android:textColor="#FF6B9D"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:paddingBottom="12dp"/>
+                        android:paddingBottom="8dp"/>
 
-                    <!-- ⚡ 1. GAIN / INPUT -->
+                    <!-- TREBLE -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_gain"/>
+                        android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_treble"/>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="⚡ GAIN" android:textColor="#FF4444" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_gain" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                            <TextView android:text="TREBLE" android:textColor="#FFD700" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_treble_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- 🎚️ 2. LOW / BASS -->
+                    <!-- MID -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_bass"/>
+                        android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_mid"/>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="🎚️ LOW / BASS" android:textColor="#40E0D0" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_bass" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                            <TextView android:text="MID" android:textColor="#FF9500" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_mid_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- 📊 3. LOW-MID -->
+                    <!-- BASS -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_lowmid"/>
+                        android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_bass"/>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="📊 LOW-MID" android:textColor="#00BFFF" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_lowmid" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                            <TextView android:text="BASS" android:textColor="#40E0D0" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_bass_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- 📈 4. MID -->
+                    <!-- REVERB -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_mid"/>
+                        android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_reverb"/>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="📈 MID" android:textColor="#FF9500" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_mid" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                            <TextView android:text="REVERB" android:textColor="#BB86FC" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_reverb_val" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- 📊 5. HIGH-MID -->
+                    <!-- DELAY -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_highmid"/>
+                        android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_delay"/>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="📊 HIGH-MID" android:textColor="#FFCC00" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_highmid" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                            <TextView android:text="DELAY" android:textColor="#00BFFF" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_delay_val" android:text="0ms" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- 🔆 6. TREBLE / HIGH -->
+                    <!-- DECAY -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_treble"/>
+                        android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_decay"/>
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="🔆 TREBLE" android:textColor="#FFD700" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_treble" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                            <TextView android:text="DECAY" android:textColor="#FF6B6B" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_decay_val" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- ✨ 7. PRESENCE -->
+                    <!-- CHANNEL VOLUME — PINAKAIBABA NG CHANNEL 1 -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_presence"/>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="✨ PRESENCE" android:textColor="#00FF88" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_presence" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- 🌊 8. REVERB -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_reverb"/>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="🌊 REVERB" android:textColor="#BB86FC" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_reverb" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- ⏱️ 9. DELAY -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_delay"/>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="⏱️ DELAY" android:textColor="#00BFFF" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_delay" android:text="0ms" android:textColor="#888" android:textSize="10sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- 🌀 10. COMPRESSOR -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_compressor"/>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="🌀 COMPRESSOR" android:textColor="#FF6B6B" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_compressor" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- 🎯 11. PAN -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingVertical="5dp">
-                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/knob_pan"/>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
-                            <TextView android:text="🎯 PAN" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_pan" android:text="CENTER" android:textColor="#888" android:textSize="10sp"/>
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <!-- 🔊 CHANNEL VOLUME — PINAKAIBABA -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:paddingVertical="8dp"
-                        android:layout_marginTop="8dp"
+                        android:paddingVertical="6dp"
+                        android:layout_marginTop="4dp"
                         android:background="#252540"
-                        android:padding="8dp">
-                        <ImageView android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/knob_base" android:id="@+id/knob_vol"/>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp">
-                            <TextView android:text="🔊 CHANNEL VOLUME" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                            <TextView android:id="@+id/val_vol" android:text="-12 dB" android:textColor="#AAA" android:textSize="11sp"/>
+                        android:padding="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/voc_vol"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="CHANNEL VOLUME" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/voc_vol_val" android:text="-12 dB" android:textColor="#AAA" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ============= CHANNEL 2 — 🎸 INSTRUMENTS ============= -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#1A2E28"
+                    android:padding="10dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🎸 CHANNEL 2 — INSTRUMENTS"
+                        android:textColor="#40E0D0"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:paddingBottom="8dp"/>
+
+                    <!-- TREBLE -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_treble"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="TREBLE" android:textColor="#FFD700" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_treble_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
                         </LinearLayout>
                     </LinearLayout>
 
+                    <!-- MID -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_mid"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="MID" android:textColor="#FF9500" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_mid_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- BASS -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_bass"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="BASS" android:textColor="#40E0D0" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_bass_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- REVERB -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_reverb"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="REVERB" android:textColor="#BB86FC" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_reverb_val" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- DELAY -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_delay"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="DELAY" android:textColor="#00BFFF" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_delay_val" android:text="0ms" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- DECAY -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_decay"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="DECAY" android:textColor="#FF6B6B" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_decay_val" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- CHANNEL VOLUME — PINAKAIBABA NG CHANNEL 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="6dp"
+                        android:layout_marginTop="4dp"
+                        android:background="#204035"
+                        android:padding="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/inst_vol"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="CHANNEL VOLUME" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/inst_vol_val" android:text="-12 dB" android:textColor="#AAA" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ============= CHANNEL 3 — 🎵 MUSIC / BACKGROUND ============= -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#1A2330"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🎵 CHANNEL 3 — MUSIC / BACKGROUND"
+                        android:textColor="#00BFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:paddingBottom="8dp"/>
+
+                    <!-- TREBLE -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_treble"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="TREBLE" android:textColor="#FFD700" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_treble_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- MID -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_mid"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="MID" android:textColor="#FF9500" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_mid_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- BASS -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_bass"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="BASS" android:textColor="#40E0D0" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_bass_val" android:text="0 dB" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- REVERB -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_reverb"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="REVERB" android:textColor="#BB86FC" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_reverb_val" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- DELAY -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_delay"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="DELAY" android:textColor="#00BFFF" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_delay_val" android:text="0ms" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- DECAY -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_decay"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="DECAY" android:textColor="#FF6B6B" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_decay_val" android:text="0%" android:textColor="#888" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- CHANNEL VOLUME — PINAKAIBABA NG CHANNEL 3 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingVertical="6dp"
+                        android:layout_marginTop="4dp"
+                        android:background="#253050"
+                        android:padding="6dp">
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/knob_base" android:id="@+id/mus_vol"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp">
+                            <TextView android:text="CHANNEL VOLUME" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/mus_vol_val" android:text="-12 dB" android:textColor="#AAA" android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
 
             <!-- ============================================== -->
-            <!-- ✅ KANAN — SLIDERS: LEFT → RIGHT → MASTER -->
+            <!-- ✅ KANAN — SLIDERS LANG: LEFT → RIGHT → MASTER -->
             <!-- ============================================== -->
             <LinearLayout
                 android:layout_width="0dp"
@@ -281,7 +385,7 @@
                     <ToggleButton android:id="@+id/btn_mono" android:layout_width="56dp" android:layout_height="32dp" android:textOff="OFF" android:textOn="ON" android:backgroundTint="#2A2A3C" android:textColor="#FFFFFF" android:textSize="11sp"/>
                 </LinearLayout>
 
-                <!-- 🔊 MASTER VOLUME -->
+                <!-- 🔊 MASTER VOLUME — PINAKAHULI! -->
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔊 MASTER VOLUME" android:textColor="#FFD700" android:textSize="14sp" android:textStyle="bold" android:layout_marginBottom="4dp"/>
                 <TextView android:id="@+id/master_vol_val" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-0 dB" android:textColor="#FFD700" android:textSize="12sp" android:layout_marginBottom="4dp"/>
                 <SeekBar android:id="@+id/slider_master" android:layout_width="match_parent" android:layout_height="wrap_content" android:progress="65" android:max="100" android:progressTint="#FFD700" android:thumbTint="#FFFFFF" android:layout_marginBottom="16dp"/>
