@@ -86,11 +86,18 @@ class MainActivity : Activity() {
         }
 
         // ==============================================
-        // ✅ MENU OPTIONS — KUMPLETO NA! MAY MIXER NA!
+        // ✅ MENU OPTIONS — MAY ERROR TRAP NA ANG MIXER! 🎚️✅
         // ==============================================
         findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             drawerLayout.closeDrawer(Gravity.START)
-            startActivity(Intent(this, MixerActivity::class.java))
+            try {
+                val intent = Intent(this, MixerActivity::class.java)
+                startActivity(intent)
+            } catch (e: Exception) {
+                // ✅ HINDI NA MAG-CRASH — MAGPAPAKITA NG MENSAHE AT MANANATILI SA MAIN!
+                Toast.makeText(this, "⚠️ Hindi mabuksan ang Mixer — babalik sa Main", Toast.LENGTH_LONG).show()
+                Log.e("MIXER", "Error pagbukas ng Mixer: ${e.message}", e)
+            }
         }
 
         findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
