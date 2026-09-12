@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-12 17:56 UTC
-🏷️ **Bersyon:** v1.0.75
+📅 **Petsa:** 2026-09-12 18:36 UTC
+🏷️ **Bersyon:** v1.0.76
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-12 17:56:34 UTC
-🏷️ BERSYON:    v1.0.75
+⏰ ORAS:       2026-09-12 18:36:55 UTC
+🏷️ BERSYON:    v1.0.76
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.75.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.76.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -58,13 +58,13 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:desugarReleaseFileDependencies
+> Task :app:processReleaseManifestForPackage
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:mergeReleaseArtProfile
+> Task :app:desugarReleaseFileDependencies
 > Task :app:processReleaseResources
 > Task :app:mergeExtDexRelease
+> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
@@ -78,7 +78,7 @@ Recommendation: remove package="com.martodosko.studio" from the source AndroidMa
 > Task :app:optimizeReleaseResources
 
 > Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:234:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:241:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
 
 > Task :app:compileReleaseJavaWithJavac NO-SOURCE
 > Task :app:generateReleaseLintVitalReportModel
@@ -95,7 +95,7 @@ w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 > Task :app:lintVitalRelease
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 1m 21s
+BUILD SUCCESSFUL in 1m 14s
 44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
