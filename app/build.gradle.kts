@@ -1,3 +1,8 @@
+// ==================================================
+// FILE: build.gradle.kts
+// VERSION: 1.0.61
+// UPDATED: 2026-09-12
+// ==================================================
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
