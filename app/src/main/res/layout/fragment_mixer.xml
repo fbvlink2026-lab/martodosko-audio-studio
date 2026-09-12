@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: fragment_mixer.xml — HAKBANG 1: SIMPLE BASE -->
-<!-- VERSION: 1.0.62 — BUG HUNTING MODE → HAKBANG HAKBANG -->
+<!-- FILE: fragment_mixer.xml — HORIZONTAL SLIDERS ✅ -->
+<!-- VERSION: 1.0.64 — AYON SA PLANO: HORIZONTAL L/R/MASTER -->
 <!-- UPDATED: 2026-09-13 -->
 <!-- ================================================== -->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#080810">
+    android:background="#080810"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +18,7 @@
         android:padding="8dp">
 
         <!-- ============================================== -->
-        <!-- 🎛️ KALIWA — 1 CHANNEL — MGA PIHITAN -->
+        <!-- 🎛️ KALIWA — 1 CHANNEL — BUONG PIHITAN -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="0dp"
@@ -26,165 +27,136 @@
             android:orientation="vertical"
             android:layout_marginEnd="8dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- 📌 CHANNEL HEADER -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🎤 CHANNEL — VOCALS"
-                android:textColor="#40E0D0"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:padding="8dp"/>
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:background="#12121F"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🎤 VOCAL CHANNEL"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <ToggleButton
+                    android:id="@+id/btn_mute"
+                    android:layout_width="70dp"
+                    android:layout_height="32dp"
+                    android:textOff="MUTE"
+                    android:textOn="🔇 MUTED"
+                    android:background="#2A2A3C"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:minWidth="0dp"/>
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#333344"/>
+                android:background="#333344"
+                android:layout_marginBottom="8dp"/>
 
-            <!-- ✅ HAKBANG 1 — Ilang pihitan lang muna -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="GAIN"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"/>
-
-                <ImageView
-                    android:id="@+id/knob_gain"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_knob"
-                    android:layout_marginStart="8dp"/>
-
-                <TextView
-                    android:id="@+id/val_gain"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="0 dB"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:gravity="end"
-                    android:layout_marginStart="8dp"/>
-            </LinearLayout>
-
-            <!-- ✅ Bass -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="BASS"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"/>
-
-                <ImageView
-                    android:id="@+id/knob_bass"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_knob"
-                    android:layout_marginStart="8dp"/>
-
-                <TextView
-                    android:id="@+id/val_bass"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="0 dB"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:gravity="end"
-                    android:layout_marginStart="8dp"/>
-            </LinearLayout>
-
-            <!-- ✅ Treble -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="TREBLE"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"/>
-
-                <ImageView
-                    android:id="@+id/knob_treble"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_knob"
-                    android:layout_marginStart="8dp"/>
-
-                <TextView
-                    android:id="@+id/val_treble"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="0 dB"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:gravity="end"
-                    android:layout_marginStart="8dp"/>
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- ============================================== -->
-        <!-- 🎚️ KANAN — SLIDERS — HAKBANG 1: ITO LANG MUNA -->
-        <!-- ============================================== -->
-        <LinearLayout
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginStart="8dp">
-
+            <!-- 🎚️ EQ SECTION -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OUTPUT"
-                android:textColor="#40E0D0"
-                android:textSize="14sp"
+                android:text="EQUALIZER"
+                android:textColor="#888888"
+                android:textSize="12sp"
                 android:textStyle="bold"
-                android:padding="8dp"/>
+                android:paddingStart="8dp"
+                android:layout_marginBottom="4dp"/>
 
-            <!-- LEFT -->
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- GAIN -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="L"
-                android:textColor="#888888"
-                android:textSize="11sp"/>
-            <SeekBar
-                android:id="@+id/slider_left"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:progress="50"/>
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="GAIN" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_gain" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_gain" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
 
-            <!-- RIGHT -->
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- BASS -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="R"
-                android:textColor="#888888"
-                android:textSize="11sp"/>
-            <SeekBar
-                android:id="@+id/slider_right"
-                android:layout_width="80dp"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="BASS" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_bass" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_bass" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- LOW-MID -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:progress="50"/>
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="LOW-MID" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_lowmid" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_lowmid" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- MID -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="MID" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_mid" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_mid" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- HIGH-MID -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="HIGH-MID" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_highmid" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_highmid" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- TREBLE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="TREBLE" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_treble" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_treble" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- PRESENCE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="PRESENCE" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_presence" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_presence" android:layout_width="55dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -192,27 +164,175 @@
                 android:background="#333344"
                 android:layout_marginVertical="8dp"/>
 
-            <!-- MASTER VOLUME -->
+            <!-- 🎚️ EFFECTS SECTION -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MASTER"
-                android:textColor="#FF6B6B"
-                android:textSize="11sp"
-                android:textStyle="bold"/>
+                android:text="EFFECTS"
+                android:textColor="#888888"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:paddingStart="8dp"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- REVERB -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="REVERB" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_reverb" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_reverb" android:layout_width="55dp" android:text="0%" android:textColor="#40E0D0" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- DELAY -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="DELAY" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_delay" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_delay" android:layout_width="55dp" android:text="0ms" android:textColor="#40E0D0" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- COMPRESSOR -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="COMPRESSOR" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_compressor" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_compressor" android:layout_width="55dp" android:text="0%" android:textColor="#FF6B6B" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- PAN -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:gravity="center_vertical">
+                <TextView android:layout_width="80dp" android:text="PAN" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                <ImageView android:id="@+id/knob_pan" android:layout_width="44dp" android:layout_height="44dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_pan" android:layout_width="55dp" android:text="CENTER" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="end"/>
+            </LinearLayout>
+
+            <!-- VOLUME -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:background="#1A1A2E"
+                android:layout_marginTop="4dp">
+                <TextView android:layout_width="80dp" android:text="VOLUME" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                <ImageView android:id="@+id/knob_vol" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+                <TextView android:id="@+id/val_vol" android:layout_width="55dp" android:text="0 dB" android:textColor="#FF6B6B" android:textSize="13sp" android:textStyle="bold" android:gravity="end"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ============================================== -->
+        <!-- 🎚️ KANAN — HORIZONTAL SLIDERS ✅ KALIWA-PAKANAN -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="4dp">
+
+            <!-- 📌 OUTPUT HEADER -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OUTPUT"
+                android:textColor="#40E0D0"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:padding="12dp"/>
+
+            <!-- MONO BUTTON -->
+            <ToggleButton
+                android:id="@+id/btn_mono"
+                android:layout_width="100dp"
+                android:layout_height="36dp"
+                android:textOff="STEREO"
+                android:textOn="🔘 MONO"
+                android:background="#2A2A3C"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- LEFT — HORIZONTAL ✅ -->
+            <TextView android:layout_width="wrap_content" android:text="LEFT" android:textColor="#888888" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+            <SeekBar
+                android:id="@+id/slider_left"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:progress="50"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- RIGHT — HORIZONTAL ✅ -->
+            <TextView android:layout_width="wrap_content" android:text="RIGHT" android:textColor="#888888" android:textSize="12sp" android:layout_marginBottom="4dp"/>
+            <SeekBar
+                android:id="@+id/slider_right"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:progress="50"
+                android:layout_marginBottom="20dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#333344"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- MASTER — HORIZONTAL ✅ PINAKAMAHABA -->
+            <TextView android:layout_width="wrap_content" android:text="MASTER VOLUME" android:textColor="#FF6B6B" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="4dp"/>
             <SeekBar
                 android:id="@+id/slider_master"
-                android:layout_width="80dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:progress="65"/>
+                android:progress="65"
+                android:layout_marginBottom="8dp"/>
             <TextView
                 android:id="@+id/master_vol_val"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="0 dB"
                 android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- MUTE ALL + BYPASS -->
+            <ToggleButton
+                android:id="@+id/btn_mute_all"
+                android:layout_width="100dp"
+                android:layout_height="36dp"
+                android:textOff="MUTE ALL"
+                android:textOn="🔇 ALL MUTED"
+                android:background="#2A2A3C"
+                android:textColor="#FFFFFF"
                 android:textSize="11sp"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginBottom="8dp"/>
+
+            <ToggleButton
+                android:id="@+id/btn_bypass"
+                android:layout_width="100dp"
+                android:layout_height="36dp"
+                android:textOff="BYPASS"
+                android:textOn="✅ ACTIVE"
+                android:background="#2A2A3C"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"/>
 
         </LinearLayout>
 
