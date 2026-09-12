@@ -1,85 +1,111 @@
+// ==================================================
+// FILE: MixerActivity.kt — TUGMA SA fragment_mixer.xml ✅
+// VERSION: 1.0.62 — HAKBANG 1: TUGMA SA KASALUKUYANG XML
+// UPDATED: 2026-09-13
+// ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.ToggleButton
-import android.widget.ImageView
-import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import kotlin.math.roundToInt
 
 class MixerActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_mixer)
+        setContentView(R.layout.fragment_mixer) // ✅ TAMA — fragment_mixer.xml
+
+        Toast.makeText(this, "🎚️ Mixer Loaded — Hakbang 1", Toast.LENGTH_SHORT).show()
 
         // ==============================================
-        // ✅ CHANNEL 1 — VOCAL / MIC
+        // ✅ KALIWA — MGA PIHITAN (NASA XML NA!)
         // ==============================================
-        val ch1Volume = findViewById<SeekBar>(R.id.ch1_volume)
-        val ch1VolumeText = findViewById<TextView>(R.id.ch1_volume_text)
+        setupKnob(R.id.knob_gain, R.id.val_gain, -12, 12, "dB")
+        setupKnob(R.id.knob_bass, R.id.val_bass, -12, 12, "dB")
+        setupKnob(R.id.knob_treble, R.id.val_treble, -12, 12, "dB")
 
-        ch1Volume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val db = ((progress - 50) * 0.6).roundToInt()
-                ch1VolumeText.text = if (db >= 0) "+$db dB" else "$db dB"
+        // ==============================================
+        // ✅ KANAN — SLIDERS (NASA XML NA!)
+        // ==============================================
+        val sliderLeft = findViewById<SeekBar>(R.id.slider_left)
+        val sliderRight = findViewById<SeekBar>(R.id.slider_right)
+        val sliderMaster = findViewById<SeekBar>(R.id.slider_master)
+        val masterVal = findViewById<TextView>(R.id.master_vol_val)
+
+        // Left Slider
+        sliderLeft.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                val pos = ((p - 50) / 5f).roundToInt()
+                val text = when {
+                    pos < -1 -> "L ${pos * -1}"
+                    pos > 1 -> "R $pos"
+                    else -> "C"
+                }
+                findViewById<TextView>(R.id.slider_left)?.contentDescription = text
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
 
-        // ✅ CH 1 — Mute + Solo
-        findViewById<ToggleButton>(R.id.ch1_mute).setOnCheckedChangeListener { _, isChecked ->
-            ch1Volume.alpha = if (isChecked) 0.3f else 1.0f
-        }
-
-        // ==============================================
-        // ✅ CHANNEL 2 — GUITAR / IN
-        // ==============================================
-        val ch2Volume = findViewById<SeekBar>(R.id.ch2_volume)
-        val ch2VolumeText = findViewById<TextView>(R.id.ch2_volume_text)
-
-        ch2Volume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val db = ((progress - 50) * 0.6).roundToInt()
-                ch2VolumeText.text = if (db >= 0) "+$db dB" else "$db dB"
+        // Right Slider
+        sliderRight.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                val pos = ((p - 50) / 5f).roundToInt()
+                val text = when {
+                    pos < -1 -> "L ${pos * -1}"
+                    pos > 1 -> "R $pos"
+                    else -> "C"
+                }
+                findViewById<TextView>(R.id.slider_right)?.contentDescription = text
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
 
-        findViewById<ToggleButton>(R.id.ch2_mute).setOnCheckedChangeListener { _, isChecked ->
-            ch2Volume.alpha = if (isChecked) 0.3f else 1.0f
-        }
-
-        // ==============================================
-        // ✅ MASTER VOLUME
-        // ==============================================
-        val masterVolume = findViewById<SeekBar>(R.id.master_volume)
-        val masterVolumeText = findViewById<TextView>(R.id.master_volume_text)
-
-        masterVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val db = ((progress - 50) * 0.6).roundToInt()
-                masterVolumeText.text = "MASTER: ${if (db >= 0) "+$db" else "$db"} dB"
+        // Master Volume Slider
+        sliderMaster.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                val db = ((p - 65) * 0.3).roundToInt()
+                masterVal.text = if (db >= 0) "+$db dB" else "$db dB"
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
+    }
 
-        // ==============================================
-        // ✅ EFFECTS — Reverb / Delay / Distortion
-        // ==============================================
-        findViewById<ToggleButton>(R.id.effect_reverb).setOnCheckedChangeListener { button, isChecked ->
-            button.setBackgroundColor(if (isChecked) 0xFF40E0D0.toInt() else 0xFF2A2A3C.toInt())
+    // ==============================================
+    // ✅ PIHITAN CONTROL — HILA PATAAS/PABABA
+    // ==============================================
+    private fun setupKnob(knobId: Int, valueId: Int, min: Int, max: Int, unit: String) {
+        val knob = findViewById<View>(knobId)
+        val valueText = findViewById<TextView>(valueId)
+        val range = max - min
+        var currentValue = (min + max) / 2
+
+        fun updateValue() {
+            valueText.text = when {
+                unit == "dB" && currentValue >= 0 -> "+$currentValue dB"
+                unit.isNotEmpty() -> "$currentValue $unit"
+                else -> "$currentValue"
+            }
+            // Paikutin ang knob (-135° hanggang +135°)
+            knob.rotation = ((currentValue - min) / range.toFloat() * 270f) - 135f
         }
-        findViewById<ToggleButton>(R.id.effect_delay).setOnCheckedChangeListener { button, isChecked ->
-            button.setBackgroundColor(if (isChecked) 0xFF40E0D0.toInt() else 0xFF2A2A3C.toInt())
-        }
-        findViewById<ToggleButton>(R.id.effect_distortion).setOnCheckedChangeListener { button, isChecked ->
-            button.setBackgroundColor(if (isChecked) 0xFFFF6B6B.toInt() else 0xFF2A2A3C.toInt())
+
+        updateValue()
+
+        knob.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
+                val percent = (1f - (event.y / knob.height).coerceIn(0f, 1f))
+                currentValue = (min + percent * range).roundToInt()
+                updateValue()
+            }
+            true
         }
     }
 }
