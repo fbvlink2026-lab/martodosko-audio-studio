@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-12 15:00 UTC
-🏷️ **Bersyon:** v1.0.64
+📅 **Petsa:** 2026-09-12 15:31 UTC
+🏷️ **Bersyon:** v1.0.65
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-12 15:00:35 UTC
-🏷️ BERSYON:    v1.0.64
+⏰ ORAS:       2026-09-12 15:31:28 UTC
+🏷️ BERSYON:    v1.0.65
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -39,7 +39,7 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseResources FAILED
 
 > Task :app:parseReleaseLocalResources FAILED
-[Fatal Error] activity_mixer.xml:263:47: The entity name must immediately follow the '&' in the entity reference.
+[Fatal Error] fragment_mixer.xml:263:47: The entity name must immediately follow the '&' in the entity reference.
 
 FAILURE: Build completed with 2 failures.
 
@@ -48,7 +48,7 @@ FAILURE: Build completed with 2 failures.
 * What went wrong:
 Execution failed for task ':app:mergeReleaseResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
-   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_mixer.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[263,47]
+   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_mixer.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[263,47]
      Message: The entity name must immediately follow the '&' in the entity reference.). Check logs for more details.
 
 * Try:
@@ -63,7 +63,7 @@ Execution failed for task ':app:mergeReleaseResources'.
 * What went wrong:
 Execution failed for task ':app:parseReleaseLocalResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.ParseLibraryResourcesTask$ParseResourcesRunnable
-   > Failed to parse XML file '/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/intermediates/packaged_res/release/layout/activity_mixer.xml'
+   > Failed to parse XML file '/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/intermediates/packaged_res/release/layout/fragment_mixer.xml'
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -72,7 +72,7 @@ Execution failed for task ':app:parseReleaseLocalResources'.
 > Get more help at https://help.gradle.org.
 ==============================================================================
 
-BUILD FAILED in 27s
+BUILD FAILED in 22s
 9 actionable tasks: 8 executed, 1 up-to-date
 
 ==================================================
