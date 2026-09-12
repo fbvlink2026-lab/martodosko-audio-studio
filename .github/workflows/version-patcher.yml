@@ -1,8 +1,8 @@
 # ==================================================
 # FILE: version-patcher.yml
-# VERSION: 1.0.8 — FIXED SYNTAX + AUTO-UPDATE VERSION
+# VERSION: 1.0.9 — FIXED INPUTS — REMOVED REQUIRED
 # UPDATED: 2026-09-12
-# PURPOSE: Add/update headers — app/ folder only
+# PURPOSE: Add/update headers — app/ folder only + auto-update version
 # ==================================================
 
 name: Version Header Patcher
@@ -11,12 +11,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Mode: all_app OR specific_app'
-        required: true
+        description: 'Mode: all_app (lahat sa app/) OR specific_app (partikular na files)'
         default: 'all_app'
       specific_files:
-        description: 'Files (if specific_app): comma separated paths'
-        required: false
+        description: 'Kung specific_app — ilagay ang path (hal: app/src/main/AndroidManifest.xml)'
         default: ''
 
 jobs:
@@ -43,7 +41,7 @@ jobs:
           DATE=$(date +%Y-%m-%d)
           echo "date=$DATE" >> $GITHUB_OUTPUT
 
-      - name: Process Files
+      - name: Process Files — Add or Update Header
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
           DATE="${{ steps.get-version.outputs.date }}"
@@ -54,24 +52,29 @@ jobs:
             local file="$1"
             local filename=$(basename "$file")
             
+            # ✅ app/ folder lang
             [[ ! "$file" == app/* ]] && return
+            # ✅ Suportadong file types lang
             [[ "$file" != *.xml && "$file" != *.kt && "$file" != *.kts && "$file" != *.gradle ]] && return
             
+            # ✅ May header na? I-check ang version
             if grep -q "VERSION:" "$file"; then
               CURRENT_VER=$(grep -o 'VERSION: *[^ ]*' "$file" | head -n1 | sed 's/VERSION: *//')
               if [ "$CURRENT_VER" = "$VERSION" ]; then
-                echo "SKIP: $filename — already v$VERSION"
+                echo "✅ SKIP: $filename — already v$VERSION"
                 return
               else
-                echo "UPDATE: $filename — v$CURRENT_VER → v$VERSION"
+                echo "🔄 UPDATE: $filename — v$CURRENT_VER → v$VERSION"
                 sed -i "s/VERSION: *[^ ]*/VERSION: $VERSION/" "$file"
                 sed -i "s/UPDATED: *[0-9-]*/UPDATED: $DATE/" "$file"
                 return
               fi
             fi
             
-            echo "ADD: $filename — new header v$VERSION"
+            # ✅ Walang header — IDADAGDAG
+            echo "➕ ADD: $filename — new header v$VERSION"
             local first_line=$(head -n 1 "$file")
+            
             if [[ "$file" == *.xml ]]; then
               if [[ "$first_line" == "<?xml"* ]]; then
                 local rest=$(tail -n +2 "$file")
@@ -94,7 +97,9 @@ jobs:
             fi
           }
           
+          # ✅ Ayon sa pinili
           if [ "$MODE" = "specific_app" ] && [ -n "$SPECIFIC_INPUT" ]; then
+            echo "📂 Proseso ng mga piniling file..."
             IFS=',' read -ra FILES <<< "$SPECIFIC_INPUT"
             for fname in "${FILES[@]}"; do
               fname=$(echo "$fname" | xargs)
@@ -102,6 +107,7 @@ jobs:
               [ -f "$fname" ] && process_file "$fname"
             done
           else
+            echo "📂 Proseso ng lahat ng files sa app/ folder..."
             find ./app -type f \( -name "*.xml" -o -name "*.kt" -o -name "*.kts" -o -name "*.gradle" \) \
               -not -path "*/build/*" -not -path "*/.git/*" | while read file; do
               process_file "$file"
@@ -115,8 +121,9 @@ jobs:
           git add -A
           VERSION="${{ steps.get-version.outputs.version }}"
           if git diff --staged --quiet; then
-            echo "No changes needed"
+            echo "✅ Walang kailangang baguhin — lahat tama na!"
           else
-            git commit -m "Update headers — v$VERSION"
+            git commit -m "🤖 Update headers — v$VERSION"
             git push
+            echo "✅ Tapos na! Headers updated to v$VERSION"
           fi
