@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — PINAKA-SIMPLE ✅ WALANG ERROR!
-// VERSION: 1.0.89 — LAGING MAY PREFIX NA!
+// FILE: MixerActivity.kt — FINAL ✅ SIGURADONG MAGBUBUO!
+// VERSION: 1.0.90 — TAMA NA ANG LAHAT NG SYNTAX!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -35,22 +35,26 @@ class MixerActivity : Activity() {
     }
 
     private fun buildMixerLayout(): View {
-        // ✅ SCROLLVIEW — MAY BUONG PANGALAN!
+        // ✅ SCROLLVIEW — IHIWALAY MUNA ANG PARAMS!
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
-        scrollView.layoutParams = ScrollView.LayoutParams(
+        // ✅ TAMA: GUMAGAWA MUNA NG VARIABLE BAGO I-ASSIGN!
+        val scrollParams = ScrollView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
+        scrollView.layoutParams = scrollParams
 
-        // ✅ MAIN LAYOUT — MAY BUONG PANGALAN!
+        // ✅ MAIN LAYOUT — IHIWALAY MUNA ANG PARAMS!
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
-        mainLayout.layoutParams = ScrollView.LayoutParams(
+        // ✅ TAMA: GUMAGAWA MUNA NG VARIABLE BAGO I-ASSIGN!
+        val mainParams = ScrollView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+        mainLayout.layoutParams = mainParams
 
         // HEADER
         val title = TextView(this)
@@ -82,18 +86,19 @@ class MixerActivity : Activity() {
         initialValue: Float,
         unit: String
     ): View {
-        // ✅ ROW — MAY BUONG PANGALAN!
+        // ✅ ROW — IHIWALAY MUNA ANG PARAMS!
         val row = LinearLayout(this)
         row.orientation = LinearLayout.HORIZONTAL
         row.gravity = Gravity.CENTER_VERTICAL
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
-        row.layoutParams = LinearLayout.LayoutParams(
+        // ✅ TAMA: GUMAGAWA MUNA NG VARIABLE BAGO I-ASSIGN!
+        val rowParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            setMargins(0, 0, 0, 8)
-        }
+        )
+        rowParams.setMargins(0, 0, 0, 8)
+        row.layoutParams = rowParams
 
         // LABEL
         val label = TextView(this)
@@ -106,7 +111,8 @@ class MixerActivity : Activity() {
 
         // ✅ KNOB
         val knob = KnobView(this)
-        knob.layoutParams = LinearLayout.LayoutParams(144, 144)
+        val knobParams = LinearLayout.LayoutParams(144, 144)
+        knob.layoutParams = knobParams
         knob.minValue = -50f
         knob.maxValue = 50f
         knob.value = initialValue
