@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — NANDOON ANG dB! ✅ 0-10 + dB
-// VERSION: 1.0.102 — NUMERO SA PALIGID HINDI GUMAGALAW, MAY dB SA HALAGA!
+// FILE: MixerActivity.kt — NANDOON ANG dB ✅ TUGMA SA KNOB!
+// VERSION: 1.0.103 — 0=ibaba ↓, 1-10 lahat naroon, may dB!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,18 +21,16 @@ class MixerActivity : Activity() {
             val gainKnob = findViewById<KnobView>(R.id.knob_gain)
             val gainValue = findViewById<TextView>(R.id.tv_gain_value)
 
-            // ✅ 0 hanggang 10 — NUMERO SA PALIGID HINDI GUMAGALAW!
-            // 0 = ibaba-kaliwa ↙️ , 10 = ibaba-kanan ↘️
+            // ✅ 0 = PINAKA-IBABA ↓, 10 = KANAN-IBABA ↘️
             gainKnob.minValue = 0f
             gainKnob.maxValue = 10f
             gainKnob.value = 0f
 
             gainKnob.onValueChange = { newVal ->
-                // ✅ NANDOON ANG dB — HINDI TINANGGAL!
-                gainValue.text = "${newVal.roundToInt()} dB"
+                gainValue.text = "${newVal.roundToInt()} dB" // ✅ NANDOON ANG dB!
             }
 
-            Toast.makeText(this, "🎚️ 0-10 + dB — OK!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "🎚️ 0=ibaba ↓ — OK!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
