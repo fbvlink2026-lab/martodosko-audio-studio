@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FILE: fragment_mixer.xml — STEP 4: ALL KNOBS UNCOMMENTED -->
-<!-- VERSION: 1.0.74 — 12 KNOBS TOTAL ✅ -->
+<!-- FILE: fragment_mixer.xml — FIXED & CHARACTER ERROR -->
+<!-- VERSION: 1.0.75 — ALL 12 KNOBS + NO XML ERRORS ✅ -->
 <!-- UPDATED: 2026-09-13 -->
 
 <ScrollView
@@ -62,7 +62,7 @@
             android:paddingStart="8dp"
             android:layout_marginBottom="6dp"/>
 
-        <!-- ✅ GAIN -->
+        <!-- GAIN -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             <TextView android:id="@+id/val_gain" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ BASS -->
+        <!-- BASS -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
             <TextView android:id="@+id/val_bass" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ LOW-MID -->
+        <!-- LOW-MID -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
             <TextView android:id="@+id/val_lowmid" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ MID -->
+        <!-- MID -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             <TextView android:id="@+id/val_mid" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ HIGH-MID -->
+        <!-- HIGH-MID -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
             <TextView android:id="@+id/val_highmid" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ TREBLE -->
+        <!-- TREBLE -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
             <TextView android:id="@+id/val_treble" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ PRESENCE -->
+        <!-- PRESENCE -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
             android:paddingStart="8dp"
             android:layout_marginBottom="6dp"/>
 
-        <!-- ✅ REVERB -->
+        <!-- REVERB -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -175,7 +175,7 @@
             <TextView android:id="@+id/val_reverb" android:layout_width="60dp" android:text="0%" android:textColor="#40E0D0" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ DELAY -->
+        <!-- DELAY -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -187,7 +187,7 @@
             <TextView android:id="@+id/val_delay" android:layout_width="60dp" android:text="0ms" android:textColor="#40E0D0" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ COMPRESSOR -->
+        <!-- COMPRESSOR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
             <TextView android:id="@+id/val_compressor" android:layout_width="60dp" android:text="0%" android:textColor="#FF6B6B" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ PAN -->
+        <!-- PAN -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
             <TextView android:id="@+id/val_pan" android:layout_width="60dp" android:text="CENTER" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ✅ VOLUME — PINAKA-IBABA NG CHANNEL -->
+        <!-- VOLUME — PINAKA-IBABA NG CHANNEL -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -225,13 +225,13 @@
             <TextView android:id="@+id/val_vol" android:layout_width="60dp" android:text="0 dB" android:textColor="#FF6B6B" android:textSize="14sp" android:textStyle="bold" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- SLIDERS — STILL COMMENTED FOR NEXT STEP -->
-        <!-- BUTTONS — STILL COMMENTED FOR NEXT STEP -->
+        <!-- SLIDERS — SUSUNOD NA HAKBANG -->
+        <!-- BUTTONS — SUSUNOD NA HAKBANG -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sliders & Buttons — susunod na hakbang"
+            android:text="Sliders at Buttons — susunod na hakbang"
             android:textColor="#666666"
             android:textSize="12sp"
             android:layout_gravity="center_horizontal"
