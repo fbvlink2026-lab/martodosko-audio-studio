@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — TOTOONG MIXER SCALE ✅
-// VERSION: 1.0.103 — 0=ITAAS GITNA, -50 KALIWA, +50 KANAN!
+// FILE: ControlsActivity.kt — TOTOONG PRO MIXER KNOB ✅
+// VERSION: 1.0.104 — 0=ITAAS, -50 KALIWA, +50 KANAN, PANTAY ANG PAGITAN!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -28,14 +28,15 @@ class KnobView @JvmOverloads constructor(
             onValueChange?.invoke(field)
         }
 
-    var minValue: Float = -50f   // ✅ PINAKAKALIWA IBABA
-    var maxValue: Float = 50f    // ✅ PINAKAKANAN IBABA
+    var minValue: Float = -50f   // ✅ pinakakaliwa ibaba
+    var maxValue: Float = 50f    // ✅ pinakakanan ibaba
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ TOTOONG MIXER Pwesto: 0 = ITAAS GITNA, -50 = KALIWA IBABA, +50 = KANAN IBABA
-    private val zeroAngle = -90f    // ✅ 0 = NASA PINAKA-ITAAS GITNA ⬆️
-    private val minAngle = 135f    // ✅ -50 = KALIWA IBABA ↙️
-    private val maxAngle = 45f      // ✅ +50 = KANAN IBABA ↘️
+    // ✅ TOTOONG MIXER: 0 = ITAAS GITNA, 270° kabuuang ikot
+    private val totalAngleRange = 270f
+    private val startAngle = -135f   // pinakakaliwa = -50 dB
+    private val zeroAngle = -90f     // ✅ 0 dB = ITAAS GITNA ⬆️
+    private val endAngle = 135f      // pinakakanan = +50 dB
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -56,7 +57,7 @@ class KnobView @JvmOverloads constructor(
     }
 
     private val paintTick = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#888899")
+        color = Color.parseColor("#777788")
         style = Paint.Style.STROKE
         strokeWidth = 2f
         strokeCap = Paint.Cap.ROUND
@@ -71,7 +72,7 @@ class KnobView @JvmOverloads constructor(
 
     private val paintNumber = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
-        textSize = 20f
+        textSize = 18f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
     }
@@ -81,32 +82,22 @@ class KnobView @JvmOverloads constructor(
         val centerX = width / 2f
         val centerY = height / 2f
         val radius = minOf(centerX, centerY) - 8f
-        val tickOuter = radius + 16f
+        val tickOuter = radius + 14f
         val tickInner = radius + 2f
-        val numberRadius = radius + 48f
+        val numberRadius = radius + 44f
 
         // ==================================================
-        // ✅ TOTOONG MIXER MARKA: -50 -40 -30 -20 -10 0 +10 +20 +30 +40 +50
+        // ✅ TOTOONG PRO MIXER SCALE: -50 -40 -30 -20 -10 0 +10 +20 +30 +40 +50
         // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
 
         for (mark in marks) {
-            // ✅ I-compute ang anggulo para sa bawat marka
-            val angle = when {
-                mark == 0 -> zeroAngle
-                mark < 0 -> {
-                    // Negatibo: 0 → -50 (kaliwa pababa)
-                    val progress = (0 - mark) / 50f
-                    zeroAngle + progress * (minAngle - zeroAngle)
-                }
-                else -> {
-                    // Positibo: 0 → +50 (kanan pababa)
-                    val progress = mark / 50f
-                    zeroAngle + progress * (maxAngle - zeroAngle)
-                }
-            }
-
+            // ✅ PANTAY NA PAGITAN — bawat 10dB = parehong anggulo
+            val progress = (mark - minValue) / (maxValue - minValue) // 0.0 hanggang 1.0
+            val angle = startAngle + progress * totalAngleRange
             val rad = Math.toRadians(angle.toDouble())
+
+            // ✅ Kulay ng guhit — hanggang sa kasalukuyang halaga
             val isActive = if (value >= 0) mark in 0..value.toInt() else mark in value.toInt()..0
             val tickPaint = if (isActive) paintTickActive else paintTick
 
@@ -117,10 +108,14 @@ class KnobView @JvmOverloads constructor(
             val endY = centerY + tickOuter * sin(rad).toFloat()
             canvas.drawLine(startX, startY, endX, endY, tickPaint)
 
-            // ✅ NUMERO — LITAW SA PALIGID!
+            // ✅ NUMERO — LITAW SA LABAS
             val numX = centerX + numberRadius * cos(rad).toFloat()
-            val numY = centerY + numberRadius * sin(rad).toFloat() + 7f
-            val label = if (mark > 0) "+$mark" else "$mark"
+            val numY = centerY + numberRadius * sin(rad).toFloat() + 6f
+            val label = when {
+                mark == 0 -> "0"
+                mark > 0 -> "+$mark"
+                else -> "$mark"
+            }
             canvas.drawText(label, numX, numY, paintNumber)
         }
 
@@ -130,17 +125,8 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
         // ✅ INDICATOR — TUMUTURO SA TAMANG HALAGA!
-        val currentAngle = when {
-            value == 0f -> zeroAngle
-            value < 0f -> {
-                val progress = (0 - value) / 50f
-                zeroAngle + progress * (minAngle - zeroAngle)
-            }
-            else -> {
-                val progress = value / 50f
-                zeroAngle + progress * (maxAngle - zeroAngle)
-            }
-        }
+        val progress = (value - minValue) / (maxValue - minValue)
+        val currentAngle = startAngle + progress * totalAngleRange
         val rad = Math.toRadians(currentAngle.toDouble())
         val indicatorLen = radius * 0.7f
 
