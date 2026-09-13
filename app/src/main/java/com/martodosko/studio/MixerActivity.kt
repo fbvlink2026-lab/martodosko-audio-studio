@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ 0&10 PINAKA-IBABA + NANDOON ANG dB!
-// VERSION: 1.0.104 — TUGMA SA KNOB: 0⬇️ 10⬇️ magkatabi, LAHAT 0-10 LITAW!
+// FILE: MixerActivity.kt — IBALIK ANG TUNAY NA SAKLAW!
+// VERSION: 1.0.101 — -50 hanggang 50, 0-10 lang ang display!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,21 +21,16 @@ class MixerActivity : Activity() {
             val gainKnob = findViewById<KnobView>(R.id.knob_gain)
             val gainValue = findViewById<TextView>(R.id.tv_gain_value)
 
-            // ✅ 0 hanggang 10 — TUGMA SA KNOB:
-            // 0 = PINAKA-IBABA KALIWA ⬇️ , 10 = PINAKA-IBABA KANAN ⬇️
-            // Magkatabi lang ang 0 at 10 — may kaunting pagitan lang!
-            // LAHAT NG NUMERO 0-10 — LITAW LAHAT! Walang nakatago!
-            gainKnob.minValue = 0f
-            gainKnob.maxValue = 10f
-            gainKnob.value = 0f  // ✅ Simula sa 0 — PINAKA-IBABA KALIWA
+            // ✅ IBALIK ANG TUNAY NA SAKLAW — tulad ng v1.0.95!
+            gainKnob.minValue = -50f
+            gainKnob.maxValue = 50f
+            gainKnob.value = 0f
 
             gainKnob.onValueChange = { newVal ->
-                // ✅ NANDOON ANG dB — HINDI TINANGGAL!
-                // Halimbawa: "0 dB", "5 dB", "10 dB"
                 gainValue.text = "${newVal.roundToInt()} dB"
             }
 
-            Toast.makeText(this, "🎚️ 0-10 — 0&10 PINAKA-IBABA + dB — OK!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "🎚️ Tunay na Saklaw: -50 hanggang 50", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
