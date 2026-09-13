@@ -1,8 +1,7 @@
 // ==================================================
-// FILE: ControlsActivity.kt — REUSABLE CUSTOM CONTROLS ✅
-// VERSION: 1.0.80 — KNOB + HORIZONTAL SLIDER + BUTTONS
+// FILE: ControlsActivity.kt — INAYOS NA ANG SYNTAX ✅
+// VERSION: 1.0.82 — WALANG ERROR SA KOTLIN
 // UPDATED: 2026-09-13
-// PURPOSE: Reusable na mga kontrol — magagamit sa Mixer, FX, at iba pa
 // ==================================================
 package com.martodosko.studio
 
@@ -12,7 +11,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import kotlin.math.abs
 
 // ==================================================
@@ -62,12 +60,9 @@ class KnobView @JvmOverloads constructor(
         val centerY = height / 2f
         val radius = minOf(centerX, centerY) - 8f
 
-        // Background ring
         canvas.drawCircle(centerX, centerY, radius, paintBg)
-        // Knob inner
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // Indicator line — nakapihit ayon sa value
         val angleRange = endAngle - startAngle
         val progress = (value - minValue) / (maxValue - minValue)
         val currentAngle = startAngle + progress * angleRange
@@ -133,7 +128,7 @@ class HorizontalSliderView @JvmOverloads constructor(
     private val paintThumb = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
         style = Paint.Style.FILL
-        shadowLayer = 4f, 0f, 2f, Color.parseColor("#80000000")
+        setShadowLayer(4f, 0f, 2f, 0x80000000.toInt())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -141,14 +136,12 @@ class HorizontalSliderView @JvmOverloads constructor(
         val centerY = height / 2f
         val thumbRadius = 24f
 
-        // Track — buong haba
         canvas.drawRoundRect(
             0f, centerY - 8f,
             width.toFloat(), centerY + 8f,
             8f, 8f, paintTrack
         )
 
-        // Progress — mula gitna hanggang thumb
         val progressX = ((value - minValue) / (maxValue - minValue)) * width
         if (progressX > width / 2) {
             canvas.drawRoundRect(
@@ -164,7 +157,6 @@ class HorizontalSliderView @JvmOverloads constructor(
             )
         }
 
-        // Thumb — pihitan
         canvas.drawCircle(progressX, centerY, thumbRadius, paintThumb)
     }
 
@@ -203,7 +195,7 @@ class ToggleButtonView @JvmOverloads constructor(
 
     var onToggleChange: ((Boolean) -> Unit)? = null
 
-    private lateinit var labelView: TextView
+    private lateinit var labelView: android.widget.TextView
     private lateinit var indicatorView: View
 
     init {
@@ -213,15 +205,13 @@ class ToggleButtonView @JvmOverloads constructor(
         setBackgroundColor(Color.parseColor("#12121F"))
         layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
-        // Indicator — bilog na ilaw
         indicatorView = View(context)
         indicatorView.layoutParams = LayoutParams(32, 32).apply {
             setMargins(0, 0, 16, 0)
         }
         addView(indicatorView)
 
-        // Label
-        labelView = TextView(context)
+        labelView = android.widget.TextView(context)
         labelView.textSize = 14f
         labelView.setTextColor(Color.WHITE)
         addView(labelView)
