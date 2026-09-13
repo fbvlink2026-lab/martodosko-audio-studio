@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — INAYOS NA ✅ PADDING TAMA! -->
-<!-- VERSION: 1.0.94 — WALANG ERROR SA PADDING! -->
+<!-- FILE: activity_mixer.xml ✅ TAMA NA ANG PAGKAKASUNOD! -->
+<!-- VERSION: 1.0.95 — LABEL TAAS → KNOB GITNA → VALUE IBABA! -->
+<!-- UPDATED: 2026-09-14 -->
 <!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -37,40 +38,49 @@
             android:paddingBottom="16dp"
             android:background="#12121F"/>
 
-        <!-- GAIN KNOB ROW -->
+        <!-- ================================================== -->
+        <!-- ✅ KNOB ROW — TAMA NA ANG PAGKAKASUNOD! -->
+        <!-- LABEL (TAAS) → KNOB (GITNA) → VALUE (IBABA) -->
+        <!-- ================================================== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
             android:background="#12121F"
             android:layout_marginTop="8dp">
 
+            <!-- ✅ 1. PANGALAN — NASA TAAS! -->
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="GAIN"
                 android:textColor="#AAAAAA"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
 
+            <!-- ✅ 2. KNOB — NASA GITNA! -->
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
                 android:layout_width="144dp"
                 android:layout_height="144dp"/>
 
+            <!-- ✅ 3. HALAGA — NASA IBABA NG KNOB! -->
             <TextView
                 android:id="@+id/tv_gain_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0 dB"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"/>
+                android:textColor="#40E0D0"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"/>
+
         </LinearLayout>
 
     </LinearLayout>
