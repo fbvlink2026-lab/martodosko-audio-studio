@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: fragment_mixer.xml — DETECT CRASH SOURCE -->
-<!-- VERSION: 1.0.70 — LAHAT NAKAKOMENTO MUNA ✅ -->
+<!-- FILE: fragment_mixer.xml — FIXED XML COMMENT ERROR -->
+<!-- VERSION: 1.0.71 — WALANG -- SA KOMENTO ✅ -->
 <!-- UPDATED: 2026-09-13 -->
 <!-- ================================================== -->
 <ScrollView
@@ -18,7 +18,7 @@
         android:gravity="center"
         android:padding="24dp">
 
-        <!-- ✅ SIMPLE LANG MUNA — WALANG KNOB, WALANG SLIDER, WALANG BUTTON -->
+        <!-- SIMPLE LAYOUT MUNA — WALANG KNOB, WALANG SLIDER, WALANG BUTTON -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,21 +44,21 @@
             android:textSize="12sp"/>
 
         <!-- ================================================== -->
-        <!-- ⏸️ LAHAT NAKAKOMENTO MUNA — BUBUKSAN ISA-ISA: -->
+        <!-- LAHAT NAKAKOMENTO MUNA — BUBUKSAN ISA-ISA: -->
         <!-- ================================================== -->
-        <!-- 
-        📌 HAKBANG 1: KUNG GUMANA ANG ITAAS — BUBUKSAN NATIN:
-           1. ic_knob.xml → ilagay muna sa drawable
-           2. Knob 1 — GAIN → subukan → kung okay → sunod
-           3. Knob 2 — BASS → subukan → kung okay → sunod
+        <!--
+        HAKBANG 1: KUNG GUMANA ANG ITAAS — BUBUKSAN NATIN:
+           1. ic_knob.xml — ilagay muna sa drawable
+           2. Knob 1 — GAIN — subukan — kung okay — sunod
+           3. Knob 2 — BASS — subukan — kung okay — sunod
            4. ... hanggang lahat ng knob
-           5. Sliders → isa-isa
-           6. Buttons → isa-isa
+           5. Sliders — isa-isa
+           6. Buttons — isa-isa
 
-        ❌ KUNG CRASH — ALAM NATIN AGAD KUNG ALIN ANG DAHILAN!
+        KUNG CRASH — ALAM NATIN AGAD KUNG ALIN ANG DAHILAN!
         ==================================================
 
-        <!-- 🎛️ KNOBS — NAKAKOMENTO MUNA
+        KNOBS — NAKAKOMENTO MUNA
         <ImageView android:id="@+id/knob_gain" ... />
         <ImageView android:id="@+id/knob_bass" ... />
         <ImageView android:id="@+id/knob_lowmid" ... />
@@ -71,15 +71,13 @@
         <ImageView android:id="@+id/knob_compressor" ... />
         <ImageView android:id="@+id/knob_pan" ... />
         <ImageView android:id="@+id/knob_vol" ... />
-        -->
 
-        <!-- 🎚️ SLIDERS — NAKAKOMENTO MUNA
+        SLIDERS — NAKAKOMENTO MUNA
         <SeekBar android:id="@+id/slider_left" ... />
         <SeekBar android:id="@+id/slider_right" ... />
         <SeekBar android:id="@+id/slider_master" ... />
-        -->
 
-        <!-- 🔘 BUTTONS — NAKAKOMENTO MUNA
+        BUTTONS — NAKAKOMENTO MUNA
         <ToggleButton android:id="@+id/btn_mute" ... />
         <ToggleButton android:id="@+id/btn_mono" ... />
         <ToggleButton android:id="@+id/btn_mute_all" ... />
