@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — FINAL FIX ✅ KOTLIN COMPATIBLE!
-// VERSION: 1.0.85 — WALANG ERROR — TAMANG KOTLIN SYNTAX
+// FILE: MixerActivity.kt — FINAL FIX ✅ LAHAT MAY BUONG PANGALAN!
+// VERSION: 1.0.86 — WALANG ERROR — TAMA NA ANG LAHAT!
 // UPDATED: 2026-09-13
 // ==================================================
 package com.martodosko.studio
@@ -37,7 +37,7 @@ class MixerActivity : Activity() {
     private fun buildMixerLayout(): View {
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
-        // ✅ TAMANG PARAAN: BUONG PANGALAN — ScrollView.LayoutParams
+        // ✅ BUONG PANGALAN — ScrollView.LayoutParams
         scrollView.layoutParams = ScrollView.LayoutParams(
             ScrollView.LayoutParams.MATCH_PARENT,
             ScrollView.LayoutParams.MATCH_PARENT
@@ -46,7 +46,7 @@ class MixerActivity : Activity() {
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
-        // ✅ TAMANG PARAAN: BUONG PANGALAN — ScrollView.LayoutParams
+        // ✅ BUONG PANGALAN — ScrollView.LayoutParams
         mainLayout.layoutParams = ScrollView.LayoutParams(
             ScrollView.LayoutParams.MATCH_PARENT,
             ScrollView.LayoutParams.WRAP_CONTENT
@@ -88,7 +88,7 @@ class MixerActivity : Activity() {
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
         
-        // ✅ TAMANG PARAAN: BUONG PANGALAN — LinearLayout.LayoutParams
+        // ✅ BUONG PANGALAN — LinearLayout.LayoutParams
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
