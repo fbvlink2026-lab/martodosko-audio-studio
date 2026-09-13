@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — INAYOS NA ANG SYNTAX ✅
-// VERSION: 1.0.82 — WALANG ERROR SA KOTLIN
+// FILE: MixerActivity.kt — INAYOS NA ANG LayoutParams ✅
+// VERSION: 1.0.83 — WALANG ERROR SA KOTLIN
 // UPDATED: 2026-09-13
 // ==================================================
 package com.martodosko.studio
@@ -37,19 +37,24 @@ class MixerActivity : Activity() {
     private fun buildMixerLayout(): View {
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
-        scrollView.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
+        
+        // ✅ BUONG PANGALAN: ScrollView.LayoutParams
+        scrollView.layoutParams = ScrollView.LayoutParams(
+            ScrollView.LayoutParams.MATCH_PARENT,
+            ScrollView.LayoutParams.MATCH_PARENT
         )
 
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
+        
+        // ✅ BUONG PANGALAN: ScrollView.LayoutParams
         mainLayout.layoutParams = ScrollView.LayoutParams(
             ScrollView.LayoutParams.MATCH_PARENT,
             ScrollView.LayoutParams.WRAP_CONTENT
         )
 
+        // HEADER
         val title = TextView(this)
         title.text = "🎚️ MIXER — TOTOONG KNOB"
         title.setTextColor(Color.parseColor("#40E0D0"))
@@ -58,6 +63,7 @@ class MixerActivity : Activity() {
         title.gravity = Gravity.CENTER
         mainLayout.addView(title)
 
+        // CHANNEL HEADER
         val channelHeader = TextView(this)
         channelHeader.text = "🎤 VOCAL CHANNEL"
         channelHeader.setTextColor(Color.parseColor("#40E0D0"))
@@ -66,6 +72,7 @@ class MixerActivity : Activity() {
         channelHeader.setBackgroundColor(Color.parseColor("#12121F"))
         mainLayout.addView(channelHeader)
 
+        // ✅ GAIN — TOTOONG KNOB!
         mainLayout.addView(buildKnobRow("GAIN", 0f, "dB"))
 
         scrollView.addView(mainLayout)
@@ -82,6 +89,8 @@ class MixerActivity : Activity() {
         row.gravity = Gravity.CENTER_VERTICAL
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
+        
+        // ✅ BUONG PANGALAN: LinearLayout.LayoutParams
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -89,6 +98,7 @@ class MixerActivity : Activity() {
         layoutParams.setMargins(0, 0, 0, 8)
         row.layoutParams = layoutParams
 
+        // LABEL
         val label = TextView(this)
         label.text = labelText
         label.setTextColor(Color.parseColor("#AAAAAA"))
@@ -97,6 +107,7 @@ class MixerActivity : Activity() {
         label.width = 240
         row.addView(label)
 
+        // ✅ TOTOONG KNOBVIEW
         val knob = KnobView(this)
         knob.layoutParams = LinearLayout.LayoutParams(144, 144)
         knob.minValue = -50f
@@ -104,6 +115,7 @@ class MixerActivity : Activity() {
         knob.value = initialValue
         row.addView(knob)
 
+        // VALUE DISPLAY
         val value = TextView(this)
         value.text = "${initialValue.roundToInt()} $unit"
         value.setTextColor(Color.parseColor("#FFFFFF"))
@@ -112,6 +124,7 @@ class MixerActivity : Activity() {
         value.gravity = Gravity.END
         row.addView(value)
 
+        // ✅ UPDATE VALUE KAPAG PINIHIT
         knob.onValueChange = { newVal ->
             value.text = "${newVal.roundToInt()} $unit"
         }
