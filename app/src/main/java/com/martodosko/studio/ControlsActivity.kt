@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — KNOB ✅ 0-10 NUMERO SA PALIGID + NANDOON ANG dB!
-// VERSION: 1.0.101 — NUMERO HINDI GUMAGALAW, GUHIT LANG ANG UMIKOT!
+// FILE: ControlsActivity.kt — KNOB ✅ 0=PINAKA-IBABA ↓, 1-10 LAHAT NAROON!
+// VERSION: 1.0.103 — TAMA NA ANG PWESTO NG LAHAT NG NUMERO!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,7 +21,6 @@ class KnobView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ✅ 0 hanggang 10 — TUGMA SA NUMERO SA PALIGID
     var value: Float = 0f
         set(newVal) {
             field = newVal.coerceIn(minValue, maxValue)
@@ -33,9 +32,9 @@ class KnobView @JvmOverloads constructor(
     var maxValue: Float = 10f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ ANGLE: 0 = ibaba-kaliwa ↙️ (-135°), 10 = ibaba-kanan ↘️ (+135°)
-    private val startAngle = -135f
-    private val endAngle = 135f
+    // ✅ TAMA NA ANG ANGLE: 0 = PINAKA-IBABA ↓ (-90°), 10 = KANAN-IBABA ↘️ (+90°)
+    private val startAngle = -90f   // ↓ PINAKA-IBABA = 0
+    private val endAngle = 90f      // ↘️ KANAN-IBABA = 10
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -69,7 +68,7 @@ class KnobView @JvmOverloads constructor(
 
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#CCCCCC")
-        textSize = 24f
+        textSize = 22f
         textAlign = Paint.Align.CENTER
     }
 
@@ -77,36 +76,34 @@ class KnobView @JvmOverloads constructor(
         super.onDraw(canvas)
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = minOf(centerX, centerY) - 16f
-        val tickOuter = radius + 20f
-        val textRadius = radius + 45f
+        val radius = minOf(centerX, centerY) - 20f
+        val tickInner = radius + 2f
+        val tickOuter = radius + 12f
+        val textRadius = radius + 38f
 
         // ==================================================
-        // ✅ NUMERO 0-10 — NAKA-STEADY! HINDI GUMAGALAW!
+        // ✅ LAHAT NG NUMERO 0-10 — NAROON! TAMA NA ANG PWESTO!
         // ==================================================
         val angleRange = endAngle - startAngle
-        for (i in 0..10 step 1) {
+        for (i in 0..10) {
             val progress = i / 10f
             val angleDeg = startAngle + progress * angleRange
             val angleRad = Math.toRadians(angleDeg.toDouble())
 
-            // ✅ GUHIT NG MARKA
-            val tickInner = radius + 2f
+            // ✅ GUHIT NG MARKA — LAHAT MAY GUHIT
             val tickPaint = if (i <= value) paintTickActive else paintTick
             canvas.drawLine(
-                (centerX + tickInner * cos(angleRad).toFloat()),
-                (centerY + tickInner * sin(angleRad).toFloat()),
-                (centerX + tickOuter * cos(angleRad).toFloat()),
-                (centerY + tickOuter * sin(angleRad).toFloat()),
+                centerX + tickInner * cos(angleRad).toFloat(),
+                centerY + tickInner * sin(angleRad).toFloat(),
+                centerX + tickOuter * cos(angleRad).toFloat(),
+                centerY + tickOuter * sin(angleRad).toFloat(),
                 tickPaint
             )
 
-            // ✅ NUMERO — NAKA-STEADY SA LABAS! HINDI GUMAGALAW!
-            if (i % 2 == 0 || i == 0 || i == 10) { // 0,2,4,5,6,8,10 — mas malinaw
-                val textX = centerX + textRadius * cos(angleRad).toFloat()
-                val textY = centerY + textRadius * sin(angleRad).toFloat() + 8f
-                canvas.drawText("$i", textX, textY, paintText)
-            }
+            // ✅ NUMERO — LAHAT NG 0-10 NAKALAGAY!
+            val textX = centerX + textRadius * cos(angleRad).toFloat()
+            val textY = centerY + textRadius * sin(angleRad).toFloat() + 8f
+            canvas.drawText("$i", textX, textY, paintText)
         }
 
         // Outer ring
@@ -114,7 +111,7 @@ class KnobView @JvmOverloads constructor(
         // Inner knob
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // ✅ GUHIT NG PIHITAN — ITO LANG ANG UMIKOT!
+        // ✅ GUHIT NG PIHITAN — UMIKOT MULA 0 (ibaba) → 10 (kanan)
         val progress = (value - minValue) / (maxValue - minValue)
         val currentAngle = startAngle + progress * angleRange
         val rad = Math.toRadians(currentAngle.toDouble())
@@ -122,8 +119,8 @@ class KnobView @JvmOverloads constructor(
 
         canvas.drawLine(
             centerX, centerY,
-            (centerX + indicatorLen * cos(rad)).toFloat(),
-            (centerY + indicatorLen * sin(rad)).toFloat(),
+            centerX + indicatorLen * cos(rad).toFloat(),
+            centerY + indicatorLen * sin(rad).toFloat(),
             paintIndicator
         )
     }
