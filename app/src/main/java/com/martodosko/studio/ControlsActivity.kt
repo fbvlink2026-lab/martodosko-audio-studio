@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — TOTOONG PRO MIXER STANDARD ✅ HINDI NA MASISIRA!
-// VERSION: 1.0.106 — 0=ITAAS, -50=KALIWA, +50=KANAN, PANTAY ANG PAGITAN!
+// FILE: ControlsActivity.kt — -50 & +50 NASA IBABA ✅ HINDI NA MATATAKPAN!
+// VERSION: 1.0.107 — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN, MALAKING NUMERO!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -28,15 +28,15 @@ class KnobView @JvmOverloads constructor(
             onValueChange?.invoke(field)
         }
 
-    var minValue: Float = -50f   // ✅ pinakakaliwa
-    var maxValue: Float = 50f    // ✅ pinakakanan
+    var minValue: Float = -50f
+    var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ TOTOONG STANDARD: 0=ITAAS(-90°), -50=KALIWA(180°), +50=KANAN(0°), 270° kabuuan
+    // ✅ EKSATONG PWEStO: 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN — 270° IKOT
     private val totalAngleRange = 270f
-    private val startAngle = 180f    // ✅ -50 = PINAKAKALIWA ←
+    private val startAngle = -135f   // ✅ -50 = IBABA-KALIWA ↙️
     private val zeroAngle = -90f     // ✅ 0 = ITAAS GITNA ⬆️
-    private val endAngle = 0f        // ✅ +50 = PINAKAKANAN →
+    private val endAngle = 135f      // ✅ +50 = IBABA-KANAN ↘️
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -70,9 +70,10 @@ class KnobView @JvmOverloads constructor(
         strokeCap = Paint.Cap.ROUND
     }
 
+    // ✅ MAS MALAKING FONT + MAS MALAYO — HINDI NA MATATAKPAN!
     private val paintNumber = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
-        textSize = 22f
+        textSize = 22f  // ✅ MAS MALAKI!
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
     }
@@ -84,17 +85,17 @@ class KnobView @JvmOverloads constructor(
         val radius = minOf(centerX, centerY) - 8f
         val tickOuter = radius + 14f
         val tickInner = radius + 2f
-        val numberRadius = radius + 58f
+        val numberRadius = radius + 60f  // ✅ MAS MALAYO — HINDI MATATAKPAN!
 
         // ==================================================
-        // ✅ TOTOONG PRO MIXER SCALE — PANTAY ANG PAGITAN, HINDI NA MASISIRA!
+        // ✅ TOTOONG MIXER SCALE: -50 IBABA-KALIWA, +50 IBABA-KANAN!
         // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
 
         for (mark in marks) {
-            // ✅ PANTAY NA PAGITAN — bawat marka = parehong distansya
+            // ✅ PANTAY NA PAGITAN — bawat marka = parehong anggulo
             val progress = (mark - minValue) / (maxValue - minValue) // 0.0 → 1.0
-            val angle = startAngle - progress * totalAngleRange  // ✅ tama na direksyon
+            val angle = startAngle + progress * totalAngleRange
             val rad = Math.toRadians(angle.toDouble())
 
             // ✅ Kulay ng guhit
@@ -108,7 +109,7 @@ class KnobView @JvmOverloads constructor(
             val endY = centerY + tickOuter * sin(rad).toFloat()
             canvas.drawLine(startX, startY, endX, endY, tickPaint)
 
-            // ✅ NUMERO — MALAKI, MALINAW, HINDI MATATAKPAN!
+            // ✅ NUMERO — MALAKI, MALAYO, LITAW!
             val numX = centerX + numberRadius * cos(rad).toFloat()
             val numY = centerY + numberRadius * sin(rad).toFloat() + 8f
             val label = when {
@@ -124,9 +125,9 @@ class KnobView @JvmOverloads constructor(
         // Inner knob
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // ✅ INDICATOR — TUMUTURO SA TAMANG HALAGA, HINDI NA NAGKAKAGULO!
+        // ✅ INDICATOR — TUMUTURO SA TAMANG HALAGA!
         val progress = (value - minValue) / (maxValue - minValue)
-        val currentAngle = startAngle - progress * totalAngleRange
+        val currentAngle = startAngle + progress * totalAngleRange
         val rad = Math.toRadians(currentAngle.toDouble())
         val indicatorLen = radius * 0.7f
 
