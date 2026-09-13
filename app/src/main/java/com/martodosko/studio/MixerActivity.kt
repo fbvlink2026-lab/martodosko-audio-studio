@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: MixerActivity.kt — FINAL FIX ✅ TAMA NA ANG MATCH_PARENT!
-// VERSION: 1.0.88 — WALANG ERROR — VIEWGROUP CONSTANTS!
-// UPDATED: 2026-09-13
+// FILE: MixerActivity.kt — PINAKA-SIMPLE ✅ WALANG ERROR!
+// VERSION: 1.0.89 — LAGING MAY PREFIX NA!
+// UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
 
@@ -25,9 +25,8 @@ class MixerActivity : Activity() {
 
         try {
             setContentView(buildMixerLayout())
-            android.widget.Toast.makeText(this, "🎚️ Mixer — Totoong Knob OK!", android.widget.Toast.LENGTH_SHORT).show()
-            Log.d("MIXER", "✅ MixerActivity — KnobView connected!")
-
+            android.widget.Toast.makeText(this, "🎚️ Mixer — OK!", android.widget.Toast.LENGTH_SHORT).show()
+            Log.d("MIXER", "✅ MixerActivity loaded!")
         } catch (e: Exception) {
             Log.e("MIXER", "❌ Error: ${e.message}", e)
             android.widget.Toast.makeText(this, "⚠️ Error — babalik sa Main", android.widget.Toast.LENGTH_LONG).show()
@@ -36,30 +35,26 @@ class MixerActivity : Activity() {
     }
 
     private fun buildMixerLayout(): View {
+        // ✅ SCROLLVIEW — MAY BUONG PANGALAN!
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
-        
-        // ✅ TAMA: ViewGroup.LayoutParams.MATCH_PARENT
-        val scrollParams = ScrollView.LayoutParams(
+        scrollView.layoutParams = ScrollView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        scrollView.layoutParams = scrollParams
 
+        // ✅ MAIN LAYOUT — MAY BUONG PANGALAN!
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
-        
-        // ✅ TAMA: ViewGroup.LayoutParams.WRAP_CONTENT
-        val mainParams = ScrollView.LayoutParams(
+        mainLayout.layoutParams = ScrollView.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        mainLayout.layoutParams = mainParams
 
         // HEADER
         val title = TextView(this)
-        title.text = "🎚️ MIXER — TOTOONG KNOB"
+        title.text = "🎚️ MIXER"
         title.setTextColor(Color.parseColor("#40E0D0"))
         title.textSize = 22f
         title.setPadding(0, 0, 0, 32)
@@ -75,7 +70,7 @@ class MixerActivity : Activity() {
         channelHeader.setBackgroundColor(Color.parseColor("#12121F"))
         mainLayout.addView(channelHeader)
 
-        // ✅ GAIN — TOTOONG KNOB!
+        // ✅ GAIN KNOB
         mainLayout.addView(buildKnobRow("GAIN", 0f, "dB"))
 
         scrollView.addView(mainLayout)
@@ -87,19 +82,18 @@ class MixerActivity : Activity() {
         initialValue: Float,
         unit: String
     ): View {
+        // ✅ ROW — MAY BUONG PANGALAN!
         val row = LinearLayout(this)
         row.orientation = LinearLayout.HORIZONTAL
         row.gravity = Gravity.CENTER_VERTICAL
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
-        
-        // ✅ TAMA: ViewGroup constants
-        val rowParams = LinearLayout.LayoutParams(
+        row.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        rowParams.setMargins(0, 0, 0, 8)
-        row.layoutParams = rowParams
+        ).apply {
+            setMargins(0, 0, 0, 8)
+        }
 
         // LABEL
         val label = TextView(this)
@@ -110,16 +104,15 @@ class MixerActivity : Activity() {
         label.width = 240
         row.addView(label)
 
-        // ✅ TOTOONG KNOBVIEW
+        // ✅ KNOB
         val knob = KnobView(this)
-        val knobParams = LinearLayout.LayoutParams(144, 144)
-        knob.layoutParams = knobParams
+        knob.layoutParams = LinearLayout.LayoutParams(144, 144)
         knob.minValue = -50f
         knob.maxValue = 50f
         knob.value = initialValue
         row.addView(knob)
 
-        // VALUE DISPLAY
+        // VALUE
         val value = TextView(this)
         value.text = "${initialValue.roundToInt()} $unit"
         value.setTextColor(Color.parseColor("#FFFFFF"))
@@ -128,7 +121,6 @@ class MixerActivity : Activity() {
         value.gravity = Gravity.END
         row.addView(value)
 
-        // ✅ UPDATE VALUE KAPAG PINIHIT
         knob.onValueChange = { newVal ->
             value.text = "${newVal.roundToInt()} $unit"
         }
