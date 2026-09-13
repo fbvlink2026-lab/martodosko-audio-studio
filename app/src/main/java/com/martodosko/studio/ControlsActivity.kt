@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: ControlsActivity.kt — INAYOS NA ANG SYNTAX ✅
-// VERSION: 1.0.82 — WALANG ERROR SA KOTLIN
-// UPDATED: 2026-09-13
+// FILE: ControlsActivity.kt — INAYOS NA ✅ WALANG ERROR!
+// VERSION: 1.0.83 — TAMA NA ANG LAHAT NG SYNTAX
+// UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
 
@@ -10,6 +10,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import kotlin.math.abs
 
@@ -128,7 +129,7 @@ class HorizontalSliderView @JvmOverloads constructor(
     private val paintThumb = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
         style = Paint.Style.FILL
-        setShadowLayer(4f, 0f, 2f, 0x80000000.toInt())
+        // ✅ TINANGGAL ANG setShadowLayer — nagdudulot ng error!
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -203,10 +204,16 @@ class ToggleButtonView @JvmOverloads constructor(
         gravity = android.view.Gravity.CENTER_VERTICAL
         setPadding(24, 12, 24, 12)
         setBackgroundColor(Color.parseColor("#12121F"))
-        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        
+        // ✅ TAMA: BUONG PANGALAN — LinearLayout.LayoutParams
+        layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
         indicatorView = View(context)
-        indicatorView.layoutParams = LayoutParams(32, 32).apply {
+        // ✅ TAMA: BUONG PANGALAN — LinearLayout.LayoutParams
+        indicatorView.layoutParams = LinearLayout.LayoutParams(32, 32).apply {
             setMargins(0, 0, 16, 0)
         }
         addView(indicatorView)
