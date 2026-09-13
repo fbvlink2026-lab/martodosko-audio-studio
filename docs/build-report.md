@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-13 10:17 UTC
-🏷️ **Bersyon:** v1.0.82
+📅 **Petsa:** 2026-09-13 10:47 UTC
+🏷️ **Bersyon:** v1.0.83
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-13 10:17:14 UTC
-🏷️ BERSYON:    v1.0.82
+⏰ ORAS:       2026-09-13 10:47:11 UTC
+🏷️ BERSYON:    v1.0.83
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -39,7 +39,7 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseResources FAILED
 
 > Task :app:parseReleaseLocalResources FAILED
-[Fatal Error] fragment_mixer.xml:61:13: The string "--" is not permitted within comments.
+[Fatal Error] fragment_mixer.xml:4:33: The string "--" is not permitted within comments.
 
 FAILURE: Build completed with 2 failures.
 
@@ -48,7 +48,7 @@ FAILURE: Build completed with 2 failures.
 * What went wrong:
 Execution failed for task ':app:mergeReleaseResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
-   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_mixer.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[61,13]
+   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_mixer.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[4,33]
      Message: The string "--" is not permitted within comments.). Check logs for more details.
 
 * Try:
@@ -72,7 +72,7 @@ Execution failed for task ':app:parseReleaseLocalResources'.
 > Get more help at https://help.gradle.org.
 ==============================================================================
 
-BUILD FAILED in 24s
+BUILD FAILED in 23s
 9 actionable tasks: 8 executed, 1 up-to-date
 
 ==================================================
