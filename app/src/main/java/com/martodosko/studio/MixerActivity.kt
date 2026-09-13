@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — FINAL ✅ SIGURADONG MAGBUBUO!
-// VERSION: 1.0.90 — TAMA NA ANG LAHAT NG SYNTAX!
+// FILE: MixerActivity.kt — PINAKA-SIMPLE ✅ SIGURADONG MAGBUBUO!
+// VERSION: 1.0.91 — WALANG LayoutParams NA HINDI ALAM!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -12,13 +12,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import kotlin.math.roundToInt
 
 class MixerActivity : Activity() {
+
+    // ✅ DIREKTANG CONSTANT — WALANG REFERENCE NA HINDI ALAM!
+    private val MATCH_PARENT = -1
+    private val WRAP_CONTENT = -2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,25 +38,17 @@ class MixerActivity : Activity() {
     }
 
     private fun buildMixerLayout(): View {
-        // ✅ SCROLLVIEW — IHIWALAY MUNA ANG PARAMS!
+        // ✅ SCROLLVIEW — DIREKTANG NUMERO!
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
-        // ✅ TAMA: GUMAGAWA MUNA NG VARIABLE BAGO I-ASSIGN!
-        val scrollParams = ScrollView.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        val scrollParams = ScrollView.LayoutParams(MATCH_PARENT, MATCH_PARENT)
         scrollView.layoutParams = scrollParams
 
-        // ✅ MAIN LAYOUT — IHIWALAY MUNA ANG PARAMS!
+        // ✅ MAIN LAYOUT — DIREKTANG NUMERO!
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
-        // ✅ TAMA: GUMAGAWA MUNA NG VARIABLE BAGO I-ASSIGN!
-        val mainParams = ScrollView.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        val mainParams = ScrollView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         mainLayout.layoutParams = mainParams
 
         // HEADER
@@ -86,17 +81,13 @@ class MixerActivity : Activity() {
         initialValue: Float,
         unit: String
     ): View {
-        // ✅ ROW — IHIWALAY MUNA ANG PARAMS!
+        // ✅ ROW — DIREKTANG NUMERO!
         val row = LinearLayout(this)
         row.orientation = LinearLayout.HORIZONTAL
         row.gravity = Gravity.CENTER_VERTICAL
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
-        // ✅ TAMA: GUMAGAWA MUNA NG VARIABLE BAGO I-ASSIGN!
-        val rowParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        val rowParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         rowParams.setMargins(0, 0, 0, 8)
         row.layoutParams = rowParams
 
