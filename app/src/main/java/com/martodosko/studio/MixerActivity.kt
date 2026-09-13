@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — FINAL FIX ✅ TAMANG KOTLIN SYNTAX!
-// VERSION: 1.0.87 — WALANG ERROR — IHIWALAY ANG LayoutParams!
+// FILE: MixerActivity.kt — FINAL FIX ✅ TAMA NA ANG MATCH_PARENT!
+// VERSION: 1.0.88 — WALANG ERROR — VIEWGROUP CONSTANTS!
 // UPDATED: 2026-09-13
 // ==================================================
 package com.martodosko.studio
@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -38,10 +39,10 @@ class MixerActivity : Activity() {
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
         
-        // ✅ TAMANG PARAAN: IHIWALAY ANG PAGGAWA NG LayoutParams!
+        // ✅ TAMA: ViewGroup.LayoutParams.MATCH_PARENT
         val scrollParams = ScrollView.LayoutParams(
-            ScrollView.LayoutParams.MATCH_PARENT,
-            ScrollView.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
         )
         scrollView.layoutParams = scrollParams
 
@@ -49,10 +50,10 @@ class MixerActivity : Activity() {
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
         
-        // ✅ TAMANG PARAAN: IHIWALAY ANG PAGGAWA NG LayoutParams!
+        // ✅ TAMA: ViewGroup.LayoutParams.WRAP_CONTENT
         val mainParams = ScrollView.LayoutParams(
-            ScrollView.LayoutParams.MATCH_PARENT,
-            ScrollView.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
         mainLayout.layoutParams = mainParams
 
@@ -92,10 +93,10 @@ class MixerActivity : Activity() {
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
         
-        // ✅ TAMANG PARAAN: IHIWALAY ANG PAGGAWA NG LayoutParams!
+        // ✅ TAMA: ViewGroup constants
         val rowParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
         rowParams.setMargins(0, 0, 0, 8)
         row.layoutParams = rowParams
@@ -109,7 +110,7 @@ class MixerActivity : Activity() {
         label.width = 240
         row.addView(label)
 
-        // ✅ TOTOONG KNOBVIEW — IHIWALAY ANG LayoutParams!
+        // ✅ TOTOONG KNOBVIEW
         val knob = KnobView(this)
         val knobParams = LinearLayout.LayoutParams(144, 144)
         knob.layoutParams = knobParams
