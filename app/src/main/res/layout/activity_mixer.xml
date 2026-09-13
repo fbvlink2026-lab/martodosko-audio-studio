@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ================================================== -->
+<!-- FILE: activity_mixer.xml — XML LAYOUT ✅ WALANG ERROR! -->
+<!-- VERSION: 1.0.0 — SIMPLE LANG! -->
+<!-- ================================================== -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#080810">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="48dp">
+
+        <!-- HEADER -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎚️ MIXER"
+            android:textColor="#40E0D0"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:paddingBottom="32dp"/>
+
+        <!-- CHANNEL HEADER -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎤 VOCAL CHANNEL"
+            android:textColor="#40E0D0"
+            android:textSize="18sp"
+            android:padding="24dp 16dp"
+            android:background="#12121F"/>
+
+        <!-- GAIN KNOB ROW -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="24dp 16dp"
+            android:background="#12121F"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="GAIN"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <com.martodosko.studio.KnobView
+                android:id="@+id/knob_gain"
+                android:layout_width="144dp"
+                android:layout_height="144dp"/>
+
+            <TextView
+                android:id="@+id/tv_gain_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 dB"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
