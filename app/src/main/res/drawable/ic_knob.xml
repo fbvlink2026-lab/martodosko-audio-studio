@@ -4,15 +4,12 @@
     android:height="52dp"
     android:viewportWidth="52"
     android:viewportHeight="52">
-    <!-- Outer ring -->
     <path
         android:fillColor="#2A2A3C"
         android:pathData="M26,4C13.85,4 4,13.85 4,26s9.85,22 22,22 22,-9.85 22,-22S38.15,4 26,4z"/>
-    <!-- Inner circle -->
     <path
         android:fillColor="#3E3E5C"
         android:pathData="M26,8C15.94,8 8,15.94 8,26s7.94,18 18,18 18,-7.94 18,-18S36.06,8 26,8z"/>
-    <!-- Knob indicator line -->
     <path
         android:fillColor="#40E0D0"
         android:pathData="M26,14 L28,24 L24,24 Z"/>
