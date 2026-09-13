@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FILE: fragment_mixer.xml — STEP 3: ONE KNOB ONLY -->
-<!-- VERSION: 1.0.73 — GAIN KNOB UNCOMMENTED ✅ -->
+<!-- FILE: fragment_mixer.xml — STEP 4: ALL KNOBS UNCOMMENTED -->
+<!-- VERSION: 1.0.74 — 12 KNOBS TOTAL ✅ -->
 <!-- UPDATED: 2026-09-13 -->
 
 <ScrollView
@@ -14,68 +14,227 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
+        android:padding="16dp">
 
+        <!-- HEADER -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🎚️ MIXER — STEP 3: 1 KNOB"
+            android:text="🎚️ MIXER — ALL KNOBS"
             android:textColor="#40E0D0"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="20dp"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
-        <!-- ============================================== -->
-        <!-- STEP 3 — ONLY GAIN KNOB UNCOMMENTED -->
-        <!-- ============================================== -->
+        <!-- CHANNEL HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="14dp"
+            android:background="#12121F"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🎤 VOCAL CHANNEL"
+                android:textColor="#40E0D0"
+                android:textSize="17sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#333344"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- EQUALIZER SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EQUALIZER"
+            android:textColor="#888888"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:layout_marginBottom="6dp"/>
+
+        <!-- ✅ GAIN -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="GAIN" android:textColor="#AAAAAA" android:textSize="13sp" android:textStyle="bold"/>
+            <ImageView android:id="@+id/knob_gain" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_gain" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ BASS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="BASS" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_bass" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_bass" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ LOW-MID -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="LOW-MID" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_lowmid" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_lowmid" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ MID -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="MID" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_mid" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_mid" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ HIGH-MID -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="HIGH-MID" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_highmid" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_highmid" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ TREBLE -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="TREBLE" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_treble" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_treble" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ PRESENCE -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="PRESENCE" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_presence" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_presence" android:layout_width="60dp" android:text="0 dB" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#333344"
+            android:layout_marginVertical="10dp"/>
+
+        <!-- EFFECTS SECTION -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EFFECTS"
+            android:textColor="#888888"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:layout_marginBottom="6dp"/>
+
+        <!-- ✅ REVERB -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="REVERB" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_reverb" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_reverb" android:layout_width="60dp" android:text="0%" android:textColor="#40E0D0" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ DELAY -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="DELAY" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_delay" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_delay" android:layout_width="60dp" android:text="0ms" android:textColor="#40E0D0" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ COMPRESSOR -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="COMPRESSOR" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_compressor" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_compressor" android:layout_width="60dp" android:text="0%" android:textColor="#FF6B6B" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ PAN -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp"
+            android:gravity="center_vertical">
+            <TextView android:layout_width="90dp" android:text="PAN" android:textColor="#AAAAAA" android:textSize="13sp"/>
+            <ImageView android:id="@+id/knob_pan" android:layout_width="52dp" android:layout_height="52dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_pan" android:layout_width="60dp" android:text="CENTER" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end"/>
+        </LinearLayout>
+
+        <!-- ✅ VOLUME — PINAKA-IBABA NG CHANNEL -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="12dp"
             android:gravity="center_vertical"
-            android:background="#12121F"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="90dp"
-                android:layout_height="wrap_content"
-                android:text="GAIN"
-                android:textColor="#AAAAAA"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
-
-            <!-- ✅ UNCOMMENTED — GAIN KNOB -->
-            <ImageView
-                android:id="@+id/knob_gain"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:src="@drawable/ic_knob"
-                android:layout_marginStart="8dp"/>
-
-            <TextView
-                android:id="@+id/val_gain"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="0 dB"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:gravity="end"
-                android:layout_marginStart="8dp"/>
+            android:background="#1A1A2E"
+            android:layout_marginTop="6dp">
+            <TextView android:layout_width="90dp" android:text="VOLUME" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold"/>
+            <ImageView android:id="@+id/knob_vol" android:layout_width="56dp" android:layout_height="56dp" android:src="@drawable/ic_knob"/>
+            <TextView android:id="@+id/val_vol" android:layout_width="60dp" android:text="0 dB" android:textColor="#FF6B6B" android:textSize="14sp" android:textStyle="bold" android:gravity="end"/>
         </LinearLayout>
 
-        <!-- ALL OTHER KNOBS — STILL COMMENTED OUT -->
-        <!-- BASS — LOWMID — MID — HIGHMID — TREBLE — PRESENCE — REVERB — DELAY — COMPRESSOR — PAN — VOLUME -->
-        <!-- SLIDERS — STILL COMMENTED -->
-        <!-- BUTTONS — STILL COMMENTED -->
+        <!-- SLIDERS — STILL COMMENTED FOR NEXT STEP -->
+        <!-- BUTTONS — STILL COMMENTED FOR NEXT STEP -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Iba pang element — nakakomento pa rin"
+            android:text="Sliders & Buttons — susunod na hakbang"
             android:textColor="#666666"
             android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"/>
 
     </LinearLayout>
