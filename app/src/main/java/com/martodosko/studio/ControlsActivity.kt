@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — KNOB 0-10 ✅ MAY MARKA!
-// VERSION: 1.0.98 — IBABA-KALIWA=0, IBABA-KANAN=10 + MAY TICKS!
+// FILE: ControlsActivity.kt — KNOB ✅ 0-10 NUMERO SA PALIGID + NANDOON ANG dB!
+// VERSION: 1.0.101 — NUMERO HINDI GUMAGALAW, GUHIT LANG ANG UMIKOT!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -14,17 +14,14 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.PI
 
-// ==================================================
-// 🎛️ CUSTOM KNOB — 0-10 SCALE ✅ MAY MARKA SA PALIGID!
-// ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    // ✅ 0 hanggang 10 — TUGMA SA NUMERO SA PALIGID
     var value: Float = 0f
         set(newVal) {
             field = newVal.coerceIn(minValue, maxValue)
@@ -33,10 +30,10 @@ class KnobView @JvmOverloads constructor(
         }
 
     var minValue: Float = 0f
-    var maxValue: Float = 10f  // ✅ 0 hanggang 10
+    var maxValue: Float = 10f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ ANGLE: IBABA-KALIWA = -135° (0), IBABA-KANAN = +135° (10)
+    // ✅ ANGLE: 0 = ibaba-kaliwa ↙️ (-135°), 10 = ibaba-kanan ↘️ (+135°)
     private val startAngle = -135f
     private val endAngle = 135f
     private var lastTouchY = 0f
@@ -62,37 +59,54 @@ class KnobView @JvmOverloads constructor(
         color = Color.parseColor("#888899")
         style = Paint.Style.STROKE
         strokeWidth = 2f
-        strokeCap = Paint.Cap.ROUND
     }
 
     private val paintTickActive = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.STROKE
         strokeWidth = 3f
-        strokeCap = Paint.Cap.ROUND
+    }
+
+    private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#CCCCCC")
+        textSize = 24f
+        textAlign = Paint.Align.CENTER
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = minOf(centerX, centerY) - 8f
-        val tickOuter = radius + 14f
-        val tickInner = radius + 2f
+        val radius = minOf(centerX, centerY) - 16f
+        val tickOuter = radius + 20f
+        val textRadius = radius + 45f
 
-        // ✅ GUHIT NG MARKA — 0 hanggang 10 sa paligid
+        // ==================================================
+        // ✅ NUMERO 0-10 — NAKA-STEADY! HINDI GUMAGALAW!
+        // ==================================================
         val angleRange = endAngle - startAngle
-        for (i in 0..10) {
+        for (i in 0..10 step 1) {
             val progress = i / 10f
-            val angleRad = Math.toRadians((startAngle + progress * angleRange).toDouble())
+            val angleDeg = startAngle + progress * angleRange
+            val angleRad = Math.toRadians(angleDeg.toDouble())
+
+            // ✅ GUHIT NG MARKA
+            val tickInner = radius + 2f
             val tickPaint = if (i <= value) paintTickActive else paintTick
+            canvas.drawLine(
+                (centerX + tickInner * cos(angleRad).toFloat()),
+                (centerY + tickInner * sin(angleRad).toFloat()),
+                (centerX + tickOuter * cos(angleRad).toFloat()),
+                (centerY + tickOuter * sin(angleRad).toFloat()),
+                tickPaint
+            )
 
-            val startX = centerX + tickInner * cos(angleRad).toFloat()
-            val startY = centerY + tickInner * sin(angleRad).toFloat()
-            val endX = centerX + tickOuter * cos(angleRad).toFloat()
-            val endY = centerY + tickOuter * sin(angleRad).toFloat()
-
-            canvas.drawLine(startX, startY, endX, endY, tickPaint)
+            // ✅ NUMERO — NAKA-STEADY SA LABAS! HINDI GUMAGALAW!
+            if (i % 2 == 0 || i == 0 || i == 10) { // 0,2,4,5,6,8,10 — mas malinaw
+                val textX = centerX + textRadius * cos(angleRad).toFloat()
+                val textY = centerY + textRadius * sin(angleRad).toFloat() + 8f
+                canvas.drawText("$i", textX, textY, paintText)
+            }
         }
 
         // Outer ring
@@ -100,7 +114,7 @@ class KnobView @JvmOverloads constructor(
         // Inner knob
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // ✅ INDICATOR — TUMUTURO SA TAMANG MARKA!
+        // ✅ GUHIT NG PIHITAN — ITO LANG ANG UMIKOT!
         val progress = (value - minValue) / (maxValue - minValue)
         val currentAngle = startAngle + progress * angleRange
         val rad = Math.toRadians(currentAngle.toDouble())
@@ -140,14 +154,12 @@ class HorizontalSliderView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-
     var value: Float = 0f
         set(newVal) {
             field = newVal.coerceIn(minValue, maxValue)
             invalidate()
             onValueChange?.invoke(field)
         }
-
     var minValue: Float = -100f
     var maxValue: Float = 100f
     var onValueChange: ((Float) -> Unit)? = null
@@ -156,12 +168,10 @@ class HorizontalSliderView @JvmOverloads constructor(
         color = Color.parseColor("#1A1A2E")
         style = Paint.Style.FILL
     }
-
     private val paintProgress = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.FILL
     }
-
     private val paintThumb = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
         style = Paint.Style.FILL
@@ -171,28 +181,13 @@ class HorizontalSliderView @JvmOverloads constructor(
         super.onDraw(canvas)
         val centerY = height / 2f
         val thumbRadius = 24f
-
-        canvas.drawRoundRect(
-            0f, centerY - 8f,
-            width.toFloat(), centerY + 8f,
-            8f, 8f, paintTrack
-        )
-
+        canvas.drawRoundRect(0f, centerY - 8f, width.toFloat(), centerY + 8f, 8f, 8f, paintTrack)
         val progressX = ((value - minValue) / (maxValue - minValue)) * width
         if (progressX > width / 2) {
-            canvas.drawRoundRect(
-                width / 2f, centerY - 8f,
-                progressX, centerY + 8f,
-                8f, 8f, paintProgress
-            )
+            canvas.drawRoundRect(width / 2f, centerY - 8f, progressX, centerY + 8f, 8f, 8f, paintProgress)
         } else {
-            canvas.drawRoundRect(
-                progressX, centerY - 8f,
-                width / 2f, centerY + 8f,
-                8f, 8f, paintProgress
-            )
+            canvas.drawRoundRect(progressX, centerY - 8f, width / 2f, centerY + 8f, 8f, 8f, paintProgress)
         }
-
         canvas.drawCircle(progressX, centerY, thumbRadius, paintThumb)
     }
 
@@ -215,20 +210,17 @@ class ToggleButtonView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
-
     var isOn: Boolean = false
         set(newVal) {
             field = newVal
             updateAppearance()
             onToggleChange?.invoke(field)
         }
-
     var textLabel: String = ""
         set(value) {
             field = value
             labelView.text = value
         }
-
     var onToggleChange: ((Boolean) -> Unit)? = null
 
     private lateinit var labelView: android.widget.TextView
@@ -239,15 +231,10 @@ class ToggleButtonView @JvmOverloads constructor(
         gravity = android.view.Gravity.CENTER_VERTICAL
         setPadding(24, 12, 24, 12)
         setBackgroundColor(Color.parseColor("#12121F"))
-        layoutParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         indicatorView = View(context)
-        indicatorView.layoutParams = LinearLayout.LayoutParams(32, 32).apply {
-            setMargins(0, 0, 16, 0)
-        }
+        indicatorView.layoutParams = LinearLayout.LayoutParams(32, 32).apply { setMargins(0, 0, 16, 0) }
         addView(indicatorView)
 
         labelView = android.widget.TextView(context)
@@ -260,11 +247,7 @@ class ToggleButtonView @JvmOverloads constructor(
     }
 
     private fun updateAppearance() {
-        indicatorView.setBackgroundColor(
-            if (isOn) Color.parseColor("#40E0D0") else Color.parseColor("#333344")
-        )
-        setBackgroundColor(
-            if (isOn) Color.parseColor("#1A1A3A") else Color.parseColor("#12121F")
-        )
+        indicatorView.setBackgroundColor(if (isOn) Color.parseColor("#40E0D0") else Color.parseColor("#333344"))
+        setBackgroundColor(if (isOn) Color.parseColor("#1A1A3A") else Color.parseColor("#12121F"))
     }
 }
