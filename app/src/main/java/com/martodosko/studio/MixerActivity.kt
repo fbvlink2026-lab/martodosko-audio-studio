@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — GUMAGAMIT NG XML ✅ WALANG ERROR!
-// VERSION: 1.0.92 — SIMPLE LANG! WALANG LayoutParams!
+// FILE: MixerActivity.kt — 0-10 SCALE ✅ TUGMA SA KNOB MARKA!
+// VERSION: 1.0.100 — 0=ibaba-kaliwa, 10=ibaba-kanan, WALANG dB!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,15 +21,17 @@ class MixerActivity : Activity() {
             val gainKnob = findViewById<KnobView>(R.id.knob_gain)
             val gainValue = findViewById<TextView>(R.id.tv_gain_value)
 
-            gainKnob.minValue = -50f
-            gainKnob.maxValue = 50f
-            gainKnob.value = 0f
+            // ✅ 0 hanggang 10 — TUGMA SA MARKA SA PALIGID NG KNOB!
+            // 0 = IBABA-KALIWA ↙️ , 10 = IBABA-KANAN ↘️
+            gainKnob.minValue = 0f
+            gainKnob.maxValue = 10f
+            gainKnob.value = 0f  // ✅ Simula sa 0 — ibaba-kaliwa
 
             gainKnob.onValueChange = { newVal ->
-                gainValue.text = "${newVal.roundToInt()} dB"
+                gainValue.text = "${newVal.roundToInt()}" // ✅ Numero lang — WALANG dB!
             }
 
-            Toast.makeText(this, "🎚️ Mixer — OK!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "🎚️ 0-10 Scale — OK!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
