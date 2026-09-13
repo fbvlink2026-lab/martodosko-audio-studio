@@ -11,8 +11,8 @@ android {
         applicationId = "com.martodosko.studio"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10107       // ✅ v1.0.55 — PINAKABAGO!
-        versionName = "1.0.107"    // ✅ v1.0.55 — PINAKABAGO!
+        versionCode = 10108       // ✅ v1.0.55 — PINAKABAGO!
+        versionName = "1.0.108"    // ✅ v1.0.55 — PINAKABAGO!
 
         // ⏸️ IKOMENTO MUNA — WALANG C++ PA!
         // externalNativeBuild {
