@@ -1,8 +1,8 @@
 // ==================================================
-// FILE: MixerActivity.kt — BUONG LAYOUT SA KOTLIN ✅ WALANG XML!
-// VERSION: 1.0.80 — BAGONG PLANO: WALANG fragment_mixer.xml ✅
+// FILE: MixerActivity.kt — GUMAGAMIT NA NG TOTOONG KNOB ✅
+// VERSION: 1.0.81 — KnobView mula sa ControlsActivity.kt
 // UPDATED: 2026-09-13
-// PURPOSE: Buong Mixer screen — ginawa sa Kotlin code lang
+// PURPOSE: Totoong Knob — pwedeng paikutin! Dahan-dahan lang!
 // ==================================================
 package com.martodosko.studio
 
@@ -21,11 +21,9 @@ class MixerActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         try {
-            // ✅ WALANG XML NA FILE — LAHAT GAGAWIN DITO!
             setContentView(buildMixerLayout())
-
-            Toast.makeText(this, "🎚️ Mixer Screen — LOADED OK", Toast.LENGTH_SHORT).show()
-            Log.d("MIXER", "✅ MixerActivity — Buong layout ginawa sa Kotlin!")
+            Toast.makeText(this, "🎚️ Mixer — Totoong Knob OK!", Toast.LENGTH_SHORT).show()
+            Log.d("MIXER", "✅ MixerActivity — KnobView connected!")
 
         } catch (e: Exception) {
             Log.e("MIXER", "❌ Error: ${e.message}", e)
@@ -34,9 +32,6 @@ class MixerActivity : Activity() {
         }
     }
 
-    // ==================================================
-    // ✅ BUONG MIXER LAYOUT — GINAGAWA DITO SA KOTLIN!
-    // ==================================================
     private fun buildMixerLayout(): View {
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
@@ -53,20 +48,16 @@ class MixerActivity : Activity() {
             ScrollView.LayoutParams.WRAP_CONTENT
         )
 
-        // ==============================================
         // HEADER
-        // ==============================================
         val title = TextView(this)
-        title.text = "🎚️ MIXER — BAGONG PLANO"
+        title.text = "🎚️ MIXER — TOTOONG KNOB"
         title.setTextColor(Color.parseColor("#40E0D0"))
         title.textSize = 22f
         title.setPadding(0, 0, 0, 32)
         title.gravity = Gravity.CENTER
         mainLayout.addView(title)
 
-        // ==============================================
         // CHANNEL HEADER
-        // ==============================================
         val channelHeader = TextView(this)
         channelHeader.text = "🎤 VOCAL CHANNEL"
         channelHeader.setTextColor(Color.parseColor("#40E0D0"))
@@ -76,37 +67,41 @@ class MixerActivity : Activity() {
         mainLayout.addView(channelHeader)
 
         // ==============================================
-        // ✅ GAIN — UNANG KNOB — BILANG LANG MUNA!
+        // ✅ GAIN — TOTOONG KNOBVIEW! PWEDENG PAIKUTIN!
         // ==============================================
-        mainLayout.addView(buildKnobRow("GAIN", "0 dB"))
+        mainLayout.addView(buildKnobRow("GAIN", 0f, "dB"))
 
         // ==============================================
-        // ⏸️ IBA PANG KNOBS — KOMENTO MUNA — DAHAN-DAHAN!
+        // ⏸️ IBA — KOMENTO MUNA — DAHAN-DAHAN!
         // ==============================================
-        // mainLayout.addView(buildKnobRow("BASS", "0 dB"))
-        // mainLayout.addView(buildKnobRow("LOW-MID", "0 dB"))
-        // mainLayout.addView(buildKnobRow("MID", "0 dB"))
-        // mainLayout.addView(buildKnobRow("HIGH-MID", "0 dB"))
-        // mainLayout.addView(buildKnobRow("TREBLE", "0 dB"))
-        // mainLayout.addView(buildKnobRow("PRESENCE", "0 dB"))
-        // mainLayout.addView(buildKnobRow("REVERB", "0%"))
-        // mainLayout.addView(buildKnobRow("DELAY", "0ms"))
-        // mainLayout.addView(buildKnobRow("COMPRESSOR", "0%"))
-        // mainLayout.addView(buildKnobRow("PAN", "CENTER"))
-        // mainLayout.addView(buildKnobRow("VOLUME", "0 dB"))
+        // mainLayout.addView(buildKnobRow("BASS", 0f, "dB"))
+        // mainLayout.addView(buildKnobRow("LOW-MID", 0f, "dB"))
+        // mainLayout.addView(buildKnobRow("MID", 0f, "dB"))
+        // mainLayout.addView(buildKnobRow("HIGH-MID", 0f, "dB"))
+        // mainLayout.addView(buildKnobRow("TREBLE", 0f, "dB"))
+        // mainLayout.addView(buildKnobRow("PRESENCE", 0f, "dB"))
+        // mainLayout.addView(buildKnobRow("REVERB", 0f, "%"))
+        // mainLayout.addView(buildKnobRow("DELAY", 0f, "ms"))
+        // mainLayout.addView(buildKnobRow("COMPRESSOR", 0f, "%"))
+        // mainLayout.addView(buildKnobRow("PAN", 50f, ""))
+        // mainLayout.addView(buildKnobRow("VOLUME", 0f, "dB"))
 
         scrollView.addView(mainLayout)
         return scrollView
     }
 
     // ==================================================
-    // ✅ REUSABLE KNOB ROW — WALANG DRAWABLE!
+    // ✅ BUILD KNOB ROW — GUMAGAMIT NA NG KnobView!
     // ==================================================
-    private fun buildKnobRow(labelText: String, valueText: String): View {
+    private fun buildKnobRow(
+        labelText: String,
+        initialValue: Float,
+        unit: String
+    ): View {
         val row = LinearLayout(this)
         row.orientation = LinearLayout.HORIZONTAL
         row.gravity = Gravity.CENTER_VERTICAL
-        row.setPadding(24, 12, 24, 12)
+        row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -120,28 +115,31 @@ class MixerActivity : Activity() {
         label.text = labelText
         label.setTextColor(Color.parseColor("#AAAAAA"))
         label.textSize = 14f
+        label.textStyle = android.graphics.Typeface.BOLD
         label.width = 240
         row.addView(label)
 
-        // ✅ KNOB — BILOG NA PIHITAN — GINAGAWA SA KOTLIN! WALANG IC_KNOB.XML!
-        val knob = TextView(this)
-        knob.text = "⚫"
-        knob.setTextColor(Color.parseColor("#40E0D0"))
-        knob.textSize = 24f
-        knob.gravity = Gravity.CENTER
-        knob.width = 144
-        knob.height = 144
-        knob.setBackgroundColor(Color.parseColor("#2A2A3C"))
+        // ✅ TOTOONG KNOBVIEW — MULA SA ControlsActivity.kt!
+        val knob = KnobView(this)
+        knob.layoutParams = LinearLayout.LayoutParams(144, 144)
+        knob.minValue = -50f
+        knob.maxValue = 50f
+        knob.value = initialValue
         row.addView(knob)
 
-        // VALUE
+        // VALUE DISPLAY — NAGBABAGO PAG PIHITIN ANG KNOB!
         val value = TextView(this)
-        value.text = valueText
+        value.text = "${initialValue.roundToInt()} $unit"
         value.setTextColor(Color.parseColor("#FFFFFF"))
         value.textSize = 14f
         value.width = 160
         value.gravity = Gravity.END
         row.addView(value)
+
+        // ✅ UPDATE VALUE KAPAG PINIHIT ANG KNOB!
+        knob.onValueChange = { newVal ->
+            value.text = "${newVal.roundToInt()} $unit"
+        }
 
         return row
     }
