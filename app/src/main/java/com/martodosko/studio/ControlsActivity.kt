@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — INAYOS NA ✅ WALANG ERROR!
-// VERSION: 1.0.83 — TAMA NA ANG LAHAT NG SYNTAX
+// FILE: ControlsActivity.kt — KNOB 0-10 ✅ MAY MARKA!
+// VERSION: 1.0.98 — IBABA-KALIWA=0, IBABA-KANAN=10 + MAY TICKS!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -12,10 +12,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.PI
 
 // ==================================================
-// 🎛️ CUSTOM KNOB — BILOG NA PIHITAN
+// 🎛️ CUSTOM KNOB — 0-10 SCALE ✅ MAY MARKA SA PALIGID!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context,
@@ -31,11 +33,12 @@ class KnobView @JvmOverloads constructor(
         }
 
     var minValue: Float = 0f
-    var maxValue: Float = 100f
+    var maxValue: Float = 10f  // ✅ 0 hanggang 10
     var onValueChange: ((Float) -> Unit)? = null
 
-    private var startAngle = -135f
-    private var endAngle = 135f
+    // ✅ ANGLE: IBABA-KALIWA = -135° (0), IBABA-KANAN = +135° (10)
+    private val startAngle = -135f
+    private val endAngle = 135f
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -55,25 +58,58 @@ class KnobView @JvmOverloads constructor(
         strokeCap = Paint.Cap.ROUND
     }
 
+    private val paintTick = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#888899")
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+        strokeCap = Paint.Cap.ROUND
+    }
+
+    private val paintTickActive = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#40E0D0")
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+        strokeCap = Paint.Cap.ROUND
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val centerX = width / 2f
         val centerY = height / 2f
         val radius = minOf(centerX, centerY) - 8f
+        val tickOuter = radius + 14f
+        val tickInner = radius + 2f
 
+        // ✅ GUHIT NG MARKA — 0 hanggang 10 sa paligid
+        val angleRange = endAngle - startAngle
+        for (i in 0..10) {
+            val progress = i / 10f
+            val angleRad = Math.toRadians((startAngle + progress * angleRange).toDouble())
+            val tickPaint = if (i <= value) paintTickActive else paintTick
+
+            val startX = centerX + tickInner * cos(angleRad).toFloat()
+            val startY = centerY + tickInner * sin(angleRad).toFloat()
+            val endX = centerX + tickOuter * cos(angleRad).toFloat()
+            val endY = centerY + tickOuter * sin(angleRad).toFloat()
+
+            canvas.drawLine(startX, startY, endX, endY, tickPaint)
+        }
+
+        // Outer ring
         canvas.drawCircle(centerX, centerY, radius, paintBg)
+        // Inner knob
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        val angleRange = endAngle - startAngle
+        // ✅ INDICATOR — TUMUTURO SA TAMANG MARKA!
         val progress = (value - minValue) / (maxValue - minValue)
         val currentAngle = startAngle + progress * angleRange
         val rad = Math.toRadians(currentAngle.toDouble())
-        val indicatorLength = radius * 0.65
+        val indicatorLen = radius * 0.7f
 
         canvas.drawLine(
             centerX, centerY,
-            (centerX + indicatorLength * Math.cos(rad)).toFloat(),
-            (centerY + indicatorLength * Math.sin(rad)).toFloat(),
+            (centerX + indicatorLen * cos(rad)).toFloat(),
+            (centerY + indicatorLen * sin(rad)).toFloat(),
             paintIndicator
         )
     }
@@ -87,7 +123,7 @@ class KnobView @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> {
                 val deltaY = lastTouchY - event.y
                 val range = maxValue - minValue
-                value += deltaY / height * range
+                value += deltaY / height * range * 2f
                 lastTouchY = event.y
                 return true
             }
@@ -97,7 +133,7 @@ class KnobView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎚️ HORIZONTAL SLIDER — PABABA / PATAAS
+// 🎚️ HORIZONTAL SLIDER — WALANG PAGBABAGO ✅
 // ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context,
@@ -129,7 +165,6 @@ class HorizontalSliderView @JvmOverloads constructor(
     private val paintThumb = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
         style = Paint.Style.FILL
-        // ✅ TINANGGAL ANG setShadowLayer — nagdudulot ng error!
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -173,7 +208,7 @@ class HorizontalSliderView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🔘 TOGGLE BUTTON — BUKSAN / ISARA
+// 🔘 TOGGLE BUTTON — WALANG PAGBABAGO ✅
 // ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context,
@@ -204,15 +239,12 @@ class ToggleButtonView @JvmOverloads constructor(
         gravity = android.view.Gravity.CENTER_VERTICAL
         setPadding(24, 12, 24, 12)
         setBackgroundColor(Color.parseColor("#12121F"))
-        
-        // ✅ TAMA: BUONG PANGALAN — LinearLayout.LayoutParams
         layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
         indicatorView = View(context)
-        // ✅ TAMA: BUONG PANGALAN — LinearLayout.LayoutParams
         indicatorView.layoutParams = LinearLayout.LayoutParams(32, 32).apply {
             setMargins(0, 0, 16, 0)
         }
