@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — FINAL FIX ✅ LAHAT MAY BUONG PANGALAN!
-// VERSION: 1.0.86 — WALANG ERROR — TAMA NA ANG LAHAT!
+// FILE: MixerActivity.kt — FINAL FIX ✅ TAMANG KOTLIN SYNTAX!
+// VERSION: 1.0.87 — WALANG ERROR — IHIWALAY ANG LayoutParams!
 // UPDATED: 2026-09-13
 // ==================================================
 package com.martodosko.studio
@@ -37,20 +37,24 @@ class MixerActivity : Activity() {
     private fun buildMixerLayout(): View {
         val scrollView = ScrollView(this)
         scrollView.setBackgroundColor(Color.parseColor("#080810"))
-        // ✅ BUONG PANGALAN — ScrollView.LayoutParams
-        scrollView.layoutParams = ScrollView.LayoutParams(
+        
+        // ✅ TAMANG PARAAN: IHIWALAY ANG PAGGAWA NG LayoutParams!
+        val scrollParams = ScrollView.LayoutParams(
             ScrollView.LayoutParams.MATCH_PARENT,
             ScrollView.LayoutParams.MATCH_PARENT
         )
+        scrollView.layoutParams = scrollParams
 
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(48, 48, 48, 48)
-        // ✅ BUONG PANGALAN — ScrollView.LayoutParams
-        mainLayout.layoutParams = ScrollView.LayoutParams(
+        
+        // ✅ TAMANG PARAAN: IHIWALAY ANG PAGGAWA NG LayoutParams!
+        val mainParams = ScrollView.LayoutParams(
             ScrollView.LayoutParams.MATCH_PARENT,
             ScrollView.LayoutParams.WRAP_CONTENT
         )
+        mainLayout.layoutParams = mainParams
 
         // HEADER
         val title = TextView(this)
@@ -88,13 +92,13 @@ class MixerActivity : Activity() {
         row.setPadding(24, 16, 24, 16)
         row.setBackgroundColor(Color.parseColor("#12121F"))
         
-        // ✅ BUONG PANGALAN — LinearLayout.LayoutParams
-        val layoutParams = LinearLayout.LayoutParams(
+        // ✅ TAMANG PARAAN: IHIWALAY ANG PAGGAWA NG LayoutParams!
+        val rowParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        layoutParams.setMargins(0, 0, 0, 8)
-        row.layoutParams = layoutParams
+        rowParams.setMargins(0, 0, 0, 8)
+        row.layoutParams = rowParams
 
         // LABEL
         val label = TextView(this)
@@ -105,9 +109,10 @@ class MixerActivity : Activity() {
         label.width = 240
         row.addView(label)
 
-        // ✅ TOTOONG KNOBVIEW — BUONG PANGALAN
+        // ✅ TOTOONG KNOBVIEW — IHIWALAY ANG LayoutParams!
         val knob = KnobView(this)
-        knob.layoutParams = LinearLayout.LayoutParams(144, 144)
+        val knobParams = LinearLayout.LayoutParams(144, 144)
+        knob.layoutParams = knobParams
         knob.minValue = -50f
         knob.maxValue = 50f
         knob.value = initialValue
