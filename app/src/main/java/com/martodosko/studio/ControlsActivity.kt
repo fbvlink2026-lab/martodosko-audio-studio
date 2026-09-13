@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — KNOB ✅ 0=PINAKA-IBABA ↓, 1-10 LAHAT NAROON!
-// VERSION: 1.0.103 — TAMA NA ANG PWESTO NG LAHAT NG NUMERO!
+// FILE: ControlsActivity.kt — KNOB ✅ 0&10 PINAKA-IBABA, LAHAT LITAW!
+// VERSION: 1.0.103 — 0⬇️ 10⬇️ magkatabi, 0-10 lahat nakikita!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -32,9 +32,10 @@ class KnobView @JvmOverloads constructor(
     var maxValue: Float = 10f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ TAMA NA ANG ANGLE: 0 = PINAKA-IBABA ↓ (-90°), 10 = KANAN-IBABA ↘️ (+90°)
-    private val startAngle = -90f   // ↓ PINAKA-IBABA = 0
-    private val endAngle = 90f      // ↘️ KANAN-IBABA = 10
+    // ✅ TAMA NA: 0 = -10° (ibaba-kaliwa), 10 = +10° (ibaba-kanan) — parehong nasa PINAKA-IBABA!
+    private val startAngle = -10f   // ⬇️ 0 — PINAKA-IBABA KALIWA
+    private val endAngle = 10f      // ⬇️ 10 — PINAKA-IBABA KANAN
+    private val sweepAngle = 240f   // ✅ Kabuuan ng ikot — 240° mula 0 hanggang 10
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -67,9 +68,10 @@ class KnobView @JvmOverloads constructor(
     }
 
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#CCCCCC")
+        color = Color.parseColor("#FFFFFF")
         textSize = 22f
         textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -77,30 +79,32 @@ class KnobView @JvmOverloads constructor(
         val centerX = width / 2f
         val centerY = height / 2f
         val radius = minOf(centerX, centerY) - 20f
-        val tickInner = radius + 2f
-        val tickOuter = radius + 12f
-        val textRadius = radius + 38f
+        val tickOuter = radius + 18f
+        val textRadius = radius + 48f
 
         // ==================================================
-        // ✅ LAHAT NG NUMERO 0-10 — NAROON! TAMA NA ANG PWESTO!
+        // ✅ NUMERO 0-10 — LAHAT LITAW! 0&10 NASA PINAKA-IBABA!
         // ==================================================
-        val angleRange = endAngle - startAngle
-        for (i in 0..10) {
+        val angleRange = endAngle - startAngle + sweepAngle
+        val baseOffset = -sweepAngle / 2f  // ✅ Simula sa ibaba-kaliwa
+
+        for (i in 0..10 step 1) {
             val progress = i / 10f
-            val angleDeg = startAngle + progress * angleRange
+            val angleDeg = baseOffset + progress * sweepAngle
             val angleRad = Math.toRadians(angleDeg.toDouble())
 
-            // ✅ GUHIT NG MARKA — LAHAT MAY GUHIT
+            // ✅ GUHIT NG MARKA
+            val tickInner = radius + 2f
             val tickPaint = if (i <= value) paintTickActive else paintTick
             canvas.drawLine(
-                centerX + tickInner * cos(angleRad).toFloat(),
-                centerY + tickInner * sin(angleRad).toFloat(),
-                centerX + tickOuter * cos(angleRad).toFloat(),
-                centerY + tickOuter * sin(angleRad).toFloat(),
+                (centerX + tickInner * cos(angleRad).toFloat()),
+                (centerY + tickInner * sin(angleRad).toFloat()),
+                (centerX + tickOuter * cos(angleRad).toFloat()),
+                (centerY + tickOuter * sin(angleRad).toFloat()),
                 tickPaint
             )
 
-            // ✅ NUMERO — LAHAT NG 0-10 NAKALAGAY!
+            // ✅ NUMERO — 0-10 LAHAT LITAW! Walang nakatago!
             val textX = centerX + textRadius * cos(angleRad).toFloat()
             val textY = centerY + textRadius * sin(angleRad).toFloat() + 8f
             canvas.drawText("$i", textX, textY, paintText)
@@ -111,16 +115,16 @@ class KnobView @JvmOverloads constructor(
         // Inner knob
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // ✅ GUHIT NG PIHITAN — UMIKOT MULA 0 (ibaba) → 10 (kanan)
+        // ✅ GUHIT NG PIHITAN — ITO LANG ANG UMIKOT!
         val progress = (value - minValue) / (maxValue - minValue)
-        val currentAngle = startAngle + progress * angleRange
+        val currentAngle = baseOffset + progress * sweepAngle
         val rad = Math.toRadians(currentAngle.toDouble())
         val indicatorLen = radius * 0.7f
 
         canvas.drawLine(
             centerX, centerY,
-            centerX + indicatorLen * cos(rad).toFloat(),
-            centerY + indicatorLen * sin(rad).toFloat(),
+            (centerX + indicatorLen * cos(rad)).toFloat(),
+            (centerY + indicatorLen * sin(rad)).toFloat(),
             paintIndicator
         )
     }
@@ -134,7 +138,7 @@ class KnobView @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> {
                 val deltaY = lastTouchY - event.y
                 val range = maxValue - minValue
-                value += deltaY / height * range * 2f
+                value += deltaY / height * range * 2.5f
                 lastTouchY = event.y
                 return true
             }
