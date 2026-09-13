@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FILE: fragment_mixer.xml — FIXED ALL DASHES IN COMMENTS -->
-<!-- VERSION: 1.0.72 — NO DOUBLE DASH IN COMMENTS ✅ -->
+<!-- FILE: fragment_mixer.xml — STEP 3: ONE KNOB ONLY -->
+<!-- VERSION: 1.0.73 — GAIN KNOB UNCOMMENTED ✅ -->
 <!-- UPDATED: 2026-09-13 -->
-<!-- PURPOSE: Safe base layout — elements commented out one by one later -->
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -18,64 +17,66 @@
         android:gravity="center"
         android:padding="24dp">
 
-        <!-- SIMPLE LAYOUT FIRST — NO KNOBS NO SLIDERS NO BUTTONS -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🎚️ MIXER SCREEN — LOADED OK"
+            android:text="🎚️ MIXER — STEP 3: 1 KNOB"
             android:textColor="#40E0D0"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="20dp"/>
+
+        <!-- ============================================== -->
+        <!-- STEP 3 — ONLY GAIN KNOB UNCOMMENTED -->
+        <!-- ============================================== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:background="#12121F"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:text="GAIN"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <!-- ✅ UNCOMMENTED — GAIN KNOB -->
+            <ImageView
+                android:id="@+id/knob_gain"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_knob"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:id="@+id/val_gain"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="0 dB"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:gravity="end"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <!-- ALL OTHER KNOBS — STILL COMMENTED OUT -->
+        <!-- BASS — LOWMID — MID — HIGHMID — TREBLE — PRESENCE — REVERB — DELAY — COMPRESSOR — PAN — VOLUME -->
+        <!-- SLIDERS — STILL COMMENTED -->
+        <!-- BUTTONS — STILL COMMENTED -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Base layout — No crash!"
-            android:textColor="#888888"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Elements will be enabled one by one..."
+            android:text="Iba pang element — nakakomento pa rin"
             android:textColor="#666666"
-            android:textSize="12sp"/>
-
-        <!-- ALL ELEMENTS COMMENTED OUT FOR NOW -->
-        <!-- STEP BY STEP PLAN -->
-        <!-- Step 1 — Confirm base layout loads correctly -->
-        <!-- Step 2 — Add ic_knob.xml to drawable folder -->
-        <!-- Step 3 — Uncomment one knob — test — then next -->
-        <!-- Step 4 — Uncomment sliders one by one -->
-        <!-- Step 5 — Uncomment buttons one by one -->
-        <!-- If crash happens — we know exactly which element caused it -->
-
-        <!-- KNOBS — commented out -->
-        <!-- <ImageView android:id="@+id/knob_gain" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_bass" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_lowmid" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_mid" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_highmid" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_treble" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_presence" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_reverb" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_delay" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_compressor" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_pan" ... /> -->
-        <!-- <ImageView android:id="@+id/knob_vol" ... /> -->
-
-        <!-- SLIDERS — commented out -->
-        <!-- <SeekBar android:id="@+id/slider_left" ... /> -->
-        <!-- <SeekBar android:id="@+id/slider_right" ... /> -->
-        <!-- <SeekBar android:id="@+id/slider_master" ... /> -->
-
-        <!-- BUTTONS — commented out -->
-        <!-- <ToggleButton android:id="@+id/btn_mute" ... /> -->
-        <!-- <ToggleButton android:id="@+id/btn_mono" ... /> -->
-        <!-- <ToggleButton android:id="@+id/btn_mute_all" ... /> -->
-        <!-- <ToggleButton android:id="@+id/btn_bypass" ... /> -->
+            android:textSize="12sp"
+            android:layout_marginTop="20dp"/>
 
     </LinearLayout>
 
