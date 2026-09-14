@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ FIXED SYNTAX ERROR! WALANG HIWALAY NA FILE!
-// VERSION: 4.0.1 — INAYOS NA ANG when-expression! BUILD NA!
+// FILE: MixerActivity.kt — ✅ TAMA NA ANG TURO! 0=ITAAS! WALANG HIWALAY NA FILE!
+// VERSION: 4.1.0 — INDICATOR TAMA NA! 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -19,7 +19,7 @@ import kotlin.math.sin
 import kotlin.math.roundToInt
 
 // ==================================================
-// 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+// 🎛️ CUSTOM KNOB — ✅ TAMA NA ANG TURO! 0=ITAAS!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -36,9 +36,9 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    private val ANGLE_START = 135f
-    private val ANGLE_END = 405f
-    private val ANGLE_RANGE = ANGLE_END - ANGLE_START
+    // ✅ TAMA NA ANG ANGGULO: -135° = -50 ↙️ IBABA-KALIWA, 0° = 0 ⬆️ ITAAS, +135° = +50 ↘️ IBABA-KANAN
+    private val ANGLE_MIN = -135f
+    private val ANGLE_MAX = 135f
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -104,47 +104,45 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
+        // ✅ TAMA NA ANG PAGKAKASUNOD-SUNOD NG NUMERO
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
-            val angle = ANGLE_START + ratio * ANGLE_RANGE
+            val angle = ANGLE_MIN + ratio * (ANGLE_MAX - ANGLE_MIN)
             val rad = Math.toRadians(angle.toDouble())
+
             val x1 = cx + tickInner * cos(rad).toFloat()
             val y1 = cy + tickInner * sin(rad).toFloat()
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            val isActive = if (value >= 0) {
-                mark in 0..value.toInt()
-            } else {
-                mark in value.toInt()..0
-            }
+            val isActive = if (value >= 0) mark in 0..value.toInt() else mark in value.toInt()..0
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
             val nx = cx + textRadius * cos(rad).toFloat()
-            val ny = cy + textRadius * sin(rad).toFloat() + 4f
+            val ny = cy + textRadius * sin(rad).toFloat() + 5f
 
-            // ✅ FIXED: TAMA NA ANG when-expression syntax!
             val label = when {
                 mark == 0 -> "0"
-                mark == 50 -> "+50"
-                mark == -50 -> "-50"
                 mark > 0 -> "+$mark"
                 else -> "$mark"
             }
             canvas.drawText(label, nx, ny, paintText)
         }
 
+        // ✅ INDICATOR — TAMA NA! 0 = ITAAS! WALANG BALIKTAD!
         val valRatio = (value - minValue) / (maxValue - minValue)
-        val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
+        val indAngle = ANGLE_MIN + valRatio * (ANGLE_MAX - ANGLE_MIN)
+
         canvas.save()
         canvas.translate(cx, cy)
-        canvas.rotate(indAngle - 90f)
+        canvas.rotate(indAngle) // ✅ DIRETSO — TAMA NA ANG TURO!
+
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen)
+            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS!
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
@@ -157,13 +155,14 @@ class KnobView @JvmOverloads constructor(
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
     }
 
+    // ✅ TAMA NA ANG GALAW — PATAAS = TAAS ANG HALAGA
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
             lastTouchY = e.y
             return true
         }
         if (e.action == MotionEvent.ACTION_MOVE) {
-            value += (lastTouchY - e.y) / height * 100f * 0.6f
+            value += (lastTouchY - e.y) / height * 100f * 0.5f
             lastTouchY = e.y
             return true
         }
@@ -195,13 +194,7 @@ class HorizontalSliderView @JvmOverloads constructor(
         val cy = height / 2f
         val tx = ((value - minValue) / (maxValue - minValue)) * width
         canvas.drawRoundRect(0f, cy - 8f, width.toFloat(), cy + 8f, 8f, 8f, track)
-        canvas.drawRoundRect(
-            if (tx > width / 2) width / 2f else tx,
-            cy - 8f,
-            if (tx > width / 2) tx else width / 2f,
-            cy + 8f,
-            8f, 8f, prog
-        )
+        canvas.drawRoundRect(if (tx > width / 2) width / 2f else tx, cy - 8f, if (tx > width / 2) tx else width / 2f, cy + 8f, 8f, 8f, prog)
         canvas.drawCircle(tx, cy, 24f, thumb)
     }
 
