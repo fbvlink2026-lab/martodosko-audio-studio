@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt ✅ 0=ITAAS, SIMULA=0 dB
-// VERSION: 2.1.0 - TUGMA SA LAHAT
+// FILE: MixerActivity.kt - 0=ITAAS ✅
+// VERSION: 2.1.0 - SIMPLE AT TAMA
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
