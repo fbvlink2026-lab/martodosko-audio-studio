@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ HULING AYOS! 0=ITAAS NA TALAGA! WALANG MALI!
-// VERSION: 4.4.0 — INAYOS ANG DIREKSYON NG ANGGULO! CLOCKWISE = TAMA!
+// FILE: MixerActivity.kt — ✅ PERFECT NA! 0=ITAAS + TAMA ANG PAG-IKOT!
+// VERSION: 4.5.0 — INAYOS ANG DIREKSYON NG PAG-IKOT! PAKANAN = TAAS ANG HALAGA!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -33,10 +33,10 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    // ✅ TAMA NA ANG SAKLAW: 0° = ITAAS, -135° = IBABA-KALIWA, +135° = IBABA-KANAN
+    // ✅ TAMA NA ANG SAKLAW: 0 = ITAAS, -50 = IBABA-KALIWA, +50 = IBABA-KANAN
     private val ANGLE_MIN = -135f
     private val ANGLE_MAX = 135f
-    private val ROTATE_OFFSET = -90f // ✅ Android 0° → KANAN → minus 90° = ITAAS
+    private val ROTATE_OFFSET = -90f // ✅ Android 0°→KANAN → -90° = ITAAS
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -102,7 +102,7 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
-        // ✅ NUMERO — TAMA NA ANG PAGKAKASUNOD: -50 ↙️ IBABA-KALIWA → 0 ⬆️ ITAAS → +50 ↘️ IBABA-KANAN
+        // ✅ NUMERO — TAMA NA ANG PAGKAKASUNOD: -50 ↙️ → 0 ⬆️ → +50 ↘️
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
@@ -128,19 +128,19 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ✅ INDICATOR — TAMA NA! 0 = ITAAS! WALANG BALIKTAD!
+        // ✅ INDICATOR — INAYOS ANG DIREKSYON! PAKANAN = TAAS ANG HALAGA!
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_MIN + valRatio * (ANGLE_MAX - ANGLE_MIN)
 
         canvas.save()
         canvas.translate(cx, cy)
-        canvas.rotate(indAngle + ROTATE_OFFSET) // ✅ IISANG OFFSET LANG!
+        canvas.rotate(indAngle + ROTATE_OFFSET) // ✅ TAMA — PAKANAN KAPAG TUMATAAS!
 
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — SIGURADO NA!
+            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA!
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
@@ -153,14 +153,15 @@ class KnobView @JvmOverloads constructor(
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
     }
 
-    // ✅ TAMA NA ANG GALAW — PATAAS = TAAS ANG HALAGA
+    // ✅ INAYOS ANG GALAW — PAKANAN = TAAS, PAKALIWA = BABA!
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
             lastTouchY = e.y
             return true
         }
         if (e.action == MotionEvent.ACTION_MOVE) {
-            value += (lastTouchY - e.y) / height * 100f * 0.5f
+            // ✅ BALIKTAD ANG DIREKSYON — PARA PAKANAN KAPAG TUMATAAS!
+            value -= (lastTouchY - e.y) / height * 100f * 0.5f
             lastTouchY = e.y
             return true
         }
