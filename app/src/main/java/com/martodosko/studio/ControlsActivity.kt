@@ -1,5 +1,5 @@
 // ==================================================
-// FILE: ControlsActivity.kt — BAGONG SIMULA ✅ TAMA ANG PWEStO
+// FILE: ControlsActivity.kt — BAGO ✅ EKSAAKTO SA GUSTO MO!
 // VERSION: 2.0.0 — 0=ITAAS, -50 IBABA-KALIWA, +50 IBABA-KANAN
 // UPDATED: 2026-09-14
 // ==================================================
@@ -10,6 +10,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -19,7 +21,7 @@ class KnobView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    var value: Float = 0f  // ✅ SIMULA = 0
+    var value: Float = 0f // ✅ SIMULA = 0
         set(newVal) {
             field = newVal.coerceIn(minValue, maxValue)
             invalidate()
@@ -30,14 +32,20 @@ class KnobView @JvmOverloads constructor(
     var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ TAMA NA ANGGULO — 0° = ITAAS, umiikot 270° pababa
-    private val ANGLE_0 = -90f      // ⬆️ 0 = ITAAS GITNA
-    private val ANGLE_MIN = 135f    // ↙️ -50 = IBABA-KALIWA
-    private val ANGLE_MAX = 45f     // ↘️ +50 = IBABA-KANAN
+    // ✅ EKSAAKTONG PWEStO:
+    private val angleZero = -90f   // 0 = ITAAS GITNA ⬆️
+    private val angleMin = 135f    // -50 = IBABA-KALIWA ↙️
+    private val angleMax = 45f     // +50 = IBABA-KANAN ↘️
     private var lastTouchY = 0f
 
-    private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#2A2A3C") }
-    private val paintKnob = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3E3E5C") }
+    private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#2A2A3C")
+        style = Paint.Style.FILL
+    }
+    private val paintKnob = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#3E3E5C")
+        style = Paint.Style.FILL
+    }
     private val paintIndicator = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.STROKE
@@ -49,9 +57,14 @@ class KnobView @JvmOverloads constructor(
         style = Paint.Style.STROKE
         strokeWidth = 2f
     }
+    private val paintTickActive = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#40E0D0")
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+    }
     private val paintNumber = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
-        textSize = 15f
+        textSize = 14f
         textAlign = Paint.Align.CENTER
     }
 
@@ -59,46 +72,49 @@ class KnobView @JvmOverloads constructor(
         super.onDraw(canvas)
         val cx = width / 2f
         val cy = height / 2f
-        val r = minOf(cx, cy) * 0.35f
-        val tickR = r + 12f
-        val numR = r + 48f  // ✅ SAKTO — LITAW ANG NUMERO
+        val r = minOf(cx, cy) * 0.45f // ✅ Tamang laki ng knob
+        val rTick = r + 12f
+        val rNum = r + 45f // ✅ Sapat na layo para makita ang numero
 
         // ✅ LAHAT NG NUMERO
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
 
         for (mark in marks) {
-            // ✅ KUWENTUHIN ANG ANGGULO — SIMPLE AT TAMA
-            val angle = when (mark) {
-                0 -> ANGLE_0
-                -50 -> ANGLE_MIN
-                50 -> ANGLE_MAX
-                in -40 downTo -10 -> {
-                    val t = (mark + 50f) / 40f
-                    ANGLE_0 + t * (ANGLE_MIN - ANGLE_0)
+            // ✅ KUWENTO NG ANGGULO — SIMPLE AT TAMA
+            val angle = when {
+                mark == 0 -> angleZero
+                mark == -50 -> angleMin
+                mark == 50 -> angleMax
+                mark < 0 -> {
+                    // -40,-30,-20,-10: mula 0 pababa kaliwa hanggang -50
+                    val p = (mark + 50f) / 50f // 0 → 1
+                    angleZero + p * (angleMin - angleZero)
                 }
-                in 10..40 -> {
-                    val t = (mark - 10f) / 40f
-                    ANGLE_0 + t * (ANGLE_MAX - ANGLE_0)
+                else -> {
+                    // 10,20,30,40: mula 0 pababa kanan hanggang +50
+                    val p = mark / 50f // 0 → 1
+                    angleZero + p * (angleMax - angleZero)
                 }
-                else -> ANGLE_0
             }
 
             val rad = Math.toRadians(angle.toDouble())
             val x1 = cx + r * cos(rad).toFloat()
             val y1 = cy + r * sin(rad).toFloat()
-            val x2 = cx + tickR * cos(rad).toFloat()
-            val y2 = cy + tickR * sin(rad).toFloat()
-            canvas.drawLine(x1, y1, x2, y2, paintTick)
+            val x2 = cx + rTick * cos(rad).toFloat()
+            val y2 = cy + rTick * sin(rad).toFloat()
+            val tPaint = if ((value >= 0 && mark in 0..value.toInt()) ||
+                             (value < 0 && mark in value.toInt()..0)) paintTickActive else paintTick
+            canvas.drawLine(x1, y1, x2, y2, tPaint)
 
-            // ✅ NUMERO — SAKTO SA PWEStO
-            val nx = cx + numR * cos(rad).toFloat()
-            val ny = cy + numR * sin(rad).toFloat() + 5f
-            val label = when {
+            // ✅ NUMERO — SIGURADONG LITAW
+            val nx = cx + rNum * cos(rad).toFloat()
+            val ny = cy + rNum * sin(rad).toFloat() + 5f
+            val txt = when {
                 mark == 0 -> "0"
                 mark > 0 -> "+$mark"
                 else -> "$mark"
             }
-            canvas.drawText(label, nx, ny, paintNumber)
+            canvas.drawText(txt, nx, ny, paintNumber)
         }
 
         // ✅ KNOB
@@ -107,14 +123,14 @@ class KnobView @JvmOverloads constructor(
 
         // ✅ INDICATOR — TUMUTURO SA TAMA
         val ang = when {
-            value == 0f -> ANGLE_0
+            value == 0f -> angleZero
             value < 0f -> {
-                val t = (value + 50f) / 50f
-                ANGLE_0 + t * (ANGLE_MIN - ANGLE_0)
+                val p = (value + 50f) / 50f
+                angleZero + p * (angleMin - angleZero)
             }
             else -> {
-                val t = value / 50f
-                ANGLE_0 + t * (ANGLE_MAX - ANGLE_0)
+                val p = value / 50f
+                angleZero + p * (angleMax - angleZero)
             }
         }
         val rad = Math.toRadians(ang.toDouble())
@@ -141,5 +157,73 @@ class KnobView @JvmOverloads constructor(
             }
         }
         return super.onTouchEvent(event)
+    }
+}
+
+// ==================================================
+// HORIZONTAL SLIDER — WALANG PAGBABAGO
+// ==================================================
+class HorizontalSliderView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
+    var value: Float = 0f
+        set(v) { field = v.coerceIn(minValue, maxValue); invalidate(); onValueChange?.invoke(field) }
+    var minValue: Float = -100f
+    var maxValue: Float = 100f
+    var onValueChange: ((Float) -> Unit)? = null
+    private val track = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#1A1A2E") }
+    private val prog = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#40E0D0") }
+    private val thumb = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
+
+    override fun onDraw(canvas: Canvas) {
+        val cy = height / 2f
+        val tx = ((value - minValue) / (maxValue - minValue)) * width
+        canvas.drawRoundRect(0f, cy - 8f, width.toFloat(), cy + 8f, 8f, 8f, track)
+        canvas.drawRoundRect(if (tx > width/2) width/2f else tx, cy - 8f,
+            if (tx > width/2) tx else width/2f, cy + 8f, 8f, 8f, prog)
+        canvas.drawCircle(tx, cy, 24f, thumb)
+    }
+    override fun onTouchEvent(e: MotionEvent): Boolean {
+        if (e.action == MotionEvent.ACTION_DOWN || e.action == MotionEvent.ACTION_MOVE) {
+            value = minValue + (e.x / width) * (maxValue - minValue)
+            return true
+        }
+        return super.onTouchEvent(e)
+    }
+}
+
+// ==================================================
+// TOGGLE BUTTON — WALANG PAGBABAGO
+// ==================================================
+class ToggleButtonView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
+    var isOn: Boolean = false
+        set(v) { field = v; update(); onToggle?.invoke(field) }
+    var textLabel: String = ""
+        set(v) { field = v; tv.text = v }
+    var onToggle: ((Boolean) -> Unit)? = null
+    private lateinit var tv: android.widget.TextView
+    private lateinit var dot: View
+
+    init {
+        orientation = HORIZONTAL
+        gravity = android.view.Gravity.CENTER_VERTICAL
+        setPadding(24,12,24,12)
+        setBackgroundColor(Color.parseColor("#12121F"))
+        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        dot = View(context)
+        dot.layoutParams = LayoutParams(32,32).apply { setMargins(0,0,16,0) }
+        addView(dot)
+        tv = android.widget.TextView(context)
+        tv.textSize = 14f
+        tv.setTextColor(Color.WHITE)
+        addView(tv)
+        setOnClickListener { isOn = !isOn }
+        update()
+    }
+    private fun update() {
+        dot.setBackgroundColor(if (isOn) Color.parseColor("#40E0D0") else Color.parseColor("#333344"))
+        setBackgroundColor(if (isOn) Color.parseColor("#1A1A3A") else Color.parseColor("#12121F"))
     }
 }
