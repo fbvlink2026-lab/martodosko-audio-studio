@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt - BAGONG SIMULA ✅
-// VERSION: 2.0.0 — 0=ITAAS, DETALYADONG NUMERO, TAMA ANG SAKLAW!
+// FILE: ControlsActivity.kt — BAGONG SIMULA ✅
+// VERSION: 2.0.0 — 0=ITAAS, BAWAT 5, BUONG SAKOP, HINDI SIKSIKAN
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,7 +21,7 @@ class KnobView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ✅ SIMULA = 0 — HINDI -50!
+    // ✅ DEFAULT = 0 — NASA ITAAS AGAD
     var value: Float = 0f
         set(newVal) {
             field = newVal.coerceIn(minValue, maxValue)
@@ -33,11 +33,11 @@ class KnobView @JvmOverloads constructor(
     var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ TAMA NA PWEStO: 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-    private val zeroAngle = -90f    // 0 = ITAAS NA GITNA ⬆️
-    private val minAngle = 135f     // -50 = IBABA-KALIWA ↙️
-    private val maxAngle = 45f      // +50 = IBABA-KANAN ↘️
-    private val totalArc = minAngle - maxAngle  // 270 degrees kabuuan
+    // ✅ 0 = ITAAS (-90°), -50 = IBABA-KALIWA (135°), +50 = IBABA-KANAN (45°)
+    private val angleZero = -90f
+    private val angleMin = 135f    // -50
+    private val angleMax = 45f     // +50
+    private val totalArc = 270f    // Buong sakop mula -50 hanggang +50
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -77,42 +77,46 @@ class KnobView @JvmOverloads constructor(
         super.onDraw(canvas)
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = minOf(centerX, centerY) * 0.38f
+        val radius = minOf(centerX, centerY) * 0.32f
+
+        // ✅ DISTANCE NG NUMERO — MALAYO ENOUGH PARA HINDI SIKSIKAN
+        val numberRadius = radius + 58f
         val tickOuter = radius + 12f
         val tickInner = radius + 2f
-        val numberRadius = radius + 58f
 
-        // ✅ DETALYADONG NUMERO — SAKOP ANG BUONG RADIUS!
+        // ==================================================
+        // ✅ LAHAT NG NUMERO — BAWAT 5: -50, -45, -40 ... 0 ... +40, +45, +50
+        // ==================================================
         val marks = listOf(-50, -45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
 
         for (mark in marks) {
-            // ✅ TAMA NA ANGGULO — 0=ITAAS, umiikot pababa sa kaliwa at kanan
+            // ✅ KUWENTO NG ANGGULO — 0 = ITAAS, papunta sa kaliwa at kanan
             val angle = when {
-                mark == 0 -> zeroAngle
+                mark == 0 -> angleZero
                 mark < 0 -> {
-                    // Mula 0 → -50: ITAAS → IBABA-KALIWA
-                    val progress = (mark - 0f) / (minValue - 0f)
-                    zeroAngle + progress * (minAngle - zeroAngle)
+                    // Mula 0 pababa-kaliwa hanggang -50
+                    val progress = (mark + 50f) / 50f
+                    angleZero + progress * (angleMin - angleZero)
                 }
                 else -> {
-                    // Mula 0 → +50: ITAAS → IBABA-KANAN
-                    val progress = mark / maxValue
-                    zeroAngle + progress * (maxAngle - zeroAngle)
+                    // Mula 0 pababa-kanan hanggang +50
+                    val progress = mark / 50f
+                    angleZero + progress * (angleMax - angleZero)
                 }
             }
 
             val rad = Math.toRadians(angle.toDouble())
-            val isActive = if (value >= 0) mark in 0..value.toInt() else mark in value.toInt()..0
-            val tickPaint = if (isActive) paintTickActive else paintTick
 
             // ✅ GUHIT
             val startX = centerX + tickInner * cos(rad).toFloat()
             val startY = centerY + tickInner * sin(rad).toFloat()
             val endX = centerX + tickOuter * cos(rad).toFloat()
             val endY = centerY + tickOuter * sin(rad).toFloat()
+            val tickPaint = if ((value >= 0 && mark in 0..value.toInt()) ||
+                               (value < 0 && mark in value.toInt()..0)) paintTickActive else paintTick
             canvas.drawLine(startX, startY, endX, endY, tickPaint)
 
-            // ✅ NUMERO — LAHAT LITAW!
+            // ✅ NUMERO — NAKAPALIBOT, HINDI SIKSIKAN, LITAW LAHAT
             val numX = centerX + numberRadius * cos(rad).toFloat()
             val numY = centerY + numberRadius * sin(rad).toFloat() + 5f
             val label = when {
@@ -127,16 +131,16 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(centerX, centerY, radius, paintBg)
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // ✅ INDICATOR — TUMUTURO SA TAMA!
+        // ✅ INDICATOR — TUMUTURO SA TAMA
         val currentAngle = when {
-            value == 0f -> zeroAngle
+            value == 0f -> angleZero
             value < 0f -> {
-                val progress = (value - 0f) / (minValue - 0f)
-                zeroAngle + progress * (minAngle - zeroAngle)
+                val progress = (value + 50f) / 50f
+                angleZero + progress * (angleMin - angleZero)
             }
             else -> {
-                val progress = value / maxValue
-                zeroAngle + progress * (maxAngle - zeroAngle)
+                val progress = value / 50f
+                angleZero + progress * (angleMax - angleZero)
             }
         }
         val rad = Math.toRadians(currentAngle.toDouble())
