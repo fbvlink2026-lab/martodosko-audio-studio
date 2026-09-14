@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — BAGONG SIMULA ✅
-// VERSION: 2.0.0 — 0=ITAAS, 0-50 BAWAT 5, BUONG BILOG!
+// FILE: ControlsActivity.kt — 290° NA ✅ HINDI NA SIKSIKAN!
+// VERSION: 2.1.0 — 0=ITAAS, 290° SAKLAW, MAS MALAWAK ANG PAGITAN!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,23 +21,22 @@ class KnobView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ✅ SIMULA = 0 — NASA ITAAS
     var value: Float = 0f
         set(newVal) {
-            field = newVal.coerceIn(0f, 50f)
+            field = newVal.coerceIn(minValue, maxValue)
             invalidate()
             onValueChange?.invoke(field)
         }
 
-    var minValue: Float = 0f
+    var minValue: Float = -50f
     var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ 0° = ITAAS, umiikot 270° pababa sa kaliwa at kanan
-    private val zeroAngle = -90f       // 0 = ITAAS GITNA ⬆️
-    private val endLeftAngle = 135f    // 50 = IBABA-KALIWA ↙️
-    private val endRightAngle = 45f    // 50 = IBABA-KANAN ↘️
-    private val totalRange = 225f      // mula 0 hanggang 50 sa bawat panig
+    // ✅ 290° NA — MAS MALAWAK! 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+    private val zeroAngle = -90f    // 0 = ITAAS GITNA ⬆️
+    private val minAngle = 155f     // -50 = IBABA-KALIWA ↙️ (mas malayo)
+    private val maxAngle = 55f      // +50 = IBABA-KANAN ↘️ (mas malayo)
+    private val totalArc = minAngle - maxAngle  // ✅ 290 degrees kabuuan!
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -68,7 +67,7 @@ class KnobView @JvmOverloads constructor(
     }
     private val paintNumber = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
-        textSize = 14f
+        textSize = 13f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
     }
@@ -77,32 +76,30 @@ class KnobView @JvmOverloads constructor(
         super.onDraw(canvas)
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = minOf(centerX, centerY) * 0.45f
+        val radius = minOf(centerX, centerY) * 0.38f
         val tickOuter = radius + 12f
         val tickInner = radius + 2f
-        val numberRadius = radius + 50f
+        val numberRadius = radius + 58f
 
-        // ✅ MGA NUMERO: 0,5,10,15,20,25,30,35,40,45,50 — SAKOP ANG BUONG BILOG!
-        val marks = listOf(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
+        // ✅ DETALYADONG NUMERO — 5 steps — MAS MALAWAK ANG PAGITAN!
+        val marks = listOf(-50, -45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
 
         for (mark in marks) {
-            // ✅ KALIWA = 0→50 pakanan pababa, KANAN = 0→50 pakaliwa pababa
+            // ✅ 290° NA — TAMA ANG PAGKAKALAGAY NG LAHAT!
             val angle = when {
                 mark == 0 -> zeroAngle
-                mark <= 25 -> {
-                    // KANAN PABABA: 5→10→15→20→25
-                    val progress = mark / 25f
-                    zeroAngle + progress * (endRightAngle - zeroAngle)
+                mark < 0 -> {
+                    val progress = (mark - minValue) / (0f - minValue)
+                    zeroAngle + progress * (minAngle - zeroAngle)
                 }
                 else -> {
-                    // KALIWA PABABA: 30→35→40→45→50
-                    val progress = (mark - 25f) / 25f
-                    endRightAngle + progress * (endLeftAngle - endRightAngle)
+                    val progress = mark / maxValue
+                    zeroAngle + progress * (maxAngle - zeroAngle)
                 }
             }
 
             val rad = Math.toRadians(angle.toDouble())
-            val isActive = mark in 0..value.toInt()
+            val isActive = if (value >= 0) mark in 0..value.toInt() else mark in value.toInt()..0
             val tickPaint = if (isActive) paintTickActive else paintTick
 
             // ✅ GUHIT
@@ -112,10 +109,15 @@ class KnobView @JvmOverloads constructor(
             val endY = centerY + tickOuter * sin(rad).toFloat()
             canvas.drawLine(startX, startY, endX, endY, tickPaint)
 
-            // ✅ NUMERO — LAHAT LITAW!
+            // ✅ NUMERO — MAS MALAWAK ANG PAGITAN, HINDI NA SIKSIKAN!
             val numX = centerX + numberRadius * cos(rad).toFloat()
             val numY = centerY + numberRadius * sin(rad).toFloat() + 5f
-            canvas.drawText("$mark", numX, numY, paintNumber)
+            val label = when {
+                mark == 0 -> "0"
+                mark > 0 -> "+$mark"
+                else -> "$mark"
+            }
+            canvas.drawText(label, numX, numY, paintNumber)
         }
 
         // ✅ KNOB
@@ -123,8 +125,17 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
         // ✅ INDICATOR — TUMUTURO SA TAMA!
-        val progress = value / 50f
-        val currentAngle = zeroAngle + progress * (endLeftAngle - zeroAngle)
+        val currentAngle = when {
+            value == 0f -> zeroAngle
+            value < 0f -> {
+                val progress = (value - minValue) / (0f - minValue)
+                zeroAngle + progress * (minAngle - zeroAngle)
+            }
+            else -> {
+                val progress = value / maxValue
+                zeroAngle + progress * (maxAngle - zeroAngle)
+            }
+        }
         val rad = Math.toRadians(currentAngle.toDouble())
         val indicatorLen = radius * 0.7f
         canvas.drawLine(
@@ -143,8 +154,8 @@ class KnobView @JvmOverloads constructor(
             }
             MotionEvent.ACTION_MOVE -> {
                 val deltaY = lastTouchY - event.y
-                value += deltaY / height * 50f * 0.8f
-                value = value.coerceIn(0f, 50f)
+                val range = maxValue - minValue
+                value += deltaY / height * range * 0.5f
                 lastTouchY = event.y
                 return true
             }
@@ -162,7 +173,9 @@ class HorizontalSliderView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     var value: Float = 0f
-        set(newVal) { field = newVal.coerceIn(0f, 100f); invalidate(); onValueChange?.invoke(field) }
+        set(newVal) { field = newVal.coerceIn(minValue, maxValue); invalidate(); onValueChange?.invoke(field) }
+    var minValue: Float = -100f
+    var maxValue: Float = 100f
     var onValueChange: ((Float) -> Unit)? = null
     private val paintTrack = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#1A1A2E"); style = Paint.Style.FILL }
     private val paintProgress = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#40E0D0"); style = Paint.Style.FILL }
@@ -173,13 +186,14 @@ class HorizontalSliderView @JvmOverloads constructor(
         val centerY = height / 2f
         val thumbRadius = 24f
         canvas.drawRoundRect(0f, centerY - 8f, width.toFloat(), centerY + 8f, 8f, 8f, paintTrack)
-        val progressX = (value / 100f) * width
-        canvas.drawRoundRect(0f, centerY - 8f, progressX, centerY + 8f, 8f, 8f, paintProgress)
+        val progressX = ((value - minValue) / (maxValue - minValue)) * width
+        if (progressX > width / 2) canvas.drawRoundRect(width / 2f, centerY - 8f, progressX, centerY + 8f, 8f, 8f, paintProgress)
+        else canvas.drawRoundRect(progressX, centerY - 8f, width / 2f, centerY + 8f, 8f, 8f, paintProgress)
         canvas.drawCircle(progressX, centerY, thumbRadius, paintThumb)
     }
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
-            value = (event.x / width) * 100f
+            value = minValue + (event.x / width) * (maxValue - minValue)
             return true
         }
         return super.onTouchEvent(event)
