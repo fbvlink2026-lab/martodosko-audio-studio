@@ -33,13 +33,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:paddingTop="40dp"
-            android:paddingBottom="40dp"
-            android:paddingLeft="60dp"
-            android:paddingRight="60dp"
-            android:background="#12121F"
-            android:layout_marginTop="8dp">
+            android:gravity="center"
+            android:padding="32dp"
+            android:layout_marginTop="8dp"
+            android:background="#12121F">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,7 +45,7 @@
                 android:textColor="#AAAAAA"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="16dp"/>
 
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
@@ -63,7 +60,8 @@
                 android:textColor="#40E0D0"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
+                android:layout_marginTop="16dp"/>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
