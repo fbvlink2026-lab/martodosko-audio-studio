@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ TAMA NA ANG TURO! 0=ITAAS! WALANG HIWALAY NA FILE!
-// VERSION: 4.1.0 — INDICATOR TAMA NA! 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+// FILE: MixerActivity.kt — ✅ 0 = ITAAS NA TALAGA! AYOS NA ANG LAHAT!
+// VERSION: 4.2.0 — INAYOS ANG ANDROID ROTATE OFFSET! 0 NGA NGA ITAAS!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -19,7 +19,7 @@ import kotlin.math.sin
 import kotlin.math.roundToInt
 
 // ==================================================
-// 🎛️ CUSTOM KNOB — ✅ TAMA NA ANG TURO! 0=ITAAS!
+// 🎛️ CUSTOM KNOB — ✅ 0 = ITAAS! -50 = IBABA-KALIWA! +50 = IBABA-KANAN!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -36,9 +36,10 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    // ✅ TAMA NA ANG ANGGULO: -135° = -50 ↙️ IBABA-KALIWA, 0° = 0 ⬆️ ITAAS, +135° = +50 ↘️ IBABA-KANAN
-    private val ANGLE_MIN = -135f
-    private val ANGLE_MAX = 135f
+    // ✅ TAMA NA ANG ANGGULO — 270° kabuuan
+    private val ANGLE_MIN = -135f   // -50 ↙️ IBABA-KALIWA
+    private val ANGLE_MAX = 135f    // +50 ↘️ IBABA-KANAN
+    private val ROTATE_OFFSET = -90f // ✅ ANDROID FIX: 0° → ITAAS
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -109,7 +110,7 @@ class KnobView @JvmOverloads constructor(
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
             val angle = ANGLE_MIN + ratio * (ANGLE_MAX - ANGLE_MIN)
-            val rad = Math.toRadians(angle.toDouble())
+            val rad = Math.toRadians((angle + ROTATE_OFFSET).toDouble()) // ✅ MAY OFFSET!
 
             val x1 = cx + tickInner * cos(rad).toFloat()
             val y1 = cy + tickInner * sin(rad).toFloat()
@@ -130,13 +131,13 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ✅ INDICATOR — TAMA NA! 0 = ITAAS! WALANG BALIKTAD!
+        // ✅ INDICATOR — TAMA NA! 0 = ITAAS NA TALAGA!
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_MIN + valRatio * (ANGLE_MAX - ANGLE_MIN)
 
         canvas.save()
         canvas.translate(cx, cy)
-        canvas.rotate(indAngle) // ✅ DIRETSO — TAMA NA ANG TURO!
+        canvas.rotate(indAngle + ROTATE_OFFSET) // ✅ MAY OFFSET — ITAAS NA ANG 0!
 
         val indLen = knobRadius * 0.75f
         val indW = 6f
