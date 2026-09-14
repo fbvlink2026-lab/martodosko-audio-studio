@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml ✅ INAYOS NA — LUMIIT ANG KNOB + MAY ESPASYO! -->
-<!-- VERSION: 1.0.96 — KNOB 100dp + MAY ESPASYO SA PALIGID PARA SA MGA NUMERO! -->
+<!-- FILE: activity_mixer.xml ✅ INAYOS NA — WALANG ERROR! -->
+<!-- VERSION: 1.0.97 — KNOB 100dp + MAY ESPASYO SA PALIGID! -->
 <!-- UPDATED: 2026-09-14 -->
 <!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,6 +43,7 @@
         <!-- ✅ KNOB CONTAINER — MAY ESPASYO SA PALIGID PARA SA MGA NUMERO! -->
         <!-- LABEL (TAAS) → KNOB (GITNA) → VALUE (IBABA) -->
         <!-- ================================================== -->
+        <!-- ✅ ESPASYO SA KALIWA AT KANAN PARA SA -50 AT +50 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,8 +51,8 @@
             android:gravity="center_horizontal"
             android:paddingTop="32dp"
             android:paddingBottom="32dp"
-            android:paddingLeft="48dp"  <!-- ✅ ESPASYO SA KALIWA PARA SA -50! -->
-            android:paddingRight="48dp" <!-- ✅ ESPASYO SA KANAN PARA SA +50! -->
+            android:paddingLeft="48dp"
+            android:paddingRight="48dp"
             android:background="#12121F"
             android:layout_marginTop="8dp">
 
@@ -65,11 +66,11 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- ✅ 2. KNOB — LUMIIT NA (100dp) + MAY ESPASYO SA PALIGID PARA SA MGA NUMERO! -->
+            <!-- ✅ 2. KNOB — LUMIIT NA (100dp) + MAY ESPASYO SA PALIGID! -->
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
-                android:layout_width="100dp"  <!-- ✅ LUMIIT NG ~30% — dating 144dp! -->
-                android:layout_height="100dp"/> <!-- ✅ MAS MALAKING ESPASYO SA PALIGID! -->
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
 
             <!-- ✅ 3. HALAGA — NASA IBABA NG KNOB! -->
             <TextView
