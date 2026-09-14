@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt ✅ 0=ITAAS, -50 IBABA-KALIWA, +50 IBABA-KANAN
-// VERSION: 2.1.0 — BUONG BILOG, LAHAT NUMERO IKALAT, SIMULA=0
+// FILE: ControlsActivity.kt — EKSATONG AYOS ✅
+// VERSION: 2.1.0 — 0=ITAAS, -50→-5 KALIWA, +5→+50 KANAN
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -29,15 +29,17 @@ class KnobView @JvmOverloads constructor(
             onValueChange?.invoke(field)
         }
 
-    var minValue: Float = -50f   // ↙️ IBABA-KALIWA
-    var maxValue: Float = 50f    // ↘️ IBABA-KANAN
+    var minValue: Float = -50f
+    var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ TAMA NA ANGGULO — BUONG BILOG (270° mula -135° hanggang +135°)
-    private val zeroAngle = -90f    // ⬆️ 0 = PINAKA-ITAAS (-90°)
-    private val minAngle = 135f     // ↙️ -50 = IBABA-KALIWA (135°)
-    private val maxAngle = 45f      // ↘️ +50 = IBABA-KANAN (45°)
-    private val totalArc = 270f     // MULA -135° → -90° → +45° = 270°
+    // ✅ 0 = ITAAS = -90°
+    private val zeroAngle = -90f
+    // ✅ -50 = IBABA-KALIWA = 135°
+    private val minAngle = 135f
+    // ✅ +50 = IBABA-KANAN = 45°
+    private val maxAngle = 45f
+    private val totalArc = 270f  // Buong saklaw mula -50 hanggang +50
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -68,7 +70,7 @@ class KnobView @JvmOverloads constructor(
     }
     private val paintNumber = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#FFFFFF")
-        textSize = 16f
+        textSize = 14f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
     }
@@ -77,31 +79,28 @@ class KnobView @JvmOverloads constructor(
         super.onDraw(canvas)
         val centerX = width / 2f
         val centerY = height / 2f
-        val radius = minOf(centerX, centerY) * 0.40f  // ✅ Tamang laki
+        val radius = minOf(centerX, centerY) * 0.40f
         val tickOuter = radius + 12f
         val tickInner = radius + 2f
-        val numberRadius = radius + 58f  // ✅ Sapat na layo — hindi matatakpan
+        val numberRadius = radius + 58f
 
-        // ✅ LAHAT NG NUMERO — IKALAT SA BUONG BILOG
-        val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
+        // ✅ EKSATONG NUMBERS NA HINILING MO: -50 hanggang -5, 0, +5 hanggang +50
+        val marks = listOf(-50, -45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
 
         for (mark in marks) {
-            // ✅ PANTAY NA PAGITAN — BUONG BILOG
-            val angle = when (mark) {
-                0 -> zeroAngle
-                -50 -> minAngle
-                50 -> maxAngle
-                in -40 downTo -10 -> {
-                    // ↙️ Kaliwa pababa: -40 → -30 → -20 → -10
-                    val progress = (mark + 50f) / 40f
+            // ✅ TAMA NA ANGGULO — 0=ITAAS, pababa sa kaliwa at kanan
+            val angle = when {
+                mark == 0 -> zeroAngle
+                mark < 0 -> {
+                    // KALIWA PABABA: -5 → -10 → ... → -50
+                    val progress = (mark + 50f) / 50f
                     zeroAngle + progress * (minAngle - zeroAngle)
                 }
-                in 10..40 -> {
-                    // ↘️ Kanan pababa: +10 → +20 → +30 → +40
-                    val progress = (mark - 10f) / 40f
+                else -> {
+                    // KANAN PABABA: +5 → +10 → ... → +50
+                    val progress = mark / 50f
                     zeroAngle + progress * (maxAngle - zeroAngle)
                 }
-                else -> zeroAngle
             }
 
             val rad = Math.toRadians(angle.toDouble())
@@ -115,9 +114,9 @@ class KnobView @JvmOverloads constructor(
                                (value < 0 && mark in value.toInt()..0)) paintTickActive else paintTick
             canvas.drawLine(startX, startY, endX, endY, tickPaint)
 
-            // ✅ NUMERO — IKALAT SA BUONG BILOG, LITAW LAHAT
+            // ✅ NUMERO — LAHAT LITAW
             val numX = centerX + numberRadius * cos(rad).toFloat()
-            val numY = centerY + numberRadius * sin(rad).toFloat() + 6f
+            val numY = centerY + numberRadius * sin(rad).toFloat() + 5f
             val label = when {
                 mark == 0 -> "0"
                 mark > 0 -> "+$mark"
@@ -130,7 +129,7 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(centerX, centerY, radius, paintBg)
         canvas.drawCircle(centerX, centerY, radius * 0.8f, paintKnob)
 
-        // ✅ INDICATOR — NASA 0 = ITAAS SA SIMULA
+        // ✅ INDICATOR — TUMUTURO SA 0 = ITAAS
         val currentAngle = when {
             value == 0f -> zeroAngle
             value < 0f -> {
