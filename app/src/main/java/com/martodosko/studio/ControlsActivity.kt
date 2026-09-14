@@ -1,3 +1,8 @@
+// ==================================================
+// FILE: ControlsActivity.kt — FIXED ✅ WALANG BUILD ERROR!
+// VERSION: 3.1.0 — AYOS NA ANG LAHAT NG ERROR: RadialGradient, roundToInt, margins
+// UPDATED: 2026-09-14
+// ==================================================
 package com.martodosko.studio
 
 import android.content.Context
@@ -9,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.roundToInt // ✅ FIX: roundToInt
 
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -43,7 +49,8 @@ class KnobView @JvmOverloads constructor(
     }
 
     private val paintKnobShine = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.RADIAL_GRADIENT
+        // ✅ FIX: Alisin ang maling Paint.Style.RADIAL_GRADIENT — shader lang ang kailangan
+        isAntiAlias = true
         shader = RadialGradient(
             0f, 0f, 1f,
             intArrayOf(
@@ -180,7 +187,7 @@ class KnobView @JvmOverloads constructor(
         paintText.textSize = 15f
         canvas.drawText("GAIN", cx, cy - panelRadius * 0.78f, paintText)
 
-        // Value label
+        // Value label — ✅ roundToInt ayos na dahil may import na
         paintValueText.textSize = 16f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.72f, paintValueText)
     }
@@ -201,7 +208,9 @@ class KnobView @JvmOverloads constructor(
     }
 }
 
-// Keep your other classes unchanged
+// ==================================================
+// HORIZONTAL SLIDER — WALANG PAGBABAGO
+// ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -254,6 +263,9 @@ class HorizontalSliderView @JvmOverloads constructor(
     }
 }
 
+// ==================================================
+// TOGGLE BUTTON — ✅ FIXED: setMargins → hiwalay na margins
+// ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -284,9 +296,13 @@ class ToggleButtonView @JvmOverloads constructor(
         layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 
         dot = View(context)
-        dot.layoutParams = ViewGroup.LayoutParams(32, 32).apply {
-            setMargins(0, 0, 16, 0)
-        }
+        val dotParams = LayoutParams(32, 32)
+        // ✅ FIX: Hindi pwede setMargins() — hiwalay na properties
+        dotParams.leftMargin = 0
+        dotParams.topMargin = 0
+        dotParams.rightMargin = 16
+        dotParams.bottomMargin = 0
+        dot.layoutParams = dotParams
         addView(dot)
 
         tv = android.widget.TextView(context)
