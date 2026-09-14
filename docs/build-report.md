@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-14 13:55 UTC
-🏷️ **Bersyon:** v1.0.126
+📅 **Petsa:** 2026-09-14 14:29 UTC
+🏷️ **Bersyon:** v1.0.127
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-14 13:55:55 UTC
-🏷️ BERSYON:    v1.0.126
+⏰ ORAS:       2026-09-14 14:29:17 UTC
+🏷️ BERSYON:    v1.0.127
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.126.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.127.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -54,12 +54,12 @@ Daemon will be stopped at the end of the build
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:processReleaseManifestForPackage
-> Task :app:checkReleaseDuplicateClasses
 > Task :app:desugarReleaseFileDependencies
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseManifestForPackage
+> Task :app:mergeReleaseArtProfile
 > Task :app:processReleaseResources
 > Task :app:mergeExtDexRelease
-> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
@@ -73,8 +73,8 @@ Daemon will be stopped at the end of the build
 > Task :app:optimizeReleaseResources
 
 > Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ControlsActivity.kt:219:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ControlsActivity.kt:220:13 Lateinit is unnecessary: definitely initialized in constructors
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ControlsActivity.kt:223:13 Lateinit is unnecessary: definitely initialized in constructors
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ControlsActivity.kt:224:13 Lateinit is unnecessary: definitely initialized in constructors
 w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:236:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
 
 > Task :app:compileReleaseJavaWithJavac NO-SOURCE
@@ -92,7 +92,7 @@ w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 > Task :app:lintVitalRelease
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 1m 22s
+BUILD SUCCESSFUL in 1m 20s
 44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
