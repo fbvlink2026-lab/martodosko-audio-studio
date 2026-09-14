@@ -1,6 +1,6 @@
 // ==================================================
 // FILE: ControlsActivity.kt — MAS MALIIT NA KNOB ✅ -50/+50 SA IBABA ✅ LAHAT LITAW!
-// VERSION: 1.0.107 — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN, MAS MALIIT ANG KNOB!
+// VERSION: 1.0.108 — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN, MAS MALIIT ANG KNOB!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -83,10 +83,10 @@ class KnobView @JvmOverloads constructor(
         val centerY = height / 2f
         
         // ✅ BAWASAN ANG LAKI NG KNOB — mas malaki ang espasyo para sa mga numero!
-        val radius = minOf(centerX, centerY) - 32f  // ✅ mas maliit — 32px na espasyo
-        val tickOuter = radius + 20f
+        val radius = minOf(centerX, centerY) - 36f  // ✅ mas maliit — mas malayo ang numero!
+        val tickOuter = radius + 22f
         val tickInner = radius + 4f
-        val numberRadius = radius + 50f  // ✅ mas malayo — hindi matatakpan!
+        val numberRadius = radius + 55f  // ✅ mas malayo — HINDI NA MATATAKPAN!
 
         // ==================================================
         // ✅ TOTOONG PRO MIXER SCALE — -50 IBABA-KALIWA, +50 IBABA-KANAN!
@@ -124,7 +124,7 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(centerX, centerY, radius, paintBg)
         canvas.drawCircle(centerX, centerY, radius * 0.75f, paintKnob)
 
-        // ✅ INDICATOR
+        // ✅ INDICATOR — TUMUTURO SA TAMANG HALAGA!
         val progress = (value - minValue) / (maxValue - minValue)
         val currentAngle = startAngle + progress * totalAngleRange
         val rad = Math.toRadians(currentAngle.toDouble())
