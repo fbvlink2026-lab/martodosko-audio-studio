@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml ✅ 0=ITAAS, -50/+50 IBABA -->
-<!-- VERSION: 2.1.0 - PADDING 70dp LAHAT NG GILID -->
+<!-- FILE: activity_mixer.xml - 0=ITAAS ✅ -->
+<!-- VERSION: 2.1.0 - PADDING 70dp SIDES PARA SA LAHAT NG NUMERO -->
 <!-- UPDATED: 2026-09-14 -->
 <!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,8 +39,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingTop="70dp"
-            android:paddingBottom="70dp"
+            android:paddingTop="50dp"
+            android:paddingBottom="50dp"
             android:paddingLeft="70dp"
             android:paddingRight="70dp"
             android:background="#12121F"
@@ -53,7 +53,7 @@
                 android:textColor="#AAAAAA"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="20dp"/>
 
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
@@ -68,7 +68,7 @@
                 android:textColor="#40E0D0"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
+                android:layout_marginTop="20dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
