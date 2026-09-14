@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- ================================================== -->
+<!-- FILE: activity_mixer.xml — ✅ 140dp KNOB, MAY ESPASYO PA! -->
+<!-- VERSION: 4.0.0 — HANDANG DAGDAGAN NG IBA PANG KNOB! -->
+<!-- UPDATED: 2026-09-15 -->
+<!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,8 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="16dp">
 
+        <!-- HEADER -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -18,26 +24,53 @@
             android:textColor="#40E0D0"
             android:textSize="22sp"
             android:gravity="center"
-            android:paddingBottom="32dp"/>
+            android:paddingBottom="16dp"/>
 
+        <!-- CHANNEL HEADER -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="VOCAL CHANNEL"
             android:textColor="#40E0D0"
             android:textSize="18sp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:background="#12232E"/>
 
-        <com.martodosko.studio.KnobView
-            android:id="@+id/knob_gain"
-            android:layout_width="220dp"
-            android:layout_height="260dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"/>
+        <!-- ✅ KNOB AREA — 140dp × 160dp LANG! MAY ESPASYO PA! -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:background="#12232E"
+            android:layout_marginTop="8dp">
+
+            <!-- GAIN KNOB -->
+            <com.martodosko.studio.KnobView
+                android:id="@+id/knob_gain"
+                android:layout_width="140dp"
+                android:layout_height="160dp"/>
+
+            <!-- ✅ DAGDAG MO LANG DITO ANG IBA! HALIMBAWA:
+            <com.martodosko.studio.KnobView
+                android:id="@+id/knob_bass"
+                android:layout_width="140dp"
+                android:layout_height="160dp"
+                android:layout_marginTop="16dp"/>
+
+            <com.martodosko.studio.KnobView
+                android:id="@+id/knob_treble"
+                android:layout_width="140dp"
+                android:layout_height="160dp"
+                android:layout_marginTop="16dp"/>
+            -->
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
