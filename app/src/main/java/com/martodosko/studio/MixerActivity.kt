@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt - 0=ITAAS ✅
-// VERSION: 2.1.0 - SIMPLE AT TAMA
+// FILE: MixerActivity.kt — SIMPLE ✅
+// VERSION: 2.0.0 — 0=ITAAS, 0-50, BAWAT 5!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -20,16 +20,17 @@ class MixerActivity : Activity() {
             val gainKnob = findViewById<KnobView>(R.id.knob_gain)
             val gainValue = findViewById<TextView>(R.id.tv_gain_value)
 
-            gainKnob.minValue = -50f
+            // ✅ SIMULA = 0 — NASA ITAAS
+            gainKnob.minValue = 0f
             gainKnob.maxValue = 50f
-            gainKnob.value = 0f  // ✅ SIMULA = 0 — NASA ITAAS!
-            gainValue.text = "0 dB"
+            gainKnob.value = 0f
+            gainValue.text = "0"
 
             gainKnob.onValueChange = { newVal ->
-                gainValue.text = "${newVal.roundToInt()} dB"
+                gainValue.text = "${newVal.roundToInt()}"
             }
 
-            Toast.makeText(this, "Mixer Ready — 0 = ITAAS", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Ready — 0=ITAAS, 0-50", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
