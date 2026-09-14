@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml - 0 = IBABA ✅ -->
-<!-- VERSION: 2.0.0 - KNOB 140dp + PADDING 60dp SIDES -->
+<!-- FILE: activity_mixer.xml ✅ 0=ITAAS, -50/+50 IBABA -->
+<!-- VERSION: 2.1.0 - PADDING 70dp LAHAT NG GILID -->
 <!-- UPDATED: 2026-09-14 -->
 <!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,10 +39,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingTop="40dp"
-            android:paddingBottom="40dp"
-            android:paddingLeft="60dp"
-            android:paddingRight="60dp"
+            android:paddingTop="70dp"
+            android:paddingBottom="70dp"
+            android:paddingLeft="70dp"
+            android:paddingRight="70dp"
             android:background="#12121F"
             android:layout_marginTop="8dp">
 
@@ -53,12 +53,12 @@
                 android:textColor="#AAAAAA"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="24dp"/>
 
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
-                android:layout_width="140dp"
-                android:layout_height="140dp"/>
+                android:layout_width="150dp"
+                android:layout_height="150dp"/>
 
             <TextView
                 android:id="@+id/tv_gain_value"
@@ -68,7 +68,7 @@
                 android:textColor="#40E0D0"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="24dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
