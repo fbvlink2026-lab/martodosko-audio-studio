@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ================================================== -->
-<!-- FILE: activity_mixer.xml - 0=ITAAS ✅ -->
-<!-- VERSION: 2.1.0 - PADDING 70dp SIDES PARA SA LAHAT NG NUMERO -->
-<!-- UPDATED: 2026-09-14 -->
-<!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#080810"
     android:fillViewport="true">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,12 +33,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingTop="50dp"
-            android:paddingBottom="50dp"
-            android:paddingLeft="70dp"
-            android:paddingRight="70dp"
-            android:background="#12121F"
-            android:layout_marginTop="8dp">
+            android:padding="32dp"
+            android:layout_marginTop="8dp"
+            android:background="#12121F">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,22 +44,23 @@
                 android:textColor="#AAAAAA"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="16dp"/>
 
+            <!-- ✅ 140dp — SAKTO ANG LAKI -->
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
-                android:layout_width="150dp"
-                android:layout_height="150dp"/>
+                android:layout_width="140dp"
+                android:layout_height="140dp"/>
 
             <TextView
                 android:id="@+id/tv_gain_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 dB"
+                android:text="0"
                 android:textColor="#40E0D0"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="16dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
