@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt - 0 = IBABA ✅
-// VERSION: 2.0.0 - SIMPLE, TAMA ANG SIMULA
+// FILE: MixerActivity.kt ✅ 0=ITAAS, SIMULA=0 dB
+// VERSION: 2.1.0 - TUGMA SA LAHAT
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -22,14 +22,14 @@ class MixerActivity : Activity() {
 
             gainKnob.minValue = -50f
             gainKnob.maxValue = 50f
-            gainKnob.value = 0f  // ✅ SIMULA = 0 — NASA IBABA!
+            gainKnob.value = 0f  // ✅ SIMULA = 0 — NASA ITAAS!
             gainValue.text = "0 dB"
 
             gainKnob.onValueChange = { newVal ->
                 gainValue.text = "${newVal.roundToInt()} dB"
             }
 
-            Toast.makeText(this, "Mixer Ready — 0 = IBABA", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Mixer Ready — 0 = ITAAS", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
