@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: ControlsActivity.kt — 290° NA ✅ HINDI NA SIKSIKAN!
-// VERSION: 2.1.0 — 0=ITAAS, 290° SAKLAW, MAS MALAWAK ANG PAGITAN!
+// FILE: ControlsActivity.kt - BAGONG SIMULA ✅
+// VERSION: 2.0.0 — 0=ITAAS, DETALYADONG NUMERO, TAMA ANG SAKLAW!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -21,6 +21,7 @@ class KnobView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    // ✅ SIMULA = 0 — HINDI -50!
     var value: Float = 0f
         set(newVal) {
             field = newVal.coerceIn(minValue, maxValue)
@@ -32,11 +33,11 @@ class KnobView @JvmOverloads constructor(
     var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
 
-    // ✅ 290° NA — MAS MALAWAK! 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-    private val zeroAngle = -90f    // 0 = ITAAS GITNA ⬆️
-    private val minAngle = 155f     // -50 = IBABA-KALIWA ↙️ (mas malayo)
-    private val maxAngle = 55f      // +50 = IBABA-KANAN ↘️ (mas malayo)
-    private val totalArc = minAngle - maxAngle  // ✅ 290 degrees kabuuan!
+    // ✅ TAMA NA PWEStO: 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+    private val zeroAngle = -90f    // 0 = ITAAS NA GITNA ⬆️
+    private val minAngle = 135f     // -50 = IBABA-KALIWA ↙️
+    private val maxAngle = 45f      // +50 = IBABA-KANAN ↘️
+    private val totalArc = minAngle - maxAngle  // 270 degrees kabuuan
     private var lastTouchY = 0f
 
     private val paintBg = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -81,18 +82,20 @@ class KnobView @JvmOverloads constructor(
         val tickInner = radius + 2f
         val numberRadius = radius + 58f
 
-        // ✅ DETALYADONG NUMERO — 5 steps — MAS MALAWAK ANG PAGITAN!
+        // ✅ DETALYADONG NUMERO — SAKOP ANG BUONG RADIUS!
         val marks = listOf(-50, -45, -40, -35, -30, -25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50)
 
         for (mark in marks) {
-            // ✅ 290° NA — TAMA ANG PAGKAKALAGAY NG LAHAT!
+            // ✅ TAMA NA ANGGULO — 0=ITAAS, umiikot pababa sa kaliwa at kanan
             val angle = when {
                 mark == 0 -> zeroAngle
                 mark < 0 -> {
-                    val progress = (mark - minValue) / (0f - minValue)
+                    // Mula 0 → -50: ITAAS → IBABA-KALIWA
+                    val progress = (mark - 0f) / (minValue - 0f)
                     zeroAngle + progress * (minAngle - zeroAngle)
                 }
                 else -> {
+                    // Mula 0 → +50: ITAAS → IBABA-KANAN
                     val progress = mark / maxValue
                     zeroAngle + progress * (maxAngle - zeroAngle)
                 }
@@ -109,7 +112,7 @@ class KnobView @JvmOverloads constructor(
             val endY = centerY + tickOuter * sin(rad).toFloat()
             canvas.drawLine(startX, startY, endX, endY, tickPaint)
 
-            // ✅ NUMERO — MAS MALAWAK ANG PAGITAN, HINDI NA SIKSIKAN!
+            // ✅ NUMERO — LAHAT LITAW!
             val numX = centerX + numberRadius * cos(rad).toFloat()
             val numY = centerY + numberRadius * sin(rad).toFloat() + 5f
             val label = when {
@@ -128,7 +131,7 @@ class KnobView @JvmOverloads constructor(
         val currentAngle = when {
             value == 0f -> zeroAngle
             value < 0f -> {
-                val progress = (value - minValue) / (0f - minValue)
+                val progress = (value - 0f) / (minValue - 0f)
                 zeroAngle + progress * (minAngle - zeroAngle)
             }
             else -> {
