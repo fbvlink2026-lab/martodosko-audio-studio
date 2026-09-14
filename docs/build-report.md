@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-14 14:29 UTC
-🏷️ **Bersyon:** v1.0.127
+📅 **Petsa:** 2026-09-14 15:05 UTC
+🏷️ **Bersyon:** v1.0.128
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-14 14:29:17 UTC
-🏷️ BERSYON:    v1.0.127
+⏰ ORAS:       2026-09-14 15:05:52 UTC
+🏷️ BERSYON:    v1.0.128
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.5M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.127.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -56,11 +51,9 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseArtProfile
-> Task :app:processReleaseResources
-> Task :app:mergeExtDexRelease
 > Task :app:mergeReleaseShaders
+> Task :app:processReleaseManifestForPackage
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -70,30 +63,28 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:optimizeReleaseResources
+> Task :app:processReleaseResources FAILED
+> Task :app:mergeExtDexRelease
 
-> Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ControlsActivity.kt:223:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ControlsActivity.kt:224:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:236:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
+FAILURE: Build failed with an exception.
 
-> Task :app:compileReleaseJavaWithJavac NO-SOURCE
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:dexBuilderRelease
-> Task :app:mergeReleaseGlobalSynthetics
-> Task :app:processReleaseJavaRes
-> Task :app:mergeReleaseJavaResource
-> Task :app:mergeDexRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:assembleRelease
+* What went wrong:
+Execution failed for task ':app:processReleaseResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+   > Android resource linking failed
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_mixer.xml:30: AAPT: error: '16dp 24dp' is incompatible with attribute padding (attr) dimension.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_mixer.xml:39: AAPT: error: '32dp 48dp' is incompatible with attribute padding (attr) dimension.
+         
 
-BUILD SUCCESSFUL in 1m 20s
-44 actionable tasks: 43 executed, 1 up-to-date
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 44s
+30 actionable tasks: 29 executed, 1 up-to-date
 
 ==================================================
 
