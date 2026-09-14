@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — IBALIK ANG TUNAY NA SAKLAW!
-// VERSION: 1.0.101 — -50 hanggang 50, 0-10 lang ang display!
+// FILE: MixerActivity.kt — ✅ TUGMA SA KNOB + AUTO-UPDATE + WALANG CRASH!
+// VERSION: 1.0.102 — -50 hanggang 50, MAY INITIAL VALUE, TAMA ANG LISTENER!
 // UPDATED: 2026-09-14
 // ==================================================
 package com.martodosko.studio
@@ -18,21 +18,30 @@ class MixerActivity : Activity() {
         setContentView(R.layout.activity_mixer)
 
         try {
+            // ✅ HANAPIN ANG MGA ELEMENTO
             val gainKnob = findViewById<KnobView>(R.id.knob_gain)
             val gainValue = findViewById<TextView>(R.id.tv_gain_value)
 
-            // ✅ IBALIK ANG TUNAY NA SAKLAW — tulad ng v1.0.95!
+            // ✅ I-SET MUNA ANG SAKLAW BAGO ANG LAHAT
             gainKnob.minValue = -50f
             gainKnob.maxValue = 50f
+
+            // ✅ INITIAL VALUE — 0 dB SA SIMULA
             gainKnob.value = 0f
 
+            // ✅ AGAD IPAKITA ANG INITIAL VALUE — HINDI HINTAY ANG PAG-UMAYOS!
+            gainValue.text = "0 dB"
+
+            // ✅ LISTENER — TUWING NAGBABAGO ANG HALAGA, AAGAD MAG-UUPDATE!
             gainKnob.onValueChange = { newVal ->
                 gainValue.text = "${newVal.roundToInt()} dB"
             }
 
-            Toast.makeText(this, "🎚️ Tunay na Saklaw: -50 hanggang 50", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "🎚️ Mixer Ready — Saklaw: -50 hanggang 50 dB", Toast.LENGTH_SHORT).show()
+
         } catch (e: Exception) {
-            Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "⚠️ Error sa Mixer: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace() // ✅ Makikita sa log kung ano ang kulang
             finish()
         }
     }
