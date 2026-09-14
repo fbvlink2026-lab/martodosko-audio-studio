@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml ✅ TAMA NA ANG PAGKAKASUNOD! -->
-<!-- VERSION: 1.0.95 — LABEL TAAS → KNOB GITNA → VALUE IBABA! -->
+<!-- FILE: activity_mixer.xml ✅ INAYOS NA — LUMIIT ANG KNOB + MAY ESPASYO! -->
+<!-- VERSION: 1.0.96 — KNOB 100dp + MAY ESPASYO SA PALIGID PARA SA MGA NUMERO! -->
 <!-- UPDATED: 2026-09-14 -->
 <!-- ================================================== -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#080810">
+    android:background="#080810"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="48dp">
+        android:padding="24dp">
 
         <!-- HEADER -->
         <TextView
@@ -39,7 +40,7 @@
             android:background="#12121F"/>
 
         <!-- ================================================== -->
-        <!-- ✅ KNOB ROW — TAMA NA ANG PAGKAKASUNOD! -->
+        <!-- ✅ KNOB CONTAINER — MAY ESPASYO SA PALIGID PARA SA MGA NUMERO! -->
         <!-- LABEL (TAAS) → KNOB (GITNA) → VALUE (IBABA) -->
         <!-- ================================================== -->
         <LinearLayout
@@ -47,10 +48,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="32dp"
+            android:paddingLeft="48dp"  <!-- ✅ ESPASYO SA KALIWA PARA SA -50! -->
+            android:paddingRight="48dp" <!-- ✅ ESPASYO SA KANAN PARA SA +50! -->
             android:background="#12121F"
             android:layout_marginTop="8dp">
 
@@ -62,13 +63,13 @@
                 android:textColor="#AAAAAA"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="24dp"/>
 
-            <!-- ✅ 2. KNOB — NASA GITNA! -->
+            <!-- ✅ 2. KNOB — LUMIIT NA (100dp) + MAY ESPASYO SA PALIGID PARA SA MGA NUMERO! -->
             <com.martodosko.studio.KnobView
                 android:id="@+id/knob_gain"
-                android:layout_width="144dp"
-                android:layout_height="144dp"/>
+                android:layout_width="100dp"  <!-- ✅ LUMIIT NG ~30% — dating 144dp! -->
+                android:layout_height="100dp"/> <!-- ✅ MAS MALAKING ESPASYO SA PALIGID! -->
 
             <!-- ✅ 3. HALAGA — NASA IBABA NG KNOB! -->
             <TextView
@@ -79,7 +80,7 @@
                 android:textColor="#40E0D0"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginTop="12dp"/>
+                android:layout_marginTop="24dp"/>
 
         </LinearLayout>
 
