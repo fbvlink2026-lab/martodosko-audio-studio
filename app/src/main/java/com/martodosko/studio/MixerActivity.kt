@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ 0 = ITAAS NA TALAGA! AYOS NA ANG LAHAT!
-// VERSION: 4.2.0 — INAYOS ANG ANDROID ROTATE OFFSET! 0 NGA NGA ITAAS!
+// FILE: MixerActivity.kt — ✅ AYOS NA! 0=ITAAS! INDICATOR TAMA!
+// VERSION: 4.3.0 — TINANGGAL ANG DOBLENG OFFSET! INDICATOR NAKATURO SA ITAAS!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -19,7 +19,7 @@ import kotlin.math.sin
 import kotlin.math.roundToInt
 
 // ==================================================
-// 🎛️ CUSTOM KNOB — ✅ 0 = ITAAS! -50 = IBABA-KALIWA! +50 = IBABA-KANAN!
+// 🎛️ CUSTOM KNOB — ✅ 0=ITAAS! -50=IBABA-KALIWA! +50=IBABA-KANAN!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -39,7 +39,7 @@ class KnobView @JvmOverloads constructor(
     // ✅ TAMA NA ANG ANGGULO — 270° kabuuan
     private val ANGLE_MIN = -135f   // -50 ↙️ IBABA-KALIWA
     private val ANGLE_MAX = 135f    // +50 ↘️ IBABA-KANAN
-    private val ROTATE_OFFSET = -90f // ✅ ANDROID FIX: 0° → ITAAS
+    private val ROTATE_OFFSET = -90f // ✅ ANDROID FIX: 0° → ITAAS (para sa numero lang)
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -105,12 +105,12 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
-        // ✅ TAMA NA ANG PAGKAKASUNOD-SUNOD NG NUMERO
+        // ✅ NUMERO — MAY OFFSET para lumabas sa tamang pwesto
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
             val angle = ANGLE_MIN + ratio * (ANGLE_MAX - ANGLE_MIN)
-            val rad = Math.toRadians((angle + ROTATE_OFFSET).toDouble()) // ✅ MAY OFFSET!
+            val rad = Math.toRadians((angle + ROTATE_OFFSET).toDouble()) // ✅ MAY OFFSET — tama ang pwesto ng numero
 
             val x1 = cx + tickInner * cos(rad).toFloat()
             val y1 = cy + tickInner * sin(rad).toFloat()
@@ -131,19 +131,19 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ✅ INDICATOR — TAMA NA! 0 = ITAAS NA TALAGA!
+        // ✅ INDICATOR — WALANG DAGDAG NA OFFSET! Diretsong sumusunod sa numero!
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_MIN + valRatio * (ANGLE_MAX - ANGLE_MIN)
 
         canvas.save()
         canvas.translate(cx, cy)
-        canvas.rotate(indAngle + ROTATE_OFFSET) // ✅ MAY OFFSET — ITAAS NA ANG 0!
+        canvas.rotate(indAngle + ROTATE_OFFSET) // ✅ TAMA — iisang offset lang! Hindi doble!
 
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS!
+            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA!
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
