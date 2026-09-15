@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ GUHIT NG 0 AYUS NA! HINDI NA LAGING NAKA-HIGHLIGHT!
-// VERSION: 4.5.3 — LOGIC LANG ANG INAYOS! LAHAT NG COMMENTS NANDOON PA RIN!
+// FILE: MixerActivity.kt — ✅ GUHIT NG 0 HINDI NA LAGING NAKA-GLOW! AYUS NA!
+// VERSION: 4.5.4 — LOGIC NG SAKOP LANG ANG INAYOS! LAHAT NG COMMENTS NANDOON PA RIN!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 // ==================================================
 // 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-// ✅ GUHIT NG 0 AYUS NA — HINDI NA LAGING NAKA-HIGHLIGHT!
+// ✅ GUHIT NG 0 — HINDI NA LAGING NAKA-GLOW! SUMUSUNOD SA TAMA!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -120,7 +120,7 @@ class KnobView @JvmOverloads constructor(
         canvas.restore()
 
         // ==================================================
-        // 📏 GUHIT AT NUMERO — ✅ INAYOS ANG LOGIC! GUHIT NG 0 HINDI NA LAGING NAKA-HIGHLIGHT!
+        // 📏 GUHIT AT NUMERO — ✅ AYUS NA! GUHIT NG 0 HINDI NA LAGING NAKA-GLOW!
         // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
@@ -132,12 +132,12 @@ class KnobView @JvmOverloads constructor(
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            // ✅ INAYOS — TUMPAK NA SAKOP! GUHIT NG 0 HINDI NA LAGING NAKA-HIGHLIGHT!
+            // ✅ TUNAY NA AYOS — GUHIT NG 0 AY NAKA-GLOW LANG KAPAG TALAGANG NASA 0!
             val currentVal = value.roundToInt()
-            val isActive = if (currentVal >= 0) {
-                mark in 0..currentVal
-            } else {
-                mark in currentVal..0
+            val isActive = when {
+                currentVal == 0 -> mark == 0  // ✅ Kapag 0 lang — guhit ng 0 lang ang naka-glow
+                currentVal > 0 -> mark in 10..currentVal  // ✅ Positive — MULA 10 HANGGANG KASALUKUYAN
+                else -> mark in currentVal..(-10)  // ✅ Negative — MULA KASALUKUYAN HANGGANG -10
             }
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
