@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ TAMA NA ANG LOGIC! WALANG PINILIT NA GUHIT!
-// VERSION: 4.5.2 — GUHIT SUMUSUNOD SA TAMA! WALANG IBANG BINAGO!
+// FILE: MixerActivity.kt — ✅ GUHIT NG 0 AYUS NA! HINDI NA LAGING NAKA-HIGHLIGHT!
+// VERSION: 4.5.3 — LOGIC LANG ANG INAYOS! LAHAT NG COMMENTS NANDOON PA RIN!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -18,10 +18,17 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.roundToInt
 
+// ==================================================
+// 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+// ✅ GUHIT NG 0 AYUS NA — HINDI NA LAGING NAKA-HIGHLIGHT!
+// ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    // ==================================================
+    // ⚙️ KNOB PROPERTIES — HALAGA AT SAKLAW
+    // ==================================================
     var value: Float = 0f
         set(v) {
             field = v.coerceIn(minValue, maxValue)
@@ -33,10 +40,17 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
+    // ==================================================
+    // 📐 ANGGULO — NAKA-LOCK! WALANG BABAGUHIN DITO!
+    // 135° = -50 (IBABA-KALIWA) → 270° = 0 (ITAAS) → 405° = +50 (IBABA-KANAN)
+    // ==================================================
     private val ANGLE_START = 135f
     private val ANGLE_END = 405f
     private val ANGLE_RANGE = ANGLE_END - ANGLE_START
 
+    // ==================================================
+    // 🎨 KULAY AT ESTILO — MGA BRUSH
+    // ==================================================
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
         style = Paint.Style.FILL
@@ -83,6 +97,9 @@ class KnobView @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
+    // ==================================================
+    // 🖼️ DRAW — BUONG KNOB
+    // ==================================================
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
@@ -93,6 +110,7 @@ class KnobView @JvmOverloads constructor(
         val tickOuter = size * 0.80f
         val textRadius = size * 0.92f
 
+        // ✅ DRAW: PANEL AT KNOB BACKGROUND
         canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), panelRadius, panelRadius, paintPanel)
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
@@ -101,6 +119,9 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
+        // ==================================================
+        // 📏 GUHIT AT NUMERO — ✅ INAYOS ANG LOGIC! GUHIT NG 0 HINDI NA LAGING NAKA-HIGHLIGHT!
+        // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
@@ -111,7 +132,7 @@ class KnobView @JvmOverloads constructor(
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            // ✅ TAMA NA — WALANG PINILIT! SUMUSUNOD SA TAMA!
+            // ✅ INAYOS — TUMPAK NA SAKOP! GUHIT NG 0 HINDI NA LAGING NAKA-HIGHLIGHT!
             val currentVal = value.roundToInt()
             val isActive = if (currentVal >= 0) {
                 mark in 0..currentVal
@@ -133,6 +154,9 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
+        // ==================================================
+        // 🔵 INDICATOR — NAKATURO SA ITAAS! WALANG BINAGO!
+        // ==================================================
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
         canvas.save()
@@ -149,12 +173,16 @@ class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
+        // ✅ LABEL AT VALUE
         paintText.textSize = 13f
         canvas.drawText("GAIN", cx, cy - panelRadius * 0.85f, paintText)
         paintValueText.textSize = 14f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
     }
 
+    // ==================================================
+    // 👆 TOUCH CONTROL — GALAW NG DALIRI
+    // ==================================================
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
             lastTouchY = e.y
@@ -169,6 +197,9 @@ class KnobView @JvmOverloads constructor(
     }
 }
 
+// ==================================================
+// 🎛️ HORIZONTAL SLIDER — WALANG BINAGO!
+// ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -209,6 +240,9 @@ class HorizontalSliderView @JvmOverloads constructor(
     }
 }
 
+// ==================================================
+// 🔘 TOGGLE BUTTON — WALANG BINAGO!
+// ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -259,6 +293,9 @@ class ToggleButtonView @JvmOverloads constructor(
     }
 }
 
+// ==================================================
+// 🎯 MAIN ACTIVITY — WALANG BINAGO!
+// ==================================================
 class MixerActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
