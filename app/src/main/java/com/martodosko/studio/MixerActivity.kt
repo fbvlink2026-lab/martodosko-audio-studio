@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ GUHIT NG 0 HINDI NA LAGING NAKA-GLOW! AYUS NA!
-// VERSION: 4.5.4 — LOGIC NG SAKOP LANG ANG INAYOS! LAHAT NG COMMENTS NANDOON PA RIN!
+// FILE: MixerActivity.kt — ✅ INDICATOR NAKATURO SA ITAAS! WALANG BINAGO SA NUMERO!
+// VERSION: 4.5.0 — INDICATOR LANG ANG INAYOS! MAY DETALYADONG COMMENTS!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 // ==================================================
 // 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-// ✅ GUHIT NG 0 — HINDI NA LAGING NAKA-GLOW! SUMUSUNOD SA TAMA!
+// ✅ WALANG BINAGO SA PAGITAN NG NUMERO AT GUHIT — INDICATOR LANG ANG INAYOS!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -120,7 +120,7 @@ class KnobView @JvmOverloads constructor(
         canvas.restore()
 
         // ==================================================
-        // 📏 GUHIT AT NUMERO — ✅ AYUS NA! GUHIT NG 0 HINDI NA LAGING NAKA-GLOW!
+        // 📏 GUHIT AT NUMERO — WALANG BINAGO! TAMA ANG PAGITAN!
         // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
@@ -132,12 +132,10 @@ class KnobView @JvmOverloads constructor(
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            // ✅ TUNAY NA AYOS — GUHIT NG 0 AY NAKA-GLOW LANG KAPAG TALAGANG NASA 0!
-            val currentVal = value.roundToInt()
-            val isActive = when {
-                currentVal == 0 -> mark == 0  // ✅ Kapag 0 lang — guhit ng 0 lang ang naka-glow
-                currentVal > 0 -> mark in 10..currentVal  // ✅ Positive — MULA 10 HANGGANG KASALUKUYAN
-                else -> mark in currentVal..(-10)  // ✅ Negative — MULA KASALUKUYAN HANGGANG -10
+            val isActive = if (value >= 0) {
+                mark in 0..value.toInt()
+            } else {
+                mark in value.toInt()..0
             }
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
@@ -155,18 +153,19 @@ class KnobView @JvmOverloads constructor(
         }
 
         // ==================================================
-        // 🔵 INDICATOR — NAKATURO SA ITAAS! WALANG BINAGO!
+        // 🔵 INDICATOR — ✅ INAYOS! NAKATURO SA ITAAS! WALANG BINAGO SA IBA!
         // ==================================================
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
         canvas.save()
         canvas.translate(cx, cy)
+        // ✅ ANG TANGING BINAGO: +90f → NAKATURO SA ITAAS! NUMERO HINDI GUMALAW!
         canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen)
+            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA NA!
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
@@ -198,7 +197,7 @@ class KnobView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎛️ HORIZONTAL SLIDER — WALANG BINAGO!
+// 🎛️ HORIZONTAL SLIDER
 // ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -241,7 +240,7 @@ class HorizontalSliderView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🔘 TOGGLE BUTTON — WALANG BINAGO!
+// 🔘 TOGGLE BUTTON
 // ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -294,7 +293,7 @@ class ToggleButtonView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎯 MAIN ACTIVITY — WALANG BINAGO!
+// 🎯 MAIN ACTIVITY
 // ==================================================
 class MixerActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
