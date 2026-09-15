@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-15 11:35 UTC
-🏷️ **Bersyon:** v1.0.150
+📅 **Petsa:** 2026-09-15 11:55 UTC
+🏷️ **Bersyon:** v1.0.151
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-15 11:35:52 UTC
-🏷️ BERSYON:    v1.0.150
+⏰ ORAS:       2026-09-15 11:55:01 UTC
+🏷️ BERSYON:    v1.0.151
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.5M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.150.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -64,36 +59,33 @@ Daemon will be stopped at the end of the build
 > Task :app:compressReleaseAssets
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
-> Task :app:validateSigningRelease
 > Task :app:processReleaseManifestForPackage
+> Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
 > Task :app:processReleaseResources
 > Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
 
-> Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:236:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:288:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:289:13 Lateinit is unnecessary: definitely initialized in constructors
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:191:24 Unresolved reference: ANGLE_START
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:191:49 Unresolved reference: ANGLE_RANGE
 
-> Task :app:compileReleaseJavaWithJavac NO-SOURCE
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:dexBuilderRelease
-> Task :app:mergeReleaseGlobalSynthetics
-> Task :app:processReleaseJavaRes
-> Task :app:mergeReleaseJavaResource
-> Task :app:mergeDexRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:assembleRelease
+FAILURE: Build failed with an exception.
 
-BUILD SUCCESSFUL in 1m 10s
-44 actionable tasks: 43 executed, 1 up-to-date
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 4s
+32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
 
