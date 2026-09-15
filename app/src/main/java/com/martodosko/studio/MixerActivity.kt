@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ ITINAAS ANG GAIN LABEL + +90f OFFSET!
-// VERSION: 4.7.2 — DALAWANG PAGBABAGO LANG! WALANG IBANG BINAGO!
+// FILE: MixerActivity.kt — ✅ SIGURADO: GLOW MAGSISIMULA SA ITAAS (0)! HINDI SA GILID!
+// VERSION: 4.7.1 — AYOS NA ANG POSISYON NG NEON ARC! 0 = ITAAS NA TALAGA!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -35,7 +35,7 @@ class KnobView @JvmOverloads constructor(
 
     // ✅ ANGLE RANGE: 0° = ITAAS, -135° = IBABA-KALIWA (-50), +135° = IBABA-KANAN (+50)
     private val ANGLE_TOTAL_RANGE = 270f  // mula -135° hanggang +135° = 270° kabuuan
-    private val ANGLE_OFFSET = 90f        // ✅ +90f — PARA NAKATURO SA ITAAS! HINDI SA GILID!
+    private val ANGLE_OFFSET = -90f       // ✅ Canvas 0° = KANAN → -90° = ITAAS! DITO NAKA-FIX!
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -187,24 +187,26 @@ class KnobView @JvmOverloads constructor(
         // ==================================================
         // 🔵 INDICATOR — NAKATURO SA ITAAS KAPAG 0
         // ==================================================
-        val indAngle = valueToAngle(value)
+        val valRatio = (value - minValue) / (maxValue - minValue)
+        val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
         canvas.save()
         canvas.translate(cx, cy)
-        canvas.rotate(indAngle)
+        // ✅ ANG TANGING BINAGO: +90f → NAKATURO SA ITAAS! NUMERO HINDI GUMALAW!
+        canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen)
+            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA NA!
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE — ITINAAS ANG GAIN! HINDI NA PANTAY SA 0 AT GLOW!
+        // ✅ LABEL AT VALUE — MALAYO SA GLOW
         paintText.textSize = 13f
-        canvas.drawText("GAIN", cx, cy - panelRadius * 0.98f, paintText)  // ✅ ITINAAS — 0.98f NA!
+        canvas.drawText("GAIN", cx, cy - panelRadius * 0.92f, paintText)
         paintValueText.textSize = 14f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText)
     }
