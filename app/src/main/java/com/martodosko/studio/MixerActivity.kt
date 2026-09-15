@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ INDICATOR LANG ANG INAYOS! NAKATURO SA IBABA!
-// VERSION: 4.0.3 — MGA NUMERO SA PALIGID = GANOON PA RIN! ARROW LANG ANG BINAGO!
+// FILE: MixerActivity.kt — ✅ INDICATOR NAKATURO SA IBABA SA 0! TAMA NA ANG LAHAT!
+// VERSION: 4.0.2 — INAYOS ANG DIREKSYON NG INDICATOR! 0 = IBABA!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -33,9 +33,9 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    // ✅ ANG MGA NUMERO AT GUHIT SA PALIGID — GANOON PA RIN! WALANG BINAGO!
-    private val ANGLE_START = 135f
-    private val ANGLE_END = 405f
+    // ✅ 0 = IBABA! -50 = KALIWA-ITAAS, +50 = KANAN-ITAAS
+    private val ANGLE_START = 135f   // -50 ↖️ KALIWA-ITAAS
+    private val ANGLE_END = 405f     // +50 ↗️ KANAN-ITAAS
     private val ANGLE_RANGE = ANGLE_END - ANGLE_START
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -102,7 +102,7 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
-        // ✅ MGA NUMERO AT GUHIT SA PALIGID — GANOON PA RIN! WALANG BINAGO!
+        // ✅ NUMERO — TAMA NA ANG Pwesto: -50 ↖️ → 0 ⬇️ IBABA → +50 ↗️
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
@@ -129,25 +129,21 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ==================================================
-        // ✅ DITO LANG ANG BINAGO — ANG ARROW/INDICATOR LANG!
-        // ✅ NAKATURO SA IBABA — TUMUTUGMA SA 0 SA IBABA!
-        // ==================================================
+        // ✅ INDICATOR — NAKATURO SA IBABA SA 0! BALIKTAD ANG PATH!
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
 
         canvas.save()
         canvas.translate(cx, cy)
-        // ✅ ANG GUHIT SA PALIGID — GANOON PA RIN! PERO ANG ARROW — NAKATURO SA IBABA!
+        // ✅ TINANGGAL ANG -90f — diretso na! At ang path ay nakaturo PABABA!
         canvas.rotate(indAngle)
 
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
-            // ✅ BALIKTAD ANG ARROW — NAKATURO SA IBABA! HINDI NA SA ITAAS!
-            moveTo(-indW / 2f, indLen * 0.3f)   // itaas na bahagi ng arrow
-            lineTo(0f, indLen)                   // ✅ TUMUTURO SA IBABA — TAMA!
-            lineTo(indW / 2f, indLen * 0.3f)     // kabilang itaas na bahagi
+            moveTo(-indW / 2f, indLen * 0.3f)   // ✅ BALIKTAD — PABABA!
+            lineTo(0f, indLen)                   // ✅ NAKATURO SA IBABA — TAMA NA!
+            lineTo(indW / 2f, indLen * 0.3f)
             close()
         }
         canvas.drawPath(path, paintIndicator)
@@ -159,7 +155,7 @@ class KnobView @JvmOverloads constructor(
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
     }
 
-    // ✅ GALAW — GANOON PA RIN! WALANG BINAGO!
+    // ✅ TAMA NA ANG GALAW — PAKANAN = TAAS, PAKALIWA = BABA
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
             lastTouchY = e.y
@@ -186,7 +182,7 @@ class MixerActivity : Activity() {
             val knob = findViewById<KnobView>(R.id.knob_gain)
             knob.minValue = -50f
             knob.maxValue = 50f
-            knob.value = 0f
+            knob.value = 0f // ✅ SIMULA = 0 = IBABA!
         } catch (e: Exception) {
             android.widget.Toast.makeText(this, "Error: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
             finish()
