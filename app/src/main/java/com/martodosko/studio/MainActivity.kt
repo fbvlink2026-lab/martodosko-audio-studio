@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MainActivity.kt — ✅ GUMAGAMIT NA NG SideMenu! MAS MALINIS!
-// VERSION: 2.0.0 — SIDE MENU NAKA-HIWALAY NA!
+// FILE: MainActivity.kt — ✅ ORIHINAL NA! SIDE MENU LANG ANG INILIPAT SA SideMenu.kt!
+// VERSION: 1.0.69 — WALANG IBANG PINAGBAGO! AUTO UPDATE + PERMISSIONS + DOWNLOAD NANDOON PA RIN!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -18,6 +18,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
+import android.view.Gravity
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -34,6 +35,7 @@ import java.net.URL
 
 class MainActivity : Activity() {
 
+    // ✅ SIDE MENU — SARILING FILE NA!
     private lateinit var sideMenu: SideMenu
 
     companion object {
@@ -41,6 +43,7 @@ class MainActivity : Activity() {
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
         private const val BASE_APK_URL =
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
+        
         private const val PERMISSION_STORAGE = 1001
         private var downloadId: Long = -1
         private var apkFileName = ""
@@ -50,11 +53,14 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ✅ SIDE MENU — ISANG LINYA LANG! TAPOS NA!
+        // ==============================================
+        // ✅ SIDE MENU — SARILING FILE NA! TAWAG LANG!
+        // ==============================================
         sideMenu = SideMenu.setup(
             activity = this,
             drawerLayoutId = R.id.drawer_layout,
-            btnMenuId = R.id.btn_hamburger,
+            btnOpenMenuId = R.id.btn_hamburger,
+            btnCloseMenuId = R.id.btn_close_menu,
             tvVersionId = R.id.tv_version
         )
 
@@ -62,10 +68,13 @@ class MainActivity : Activity() {
         checkPermissions()
     }
 
+    // ==============================================
+    // ✅ ORIHINAL NA — WALANG PINAGBAGO!
+    // ==============================================
     private fun checkPermissions() {
         val neededPermissions = mutableListOf<String>()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) 
             != PackageManager.PERMISSION_GRANTED) {
             neededPermissions.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
             neededPermissions.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -84,6 +93,9 @@ class MainActivity : Activity() {
         if (requestCode == PERMISSION_STORAGE) checkForUpdates()
     }
 
+    // ==============================================
+    // ✅ ORIHINAL NA — AUTO UPDATE! WALANG PINAGBAGO!
+    // ==============================================
     private fun checkForUpdates() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -197,8 +209,11 @@ class MainActivity : Activity() {
         }
     }
 
+    // ==============================================
+    // ✅ BACK PRESSED — GUMAGANA SA SIDE MENU!
+    // ==============================================
     override fun onBackPressed() {
-        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(android.view.Gravity.START)) {
+        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(Gravity.START)) {
             sideMenu.close()
         } else {
             super.onBackPressed()
