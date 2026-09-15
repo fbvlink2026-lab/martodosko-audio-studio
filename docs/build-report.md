@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-15 15:18 UTC
-🏷️ **Bersyon:** v1.0.158
+📅 **Petsa:** 2026-09-15 15:53 UTC
+🏷️ **Bersyon:** v1.0.159
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,12 +12,17 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-15 15:18:14 UTC
-🏷️ BERSYON:    v1.0.158
+⏰ ORAS:       2026-09-15 15:53:47 UTC
+🏷️ BERSYON:    v1.0.159
 ==================================================
 
-❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
-🔑 Exit Code: 1
+✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
+📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
+📏 Laki:       4.5M
+📤 Kopyahin sa docs/...
+✅ Nasa: docs/Martodosko-Studio-v1.0.159.apk
+
+🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -67,26 +72,30 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
 
-> Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:201:50 Cannot access 'drawerLayout': it is private in 'SideMenu'
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:25:34 Unresolved reference: btn_menu
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:43:50 Cannot access 'drawerLayout': it is private in 'SideMenu'
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:170:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:219:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:50:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:32:13 Lateinit is unnecessary: definitely initialized in constructors
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:33:13 Lateinit is unnecessary: definitely initialized in constructors
 
-FAILURE: Build failed with an exception.
+> Task :app:compileReleaseJavaWithJavac NO-SOURCE
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:dexBuilderRelease
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :app:processReleaseJavaRes
+> Task :app:mergeReleaseJavaResource
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:assembleRelease
 
-* What went wrong:
-Execution failed for task ':app:compileReleaseKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 45s
-32 actionable tasks: 31 executed, 1 up-to-date
+BUILD SUCCESSFUL in 1m 21s
+44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
 
