@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-15 08:03 UTC
-🏷️ **Bersyon:** v1.0.146
+📅 **Petsa:** 2026-09-15 08:28 UTC
+🏷️ **Bersyon:** v1.0.147
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-15 08:03:15 UTC
-🏷️ BERSYON:    v1.0.146
+⏰ ORAS:       2026-09-15 08:28:16 UTC
+🏷️ BERSYON:    v1.0.147
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.5M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.146.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.147.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -50,13 +50,13 @@ Daemon will be stopped at the end of the build
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
 > Task :app:mergeReleaseJniLibFolders
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseArtProfile
 > Task :app:processReleaseResources
 > Task :app:mergeExtDexRelease
@@ -74,8 +74,8 @@ Daemon will be stopped at the end of the build
 
 > Task :app:compileReleaseKotlin
 w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:236:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:261:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:262:13 Lateinit is unnecessary: definitely initialized in constructors
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:314:13 Lateinit is unnecessary: definitely initialized in constructors
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:315:13 Lateinit is unnecessary: definitely initialized in constructors
 
 > Task :app:compileReleaseJavaWithJavac NO-SOURCE
 > Task :app:generateReleaseLintVitalReportModel
@@ -92,7 +92,7 @@ w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 > Task :app:lintVitalRelease
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 1m 14s
+BUILD SUCCESSFUL in 1m 22s
 44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
