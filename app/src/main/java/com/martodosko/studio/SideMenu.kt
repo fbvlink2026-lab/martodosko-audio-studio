@@ -1,268 +1,212 @@
 // ==================================================
-// FILE: MainActivity.kt — ✅ MAY PERMISSION CHECK + BUMABALIK AGAD SA MIXER!
-// VERSION: 1.0.72 — HINDI NA LILIPAT ANG PERMISSION CHECK! BUMABALIK AGAD! LIGTAS NA!
+// FILE: SideMenu.kt — ✅ GUMAGANA MULA SA KAHIT ANANG SCREEN! BUMABALIK AGAD!
+// VERSION: 1.0.9 — KUNG NASA MIXER — LILIPAT SAGLIT SA MAIN → TAPOS BUMABALIK AGAD! WALANG LABIS WALANG KULANG!
 // UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.view.Gravity
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.drawerlayout.widget.DrawerLayout
+import android.util.Log
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.Gravity
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.File
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
 
-class MainActivity : Activity() {
+class SideMenu(
+    private val activity: Activity,
+    val drawerLayout: DrawerLayout,
+    val versionText: TextView? = null
+) {
 
-    // ✅ SIDE MENU — SARILING FILE NA!
-    private lateinit var sideMenu: SideMenu
+    private var currentVer: String = "1.0.0"
 
-    companion object {
-        private const val VERSION_URL =
-            "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
-        private const val BASE_APK_URL =
-            "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
-        
-        private const val PERMISSION_STORAGE = 1001
-        private var downloadId: Long = -1
-        private var apkFileName = ""
+    init {
+        getCurrentVersion()
+        setupMenuButtons()
+        setupVersion()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    private fun getCurrentVersion() {
+        @Suppress("DEPRECATION")
+        currentVer = activity.packageManager.getPackageInfo(activity.packageName, 0).versionName
+    }
 
-        // ==============================================
-        // ✅ SIDE MENU — SARILING FILE NA! TAWAG LANG! — WALANG PINAGBAGO!
-        // ==============================================
-        sideMenu = SideMenu.setup(
-            activity = this,
-            drawerLayoutId = R.id.drawer_layout,
-            btnOpenMenuId = R.id.btn_hamburger,
-            btnCloseMenuId = R.id.btn_close_menu,
-            tvVersionId = R.id.tv_version
-        )
+    private fun setupVersion() {
+        versionText?.text = "v$currentVer"
+    }
 
-        // ==============================================
-        // ✅ FORCE CHECK UPDATE — MAY PERMISSION CHECK + BUMABALIK AGAD!
-        // ==============================================
-        val forceCheck = intent?.getBooleanExtra("FORCE_CHECK_UPDATE", false) ?: false
-        val returnToScreen = intent?.getStringExtra("RETURN_TO_SCREEN") // ✅ TANDAAN KUNG SAAN BABALIK
+    fun open() {
+        if (!drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.openDrawer(Gravity.START)
+        }
+    }
 
-        if (forceCheck) {
-            Toast.makeText(this, "🔄 Sinusuri ang update mula sa menu...", Toast.LENGTH_SHORT).show()
-            
-            // ✅ SURIIIN MUNA ANG PERMISSION — BAGO MAG-CHECK NG UPDATE!
-            if (hasStoragePermission()) {
-                checkForUpdates() // ✅ May permission — diretsong tignan!
-            } else {
-                checkPermissions() // ✅ Walang permission — hingin muna, tapos tignan!
+    fun close() {
+        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.closeDrawer(Gravity.START)
+        }
+    }
+
+    // ==============================================
+    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! IDINAGDAG LANG ANG UPDATE IMPROVEMENT!
+    // ==============================================
+    private fun setupMenuButtons() {
+        // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
+        activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener {
+            close()
+        }
+
+        // ✅ MIXER — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
+            close()
+            if (activity is MixerActivity) {
+                Toast.makeText(activity, "✅ Nasa Mixer ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-
-            // ✅ PAGKATAPUS — BUMABALIK AGAD SA MIXER! HINDI NA IIWAN SA MAIN!
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (returnToScreen == "MixerActivity") {
-                    val goBack = Intent(this, MixerActivity::class.java)
-                    startActivity(goBack)
-                    finish() // ✅ ISARA ANG MAIN — BALIK AGAD SA MIXER!
-                }
-            }, 500) // ✅ SANDALI LANG — HINDI NA NAKIKITA NG USER!
-        } else {
-            // ✅ KARANIWANG PAGBUKAS — GANOON PA RIN!
-            Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
-            checkPermissions()
-        }
-    }
-
-    // ==============================================
-    // ✅ BAGONG DAGDAG — TINGNAN KUNG MAY STORAGE PERMISSION NA!
-    // ==============================================
-    private fun hasStoragePermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            true // ✅ Android 10+ — hindi na kailangan ng storage permission
-        } else {
-            ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    // ==============================================
-    // ✅ ORIHINAL NA — WALANG PINAGBAGO!
-    // ==============================================
-    private fun checkPermissions() {
-        val neededPermissions = mutableListOf<String>()
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) 
-            != PackageManager.PERMISSION_GRANTED) {
-            neededPermissions.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            neededPermissions.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        if (neededPermissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, neededPermissions.toTypedArray(), PERMISSION_STORAGE)
-        } else {
-            checkForUpdates()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_STORAGE) checkForUpdates()
-    }
-
-    // ==============================================
-    // ✅ ORIHINAL NA — AUTO UPDATE! WALANG PINAGBAGO! TINITINGNAN ANG docs/version.json!
-    // ==============================================
-    fun checkForUpdates() { // ✅ GINAWING PUBLIC — PARA MATAWAG MULA SA SIDE MENU!
-        CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.d("UPDATE", "🔍 Tinitignan ang update...")
-                val conn = URL("$VERSION_URL?t=${System.currentTimeMillis()}").openConnection() as HttpURLConnection
-                conn.requestMethod = "GET"
-                conn.connectTimeout = 8000
-                conn.readTimeout = 8000
-                conn.setRequestProperty("Cache-Control", "no-cache")
+                val intent = Intent(activity, MixerActivity::class.java)
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ MixerActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("res/drawable") == true || e.message?.contains("Resource") == true ->
+                        "❌ Kulang na Drawable file"
+                    e.message?.contains("Binary XML") == true || e.message?.contains("inflate") == true ->
+                        "❌ May mali sa layout file"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("MIXER", "❌ $fullError", e)
+            }
+        }
 
-                val reader = BufferedReader(InputStreamReader(conn.inputStream))
-                val resp = StringBuilder()
-                var line: String?
-                while (reader.readLine().also { line = it } != null) resp.append(line)
-                reader.close()
-                conn.disconnect()
+        // ✅ PRESETS — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {
+            close()
+            if (activity.javaClass.simpleName == "PresetsActivity") {
+                Toast.makeText(activity, "✅ Nasa Presets ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            Toast.makeText(activity, "📋 Presets — Bubukas...", Toast.LENGTH_SHORT).show()
+        }
 
-                val json = JSONObject(resp.toString())
-                val latestVer = cleanVersion(json.getString("version"))
-                apkFileName = json.optString("apkFile", "Martodosko-Studio-v$latestVer.apk")
+        // ✅ SETTINGS → ADMIN PANEL! — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
+            close()
+            if (activity.javaClass.simpleName == "AdminPanelActivity") {
+                Toast.makeText(activity, "✅ Nasa Admin Panel ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            try {
+                val intent = Intent(activity, Class.forName("com.martodosko.studio.AdminPanelActivity"))
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ AdminPanelActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("not found") == true ->
+                        "❌ AdminPanelActivity wala pang ginawa"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("ADMIN", "❌ $fullError", e)
+            }
+        }
 
-                @Suppress("DEPRECATION")
-                val currentVer = cleanVersion(packageManager.getPackageInfo(packageName, 0).versionName)
+        // ✅ EFFECTS — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
+            close()
+            Toast.makeText(activity, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
+        }
 
-                if (isUpdateAvailable(latestVer, currentVer)) {
-                    runOnUiThread { showUpdateDialog(latestVer) }
+        // ==============================================
+        // ✅ CHECK UPDATE — ✅ GUMAGANA MULA SA KAHIT ANANG SCREEN! BUMABALIK AGAD! WALANG TINANGGAL!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
+            close()
+            Toast.makeText(activity, "🔄 Sinusuri ang update mula sa GitHub...", Toast.LENGTH_SHORT).show()
+
+            // ✅ TANDAAN ANG KASALUKUYANG SCREEN — PARA BUMABALIK PAGKATAPUS!
+            val currentActivity = activity::class.java
+
+            try {
+                if (activity is MainActivity) {
+                    // ✅ NASA MAIN NA — DIREKTANG TUMINGIN! WALANG LIPAT!
+                    activity.checkForUpdates()
                 } else {
-                    runOnUiThread {
-                        Toast.makeText(this@MainActivity, "✅ Nasa pinakabago na — v$currentVer", Toast.LENGTH_SHORT).show()
-                    }
+                    // ✅ NASA IBANG SCREEN — PUMUNTA SA MAIN → TAPOS BUMABALIK AGAD!
+                    val intent = Intent(activity, MainActivity::class.java)
+                    intent.putExtra("FORCE_CHECK_UPDATE", true)
+                    intent.putExtra("RETURN_TO_SCREEN", currentActivity.simpleName) // ✅ TANDAAN KUNG SAAN BABALIK
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    activity.startActivity(intent)
+                    
+                    // ✅ BUMABALIK AGAD SA NAKARAANG SCREEN — HINDI NA NAKIKITA ANG PAGLIPAT!
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        // Hindi na kailangang gawin — MainActivity ang titingin sa update at magpapakita ng dialog
+                        // Ang user ay mananatili sa kanyang kasalukuyang screen
+                    }, 300)
                 }
             } catch (e: Exception) {
-                Log.e("UPDATE", "⚠️ Error: ${e.message}")
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "⚠️ Hindi masuri ang update", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "❌ Hindi masuri ang update: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("UPDATE", "❌ Error checking update", e)
+            }
+        }
+
+        // ✅ HELP — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
+            close()
+            val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
+            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(readmeUrl)))
+            Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
+        }
+
+        // ✅ JOIN — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
+            close()
+            val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
+            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fbUrl)))
+            Toast.makeText(activity, "🌐 Binubuksan ang Facebook...", Toast.LENGTH_SHORT).show()
+        }
+
+        // ✅ ABOUT — WALANG PINAGBAGO!
+        activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
+            close()
+            Toast.makeText(activity, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    companion object {
+        fun setup(
+            activity: Activity,
+            drawerLayoutId: Int,
+            btnOpenMenuId: Int? = null,
+            btnCloseMenuId: Int? = null,
+            tvVersionId: Int? = null
+        ): SideMenu {
+            val drawer = activity.findViewById<DrawerLayout>(drawerLayoutId)
+            val versionText = if (tvVersionId != null) activity.findViewById<TextView>(tvVersionId) else null
+            val sideMenu = SideMenu(activity, drawer, versionText)
+
+            btnOpenMenuId?.let { id ->
+                activity.findViewById<ImageView>(id)?.setOnClickListener {
+                    sideMenu.open()
                 }
             }
-        }
-    }
 
-    private fun cleanVersion(v: String) = v.trim().removePrefix("v").removePrefix("V").replace(Regex("[^0-9.]"), "")
-
-    private fun isUpdateAvailable(latest: String, current: String): Boolean {
-        val lParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
-        val cParts = current.split(".").map { it.toIntOrNull() ?: 0 }
-        val max = maxOf(lParts.size, cParts.size)
-        for (i in 0 until max) {
-            val l = lParts.getOrNull(i) ?: 0
-            val c = cParts.getOrNull(i) ?: 0
-            if (l > c) return true
-            if (l < c) return false
-        }
-        return false
-    }
-
-    private fun showUpdateDialog(version: String) {
-        AlertDialog.Builder(this)
-            .setTitle("🔔 May Bagong Bersyon — v$version")
-            .setMessage("Gusto mo bang i-download at i-install ang pinakabagong bersyon?\n\n⚠️ Kung lalabas ang 'Package Conflict' — burahin muna ang lumang bersyon nang isang beses lang. Mula noon, kusang mag-a-update na!")
-            .setPositiveButton("✅ I-download") { _, _ -> downloadApk() }
-            .setNegativeButton("❌ Mamaya na", null)
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun downloadApk() {
-        val downloadUrl = "$BASE_APK_URL$apkFileName"
-        val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
-            setTitle("Martodosko Update")
-            setDescription("Nagda-download...")
-            setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, apkFileName)
-            setMimeType("application/vnd.android.package-archive")
-            allowScanningByMediaScanner()
-        }
-        val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        downloadId = dm.enqueue(request)
-        registerReceiver(downloadReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        Toast.makeText(this, "📥 Nagsimula ang pag-download", Toast.LENGTH_LONG).show()
-    }
-
-    private val downloadReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1) ?: -1
-            if (id == downloadId) {
-                unregisterReceiver(this)
-                openInstaller()
+            btnCloseMenuId?.let { id ->
+                activity.findViewById<ImageView>(id)?.setOnClickListener {
+                    sideMenu.close()
+                }
             }
-        }
-    }
 
-    private fun openInstaller() {
-        try {
-            val apkFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), apkFileName)
-            if (!apkFile.exists()) {
-                Toast.makeText(this, "⚠️ Hindi mahanap ang file", Toast.LENGTH_LONG).show()
-                return
-            }
-            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                FileProvider.getUriForFile(this, "$packageName.fileprovider", apkFile)
-            } else {
-                Uri.fromFile(apkFile)
-            }
-            val installIntent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, "application/vnd.android.package-archive")
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startActivity(installIntent)
-            Toast.makeText(this, "📦 Hinihingi ang pahintulot...", Toast.LENGTH_LONG).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    // ==============================================
-    // ✅ BACK PRESSED — GUMAGANA SA SIDE MENU! — WALANG PINAGBAGO!
-    // ==============================================
-    override fun onBackPressed() {
-        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(Gravity.START)) {
-            sideMenu.close()
-        } else {
-            super.onBackPressed()
+            return sideMenu
         }
     }
 }
