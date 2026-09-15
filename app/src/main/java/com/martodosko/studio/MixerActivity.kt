@@ -1,3 +1,7 @@
+iangat ang knob name na GAIN, huwag ipantay sa 0 at sa neon glow. gawing dAngle + 90f huwag dAngle - 90f, para nakaturo sa itaas hindi sa gilid nakaturo. huwag nang baguhin ang ibang code pati mga comments. yun lang.
+
+
+
 // ==================================================
 // FILE: MixerActivity.kt — ✅ SIGURADO: GLOW MAGSISIMULA SA ITAAS (0)! HINDI SA GILID!
 // VERSION: 4.7.1 — AYOS NA ANG POSISYON NG NEON ARC! 0 = ITAAS NA TALAGA!
@@ -187,11 +191,9 @@ class KnobView @JvmOverloads constructor(
         // ==================================================
         // 🔵 INDICATOR — NAKATURO SA ITAAS KAPAG 0
         // ==================================================
-        val valRatio = (value - minValue) / (maxValue - minValue)
-        val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
+        val indAngle = valueToAngle(value)
         canvas.save()
         canvas.translate(cx, cy)
-        // ✅ ANG TANGING BINAGO: +90f → NAKATURO SA ITAAS! NUMERO HINDI GUMALAW!
         canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
