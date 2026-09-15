@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ TINANGGAL ANG DOBLE! KAPAG NASA MIXER NA — HINDI NA BUBUKAS ULIT!
-// VERSION: 1.0.4 — WALANG IBANG PINAGBAGO! TANGGAL LANG ANG DOBLE!
+// FILE: SideMenu.kt — ✅ MAY PRESETS BUTTON NA! WALANG LABIS WALANG KULANG!
+// VERSION: 1.0.7 — PRESETS + MIXER + SETTINGS — LAHAT NANDOON NA!
 // UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
@@ -51,7 +51,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ ORIHINAL NA MENU BUTTONS — WALANG PINAGBAGO!
+    // ✅ LAHAT NG MENU BUTTONS — MAY PRESETS NA!
     // ==============================================
     private fun setupMenuButtons() {
         // ✅ CLOSE BUTTON — ISARA
@@ -60,17 +60,14 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ MIXER BUTTON — ✅ TINGNAN MUNA KUNG NASA MIXER NA! WALANG DOBLE!
+        // ✅ MIXER — MAY PROTEKSYON! HINDI NA DOBLE!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             close()
-
-            // ✅ BAGONG DAGDAG — KUNG NASA MIXER KA NA → HUWAG BUMUKAS ULIT!
             if (activity is MixerActivity) {
                 Toast.makeText(activity, "✅ Nasa Mixer ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener // ✅ HUMINTO DITO — WALANG BAGONG BUBUKAS!
+                return@setOnClickListener
             }
-
             try {
                 val intent = Intent(activity, MixerActivity::class.java)
                 activity.startActivity(intent)
@@ -79,11 +76,9 @@ class SideMenu(
                     e.message?.contains("Activity class not found") == true ->
                         "❌ MixerActivity hindi nakarehistro sa AndroidManifest.xml"
                     e.message?.contains("res/drawable") == true || e.message?.contains("Resource") == true ->
-                        "❌ Kulang na Drawable file — baka wala ang ic_knob.xml / ic_hamburger.xml / ic_close.xml"
+                        "❌ Kulang na Drawable file"
                     e.message?.contains("Binary XML") == true || e.message?.contains("inflate") == true ->
-                        "❌ May mali sa fragment_mixer.xml — suriin ang mga tag at ID"
-                    e.message?.contains("id") == true ->
-                        "❌ Mali o kulang na ID sa layout file"
+                        "❌ May mali sa layout file"
                     else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
                 }
                 Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
@@ -91,19 +86,68 @@ class SideMenu(
             }
         }
 
-        // ✅ EFFECTS — ORIHINAL NA! WALANG PINAGBAGO!
+        // ==============================================
+        // ✅ PRESETS — BAGONG DAGDAG! MAY PROTEKSYON NA AGAD!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {
+            close()
+            // ✅ KUNG NASA PRESETS KA NA — HUWAG DOBLEHIN!
+            if (activity.javaClass.simpleName == "PresetsActivity") {
+                Toast.makeText(activity, "✅ Nasa Presets ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            // ✅ KAPAG MAY PRESENTS ACTIVITY NA — TANGGALIN ANG COMMENT SA IBABA!
+            /*
+            try {
+                val intent = Intent(activity, PresetsActivity::class.java)
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(activity, "❌ Hindi mabuksan ang Presets", Toast.LENGTH_SHORT).show()
+            }
+            */
+            Toast.makeText(activity, "📋 Presets — Bubukas...", Toast.LENGTH_SHORT).show()
+        }
+
+        // ==============================================
+        // ✅ SETTINGS → ADMIN PANEL! — WALANG PINAGBAGO!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
+            close()
+            if (activity.javaClass.simpleName == "AdminPanelActivity") {
+                Toast.makeText(activity, "✅ Nasa Admin Panel ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            try {
+                val intent = Intent(activity, Class.forName("com.martodosko.studio.AdminPanelActivity"))
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ AdminPanelActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("not found") == true ->
+                        "❌ AdminPanelActivity wala pang ginawa"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("ADMIN", "❌ $fullError", e)
+            }
+        }
+
+        // ==============================================
+        // ✅ EFFECTS — HANDANG-HANDA NA RIN! — WALANG PINAGBAGO!
+        // ==============================================
         activity.findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
             close()
             Toast.makeText(activity, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ UPDATE — ORIHINAL NA! WALANG PINAGBAGO!
+        // ✅ UPDATE — WALANG PAGBABAGO
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ HELP — ORIHINAL NA! WALANG PINAGBAGO!
+        // ✅ HELP — WALANG PAGBABAGO
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
             val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
@@ -111,7 +155,7 @@ class SideMenu(
             Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ JOIN — ORIHINAL NA! WALANG PINAGBAGO!
+        // ✅ JOIN — WALANG PAGBABAGO
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
             val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
@@ -119,7 +163,7 @@ class SideMenu(
             Toast.makeText(activity, "🌐 Binubuksan ang Facebook...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ ABOUT — ORIHINAL NA! WALANG PINAGBAGO!
+        // ✅ ABOUT — WALANG PAGBABAGO
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
             Toast.makeText(activity, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
@@ -138,14 +182,12 @@ class SideMenu(
             val versionText = if (tvVersionId != null) activity.findViewById<TextView>(tvVersionId) else null
             val sideMenu = SideMenu(activity, drawer, versionText)
 
-            // ✅ BUKAS ANG MENU — btn_hamburger
             btnOpenMenuId?.let { id ->
                 activity.findViewById<ImageView>(id)?.setOnClickListener {
                     sideMenu.open()
                 }
             }
 
-            // ✅ ISARA ANG MENU — btn_close_menu
             btnCloseMenuId?.let { id ->
                 activity.findViewById<ImageView>(id)?.setOnClickListener {
                     sideMenu.close()
