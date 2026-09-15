@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MainActivity.kt — ✅ FORCE CHECK UPDATE MULA SA SIDE MENU! WALANG TINANGGAL!
-// VERSION: 1.0.70 — TUMUTUGMA NA SA SideMenu.kt! AUTO UPDATE NANDOON PA RIN!
+// FILE: MainActivity.kt — ✅ MAY PERMISSION CHECK NA! FORCE CHECK UPDATE + PERMISSION!
+// VERSION: 1.0.71 — HINDI NA LILIPAT ANG PERMISSION CHECK! LIGTAS NA ANG DOWNLOAD!
 // UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
@@ -65,17 +65,35 @@ class MainActivity : Activity() {
         )
 
         // ==============================================
-        // ✅ BAGONG DAGDAG — FORCE CHECK UPDATE MULA SA SIDE MENU!
+        // ✅ FORCE CHECK UPDATE — MAY PERMISSION CHECK NA RIN! HINDI NA LILIPAT!
         // ==============================================
         val forceCheck = intent?.getBooleanExtra("FORCE_CHECK_UPDATE", false) ?: false
         if (forceCheck) {
             Toast.makeText(this, "🔄 Sinusuri ang update mula sa menu...", Toast.LENGTH_SHORT).show()
-            // ✅ LAGAY NA AGAD — HINDI NA HIHINTAY ANG PERMISSION CHECK
-            checkForUpdates()
+            // ✅ SURIIIN MUNA ANG PERMISSION — BAGO MAG-CHECK NG UPDATE!
+            if (hasStoragePermission()) {
+                checkForUpdates() // ✅ May permission — diretsong tignan!
+            } else {
+                checkPermissions() // ✅ Walang permission — hingin muna, tapos tignan!
+            }
         } else {
             // ✅ KARANIWANG PAGBUKAS — GANOON PA RIN!
             Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
             checkPermissions()
+        }
+    }
+
+    // ==============================================
+    // ✅ BAGONG DAGDAG — TINGNAN KUNG MAY STORAGE PERMISSION NA!
+    // ==============================================
+    private fun hasStoragePermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            true // ✅ Android 10+ — hindi na kailangan ng storage permission
+        } else {
+            ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 
