@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ +40% LARGER GAIN & VALUE TEXT!
-// VERSION: 4.7.4 — +40% FONT SIZE! WALANG IBANG BINAGO!
+// FILE: MixerActivity.kt — ✅ GAIN TEXT INILAYO PA NG 7%!
+// VERSION: 4.7.5 — +7% PAGITAN SA GAIN! WALANG IBANG BINAGO!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -86,10 +86,9 @@ class KnobView @JvmOverloads constructor(
         isFakeBoldText = true
         setShadowLayer(0f, 0f, 0f, android.graphics.Color.TRANSPARENT)
     }
-    // ✅ VALUE TEXT — +40% LARGER!
     private val paintValueText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
-        textSize = 19.6f  // ✅ dating 14f → 14 × 1.4 = 19.6f
+        textSize = 19.6f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
         setShadowLayer(0f, 0f, 0f, android.graphics.Color.TRANSPARENT)
@@ -191,10 +190,10 @@ class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ GAIN — +40% LARGER! dating 13f → 18.2f
-        paintText.textSize = 18.2f  // ✅ +40%
-        canvas.drawText("GAIN", cx, cy - panelRadius * 1.00f, paintText)
-        // ✅ VALUE — +40% LARGER! dating 14f → 19.6f (naka-set na sa taas)
+        // ✅ GAIN — INILAYO PA NG 7%! dating 1.00f → 1.07f — HINDI NA DUMIKIT SA 0!
+        paintText.textSize = 18.2f
+        canvas.drawText("GAIN", cx, cy - panelRadius * 1.07f, paintText)
+        // ✅ VALUE — PAREHO PA RIN!
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.95f, paintValueText)
     }
 
