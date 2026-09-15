@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ SIGURADO: GLOW MAGSISIMULA SA ITAAS (0)! HINDI SA GILID!
-// VERSION: 4.7.1 — AYOS NA ANG POSISYON NG NEON ARC! 0 = ITAAS NA TALAGA!
+// FILE: MixerActivity.kt — ✅ ITINAAS ANG GAIN LABEL + +90f OFFSET!
+// VERSION: 4.7.2 — DALAWANG PAGBABAGO LANG! WALANG IBANG BINAGO!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -35,7 +35,7 @@ class KnobView @JvmOverloads constructor(
 
     // ✅ ANGLE RANGE: 0° = ITAAS, -135° = IBABA-KALIWA (-50), +135° = IBABA-KANAN (+50)
     private val ANGLE_TOTAL_RANGE = 270f  // mula -135° hanggang +135° = 270° kabuuan
-    private val ANGLE_OFFSET = -90f       // ✅ Canvas 0° = KANAN → -90° = ITAAS! DITO NAKA-FIX!
+    private val ANGLE_OFFSET = 90f        // ✅ +90f — PARA NAKATURO SA ITAAS! HINDI SA GILID!
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -202,9 +202,9 @@ class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE — MALAYO SA GLOW
+        // ✅ LABEL AT VALUE — ITINAAS ANG GAIN! HINDI NA PANTAY SA 0 AT GLOW!
         paintText.textSize = 13f
-        canvas.drawText("GAIN", cx, cy - panelRadius * 0.92f, paintText)
+        canvas.drawText("GAIN", cx, cy - panelRadius * 0.98f, paintText)  // ✅ ITINAAS — 0.98f NA!
         paintValueText.textSize = 14f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText)
     }
