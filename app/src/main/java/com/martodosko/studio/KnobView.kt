@@ -1,12 +1,13 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ PUNDASYON LANG! WALANG PANGALAN! TUGMA SA XML!
-// VERSION: 5.0.0 — PANGKALAHATANG PIHITAN — WALANG NAKATAKDANG LABEL!
-// UPDATED: 2026-09-15
-// PACKAGE: com.martodosko.studio ← TUGMA SA XML: com.martodosko.studio.KnobView
+// FILE: KnobView.kt — ✅ ORIHINAL NA DISENYO + AUTOMATIC SAVE! HINDI NA MAWAWALA!
+// VERSION: 5.1.0 — NAG-I-ISAVE NG HALAGA! KAHIT LUMABAS O MAG-BACK!
+// UPDATED: 2026-09-16
+// PACKAGE: com.martodosko.studio ← TUGMA SA XML
 // ==================================================
 package com.martodosko.studio
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -26,11 +27,15 @@ open class KnobView @JvmOverloads constructor(
     open var labelOffsetY: Float = 1.07f
     open var valueOffsetY: Float = 0.95f
 
+    // ✅ PANGALAN PARA SA SAVING — BAWAT KNOB MAY SARILING ID!
+    var preferenceKey: String? = null
+
     var value: Float = 0f
         set(v) {
             field = v.coerceIn(minValue, maxValue)
             invalidate()
             onValueChange?.invoke(field)
+            saveValue() // ✅ AWTOMATIKONG SAVE — TUWING NAGBABAGO ANG HALAGA!
         }
     var minValue: Float = -50f
     var maxValue: Float = 50f
@@ -40,6 +45,39 @@ open class KnobView @JvmOverloads constructor(
     protected val ANGLE_TOTAL_RANGE = 270f
     protected val ANGLE_OFFSET = -90f
 
+    // ✅ SharedPreferences — SARILING MEMORYA NG KNOB!
+    private val prefs: SharedPreferences by lazy {
+        context.getSharedPreferences("KnobValues", Context.MODE_PRIVATE)
+    }
+
+    init {
+        loadSavedValue() // ✅ AGAD BASAHIN ANG NAISAVE NA HALAGA PAGBUKAS!
+    }
+
+    // ==============================================
+    // ✅ MAG-ISAVE — TUWING NAGBABAGO ANG HALAGA!
+    // ==============================================
+    private fun saveValue() {
+        val key = preferenceKey ?: labelText.ifEmpty { "knob_${id}" }
+        if (key.isNotEmpty()) {
+            prefs.edit().putFloat(key, value).apply()
+        }
+    }
+
+    // ==============================================
+    // ✅ BALIKAN ANG NAISAVE — PAGBUKAS PA LANG!
+    // ==============================================
+    fun loadSavedValue() {
+        val key = preferenceKey ?: labelText.ifEmpty { "knob_${id}" }
+        if (key.isNotEmpty()) {
+            val saved = prefs.getFloat(key, value)
+            value = saved // ✅ ILOAD ANG NAISAVE — WALANG ANIMASYON, AGAD!
+        }
+    }
+
+    // ==============================================
+    // ✅ LAHAT NG ORIHINAL NA DRAWING CODE — WALANG PINAGBAGO!
+    // ==============================================
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
         style = Paint.Style.FILL
