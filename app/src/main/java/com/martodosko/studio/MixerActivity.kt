@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ INAYOS: +90f SA ANGLE + INIANGAT ANG GAIN LABEL!
-// VERSION: 4.7.2 — YUN LANG ANG BINAGO! WALANG IBA!
+// FILE: MixerActivity.kt — ✅ +40% LARGER GAIN & VALUE TEXT!
+// VERSION: 4.7.4 — +40% FONT SIZE! WALANG IBANG BINAGO!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -33,7 +33,6 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    // ✅ ANGLE RANGE: 0° = ITAAS, -135° = IBABA-KALIWA (-50), +135° = IBABA-KANAN (+50)
     private val ANGLE_TOTAL_RANGE = 270f
     private val ANGLE_OFFSET = -90f
 
@@ -59,7 +58,6 @@ class KnobView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    // ✅ NEON ARC — PAYAT, MAY GLOW
     private val paintNeonArc = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.STROKE
@@ -88,15 +86,15 @@ class KnobView @JvmOverloads constructor(
         isFakeBoldText = true
         setShadowLayer(0f, 0f, 0f, android.graphics.Color.TRANSPARENT)
     }
+    // ✅ VALUE TEXT — +40% LARGER!
     private val paintValueText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
-        textSize = 14f
+        textSize = 19.6f  // ✅ dating 14f → 14 × 1.4 = 19.6f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
         setShadowLayer(0f, 0f, 0f, android.graphics.Color.TRANSPARENT)
     }
 
-    // ✅ KONVERTER: HALAGA → ANGGULO (0 = ITAAS!)
     private fun valueToAngle(v: Float): Float {
         val percent = (v - minValue) / (maxValue - minValue)
         return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
@@ -121,9 +119,6 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
-        // ==================================================
-        // ✅ NEON ARC — SIGURADONG MAGSISIMULA SA ITAAS (0°)! HINDI SA GILID!
-        // ==================================================
         val currentVal = value.roundToInt()
         if (currentVal != 0) {
             val zeroAngle = ANGLE_OFFSET
@@ -149,9 +144,6 @@ class KnobView @JvmOverloads constructor(
             )
         }
 
-        // ==================================================
-        // 📏 GUHIT AT NUMERO
-        // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val angle = valueToAngle(mark.toFloat())
@@ -183,13 +175,10 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ==================================================
-        // 🔵 INDICATOR — ✅ +90f PARA NAKATURO SA ITAAS!
-        // ==================================================
+        // 🔵 INDICATOR — +90f PARA NAKATURO SA ITAAS
         val indAngle = valueToAngle(value)
         canvas.save()
         canvas.translate(cx, cy)
-        // ✅ BINAGO: +90f PARA NAKATURO SA ITAAS — HINDI SA GILID!
         canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
@@ -202,11 +191,11 @@ class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL — INIANGAT ANG GAIN! HINDI NA IPANTAY SA 0!
-        paintText.textSize = 13f
+        // ✅ GAIN — +40% LARGER! dating 13f → 18.2f
+        paintText.textSize = 18.2f  // ✅ +40%
         canvas.drawText("GAIN", cx, cy - panelRadius * 1.00f, paintText)
-        paintValueText.textSize = 14f
-        canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText)
+        // ✅ VALUE — +40% LARGER! dating 14f → 19.6f (naka-set na sa taas)
+        canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.95f, paintValueText)
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
