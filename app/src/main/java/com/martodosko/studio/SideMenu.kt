@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ MAY PRESETS BUTTON NA! WALANG LABIS WALANG KULANG!
-// VERSION: 1.0.7 — PRESETS + MIXER + SETTINGS — LAHAT NANDOON NA!
+// FILE: SideMenu.kt — ✅ CHECK UPDATE NAKAKONEKTA NA SA docs/version.json!
+// VERSION: 1.0.8 — TAWAG NA ANG TUNAY NA UPDATE CHECKER! WALANG TINANGGAL!
 // UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
@@ -51,17 +51,15 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — MAY PRESETS NA!
+    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! IDINAGDAG LANG ANG UPDATE CHECK!
     // ==============================================
     private fun setupMenuButtons() {
-        // ✅ CLOSE BUTTON — ISARA
+        // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
         activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener {
             close()
         }
 
-        // ==============================================
-        // ✅ MIXER — MAY PROTEKSYON! HINDI NA DOBLE!
-        // ==============================================
+        // ✅ MIXER — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             close()
             if (activity is MixerActivity) {
@@ -86,31 +84,17 @@ class SideMenu(
             }
         }
 
-        // ==============================================
-        // ✅ PRESETS — BAGONG DAGDAG! MAY PROTEKSYON NA AGAD!
-        // ==============================================
+        // ✅ PRESETS — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {
             close()
-            // ✅ KUNG NASA PRESETS KA NA — HUWAG DOBLEHIN!
             if (activity.javaClass.simpleName == "PresetsActivity") {
                 Toast.makeText(activity, "✅ Nasa Presets ka na!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            // ✅ KAPAG MAY PRESENTS ACTIVITY NA — TANGGALIN ANG COMMENT SA IBABA!
-            /*
-            try {
-                val intent = Intent(activity, PresetsActivity::class.java)
-                activity.startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(activity, "❌ Hindi mabuksan ang Presets", Toast.LENGTH_SHORT).show()
-            }
-            */
             Toast.makeText(activity, "📋 Presets — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ==============================================
         // ✅ SETTINGS → ADMIN PANEL! — WALANG PINAGBAGO!
-        // ==============================================
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
             if (activity.javaClass.simpleName == "AdminPanelActivity") {
@@ -133,21 +117,38 @@ class SideMenu(
             }
         }
 
-        // ==============================================
-        // ✅ EFFECTS — HANDANG-HANDA NA RIN! — WALANG PINAGBAGO!
-        // ==============================================
+        // ✅ EFFECTS — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
             close()
             Toast.makeText(activity, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ UPDATE — WALANG PAGBABAGO
+        // ==============================================
+        // ✅ CHECK UPDATE — ✅ NAKAKONEKTA NA SA docs/version.json! TUNAY NA PAGSUSURI NA!
+        // ==============================================
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
-            Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "🔄 Sinusuri ang update mula sa GitHub...", Toast.LENGTH_SHORT).show()
+
+            // ✅ TAWAGIN ANG TUNAY NA UPDATE CHECKER — TINGNAN ANG docs/version.json!
+            try {
+                if (activity is MainActivity) {
+                    // ✅ NASA MAIN NA — TAWAGIN ANG UMIIRAL NA checkForUpdates()!
+                    activity.checkForUpdates()
+                } else {
+                    // ✅ NASA IBANG SCREEN — PUMUNTA SA MAIN AT FORCE CHECK UPDATE!
+                    val intent = Intent(activity, MainActivity::class.java)
+                    intent.putExtra("FORCE_CHECK_UPDATE", true)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    activity.startActivity(intent)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(activity, "❌ Hindi masuri ang update: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("UPDATE", "❌ Error checking update", e)
+            }
         }
 
-        // ✅ HELP — WALANG PAGBABAGO
+        // ✅ HELP — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
             val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
@@ -155,7 +156,7 @@ class SideMenu(
             Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ JOIN — WALANG PAGBABAGO
+        // ✅ JOIN — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
             val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
@@ -163,7 +164,7 @@ class SideMenu(
             Toast.makeText(activity, "🌐 Binubuksan ang Facebook...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ ABOUT — WALANG PAGBABAGO
+        // ✅ ABOUT — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
             Toast.makeText(activity, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
