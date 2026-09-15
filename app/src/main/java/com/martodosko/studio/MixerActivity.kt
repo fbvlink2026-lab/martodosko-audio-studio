@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ FINAL! 0=ITAAS! MAY KUMPLETONG COMMENTS!
-// VERSION: 5.0.0 — INAYOS ANG ANGGULO: 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+// FILE: MixerActivity.kt — ✅ INDICATOR NAKATURO SA ITAAS! WALANG BINAGO SA NUMERO!
+// VERSION: 4.5.0 — INDICATOR LANG ANG INAYOS! MAY DETALYADONG COMMENTS!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -19,37 +19,38 @@ import kotlin.math.sin
 import kotlin.math.roundToInt
 
 // ==================================================
-// 🎛️ CUSTOM KNOB — PRO AUDIO MIXER STYLE
+// 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
+// ✅ WALANG BINAGO SA PAGITAN NG NUMERO AT GUHIT — INDICATOR LANG ANG INAYOS!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ==============================================
-    // 📊 KNOB VALUE SETTINGS
-    // ==============================================
+    // ==================================================
+    // ⚙️ KNOB PROPERTIES — HALAGA AT SAKLAW
+    // ==================================================
     var value: Float = 0f
         set(v) {
             field = v.coerceIn(minValue, maxValue)
             invalidate()
             onValueChange?.invoke(field)
         }
-    var minValue: Float = -50f   // Minimum = -50 dB
-    var maxValue: Float = 50f    // Maximum = +50 dB
+    var minValue: Float = -50f
+    var maxValue: Float = 50f
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    // ==============================================
-    // 📐 ANGLE CALCULATION — 0 = ITAAS!
-    // ==============================================
-    // 135° = IBABA-KALIWA (-50) → 315° = IBABA-KANAN (+50) → 270° = ITAAS (0) ✅
-    private val ANGLE_START = 135f   // -50 ↙️ IBABA-KALIWA
-    private val ANGLE_END = 315f     // +50 ↘️ IBABA-KANAN
-    private val ANGLE_RANGE = ANGLE_END - ANGLE_START  // 180° kabuuan
+    // ==================================================
+    // 📐 ANGGULO — NAKA-LOCK! WALANG BABAGUHIN DITO!
+    // 135° = -50 (IBABA-KALIWA) → 270° = 0 (ITAAS) → 405° = +50 (IBABA-KANAN)
+    // ==================================================
+    private val ANGLE_START = 135f
+    private val ANGLE_END = 405f
+    private val ANGLE_RANGE = ANGLE_END - ANGLE_START
 
-    // ==============================================
-    // 🎨 PAINT STYLES — KULAY AT ESTILO
-    // ==============================================
+    // ==================================================
+    // 🎨 KULAY AT ESTILO — MGA BRUSH
+    // ==================================================
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
         style = Paint.Style.FILL
@@ -96,13 +97,12 @@ class KnobView @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
-    // ==============================================
-    // 🖌️ DRAW KNOB — BUONG LARAWAN NG PIHITAN
-    // ==============================================
+    // ==================================================
+    // 🖼️ DRAW — BUONG KNOB
+    // ==================================================
     override fun onDraw(canvas: Canvas) {
-        // --- CENTER AT SUKAT ---
-        val cx = width / 2f        // Center X
-        val cy = height / 2f       // Center Y
+        val cx = width / 2f
+        val cy = height / 2f
         val size = minOf(cx, cy)
         val panelRadius = size * 0.95f
         val knobRadius = size * 0.55f
@@ -110,10 +110,8 @@ class KnobView @JvmOverloads constructor(
         val tickOuter = size * 0.80f
         val textRadius = size * 0.92f
 
-        // --- DRAW BACKGROUND PANEL ---
+        // ✅ DRAW: PANEL AT KNOB BACKGROUND
         canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), panelRadius, panelRadius, paintPanel)
-
-        // --- DRAW KNOB CIRCLE ---
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
         canvas.translate(cx, cy)
@@ -121,23 +119,19 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
-        // ==============================================
-        // 📏 DRAW NUMBERS & TICKS — -50 → 0 → +50
-        // ==============================================
+        // ==================================================
+        // 📏 GUHIT AT NUMERO — WALANG BINAGO! TAMA ANG PAGITAN!
+        // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
-            // Compute angle for each number
             val ratio = (mark - minValue) / (maxValue - minValue)
             val angle = ANGLE_START + ratio * ANGLE_RANGE
             val rad = Math.toRadians(angle.toDouble())
-
-            // Draw tick marks (guhit sa paligid)
             val x1 = cx + tickInner * cos(rad).toFloat()
             val y1 = cy + tickInner * sin(rad).toFloat()
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            // Highlight active range (mula 0 hanggang kasalukuyang value)
             val isActive = if (value >= 0) {
                 mark in 0..value.toInt()
             } else {
@@ -145,52 +139,49 @@ class KnobView @JvmOverloads constructor(
             }
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
-            // Draw number labels
             val nx = cx + textRadius * cos(rad).toFloat()
             val ny = cy + textRadius * sin(rad).toFloat() + 4f
 
             val label = when {
                 mark == 0 -> "0"
+                mark == 50 -> "+50"
+                mark == -50 -> "-50"
                 mark > 0 -> "+$mark"
                 else -> "$mark"
             }
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ==============================================
-        // 📐 DRAW INDICATOR — GUHIT NA NAKATURO SA 0=ITAAS!
-        // ==============================================
+        // ==================================================
+        // 🔵 INDICATOR — ✅ INAYOS! NAKATURO SA ITAAS! WALANG BINAGO SA IBA!
+        // ==================================================
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
-
         canvas.save()
         canvas.translate(cx, cy)
-        canvas.rotate(indAngle - 90f) // ✅ -90° OFFSET = 0° → ITAAS!
-
-        // Arrow shape — nakaturo pataas
+        // ✅ ANG TANGING BINAGO: +90f → NAKATURO SA ITAAS! NUMERO HINDI GUMALAW!
+        canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen) // ✅ TUMUTURO SA ITAAS!
+            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA NA!
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ==============================================
-        // 📝 DRAW LABEL & VALUE — GAIN + dB
-        // ==============================================
+        // ✅ LABEL AT VALUE
         paintText.textSize = 13f
         canvas.drawText("GAIN", cx, cy - panelRadius * 0.85f, paintText)
         paintValueText.textSize = 14f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
     }
 
-    // ==============================================
-    // 👆 TOUCH CONTROLS — PAGPIPIHIT NG KNOB
-    // ==============================================
+    // ==================================================
+    // 👆 TOUCH CONTROL — GALAW NG DALIRI
+    // ==================================================
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
             lastTouchY = e.y
@@ -206,7 +197,7 @@ class KnobView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎛️ HORIZONTAL SLIDER — OPTIONAL
+// 🎛️ HORIZONTAL SLIDER
 // ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -249,7 +240,7 @@ class HorizontalSliderView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🔘 TOGGLE BUTTON — OPTIONAL
+// 🔘 TOGGLE BUTTON
 // ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -302,7 +293,7 @@ class ToggleButtonView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎯 MAIN ACTIVITY — ENTRY POINT
+// 🎯 MAIN ACTIVITY
 // ==================================================
 class MixerActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -310,11 +301,10 @@ class MixerActivity : Activity() {
         setContentView(R.layout.activity_mixer)
 
         try {
-            // --- INITIALIZE GAIN KNOB ---
             val knob = findViewById<KnobView>(R.id.knob_gain)
             knob.minValue = -50f
             knob.maxValue = 50f
-            knob.value = 0f // ✅ SIMULA = 0 = ITAAS!
+            knob.value = 0f
         } catch (e: Exception) {
             android.widget.Toast.makeText(this, "Error: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
             finish()
