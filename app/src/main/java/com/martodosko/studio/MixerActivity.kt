@@ -1,12 +1,13 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ MAY SIDE MENU NA! TAWAG LANG SA SideMenu!
-// VERSION: 2.0.0 — HINDI NA ULIT-ULITIN ANG SIDE MENU CODE!
+// FILE: MixerActivity.kt — ✅ ITINUGMA NA SA SideMenu! TAMA NA ANG MGA ID!
+// VERSION: 2.0.1 — btn_hamburger + btn_close_menu! TUGMA SA XML!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.Toast
 
 class MixerActivity : Activity() {
@@ -18,11 +19,13 @@ class MixerActivity : Activity() {
         setContentView(R.layout.activity_mixer)
 
         try {
-            // ✅ SIDE MENU — ISANG LINYA LANG! TAPOS NA! PAREHO SA MAINACTIVITY!
+            // ✅ ITINUGMA NA — btnMenuId → btnOpenMenuId + btnCloseMenuId!
+            // ✅ TAMA NA ANG MGA ID — tugma sa totoong XML!
             sideMenu = SideMenu.setup(
                 activity = this,
                 drawerLayoutId = R.id.drawer_layout,
-                btnMenuId = R.id.btn_menu
+                btnOpenMenuId = R.id.btn_hamburger,    // ✅ BUKAS — tugma sa XML
+                btnCloseMenuId = R.id.btn_close_menu   // ✅ ISARA — tugma sa XML
             )
 
             // ✅ GAIN KNOB — PERFECT NA!
@@ -34,13 +37,14 @@ class MixerActivity : Activity() {
             gainKnob.value = 0f
 
         } catch (e: Exception) {
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "❌ Error: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
         }
     }
 
+    // ✅ ITINUGMA NA — Gravity.START + public drawerLayout
     override fun onBackPressed() {
-        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(android.view.Gravity.START)) {
+        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(Gravity.START)) {
             sideMenu.close()
         } else {
             super.onBackPressed()
