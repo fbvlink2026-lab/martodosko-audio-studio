@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ INDICATOR NAKATURO SA ITAAS! WALANG BINAGO SA NUMERO!
-// VERSION: 4.5.0 — INDICATOR LANG ANG INAYOS! MAY DETALYADONG COMMENTS!
+// FILE: MixerActivity.kt — ✅ TAMA NA ANG LOGIC! WALANG PINILIT NA GUHIT!
+// VERSION: 4.5.2 — GUHIT SUMUSUNOD SA TAMA! WALANG IBANG BINAGO!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -18,17 +18,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.roundToInt
 
-// ==================================================
-// 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-// ✅ WALANG BINAGO SA PAGITAN NG NUMERO AT GUHIT — INDICATOR LANG ANG INAYOS!
-// ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    // ==================================================
-    // ⚙️ KNOB PROPERTIES — HALAGA AT SAKLAW
-    // ==================================================
     var value: Float = 0f
         set(v) {
             field = v.coerceIn(minValue, maxValue)
@@ -40,17 +33,10 @@ class KnobView @JvmOverloads constructor(
     var onValueChange: ((Float) -> Unit)? = null
     private var lastTouchY = 0f
 
-    // ==================================================
-    // 📐 ANGGULO — NAKA-LOCK! WALANG BABAGUHIN DITO!
-    // 135° = -50 (IBABA-KALIWA) → 270° = 0 (ITAAS) → 405° = +50 (IBABA-KANAN)
-    // ==================================================
     private val ANGLE_START = 135f
     private val ANGLE_END = 405f
     private val ANGLE_RANGE = ANGLE_END - ANGLE_START
 
-    // ==================================================
-    // 🎨 KULAY AT ESTILO — MGA BRUSH
-    // ==================================================
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
         style = Paint.Style.FILL
@@ -97,9 +83,6 @@ class KnobView @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
-    // ==================================================
-    // 🖼️ DRAW — BUONG KNOB
-    // ==================================================
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
@@ -110,7 +93,6 @@ class KnobView @JvmOverloads constructor(
         val tickOuter = size * 0.80f
         val textRadius = size * 0.92f
 
-        // ✅ DRAW: PANEL AT KNOB BACKGROUND
         canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), panelRadius, panelRadius, paintPanel)
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
@@ -119,9 +101,6 @@ class KnobView @JvmOverloads constructor(
         canvas.drawCircle(0f, 0f, 1f, paintKnobShine)
         canvas.restore()
 
-        // ==================================================
-        // 📏 GUHIT AT NUMERO — WALANG BINAGO! TAMA ANG PAGITAN!
-        // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
             val ratio = (mark - minValue) / (maxValue - minValue)
@@ -132,10 +111,12 @@ class KnobView @JvmOverloads constructor(
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            val isActive = if (value >= 0) {
-                mark in 0..value.toInt()
+            // ✅ TAMA NA — WALANG PINILIT! SUMUSUNOD SA TAMA!
+            val currentVal = value.roundToInt()
+            val isActive = if (currentVal >= 0) {
+                mark in 0..currentVal
             } else {
-                mark in value.toInt()..0
+                mark in currentVal..0
             }
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
@@ -152,36 +133,28 @@ class KnobView @JvmOverloads constructor(
             canvas.drawText(label, nx, ny, paintText)
         }
 
-        // ==================================================
-        // 🔵 INDICATOR — ✅ INAYOS! NAKATURO SA ITAAS! WALANG BINAGO SA IBA!
-        // ==================================================
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
         canvas.save()
         canvas.translate(cx, cy)
-        // ✅ ANG TANGING BINAGO: +90f → NAKATURO SA ITAAS! NUMERO HINDI GUMALAW!
         canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA NA!
+            lineTo(0f, -indLen)
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE
         paintText.textSize = 13f
         canvas.drawText("GAIN", cx, cy - panelRadius * 0.85f, paintText)
         paintValueText.textSize = 14f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
     }
 
-    // ==================================================
-    // 👆 TOUCH CONTROL — GALAW NG DALIRI
-    // ==================================================
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
             lastTouchY = e.y
@@ -196,9 +169,6 @@ class KnobView @JvmOverloads constructor(
     }
 }
 
-// ==================================================
-// 🎛️ HORIZONTAL SLIDER
-// ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -239,9 +209,6 @@ class HorizontalSliderView @JvmOverloads constructor(
     }
 }
 
-// ==================================================
-// 🔘 TOGGLE BUTTON
-// ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
@@ -292,9 +259,6 @@ class ToggleButtonView @JvmOverloads constructor(
     }
 }
 
-// ==================================================
-// 🎯 MAIN ACTIVITY
-// ==================================================
 class MixerActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
