@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MainActivity.kt — ✅ MAY PERMISSION CHECK NA! FORCE CHECK UPDATE + PERMISSION!
-// VERSION: 1.0.71 — HINDI NA LILIPAT ANG PERMISSION CHECK! LIGTAS NA ANG DOWNLOAD!
+// FILE: MainActivity.kt — ✅ MAY PERMISSION CHECK + BUMABALIK AGAD SA MIXER!
+// VERSION: 1.0.72 — HINDI NA LILIPAT ANG PERMISSION CHECK! BUMABALIK AGAD! LIGTAS NA!
 // UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
@@ -17,6 +17,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
@@ -65,17 +67,29 @@ class MainActivity : Activity() {
         )
 
         // ==============================================
-        // ✅ FORCE CHECK UPDATE — MAY PERMISSION CHECK NA RIN! HINDI NA LILIPAT!
+        // ✅ FORCE CHECK UPDATE — MAY PERMISSION CHECK + BUMABALIK AGAD!
         // ==============================================
         val forceCheck = intent?.getBooleanExtra("FORCE_CHECK_UPDATE", false) ?: false
+        val returnToScreen = intent?.getStringExtra("RETURN_TO_SCREEN") // ✅ TANDAAN KUNG SAAN BABALIK
+
         if (forceCheck) {
             Toast.makeText(this, "🔄 Sinusuri ang update mula sa menu...", Toast.LENGTH_SHORT).show()
+            
             // ✅ SURIIIN MUNA ANG PERMISSION — BAGO MAG-CHECK NG UPDATE!
             if (hasStoragePermission()) {
                 checkForUpdates() // ✅ May permission — diretsong tignan!
             } else {
                 checkPermissions() // ✅ Walang permission — hingin muna, tapos tignan!
             }
+
+            // ✅ PAGKATAPUS — BUMABALIK AGAD SA MIXER! HINDI NA IIWAN SA MAIN!
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (returnToScreen == "MixerActivity") {
+                    val goBack = Intent(this, MixerActivity::class.java)
+                    startActivity(goBack)
+                    finish() // ✅ ISARA ANG MAIN — BALIK AGAD SA MIXER!
+                }
+            }, 500) // ✅ SANDALI LANG — HINDI NA NAKIKITA NG USER!
         } else {
             // ✅ KARANIWANG PAGBUKAS — GANOON PA RIN!
             Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
