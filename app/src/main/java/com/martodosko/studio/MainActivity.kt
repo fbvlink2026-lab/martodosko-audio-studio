@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: MainActivity.kt — ✅ ORIHINAL NA! SIDE MENU LANG ANG INILIPAT SA SideMenu.kt!
-// VERSION: 1.0.69 — WALANG IBANG PINAGBAGO! AUTO UPDATE + PERMISSIONS + DOWNLOAD NANDOON PA RIN!
-// UPDATED: 2026-09-15
+// FILE: MainActivity.kt — ✅ FORCE CHECK UPDATE MULA SA SIDE MENU! WALANG TINANGGAL!
+// VERSION: 1.0.70 — TUMUTUGMA NA SA SideMenu.kt! AUTO UPDATE NANDOON PA RIN!
+// UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
 
@@ -54,7 +54,7 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         // ==============================================
-        // ✅ SIDE MENU — SARILING FILE NA! TAWAG LANG!
+        // ✅ SIDE MENU — SARILING FILE NA! TAWAG LANG! — WALANG PINAGBAGO!
         // ==============================================
         sideMenu = SideMenu.setup(
             activity = this,
@@ -64,8 +64,19 @@ class MainActivity : Activity() {
             tvVersionId = R.id.tv_version
         )
 
-        Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
-        checkPermissions()
+        // ==============================================
+        // ✅ BAGONG DAGDAG — FORCE CHECK UPDATE MULA SA SIDE MENU!
+        // ==============================================
+        val forceCheck = intent?.getBooleanExtra("FORCE_CHECK_UPDATE", false) ?: false
+        if (forceCheck) {
+            Toast.makeText(this, "🔄 Sinusuri ang update mula sa menu...", Toast.LENGTH_SHORT).show()
+            // ✅ LAGAY NA AGAD — HINDI NA HIHINTAY ANG PERMISSION CHECK
+            checkForUpdates()
+        } else {
+            // ✅ KARANIWANG PAGBUKAS — GANOON PA RIN!
+            Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
+            checkPermissions()
+        }
     }
 
     // ==============================================
@@ -94,9 +105,9 @@ class MainActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ ORIHINAL NA — AUTO UPDATE! WALANG PINAGBAGO!
+    // ✅ ORIHINAL NA — AUTO UPDATE! WALANG PINAGBAGO! TINITINGNAN ANG docs/version.json!
     // ==============================================
-    private fun checkForUpdates() {
+    fun checkForUpdates() { // ✅ GINAWING PUBLIC — PARA MATAWAG MULA SA SIDE MENU!
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 Log.d("UPDATE", "🔍 Tinitignan ang update...")
@@ -129,6 +140,9 @@ class MainActivity : Activity() {
                 }
             } catch (e: Exception) {
                 Log.e("UPDATE", "⚠️ Error: ${e.message}")
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "⚠️ Hindi masuri ang update", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -210,7 +224,7 @@ class MainActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ BACK PRESSED — GUMAGANA SA SIDE MENU!
+    // ✅ BACK PRESSED — GUMAGANA SA SIDE MENU! — WALANG PINAGBAGO!
     // ==============================================
     override fun onBackPressed() {
         if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(Gravity.START)) {
