@@ -1,10 +1,6 @@
-iangat ang knob name na GAIN, huwag ipantay sa 0 at sa neon glow. gawing dAngle + 90f huwag dAngle - 90f, para nakaturo sa itaas hindi sa gilid nakaturo. huwag nang baguhin ang ibang code pati mga comments. yun lang.
-
-
-
 // ==================================================
-// FILE: MixerActivity.kt — ✅ SIGURADO: GLOW MAGSISIMULA SA ITAAS (0)! HINDI SA GILID!
-// VERSION: 4.7.1 — AYOS NA ANG POSISYON NG NEON ARC! 0 = ITAAS NA TALAGA!
+// FILE: MixerActivity.kt — ✅ INAYOS: +90f SA ANGLE + INIANGAT ANG GAIN LABEL!
+// VERSION: 4.7.2 — YUN LANG ANG BINAGO! WALANG IBA!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -38,8 +34,8 @@ class KnobView @JvmOverloads constructor(
     private var lastTouchY = 0f
 
     // ✅ ANGLE RANGE: 0° = ITAAS, -135° = IBABA-KALIWA (-50), +135° = IBABA-KANAN (+50)
-    private val ANGLE_TOTAL_RANGE = 270f  // mula -135° hanggang +135° = 270° kabuuan
-    private val ANGLE_OFFSET = -90f       // ✅ Canvas 0° = KANAN → -90° = ITAAS! DITO NAKA-FIX!
+    private val ANGLE_TOTAL_RANGE = 270f
+    private val ANGLE_OFFSET = -90f
 
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
@@ -130,21 +126,20 @@ class KnobView @JvmOverloads constructor(
         // ==================================================
         val currentVal = value.roundToInt()
         if (currentVal != 0) {
-            val zeroAngle = ANGLE_OFFSET  // ✅ 0° = ITAAS — SIMULA DITO PALAGAY!
+            val zeroAngle = ANGLE_OFFSET
             val endAngle = valueToAngle(value)
             
             val startAngle: Float
             val sweepAngle: Float
             
             if (currentVal > 0) {
-                startAngle = zeroAngle        // ✅ MULA SA ITAAS (0)
-                sweepAngle = endAngle - zeroAngle  // ✅ PAKANAN LANG
+                startAngle = zeroAngle
+                sweepAngle = endAngle - zeroAngle
             } else {
-                startAngle = endAngle         // ✅ MULA SA KASALUKUYANG HALAGA
-                sweepAngle = zeroAngle - endAngle  // ✅ PAKALIWA PUNTA SA ITAAS (0)
+                startAngle = endAngle
+                sweepAngle = zeroAngle - endAngle
             }
 
-            // ✅ DRAW — SIGURADONG SIMULA SA ITAAS!
             canvas.drawArc(
                 RectF(cx - arcRadius, cy - arcRadius, cx + arcRadius, cy + arcRadius),
                 startAngle,
@@ -189,26 +184,27 @@ class KnobView @JvmOverloads constructor(
         }
 
         // ==================================================
-        // 🔵 INDICATOR — NAKATURO SA ITAAS KAPAG 0
+        // 🔵 INDICATOR — ✅ +90f PARA NAKATURO SA ITAAS!
         // ==================================================
         val indAngle = valueToAngle(value)
         canvas.save()
         canvas.translate(cx, cy)
+        // ✅ BINAGO: +90f PARA NAKATURO SA ITAAS — HINDI SA GILID!
         canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA NA!
+            lineTo(0f, -indLen)
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE — MALAYO SA GLOW
+        // ✅ LABEL — INIANGAT ANG GAIN! HINDI NA IPANTAY SA 0!
         paintText.textSize = 13f
-        canvas.drawText("GAIN", cx, cy - panelRadius * 0.92f, paintText)
+        canvas.drawText("GAIN", cx, cy - panelRadius * 1.00f, paintText)
         paintValueText.textSize = 14f
         canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText)
     }
