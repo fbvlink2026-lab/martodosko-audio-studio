@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ PAYAT NA NEON ARC! HINDI MALAKI ANG ESPASYO!
-// VERSION: 4.6.1 — PAYAT NA NEON ARC + MALAYONG LABELS! WALANG IBANG BINAGO!
+// FILE: MixerActivity.kt — ✅ NEON ARC GLOW + MALAYONG LABELS!
+// VERSION: 4.6.0 — GUHIT → KONTINUONG NEON ARC! MALAYO NA ANG LABELS!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 // ==================================================
 // 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-// ✅ PAYAT NA NEON ARC — HINDI MALAKI ANG ESPASYO! KONTINUONG GLOW!
+// ✅ NEON ARC — HINDI NA PUTOL-PUTOL! MALAYO NA ANG LABELS!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -73,16 +73,16 @@ class KnobView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    // ✅ PAYAT NA NEON ARC — 4f LANG ANG KAPAL! HINDI MALAKI ANG ESPASYO! MAY GLOW PA RIN!
+    // ✅ NEON ARC GLOW — KONTINUONG GUHIT, HINDI PUTOL-PUTOL! MAY GLOW EFFECT!
     private val paintNeonArc = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.STROKE
-        strokeWidth = 4f  // ✅ PAYAT — dating 8f → 4f NA! KALAHATI NA ANG KAPAL!
+        strokeWidth = 8f
         strokeCap = Paint.Cap.ROUND
-        setShadowLayer(8f, 0f, 0f, Color.parseColor("#40E0D0")) // ✅ GLOW — PINAYAT DIN ANG SHADOW!
+        setShadowLayer(12f, 0f, 0f, Color.parseColor("#40E0D0")) // ✅ NEON GLOW!
     }
 
-    // ✅ MGA GUHIT — MANIPIS LANG
+    // ✅ MGA GUHIT — NABAWASAN ANG LAKI DAHIL MAY NEON ARC NA
     private val paintTickActive = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#8AF0E0")
         style = Paint.Style.STROKE
@@ -96,20 +96,20 @@ class KnobView @JvmOverloads constructor(
         strokeCap = Paint.Cap.ROUND
     }
 
-    // ✅ TEXT — MAS MALAYO SA ARC, WALANG GLOW
+    // ✅ TEXT — MAS MALAYO SA NEON ARC PARA HINDI MAAPEKTUHAN NG GLOW
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#B8DDE6")
         textSize = 12f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
-        setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT)
+        setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT) // ✅ WALANG GLOW SA TEXT!
     }
     private val paintValueText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         textSize = 14f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
-        setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT)
+        setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT) // ✅ WALANG GLOW SA TEXT!
     }
 
     // ==================================================
@@ -122,11 +122,11 @@ class KnobView @JvmOverloads constructor(
         val panelRadius = size * 0.95f
         val knobRadius = size * 0.55f
 
-        // ✅ RADII — MAS MALAYO ANG TEXT, HINDI NA MAAAPEKTUHAN
-        val arcRadius = size * 0.72f
-        val tickInner = arcRadius * 1.03f
-        val tickOuter = arcRadius * 1.08f
-        val textRadius = size * 0.88f
+        // ✅ MGA RADII — MAS MALAYO ANG TEXT PARA HINDI MAAPEKTUHAN NG NEON GLOW
+        val arcRadius = size * 0.72f        // ✅ DITO ILALAGAY ANG NEON ARC
+        val tickInner = arcRadius * 1.03f   // ✅ GUHIT SA LOOB NG ARC
+        val tickOuter = arcRadius * 1.08f   // ✅ GUHIT SA LABAS NG ARC
+        val textRadius = size * 0.88f       // ✅ MAS MALAYO ANG TEXT — HINDI NA MAAAPEKTUHAN!
 
         // ✅ DRAW: PANEL AT KNOB BACKGROUND
         canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), panelRadius, panelRadius, paintPanel)
@@ -138,21 +138,23 @@ class KnobView @JvmOverloads constructor(
         canvas.restore()
 
         // ==================================================
-        // ✅ PAYAT NA NEON ARC — KONTINUONG GUHIT, HINDI PUTOL-PUTOL!
+        // ✅ NEON ARC GLOW — KONTINUONG GUHIT, HINDI PUTOL-PUTOL!
         // ==================================================
         val currentVal = value.roundToInt()
-        if (currentVal != 0) {
+        if (currentVal != 0) { // ✅ Kapag 0 — walang arc, guhit lang ng 0
             val startAngle: Float
             val sweepAngle: Float
 
             if (currentVal > 0) {
+                // ✅ Positive: mula 0 (itaas) pakanan hanggang kasalukuyang halaga
                 val zeroRatio = (0 - minValue) / (maxValue - minValue)
-                val zeroAngle = ANGLE_START + zeroRatio * ANGLE_RANGE - 90f
+                val zeroAngle = ANGLE_START + zeroRatio * ANGLE_RANGE - 90f // -90 para sa Canvas coordinates
                 val endRatio = (currentVal - minValue) / (maxValue - minValue)
                 val endAngle = ANGLE_START + endRatio * ANGLE_RANGE - 90f
                 startAngle = zeroAngle
                 sweepAngle = endAngle - zeroAngle
             } else {
+                // ✅ Negative: mula 0 (itaas) pakaliwa hanggang kasalukuyang halaga
                 val zeroRatio = (0 - minValue) / (maxValue - minValue)
                 val zeroAngle = ANGLE_START + zeroRatio * ANGLE_RANGE - 90f
                 val endRatio = (currentVal - minValue) / (maxValue - minValue)
@@ -161,7 +163,7 @@ class KnobView @JvmOverloads constructor(
                 sweepAngle = zeroAngle - endAngle
             }
 
-            // ✅ NEON ARC — PAYAT, MALINIS, WALANG MALAKING ESPASYO!
+            // ✅ DRAW NEON ARC — KONTINUONG LINYA! WALANG PUTOL!
             canvas.drawArc(
                 RectF(cx - arcRadius, cy - arcRadius, cx + arcRadius, cy + arcRadius),
                 startAngle,
@@ -172,7 +174,7 @@ class KnobView @JvmOverloads constructor(
         }
 
         // ==================================================
-        // 📏 GUHIT AT NUMERO — MAS MALAYO ANG TEXT!
+        // 📏 GUHIT AT NUMERO — ✅ MAS MALAYO ANG TEXT! HINDI NA MAAAPEKTUHAN NG GLOW!
         // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
@@ -184,6 +186,7 @@ class KnobView @JvmOverloads constructor(
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
+            // ✅ TAMA ANG LOGIC — GUHIT NG 0 HINDI NA LAGING NAKA-HIGHLIGHT!
             val isActive = if (currentVal == 0) {
                 mark == 0
             } else if (currentVal > 0) {
@@ -193,6 +196,7 @@ class KnobView @JvmOverloads constructor(
             }
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
+            // ✅ TEXT — MAS MALAYO SA ARC, HINDI NA MAAAPEKTUHAN NG GLOW!
             val nx = cx + textRadius * cos(rad).toFloat()
             val ny = cy + textRadius * sin(rad).toFloat() + 4f
 
@@ -225,15 +229,15 @@ class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE — MALAYO SA ARC!
+        // ✅ LABEL AT VALUE — MAS MALAYO PA! HINDI NA MAAAPEKTUHAN NG NEON GLOW!
         paintText.textSize = 13f
-        canvas.drawText("GAIN", cx, cy - panelRadius * 0.92f, paintText)
+        canvas.drawText("GAIN", cx, cy - panelRadius * 0.92f, paintText) // ✅ MAS MALAYO PATAAS!
         paintValueText.textSize = 14f
-        canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText)
+        canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText) // ✅ MAS MALAYO PABABA!
     }
 
     // ==================================================
-    // 👆 TOUCH CONTROL — WALANG BINAGO!
+    // 👆 TOUCH CONTROL — GALAW NG DALIRI
     // ==================================================
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
