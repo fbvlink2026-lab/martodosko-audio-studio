@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ SARILING FILE! GINAYA MULA SA MAINACTIVITY!
-// VERSION: 1.0.0 — HINDI NA ULIT-ULITIN ANG CODE! TAWAGIN NA LANG!
+// FILE: SideMenu.kt — ✅ AYOS NA ANG ACCESS! HINDI NA PRIVATE!
+// VERSION: 1.0.1 — drawerLayout = PUBLIC, PARA MA-ACCESS SA onBackPressed!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -17,7 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 
 class SideMenu(
     private val activity: Activity,
-    private val drawerLayout: DrawerLayout,
+    val drawerLayout: DrawerLayout,  // ✅ val = PUBLIC NA! HINDI NA PRIVATE!
     val versionText: TextView? = null
 ) {
 
@@ -95,7 +95,6 @@ class SideMenu(
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
-            // Kung gusto mo — ilipat dito ang checkForUpdates() mula sa MainActivity
         }
 
         // ✅ HELP
@@ -132,8 +131,8 @@ class SideMenu(
             val versionText = if (tvVersionId != null) activity.findViewById<TextView>(tvVersionId) else null
             val sideMenu = SideMenu(activity, drawer, versionText)
 
-            btnMenuId?.let {
-                activity.findViewById<ImageView>(it)?.setOnClickListener {
+            btnMenuId?.let { id ->
+                activity.findViewById<ImageView>(id)?.setOnClickListener {
                     sideMenu.toggle()
                 }
             }
