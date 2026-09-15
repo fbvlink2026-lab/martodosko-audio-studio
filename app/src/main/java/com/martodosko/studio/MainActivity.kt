@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: MainActivity.kt — MAY BUONG DETALYE NG ERROR ✅
-// VERSION: 1.0.68 — IPAPAKITA NA ANG BUONG DAHILAN!
-// UPDATED: 2026-09-13
+// FILE: MainActivity.kt — ✅ GUMAGAMIT NA NG SideMenu! MAS MALINIS!
+// VERSION: 2.0.0 — SIDE MENU NAKA-HIWALAY NA!
+// UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
 
@@ -18,14 +18,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.drawerlayout.widget.DrawerLayout
-import android.view.Gravity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,17 +34,13 @@ import java.net.URL
 
 class MainActivity : Activity() {
 
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var btnHamburger: ImageView
-    private lateinit var btnCloseMenu: ImageView
-    private lateinit var tvVersion: TextView
+    private lateinit var sideMenu: SideMenu
 
     companion object {
         private const val VERSION_URL =
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
         private const val BASE_APK_URL =
             "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
-        
         private const val PERMISSION_STORAGE = 1001
         private var downloadId: Long = -1
         private var apkFileName = ""
@@ -58,83 +50,13 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        drawerLayout = findViewById(R.id.drawer_layout)
-        btnHamburger = findViewById(R.id.btn_hamburger)
-        btnCloseMenu = findViewById(R.id.btn_close_menu)
-        tvVersion = findViewById(R.id.tv_version)
-
-        @Suppress("DEPRECATION")
-        val currentVer = packageManager.getPackageInfo(packageName, 0).versionName
-        tvVersion.text = "v$currentVer"
-
-        btnHamburger.setOnClickListener {
-            if (!drawerLayout.isDrawerOpen(Gravity.START)) {
-                drawerLayout.openDrawer(Gravity.START)
-            }
-        }
-
-        btnCloseMenu.setOnClickListener {
-            if (drawerLayout.isDrawerOpen(Gravity.START)) {
-                drawerLayout.closeDrawer(Gravity.START)
-            }
-        }
-
-        // ==============================================
-        // ✅ MIXER BUTTON — MAY BUONG DETALYE NG ERROR! 🎚️✅
-        // ==============================================
-        findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
-            drawerLayout.closeDrawer(Gravity.START)
-            try {
-                val intent = Intent(this, MixerActivity::class.java)
-                startActivity(intent)
-            } catch (e: Exception) {
-                // ✅ BUONG DETALYE — IPAPAKITA ANG EKSATONG DAHILAN!
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true -> 
-                        "❌ MixerActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("res/drawable") == true || e.message?.contains("Resource") == true -> 
-                        "❌ Kulang na Drawable file — baka wala ang ic_knob.xml / ic_hamburger.xml / ic_close.xml"
-                    e.message?.contains("Binary XML") == true || e.message?.contains("inflate") == true -> 
-                        "❌ May mali sa fragment_mixer.xml — suriin ang mga tag at ID"
-                    e.message?.contains("id") == true -> 
-                        "❌ Mali o kulang na ID sa layout file"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                
-                Toast.makeText(this, fullError, Toast.LENGTH_LONG).show()
-                Log.e("MIXER", "❌ $fullError", e)
-            }
-        }
-
-        findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
-            drawerLayout.closeDrawer(Gravity.START)
-            Toast.makeText(this, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
-            drawerLayout.closeDrawer(Gravity.START)
-            Toast.makeText(this, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
-            checkForUpdates()
-        }
-
-        findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
-            drawerLayout.closeDrawer(Gravity.START)
-            val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(readmeUrl)))
-            Toast.makeText(this, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
-            drawerLayout.closeDrawer(Gravity.START)
-            val fbUrl = "https://m.facebook.com/Martodosko-Studio/"
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fbUrl)))
-            Toast.makeText(this, "🌐 Binubuksan ang Facebook...", Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
-            drawerLayout.closeDrawer(Gravity.START)
-            Toast.makeText(this, "ℹ️ Martodosko Studio — v$currentVer", Toast.LENGTH_LONG).show()
-        }
+        // ✅ SIDE MENU — ISANG LINYA LANG! TAPOS NA!
+        sideMenu = SideMenu.setup(
+            activity = this,
+            drawerLayoutId = R.id.drawer_layout,
+            btnMenuId = R.id.btn_hamburger,
+            tvVersionId = R.id.tv_version
+        )
 
         Toast.makeText(this, "Martodosko Studio — Sinusuri...", Toast.LENGTH_SHORT).show()
         checkPermissions()
@@ -143,7 +65,7 @@ class MainActivity : Activity() {
     private fun checkPermissions() {
         val neededPermissions = mutableListOf<String>()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q &&
-            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) 
+            ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
             != PackageManager.PERMISSION_GRANTED) {
             neededPermissions.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
             neededPermissions.add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -272,6 +194,14 @@ class MainActivity : Activity() {
             Toast.makeText(this, "📦 Hinihingi ang pahintulot...", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Toast.makeText(this, "⚠️ Error: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(android.view.Gravity.START)) {
+            sideMenu.close()
+        } else {
+            super.onBackPressed()
         }
     }
 }
