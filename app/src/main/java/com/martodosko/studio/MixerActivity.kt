@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: MixerActivity.kt — ✅ INDICATOR NAKATURO SA ITAAS! WALANG BINAGO SA NUMERO!
-// VERSION: 4.5.0 — INDICATOR LANG ANG INAYOS! MAY DETALYADONG COMMENTS!
+// FILE: MixerActivity.kt — ✅ PAYAT NA NEON ARC! HINDI MALAKI ANG ESPASYO!
+// VERSION: 4.6.1 — PAYAT NA NEON ARC + MALAYONG LABELS! WALANG IBANG BINAGO!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 // ==================================================
 // 🎛️ CUSTOM KNOB — 0=ITAAS, -50=IBABA-KALIWA, +50=IBABA-KANAN
-// ✅ WALANG BINAGO SA PAGITAN NG NUMERO AT GUHIT — INDICATOR LANG ANG INAYOS!
+// ✅ PAYAT NA NEON ARC — HINDI MALAKI ANG ESPASYO! KONTINUONG GLOW!
 // ==================================================
 class KnobView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -72,10 +72,21 @@ class KnobView @JvmOverloads constructor(
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.FILL
     }
-    private val paintTickActive = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+
+    // ✅ PAYAT NA NEON ARC — 4f LANG ANG KAPAL! HINDI MALAKI ANG ESPASYO! MAY GLOW PA RIN!
+    private val paintNeonArc = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         style = Paint.Style.STROKE
-        strokeWidth = 3f
+        strokeWidth = 4f  // ✅ PAYAT — dating 8f → 4f NA! KALAHATI NA ANG KAPAL!
+        strokeCap = Paint.Cap.ROUND
+        setShadowLayer(8f, 0f, 0f, Color.parseColor("#40E0D0")) // ✅ GLOW — PINAYAT DIN ANG SHADOW!
+    }
+
+    // ✅ MGA GUHIT — MANIPIS LANG
+    private val paintTickActive = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#8AF0E0")
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
         strokeCap = Paint.Cap.ROUND
     }
     private val paintTick = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -84,17 +95,21 @@ class KnobView @JvmOverloads constructor(
         strokeWidth = 2f
         strokeCap = Paint.Cap.ROUND
     }
+
+    // ✅ TEXT — MAS MALAYO SA ARC, WALANG GLOW
     private val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#B8DDE6")
         textSize = 12f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
+        setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT)
     }
     private val paintValueText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#40E0D0")
         textSize = 14f
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
+        setShadowLayer(0f, 0f, 0f, Color.TRANSPARENT)
     }
 
     // ==================================================
@@ -106,9 +121,12 @@ class KnobView @JvmOverloads constructor(
         val size = minOf(cx, cy)
         val panelRadius = size * 0.95f
         val knobRadius = size * 0.55f
-        val tickInner = knobRadius * 1.05f
-        val tickOuter = size * 0.80f
-        val textRadius = size * 0.92f
+
+        // ✅ RADII — MAS MALAYO ANG TEXT, HINDI NA MAAAPEKTUHAN
+        val arcRadius = size * 0.72f
+        val tickInner = arcRadius * 1.03f
+        val tickOuter = arcRadius * 1.08f
+        val textRadius = size * 0.88f
 
         // ✅ DRAW: PANEL AT KNOB BACKGROUND
         canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), panelRadius, panelRadius, paintPanel)
@@ -120,7 +138,41 @@ class KnobView @JvmOverloads constructor(
         canvas.restore()
 
         // ==================================================
-        // 📏 GUHIT AT NUMERO — WALANG BINAGO! TAMA ANG PAGITAN!
+        // ✅ PAYAT NA NEON ARC — KONTINUONG GUHIT, HINDI PUTOL-PUTOL!
+        // ==================================================
+        val currentVal = value.roundToInt()
+        if (currentVal != 0) {
+            val startAngle: Float
+            val sweepAngle: Float
+
+            if (currentVal > 0) {
+                val zeroRatio = (0 - minValue) / (maxValue - minValue)
+                val zeroAngle = ANGLE_START + zeroRatio * ANGLE_RANGE - 90f
+                val endRatio = (currentVal - minValue) / (maxValue - minValue)
+                val endAngle = ANGLE_START + endRatio * ANGLE_RANGE - 90f
+                startAngle = zeroAngle
+                sweepAngle = endAngle - zeroAngle
+            } else {
+                val zeroRatio = (0 - minValue) / (maxValue - minValue)
+                val zeroAngle = ANGLE_START + zeroRatio * ANGLE_RANGE - 90f
+                val endRatio = (currentVal - minValue) / (maxValue - minValue)
+                val endAngle = ANGLE_START + endRatio * ANGLE_RANGE - 90f
+                startAngle = endAngle
+                sweepAngle = zeroAngle - endAngle
+            }
+
+            // ✅ NEON ARC — PAYAT, MALINIS, WALANG MALAKING ESPASYO!
+            canvas.drawArc(
+                RectF(cx - arcRadius, cy - arcRadius, cx + arcRadius, cy + arcRadius),
+                startAngle,
+                sweepAngle,
+                false,
+                paintNeonArc
+            )
+        }
+
+        // ==================================================
+        // 📏 GUHIT AT NUMERO — MAS MALAYO ANG TEXT!
         // ==================================================
         val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
         for (mark in marks) {
@@ -132,10 +184,12 @@ class KnobView @JvmOverloads constructor(
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
 
-            val isActive = if (value >= 0) {
-                mark in 0..value.toInt()
+            val isActive = if (currentVal == 0) {
+                mark == 0
+            } else if (currentVal > 0) {
+                mark in 0..currentVal
             } else {
-                mark in value.toInt()..0
+                mark in currentVal..0
             }
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
 
@@ -153,34 +207,33 @@ class KnobView @JvmOverloads constructor(
         }
 
         // ==================================================
-        // 🔵 INDICATOR — ✅ INAYOS! NAKATURO SA ITAAS! WALANG BINAGO SA IBA!
+        // 🔵 INDICATOR — NAKATURO SA ITAAS! WALANG BINAGO!
         // ==================================================
         val valRatio = (value - minValue) / (maxValue - minValue)
         val indAngle = ANGLE_START + valRatio * ANGLE_RANGE
         canvas.save()
         canvas.translate(cx, cy)
-        // ✅ ANG TANGING BINAGO: +90f → NAKATURO SA ITAAS! NUMERO HINDI GUMALAW!
         canvas.rotate(indAngle + 90f)
         val indLen = knobRadius * 0.75f
         val indW = 6f
         val path = Path().apply {
             moveTo(-indW / 2f, -indLen * 0.3f)
-            lineTo(0f, -indLen) // ✅ NAKATURO SA ITAAS — TAMA NA!
+            lineTo(0f, -indLen)
             lineTo(indW / 2f, -indLen * 0.3f)
             close()
         }
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE
+        // ✅ LABEL AT VALUE — MALAYO SA ARC!
         paintText.textSize = 13f
-        canvas.drawText("GAIN", cx, cy - panelRadius * 0.85f, paintText)
+        canvas.drawText("GAIN", cx, cy - panelRadius * 0.92f, paintText)
         paintValueText.textSize = 14f
-        canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.80f, paintValueText)
+        canvas.drawText("${value.roundToInt()} dB", cx, cy + panelRadius * 0.87f, paintValueText)
     }
 
     // ==================================================
-    // 👆 TOUCH CONTROL — GALAW NG DALIRI
+    // 👆 TOUCH CONTROL — WALANG BINAGO!
     // ==================================================
     override fun onTouchEvent(e: MotionEvent): Boolean {
         if (e.action == MotionEvent.ACTION_DOWN) {
@@ -197,7 +250,7 @@ class KnobView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎛️ HORIZONTAL SLIDER
+// 🎛️ HORIZONTAL SLIDER — WALANG BINAGO!
 // ==================================================
 class HorizontalSliderView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -240,7 +293,7 @@ class HorizontalSliderView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🔘 TOGGLE BUTTON
+// 🔘 TOGGLE BUTTON — WALANG BINAGO!
 // ==================================================
 class ToggleButtonView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -293,7 +346,7 @@ class ToggleButtonView @JvmOverloads constructor(
 }
 
 // ==================================================
-// 🎯 MAIN ACTIVITY
+// 🎯 MAIN ACTIVITY — WALANG BINAGO!
 // ==================================================
 class MixerActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
