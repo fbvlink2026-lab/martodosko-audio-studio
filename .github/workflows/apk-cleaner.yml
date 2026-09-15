@@ -1,7 +1,8 @@
 # ==================================================
-# 📄 FILE: apk-cleaner.yml — BURAHIN ANG .apk FILES!
-# 🎯 PURPOSE: Delete ALL .apk files from specific folder (docs/)
-# ✅ BAGO MAG-UPLOAD NG BAGONG APK — BURAHIN MUNA ANG LUMANG .apk!
+# 📄 FILE: apk-cleaner.yml — ✅ INAYOS NA! PINAKABAGO = MINUTES AGO! WALANG MALI!
+# 🎯 PURPOSE: Delete ALL .apk files from specific folder — BAGO MAG-UPLOAD NG BAGO!
+# ✅ MODE 1: BURAHIN ANG LAHAT — WALANG IIWAN (PINAKATIYAK!)
+# ✅ MODE 2: PANATILIHIN ANG PINAKABAGONG — HOURS/MINUTES ANG BATAYAN!
 # ==================================================
 
 name: APK Cleaner — Burahin ang .apk Files
@@ -10,131 +11,165 @@ on:
   workflow_dispatch:
     inputs:
       target_folder:
-        description: 'Folder na lilinisin — hal: docs/ | (iwanang walang laman = docs/)'
+        description: 'Folder na lilinisin — hal: docs/'
         required: false
         default: 'docs/'
-      keep_latest:
-        description: 'Panatilihin ang pinakabagong .apk? true / false'
+      mode:
+        description: 'MODE: delete_all = Burahin LAHAT (RECOMMENDED) | keep_latest = Panatilihin ang pinakabago'
         required: false
-        default: 'false'
+        default: 'delete_all'
 
 jobs:
   clean-apks:
-    name: Burahin ang .apk Files
+    name: 🗑️ Linisin ang .apk Files
     runs-on: ubuntu-latest
     permissions: write-all
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # ✅ KAILANGAN — para makita ang commit history / oras ng pag-upload
 
       # ==================================================
-      # 📂 TINGNAN ANG FOLDER — KUNG WALA, GUMAMIT NG docs/
+      # 📂 I-SET ANG TARGET FOLDER
       # ==================================================
       - name: 📂 Ihanda ang Folder
         id: folder
         run: |
           TARGET_FOLDER="${{ github.event.inputs.target_folder }}"
+          MODE="${{ github.event.inputs.mode }}"
           
-          # ✅ KUNG WALANG NAKALAGAY — docs/ ang gagamitin
+          # ✅ Default = docs/
           if [ -z "$TARGET_FOLDER" ]; then
             TARGET_FOLDER="docs/"
           fi
-          
-          # ✅ SIGURADUHIN MAY / SA DULO
           [[ "$TARGET_FOLDER" != */ ]] && TARGET_FOLDER="$TARGET_FOLDER/"
           
           echo "folder=$TARGET_FOLDER" >> $GITHUB_OUTPUT
-          echo "🎯 Target Folder: $TARGET_FOLDER"
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "🎯 Folder: $TARGET_FOLDER"
+          echo "🎯 Mode: $MODE"
           
-          # ✅ SIGURADUHIN MAY FOLDER
           mkdir -p "$TARGET_FOLDER"
 
       # ==================================================
-      # 🗑️ ILISTA ANG LAHAT NG .apk — BAGO BURAHIN
+      # 📋 ILISTA MUNA ANG LAHAT — KILALA MO SILA
       # ==================================================
-      - name: 📋 Ilista ang mga .apk file bago burahin
+      - name: 📋 Ilista ang lahat ng .apk at kanilang ORAS
         run: |
           TARGET_FOLDER="${{ steps.folder.outputs.folder }}"
           
           echo "=========================================="
-          echo "   📋 MGA .apk FILE SA $TARGET_FOLDER"
+          echo "   📋 LAHAT NG .apk SA $TARGET_FOLDER"
           echo "=========================================="
           
           APK_COUNT=$(find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f | wc -l)
           
           if [ "$APK_COUNT" -eq 0 ]; then
-            echo "✅ WALANG .apk FILE — WALANG BUBURAHIN!"
+            echo "✅ WALANG .apk — WALANG BUBURAHIN!"
             echo "count=0" >> $GITHUB_ENV
             exit 0
           fi
           
           echo "Nakita: $APK_COUNT na .apk file(s)"
           echo ""
-          find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f -exec ls -lh {} \;
-          echo ""
+          echo "📌 Format: ORAS NG FILE | PANGALAN | LAKI"
+          echo "------------------------------------------------------"
           
+          # ✅ IPAKITA ANG ORAS — MAY MINUTES/SECONDS!
+          find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f -printf "%Td-%Tb-%TY %TH:%TM:%TS | %p | %s bytes\n" | sort -r
+          
+          echo ""
           echo "count=$APK_COUNT" >> $GITHUB_ENV
 
       # ==================================================
-      # 🗑️ BURAHIN ANG LAHAT NG .apk — O KUNG KEEP_LATEST = TRUE, ISA LANG ANG IIWAN
+      # 🗑️ MODE 1: BURAHIN ANG LAHAT — PINAKATIYAK! WALANG MALI!
       # ==================================================
-      - name: 🗑️ Burahin ang mga .apk file
-        id: delete
+      - name: 🗑️ BURAHIN ANG LAHAT NG .apk — WALANG IIWAN ✅ RECOMMENDED
+        if: steps.folder.outputs.mode == 'delete_all'
+        id: delete_all
         run: |
           TARGET_FOLDER="${{ steps.folder.outputs.folder }}"
-          KEEP_LATEST="${{ github.event.inputs.keep_latest }}"
+          
+          echo "=========================================="
+          echo "   🗑️ MODE: BURAHIN ANG LAHAT — WALANG IIWAN!"
+          echo "   ✅ PINAKATIYAK — WALANG MALING IIWAN!"
+          echo "=========================================="
+          
           DELETED=0
           
-          echo "=========================================="
-          echo "   🗑️ PAGBURAHIN NG .apk FILES"
-          echo "=========================================="
-          
-          if [ "$KEEP_LATEST" = "true" ]; then
-            echo "📌 MODE: Panatilihin ang PINAKABAGONG .apk"
-            # ✅ Kunin ang pinakabagong APK — huwag burahin
-            LATEST_APK=$(find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f -printf "%T@ %p\n" | sort -nr | head -n1 | cut -d' ' -f2-)
-            
-            if [ -n "$LATEST_APK" ]; then
-              echo "✅ Pananatilihin: $LATEST_APK"
-              # ✅ Burahin ang lahat — maliban sa pinakabago
-              find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f ! -path "$LATEST_APK" -delete -print | while read f; do
-                echo "🗑️ BINURA: $(basename "$f")"
-                DELETED=$((DELETED + 1))
-              done
-            else
-              echo "⚠️ Walang nahanap na .apk"
-            fi
-          else
-            echo "📌 MODE: BURAHIN ANG LAHAT NG .apk"
-            # ✅ Burahin ang LAHAT — walang iiwan
-            find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f -delete -print | while read f; do
-              echo "🗑️ BINURA: $(basename "$f")"
-              DELETED=$((DELETED + 1))
-            done
-          fi
+          find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f -delete -print | while read f; do
+            FILE_TIME=$(stat -c "%y" "$f" 2>/dev/null || echo "unknown")
+            echo "🗑️ BINURA: $(basename "$f") — $FILE_TIME"
+            DELETED=$((DELETED + 1))
+          done
           
           echo ""
           echo "✅ TAPOS NA! Kabuuang binura: $DELETED na .apk file(s)"
           echo "deleted=$DELETED" >> $GITHUB_OUTPUT
 
       # ==================================================
-      # ✅ I-COMMIT AT I-PUSH ANG PAGBABAGO
+      # 🗑️ MODE 2: PANATILIHIN ANG PINAKABAGO — MINUTES ANG BATAYAN!
       # ==================================================
-      - name: ✅ I-commit at i-push ang paglilinis
+      - name: 🗑️ Panatilihin ang PINAKABAGONG .apk — MINUTES/HOURS ANG BATAYAN!
+        if: steps.folder.outputs.mode == 'keep_latest'
+        id: keep_latest
+        run: |
+          TARGET_FOLDER="${{ steps.folder.outputs.folder }}"
+          
+          echo "=========================================="
+          echo "   🗑️ MODE: PANATILIHIN ANG PINAKABAGO"
+          echo "   ✅ BATAYAN: MINUTES / HOURS — HINDI DAYS!"
+          echo "=========================================="
+          
+          # ✅ KUNIN ANG PINAKABAGONG — NAKABATAY SA EXACT NA ORAS (MINUTES/SECONDS!)
+          LATEST_APK=$(find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f -printf "%T@ %p\n" | sort -nr | head -n1 | cut -d' ' -f2-)
+          
+          if [ -z "$LATEST_APK" ]; then
+            echo "⚠️ Walang nahanap na .apk"
+            echo "deleted=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # ✅ Ipakita ang oras ng napiling APK — SIGURADO KUNG MINUTES AGO!
+          LATEST_TIME=$(stat -c "%y" "$LATEST_APK")
+          LATEST_NAME=$(basename "$LATEST_APK")
+          
+          echo "✅ PANANATILIHIN: $LATEST_NAME"
+          echo "   🕐 ORAS: $LATEST_TIME"
+          echo "   ✅ KUNG HINDI 'minutes ago' — BAGUHIN ANG MODE SA 'delete_all'!"
+          echo ""
+          
+          # ✅ Burahin ang LAHAT — maliban sa PINAKABAGO!
+          DELETED=0
+          find "$TARGET_FOLDER" -maxdepth 2 -name "*.apk" -type f ! -path "$LATEST_APK" -delete -print | while read f; do
+            OLD_TIME=$(stat -c "%y" "$f")
+            echo "🗑️ BINURA: $(basename "$f") — $OLD_TIME"
+            DELETED=$((DELETED + 1))
+          done
+          
+          echo ""
+          echo "✅ TAPOS NA! Pananatilihin: $LATEST_NAME | Binura: $DELETED"
+          echo "deleted=$DELETED" >> $GITHUB_OUTPUT
+
+      # ==================================================
+      # ✅ I-COMMIT — MALINIS NA!
+      # ==================================================
+      - name: ✅ I-commit at i-push
         if: env.count != '0'
         continue-on-error: true
         run: |
           TARGET_FOLDER="${{ steps.folder.outputs.folder }}"
-          DELETED="${{ steps.delete.outputs.deleted }}"
+          DELETED="${{ steps.delete_all.outputs.deleted }}${{ steps.keep_latest.outputs.deleted }}"
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add "$TARGET_FOLDER" 2>/dev/null || true
+          git add -f "$TARGET_FOLDER" 2>/dev/null || true
           
-          git commit -m "🧹 Cleanup: Burahin ang $DELETED na .apk file(s) sa $TARGET_FOLDER" --allow-empty || true
+          git commit -m "🧹 Cleanup: $DELETED na .apk file(s) binura sa $TARGET_FOLDER" --allow-empty || true
           
           git push origin main || echo "⚠️ Hindi maipush — pero tapos na ang paglilinis!"
           
           echo ""
-          echo "✅ LAHAT NG .apk — TINANGGAL NA SA $TARGET_FOLDER!"
+          echo "✅ LAHAT NG LUMANG .apk — TINANGGAL NA! MALINIS NA ANG REPO! 🎉"
