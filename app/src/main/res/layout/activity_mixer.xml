@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ MAY SIDE MENU NA! TUGMA SA MixerActivity.kt! -->
-<!-- VERSION: 5.0.0 — DrawerLayout + btn_hamburger + btn_close_menu! HANDANG DAGDAGAN! -->
-<!-- UPDATED: 2026-09-15 -->
+<!-- FILE: activity_mixer.xml — ✅ TUGMA NA SA BUONG MENU! PAREHO SA MAIN! -->
+<!-- VERSION: 5.1.0 — MAY PRESETS + SETTINGS NA! WALANG LABIS WALANG KULANG! -->
+<!-- UPDATED: 2026-09-16 -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,7 +11,7 @@
     android:layout_height="match_parent"
     android:background="#121212">
 
-    <!-- ✅ PANGUNAHING LAMAN -->
+    <!-- ✅ PANGUNAHING LAMAN — MIXER SCREEN -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +26,7 @@
             android:background="#1E1E2F"
             android:paddingHorizontal="16dp">
 
-            <!-- ✅ HAMBURGER BUTTON — ID = btn_hamburger → TUGMA SA SideMenu.kt! -->
+            <!-- ✅ HAMBURGER BUTTON → BUKAS ANG MENU -->
             <ImageView
                 android:id="@+id/btn_hamburger"
                 android:layout_width="32dp"
@@ -114,7 +114,7 @@
 
     </LinearLayout>
 
-    <!-- ✅ SIDE MENU — KOPYAHIN LANG ANG PAREHO SA activity_main.xml! -->
+    <!-- ✅ SIDE MENU — TUGMA NA SA MAIN! MAY PRESETS + SETTINGS NA! -->
     <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
@@ -156,7 +156,7 @@
             android:layout_height="1dp"
             android:background="#333344"/>
 
-        <!-- ✅ MENU OPTIONS — PAREHO SA MAIN! -->
+        <!-- ✅ MENU OPTIONS — TUGMA NA SA BUONG MENU! WALANG LABIS WALANG KULANG! -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -168,6 +168,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="🎚️  Mixer"
+                android:textColor="#40E0D0"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
+
+            <!-- ✅ BAGONG DAGDAG — PRESETS! TUGMA SA SideMenu.kt! -->
+            <TextView
+                android:id="@+id/menu_presets"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="📋  Presets"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
+
+            <!-- ✅ BAGONG DAGDAG — SETTINGS! TUGMA SA SideMenu.kt! -->
+            <TextView
+                android:id="@+id/menu_settings"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="⚙️  Settings"
                 android:textColor="#40E0D0"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
@@ -201,7 +225,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="❓  Help"
-                android:textColor="#FFFFFF"
+                android:textColor="#40E0D0"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
                 android:paddingStart="24dp"
