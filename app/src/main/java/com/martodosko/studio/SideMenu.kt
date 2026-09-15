@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ AYOS NA ANG ACCESS! HINDI NA PRIVATE!
-// VERSION: 1.0.1 — drawerLayout = PUBLIC, PARA MA-ACCESS SA onBackPressed!
+// FILE: SideMenu.kt — ✅ TUGMA SA TOTOONG IDs! btn_hamburger + btn_close_menu!
+// VERSION: 1.0.2 — TAMA NA LAHAT NG ID! WALANG ERROR NA!
 // UPDATED: 2026-09-15
 // ==================================================
 package com.martodosko.studio
@@ -17,7 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 
 class SideMenu(
     private val activity: Activity,
-    val drawerLayout: DrawerLayout,  // ✅ val = PUBLIC NA! HINDI NA PRIVATE!
+    val drawerLayout: DrawerLayout,  // ✅ PUBLIC — pwede sa onBackPressed
     val versionText: TextView? = null
 ) {
 
@@ -55,15 +55,12 @@ class SideMenu(
     }
 
     private fun setupMenuButtons() {
-        // ✅ HOME
-        activity.findViewById<TextView>(R.id.menu_home)?.setOnClickListener {
+        // ✅ CLOSE BUTTON — btn_close_menu (mula sa XML!)
+        activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener {
             close()
-            val intent = Intent(activity, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            activity.startActivity(intent)
         }
 
-        // ✅ MIXER — MAY ERROR TRAP! GINAYA MULA SA MAINACTIVITY!
+        // ✅ MIXER — MAY ERROR TRAP!
         activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             close()
             try {
@@ -124,16 +121,25 @@ class SideMenu(
         fun setup(
             activity: Activity,
             drawerLayoutId: Int,
-            btnMenuId: Int? = null,
+            btnOpenMenuId: Int? = null,   // ✅ btn_hamburger — BUKAS
+            btnCloseMenuId: Int? = null,  // ✅ btn_close_menu — ISARA
             tvVersionId: Int? = null
         ): SideMenu {
             val drawer = activity.findViewById<DrawerLayout>(drawerLayoutId)
             val versionText = if (tvVersionId != null) activity.findViewById<TextView>(tvVersionId) else null
             val sideMenu = SideMenu(activity, drawer, versionText)
 
-            btnMenuId?.let { id ->
+            // ✅ BUKAS ANG MENU — btn_hamburger
+            btnOpenMenuId?.let { id ->
                 activity.findViewById<ImageView>(id)?.setOnClickListener {
-                    sideMenu.toggle()
+                    sideMenu.open()
+                }
+            }
+
+            // ✅ ISARA ANG MENU — btn_close_menu
+            btnCloseMenuId?.let { id ->
+                activity.findViewById<ImageView>(id)?.setOnClickListener {
+                    sideMenu.close()
                 }
             }
 
