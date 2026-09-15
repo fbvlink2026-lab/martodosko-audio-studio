@@ -10,7 +10,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
-
+import kotlin.math.roundToInt  // ✅ ITO ANG KULANG! IDAGDAG LANG!
 class MixerActivity : Activity() {
 
     private lateinit var sideMenu: SideMenu
