@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: HelpActivity.kt — ✅ KUMPLETONG GABAY + DYNAMIC VERSION!
-// VERSION: 1.0.0 — KUSANG NAKUKUHA ANG VERSION NG APP!
+// FILE: HelpActivity.kt — ✅ BUONG INAYOS! WALANG TYPE MISMATCH!
+// VERSION: 1.0.1 — TAMA NA ANG SideMenu.setup() — ID ANG IPINAPASA HINDI OBJECT!
 // UPDATED: 2026-09-16
 // ==================================================
 package com.martodosko.studio
@@ -374,10 +374,15 @@ Dito mo mababago ang pangkalahatang pagkilos ng app:
 ====================================================================
         """.trimIndent()
 
-        // ✅ I-SETUP ANG SIDE MENU — PAREHO SA IBA PANG SCREEN!
+        // ✅ I-SETUP ANG SIDE MENU — TAMA NA! ID ANG IPINAPASA HINDI OBJECT!
         try {
-            val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
-            SideMenu.setup(this, drawerLayout, null)
+            SideMenu.setup(
+                activity = this,
+                drawerLayoutId = R.id.drawer_layout,
+                btnOpenMenuId = R.id.btn_hamburger,
+                btnCloseMenuId = R.id.btn_close_menu,
+                tvVersionId = R.id.tv_version
+            )
         } catch (e: Exception) {
             // Kung walang Side Menu — walang problema — patuloy lang
         }
