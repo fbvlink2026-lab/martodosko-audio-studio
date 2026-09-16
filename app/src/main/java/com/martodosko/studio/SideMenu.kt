@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ SETTINGS/HELP/JOIN/ABOUT → ContentActivity NA! WALANG TINANGGAL!
-// VERSION: 1.2.0 — ✅ DAGDAG: ContentActivity SYSTEM! DEFAULT = SETTINGS! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-17 — WALANG TINANGGAL, WALANG BINAGO — DAGDAG LANG!
+// FILE: SideMenu.kt — ✅ INAYOS NA! DIREKTANG CLASS NA! WALANG IBANG PINAGBAGO!
+// VERSION: 1.2.1 — ✅ Pinalitan ang Class.forName → Direktang ContentActivity! WALANG TINANGGAL!
+// UPDATED: 2026-09-17 — WALANG IBANG PINAGBAGO! ITO LANG ANG INAYOS!
 // ==================================================
 package com.martodosko.studio
 
@@ -53,7 +53,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! DAGDAG LANG ANG ContentActivity!
+    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! DIREKTANG CONTENTACTIVITY NA!
     // ==============================================
     private fun setupMenuButtons() {
         // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
@@ -97,16 +97,16 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ SETTINGS → ContentActivity NA! DEFAULT = SETTINGS! WALANG IBANG PINAGBAGO!
+        // ✅ SETTINGS → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
-            if (activity.javaClass.simpleName == "ContentActivity") {
+            if (activity is ContentActivity) {
                 Toast.makeText(activity, "✅ Nasa Settings ka na!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             try {
-                val intent = Intent(activity, Class.forName("com.martodosko.studio.ContentActivity"))
+                val intent = Intent(activity, ContentActivity::class.java)
                 intent.action = "SETTINGS"
                 activity.startActivity(intent)
                 Toast.makeText(activity, "⚙️ Binubuksan ang Settings...", Toast.LENGTH_SHORT).show()
@@ -124,7 +124,7 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ GUITAR EFFECTS — ✅ WALANG PINAGBAGO!
+        // ✅ GUITAR EFFECTS — WALANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
             close()
@@ -149,7 +149,7 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ CHECK UPDATE — ✅ WALANG PINAGBAGO!
+        // ✅ CHECK UPDATE — WALANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
@@ -174,16 +174,16 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ HELP → ContentActivity NA! WALANG IBANG PINAGBAGO!
+        // ✅ HELP → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
-            if (activity.javaClass.simpleName == "ContentActivity") {
+            if (activity is ContentActivity) {
                 Toast.makeText(activity, "✅ Nasa Help ka na!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             try {
-                val intent = Intent(activity, Class.forName("com.martodosko.studio.ContentActivity"))
+                val intent = Intent(activity, ContentActivity::class.java)
                 intent.action = "HELP"
                 activity.startActivity(intent)
                 Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
@@ -201,16 +201,16 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ JOIN US → ContentActivity NA! WALANG IBANG PINAGBAGO!
+        // ✅ JOIN US → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
-            if (activity.javaClass.simpleName == "ContentActivity") {
+            if (activity is ContentActivity) {
                 Toast.makeText(activity, "✅ Nasa Join Us ka na!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             try {
-                val intent = Intent(activity, Class.forName("com.martodosko.studio.ContentActivity"))
+                val intent = Intent(activity, ContentActivity::class.java)
                 intent.action = "JOIN_US"
                 activity.startActivity(intent)
                 Toast.makeText(activity, "🌐 Binubuksan ang Join Us...", Toast.LENGTH_SHORT).show()
@@ -228,16 +228,16 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ ABOUT → ContentActivity NA! WALANG IBANG PINAGBAGO!
+        // ✅ ABOUT → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
-            if (activity.javaClass.simpleName == "ContentActivity") {
+            if (activity is ContentActivity) {
                 Toast.makeText(activity, "✅ Nasa About ka na!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             try {
-                val intent = Intent(activity, Class.forName("com.martodosko.studio.ContentActivity"))
+                val intent = Intent(activity, ContentActivity::class.java)
                 intent.action = "ABOUT"
                 activity.startActivity(intent)
                 Toast.makeText(activity, "ℹ️ Binubuksan ang About...", Toast.LENGTH_SHORT).show()
