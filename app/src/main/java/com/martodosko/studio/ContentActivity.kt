@@ -1,33 +1,32 @@
 // ==================================================
-// FILE: ContentActivity.kt — ✅ PARANG MAINACTIVITY! KILALA MO NA ANG ESTILO!
-// VERSION: 1.0.0 — DEFAULT = SETTINGS! KUNG ANO ANG PININDOT, YUN ANG LALABAS!
-// UPDATED: 2026-09-17 — TUGMA SA SideMenu.kt! FRAGMENT SYSTEM!
+// FILE: ContentActivity.kt — ✅ INAYOS NA ANG FRAGMENT TYPE MISMATCH!
+// VERSION: 1.0.1 — GUMAGAMIT NG FragmentActivity + supportFragmentManager! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-17 — BUILD NA! WALANG ERROR!
 // ==================================================
 package com.martodosko.studio
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 
-class ContentActivity : Activity() {
+// ✅ PALITAN ANG Activity → FragmentActivity — para gumana ang AndroidX Fragment!
+class ContentActivity : FragmentActivity() {
 
     // ==============================================
-    // ✅ ONCREATE — PARANG MAINACTIVITY! DIREKTANG LAMAN!
+    // ✅ ONCREATE — PAREHO PA RIN! WALANG PINAGBAGO SA LOGIC!
     // ==============================================
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_activity)
 
-        // ✅ I-SETUP ANG SIDE MENU — PARANG MAINACTIVITY! ISANG LINYA LANG!
+        // ✅ I-SETUP ANG SIDE MENU — PAREHO PA RIN!
         setupSideMenu()
 
-        // ✅ ALAMIN KUNG ANO ANG ILALABAS — KUNG ANO ANG PININDOT, YUN ANG LALABAS!
-        val targetScreen = intent?.action ?: "SETTINGS"  // ← WALANG PINILI = SETTINGS AGAD!
+        // ✅ ALAMIN KUNG ANO ANG ILALABAS — PAREHO PA RIN!
+        val targetScreen = intent?.action ?: "SETTINGS"
 
-        // ✅ ILIPAT SA TAMANG FRAGMENT — KATUGMA NG PININDOT!
+        // ✅ ILIPAT SA TAMANG FRAGMENT — PAREHO PA RIN!
         when (targetScreen) {
             "SETTINGS" -> showFragment(SettingsFragment())
             "HELP"     -> showFragment(HelpFragment())
@@ -37,7 +36,7 @@ class ContentActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ SIDE MENU — PARANG MAINACTIVITY! ISANG LINYA LANG!
+    // ✅ SIDE MENU — PAREHO PA RIN! WALANG PINAGBAGO!
     // ==============================================
     private fun setupSideMenu() {
         SideMenu.setup(
@@ -50,11 +49,12 @@ class ContentActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ PALITAN ANG LAMAN — PARANG PHP INCLUDE!
+    // ✅ PALITAN ANG LAMAN — GUMAMIT NG supportFragmentManager! ITO LANG ANG INAYOS!
     // ==============================================
     private fun showFragment(fragment: Fragment) {
-        fragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)  // ← MALAMBOT ANG PAGPALIT!
+        // ✅ fragmentManager → supportFragmentManager — ITO LANG ANG BINAGO!
+        supportFragmentManager.beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(R.id.content_container, fragment)
             .commit()
     }
