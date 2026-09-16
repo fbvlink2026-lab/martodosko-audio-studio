@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-16 16:03 UTC
-🏷️ **Bersyon:** v1.0.169
+📅 **Petsa:** 2026-09-16 16:10 UTC
+🏷️ **Bersyon:** v1.0.170
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,12 +12,17 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-16 16:03:51 UTC
-🏷️ BERSYON:    v1.0.169
+⏰ ORAS:       2026-09-16 16:10:45 UTC
+🏷️ BERSYON:    v1.0.170
 ==================================================
 
-❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
-🔑 Exit Code: 1
+✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
+📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
+📏 Laki:       4.5M
+📤 Kopyahin sa docs/...
+✅ Nasa: docs/Martodosko-Studio-v1.0.170.apk
+
+🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -67,24 +72,30 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
 
-> Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/HelpActivity.kt:380:34 Type mismatch: inferred type is DrawerLayout! but Int was expected
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:216:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:265:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:80:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:32:13 Lateinit is unnecessary: definitely initialized in constructors
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:33:13 Lateinit is unnecessary: definitely initialized in constructors
 
-FAILURE: Build failed with an exception.
+> Task :app:compileReleaseJavaWithJavac NO-SOURCE
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:dexBuilderRelease
+> Task :app:mergeReleaseGlobalSynthetics
+> Task :app:processReleaseJavaRes
+> Task :app:mergeReleaseJavaResource
+> Task :app:mergeDexRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:assembleRelease
 
-* What went wrong:
-Execution failed for task ':app:compileReleaseKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 59s
-32 actionable tasks: 31 executed, 1 up-to-date
+BUILD SUCCESSFUL in 1m 10s
+44 actionable tasks: 43 executed, 1 up-to-date
 
 ==================================================
 
