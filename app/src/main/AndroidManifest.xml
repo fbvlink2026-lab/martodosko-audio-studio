@@ -32,9 +32,15 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- ✅ Mixer Screen — BAGONG DAGDAG! 🎚️ -->
+        <!-- ✅ Mixer Screen — 🎚️ -->
         <activity
             android:name=".MixerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT — BAGONG DAGDAG! -->
+        <activity
+            android:name=".ContentActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
