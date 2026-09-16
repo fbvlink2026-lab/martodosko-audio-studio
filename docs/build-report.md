@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-16 17:10 UTC
-🏷️ **Bersyon:** v1.0.171
+📅 **Petsa:** 2026-09-16 18:18 UTC
+🏷️ **Bersyon:** v1.0.172
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-16 17:10:10 UTC
-🏷️ BERSYON:    v1.0.171
+⏰ ORAS:       2026-09-16 18:18:24 UTC
+🏷️ BERSYON:    v1.0.172
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -48,24 +48,34 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:mergeReleaseArtProfile
-> Task :app:processReleaseResources FAILED
+> Task :app:processReleaseManifestForPackage
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseResources
 > Task :app:mergeExtDexRelease
+> Task :app:optimizeReleaseResources
+
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ContentActivity.kt:58:46 Type mismatch: inferred type is androidx.fragment.app.Fragment but android.app.Fragment! was expected
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:processReleaseResources'.
-> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
-   > Android resource linking failed
-     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/content_activity.xml:35: AAPT: error: resource drawable/ic_menu (aka com.martodosko.studio:drawable/ic_menu) not found.
-         
-     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/content_activity.xml:68: AAPT: error: resource layout/side_menu_panel (aka com.martodosko.studio:layout/side_menu_panel) not found.
-         
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -73,8 +83,8 @@ Execution failed for task ':app:processReleaseResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 40s
-22 actionable tasks: 21 executed, 1 up-to-date
+BUILD FAILED in 1m 6s
+32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
 
