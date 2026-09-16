@@ -1,28 +1,51 @@
 // ==================================================
-// FILE: HelpActivity.kt — ✅ BUONG INAYOS! WALANG TYPE MISMATCH!
-// VERSION: 1.0.1 — TAMA NA ANG SideMenu.setup() — ID ANG IPINAPASA HINDI OBJECT!
-// UPDATED: 2026-09-16
+// FILE: HelpFragment.kt — ✅ BUONG HELP TEXT! WALANG BINAGO SA LAMAN!
+// VERSION: 1.0.0 — ILIPAT LANG SA FRAGMENT — GANOON PA RIN ANG BUONG GABAY!
+// UPDATED: 2026-09-17 — KINUHA MULA SA HelpActivity — WALANG PINAGBAGO SA TEXT!
 // ==================================================
 package com.martodosko.studio
 
-import android.app.Activity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 
-class HelpActivity : Activity() {
+class HelpFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_help)
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // ✅ KUSANG KUNIN ANG VERSION NG APP — HINDI NA KAILANGANG I-MANUAL!
-        val versionName = packageManager.getPackageInfo(packageName, 0).versionName
-        val helpVersionText = findViewById<TextView>(R.id.tv_help_version)
-        helpVersionText.text = "Version $versionName — 2026-09-16"
+        val versionName = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
 
-        // ✅ ILAGAY ANG BUONG HELP TEXT
-        val helpContent = findViewById<TextView>(R.id.tv_help_content)
+        // ✅ SCROLL VIEW — DAHIL MAHABA ANG HELP TEXT!
+        val scrollView = ScrollView(requireContext())
+        scrollView.setBackgroundColor(0xFF081218.toInt())
+
+        // ✅ MAIN CONTAINER
+        val root = LinearLayout(requireContext())
+        root.orientation = LinearLayout.VERTICAL
+        root.setPadding(32, 32, 32, 32)
+
+        // ✅ TITLE
+        val title = TextView(requireContext())
+        title.text = "❓ HELP — MARTODOSKO AUDIO STUDIO"
+        title.textSize = 22f
+        title.setTextColor(0xFF40E0D0.toInt())
+        title.setPadding(0, 0, 0, 24)
+        root.addView(title)
+
+        // ✅ HELP CONTENT — KOPYAHIN ANG BUONG LAMAN! WALANG PINAGBAGO!
+        val helpContent = TextView(requireContext())
+        helpContent.setTextColor(0xFFE0E0E0.toInt())
+        helpContent.textSize = 12f
+        helpContent.setLineSpacing(4f, 1f)
         helpContent.text = """
 ====================================================================
                     ❓ HELP — MARTODOSKO AUDIO STUDIO
@@ -374,17 +397,8 @@ Dito mo mababago ang pangkalahatang pagkilos ng app:
 ====================================================================
         """.trimIndent()
 
-        // ✅ I-SETUP ANG SIDE MENU — TAMA NA! ID ANG IPINAPASA HINDI OBJECT!
-        try {
-            SideMenu.setup(
-                activity = this,
-                drawerLayoutId = R.id.drawer_layout,
-                btnOpenMenuId = R.id.btn_hamburger,
-                btnCloseMenuId = R.id.btn_close_menu,
-                tvVersionId = R.id.tv_version
-            )
-        } catch (e: Exception) {
-            // Kung walang Side Menu — walang problema — patuloy lang
-        }
+        root.addView(helpContent)
+        scrollView.addView(root)
+        return scrollView
     }
 }
