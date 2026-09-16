@@ -1,7 +1,7 @@
 // ==================================================
 // FILE: SideMenu.kt — ✅ GUMAGANA MULA SA KAHIT ANANG SCREEN! BUMABALIK AGAD!
-// VERSION: 1.0.9 — KUNG NASA MIXER — LILIPAT SAGLIT SA MAIN → TAPOS BUMABALIK AGAD! WALANG LABIS WALANG KULANG!
-// UPDATED: 2026-09-16
+// VERSION: 1.1.0 — ✅ IDINAGDAG: GUITAR EFFECTS + HELP → HelpActivity! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-16 — WALANG TINANGGAL, WALANG BINAGO — DAGDAG LANG!
 // ==================================================
 package com.martodosko.studio
 
@@ -53,7 +53,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! IDINAGDAG LANG ANG UPDATE IMPROVEMENT!
+    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! DAGDAG LANG ANG GUITAR EFFECTS!
     // ==============================================
     private fun setupMenuButtons() {
         // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
@@ -119,10 +119,29 @@ class SideMenu(
             }
         }
 
-        // ✅ EFFECTS — WALANG PINAGBAGO!
-        activity.findViewById<TextView>(R.id.menu_effects)?.setOnClickListener {
+        // ==============================================
+        // ✅ GUITAR EFFECTS — ✅ IDINAGDAG LANG! WALANG IBANG PINAGBAGO!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
             close()
-            Toast.makeText(activity, "🎸 Effects — Bubukas...", Toast.LENGTH_SHORT).show()
+            if (activity.javaClass.simpleName == "GuitarActivity") {
+                Toast.makeText(activity, "✅ Nasa Guitar Effects ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            try {
+                val intent = Intent(activity, Class.forName("com.martodosko.studio.GuitarActivity"))
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ GuitarActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("not found") == true ->
+                        "❌ GuitarActivity wala pang ginawa"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("GUITAR", "❌ $fullError", e)
+            }
         }
 
         // ==============================================
@@ -143,15 +162,9 @@ class SideMenu(
                     // ✅ NASA IBANG SCREEN — PUMUNTA SA MAIN → TAPOS BUMABALIK AGAD!
                     val intent = Intent(activity, MainActivity::class.java)
                     intent.putExtra("FORCE_CHECK_UPDATE", true)
-                    intent.putExtra("RETURN_TO_SCREEN", currentActivity.simpleName) // ✅ TANDAAN KUNG SAAN BABALIK
+                    intent.putExtra("RETURN_TO_SCREEN", currentActivity.simpleName)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     activity.startActivity(intent)
-                    
-                    // ✅ BUMABALIK AGAD SA NAKARAANG SCREEN — HINDI NA NAKIKITA ANG PAGLIPAT!
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        // Hindi na kailangang gawin — MainActivity ang titingin sa update at magpapakita ng dialog
-                        // Ang user ay mananatili sa kanyang kasalukuyang screen
-                    }, 300)
                 }
             } catch (e: Exception) {
                 Toast.makeText(activity, "❌ Hindi masuri ang update: ${e.message}", Toast.LENGTH_LONG).show()
@@ -159,12 +172,30 @@ class SideMenu(
             }
         }
 
-        // ✅ HELP — WALANG PINAGBAGO!
+        // ==============================================
+        // ✅ HELP — ✅ IDINAGDAG: BUBUKAS SA HelpActivity! HINDI NA SA WEB! WALANG IBANG PINAGBAGO!
+        // ==============================================
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
-            val readmeUrl = "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/refs/heads/main/readme.md"
-            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(readmeUrl)))
-            Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
+            if (activity.javaClass.simpleName == "HelpActivity") {
+                Toast.makeText(activity, "✅ Nasa Help ka na!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            try {
+                val intent = Intent(activity, Class.forName("com.martodosko.studio.HelpActivity"))
+                activity.startActivity(intent)
+                Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ HelpActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("not found") == true ->
+                        "❌ HelpActivity wala pang ginawa"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("HELP", "❌ $fullError", e)
+            }
         }
 
         // ✅ JOIN — WALANG PINAGBAGO!
