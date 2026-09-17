@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
 <!-- FILE: activity_mixer.xml — ✅ GUMAGAMIT NA SA SARILING KNOB + SLIDER CLASSES! -->
 <!-- VERSION: 7.0.0 — ✅ LAHAT MAY SARILING PANGALAN! KUSANG MAY LABEL + SAVE! -->
 <!-- UPDATED: 2026-09-18 — WALANG IBANG PINAGBAGO! PALITAN LANG ANG PANGALAN NG KLASE! -->
 <!-- ================================================== -->
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
