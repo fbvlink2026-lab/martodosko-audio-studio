@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ TUGMA NA SA BUONG MENU! PAREHO SA MAIN! -->
-<!-- VERSION: 5.1.0 — MAY PRESETS + SETTINGS NA! WALANG LABIS WALANG KULANG! -->
-<!-- UPDATED: 2026-09-16 -->
+<!-- FILE: activity_mixer.xml — ✅ SCROLLABLE LAHAT! PATAAS/PABABA/PAKALIWA/PAKANAN! -->
+<!-- VERSION: 6.1.0 — ✅ HORIZONTAL + VERTICAL SCROLL! KASYA SA LAHAT NG SCREEN SIZE! -->
+<!-- UPDATED: 2026-09-17 — WALANG MAPUPUTOL! DOBLE SCROLLING! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -26,7 +26,6 @@
             android:background="#1E1E2F"
             android:paddingHorizontal="16dp">
 
-            <!-- ✅ HAMBURGER BUTTON → BUKAS ANG MENU -->
             <ImageView
                 android:id="@+id/btn_hamburger"
                 android:layout_width="32dp"
@@ -50,7 +49,7 @@
                 android:layout_height="32dp"/>
         </LinearLayout>
 
-        <!-- ✅ MIXER CONTENT — ORIHINAL NA! WALANG PINAGBAGO! -->
+        <!-- ✅ VERTICAL SCROLL — PATAAS / PABABA ✅ -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -63,50 +62,448 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- CHANNEL HEADER -->
+                <!-- ================================================== -->
+                <!-- 📥 INPUT SECTION -->
+                <!-- ================================================== -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="VOCAL CHANNEL"
+                    android:text="📥 INPUT"
                     android:textColor="#40E0D0"
-                    android:textSize="18sp"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ KNOB AREA — HANDANG DAGDAGAN! -->
+                <!-- ✅ HORIZONTAL SCROLL — PAKALIWA / PAKANAN ✅ -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_gain"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_sensitivity"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 🎚️ EQ / TONE SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎚️ EQ / TONE"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <!-- ✅ HORIZONTAL SCROLL — PAKALIWA / PAKANAN ✅ -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_eq_low"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_eq_lowmid"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_eq_mid"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_eq_highmid"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_eq_high"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_eq_presence"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 🏛️ REVERB SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🏛️ REVERB"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_reverb_mix"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_reverb_decay"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_reverb_predelay"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- ⏱️ DELAY SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⏱️ DELAY"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_delay_time"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_delay_feedback"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_delay_mix"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 🎵 CHORUS SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎵 CHORUS"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_chorus_mix"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_chorus_speed"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_chorus_depth"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 🔥 DISTORTION SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🔥 DISTORTION"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_distortion"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_dist_tone"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 📊 COMPRESSOR SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📊 COMPRESSOR"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_comp_threshold"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_comp_ratio"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_comp_attack"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_comp_release"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_comp_makeup"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 📤 OUTPUT SECTION -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📤 OUTPUT"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_pan"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_channel_volume"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- 📏 MASTER SLIDERS -->
+                <!-- ================================================== -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📏 MASTER"
+                    android:textColor="#40E0D0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#12232E"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
-                    android:background="#12232E"
-                    android:layout_marginTop="8dp">
+                    android:padding="16dp">
 
-                    <!-- ✅ GAIN KNOB — ID = knob_gain → TUGMA SA MixerActivity.kt! -->
-                    <com.martodosko.studio.KnobView
-                        android:id="@+id/knob_gain"
-                        android:layout_width="140dp"
-                        android:layout_height="160dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MASTER VOLUME"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:layout_marginBottom="4dp"/>
+                    <SeekBar
+                        android:id="@+id/slider_master"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:thumbTint="#40E0D0"
+                        android:progressTint="#40E0D0"
+                        android:max="100"
+                        android:progress="75"/>
 
-                    <!-- ✅ DAGDAG MO LANG DITO ANG IBA — HANDANG-HANDA NA!
-                    <com.martodosko.studio.KnobView
-                        android:id="@+id/knob_bass"
-                        android:layout_width="140dp"
-                        android:layout_height="160dp"
-                        android:layout_marginTop="24dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LEFT CHANNEL"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp"/>
+                    <SeekBar
+                        android:id="@+id/slider_master_left"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:thumbTint="#40E0D0"
+                        android:progressTint="#40E0D0"
+                        android:max="100"
+                        android:progress="75"/>
 
-                    <com.martodosko.studio.KnobView
-                        android:id="@+id/knob_treble"
-                        android:layout_width="140dp"
-                        android:layout_height="160dp"
-                        android:layout_marginTop="24dp"/>
-                    -->
-
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="RIGHT CHANNEL"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="4dp"/>
+                    <SeekBar
+                        android:id="@+id/slider_master_right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:thumbTint="#40E0D0"
+                        android:progressTint="#40E0D0"
+                        android:max="100"
+                        android:progress="75"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -114,7 +511,7 @@
 
     </LinearLayout>
 
-    <!-- ✅ SIDE MENU — TUGMA NA SA MAIN! MAY PRESETS + SETTINGS NA! -->
+    <!-- ✅ SIDE MENU — WALANG PINAGBAGO! -->
     <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
@@ -123,7 +520,6 @@
         android:orientation="vertical"
         android:elevation="16dp">
 
-        <!-- ✅ MENU HEADER + X BUTTON -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -141,7 +537,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
-            <!-- ✅ CLOSE BUTTON — ID = btn_close_menu → TUGMA SA SideMenu.kt! -->
             <ImageView
                 android:id="@+id/btn_close_menu"
                 android:layout_width="32dp"
@@ -156,7 +551,6 @@
             android:layout_height="1dp"
             android:background="#333344"/>
 
-        <!-- ✅ MENU OPTIONS — TUGMA NA SA BUONG MENU! WALANG LABIS WALANG KULANG! -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -174,7 +568,6 @@
                 android:paddingStart="24dp"
                 android:clickable="true"/>
 
-            <!-- ✅ BAGONG DAGDAG — PRESETS! TUGMA SA SideMenu.kt! -->
             <TextView
                 android:id="@+id/menu_presets"
                 android:layout_width="match_parent"
@@ -186,7 +579,6 @@
                 android:paddingStart="24dp"
                 android:clickable="true"/>
 
-            <!-- ✅ BAGONG DAGDAG — SETTINGS! TUGMA SA SideMenu.kt! -->
             <TextView
                 android:id="@+id/menu_settings"
                 android:layout_width="match_parent"
