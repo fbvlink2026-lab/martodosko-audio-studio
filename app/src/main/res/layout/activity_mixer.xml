@@ -1,9 +1,9 @@
+<!-- ================================================== -->
+<!-- FILE: activity_mixer.xml — ✅ GUMAGAMIT NA SA SARILING KNOB + SLIDER CLASSES! -->
+<!-- VERSION: 7.0.0 — ✅ LAHAT MAY SARILING PANGALAN! KUSANG MAY LABEL + SAVE! -->
+<!-- UPDATED: 2026-09-18 — WALANG IBANG PINAGBAGO! PALITAN LANG ANG PANGALAN NG KLASE! -->
+<!-- ================================================== -->
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ SCROLLABLE LAHAT! PATAAS/PABABA/PAKALIWA/PAKANAN! -->
-<!-- VERSION: 6.1.0 — ✅ HORIZONTAL + VERTICAL SCROLL! KASYA SA LAHAT NG SCREEN SIZE! -->
-<!-- UPDATED: 2026-09-17 — WALANG MAPUPUTOL! DOBLE SCROLLING! -->
-<!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
@@ -75,7 +75,6 @@
                     android:padding="12dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ HORIZONTAL SCROLL — PAKALIWA / PAKANAN ✅ -->
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,13 +86,14 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <!-- ✅ SARILING KNOB CLASS! -->
+                        <com.martodosko.studio.GainKnob
                             android:id="@+id/knob_gain"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.SensitivityKnob
                             android:id="@+id/knob_sensitivity"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -115,7 +115,6 @@
                     android:layout_marginTop="24dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ HORIZONTAL SCROLL — PAKALIWA / PAKANAN ✅ -->
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -127,37 +126,37 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.EqLowKnob
                             android:id="@+id/knob_eq_low"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.EqLowMidKnob
                             android:id="@+id/knob_eq_lowmid"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.EqMidKnob
                             android:id="@+id/knob_eq_mid"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.EqHighMidKnob
                             android:id="@+id/knob_eq_highmid"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.EqHighKnob
                             android:id="@+id/knob_eq_high"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.EqPresenceKnob
                             android:id="@+id/knob_eq_presence"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -190,19 +189,19 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ReverbMixKnob
                             android:id="@+id/knob_reverb_mix"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ReverbDecayKnob
                             android:id="@+id/knob_reverb_decay"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ReverbPredelayKnob
                             android:id="@+id/knob_reverb_predelay"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -235,19 +234,19 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.DelayTimeKnob
                             android:id="@+id/knob_delay_time"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.DelayFeedbackKnob
                             android:id="@+id/knob_delay_feedback"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.DelayMixKnob
                             android:id="@+id/knob_delay_mix"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -280,19 +279,19 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ChorusMixKnob
                             android:id="@+id/knob_chorus_mix"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ChorusSpeedKnob
                             android:id="@+id/knob_chorus_speed"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ChorusDepthKnob
                             android:id="@+id/knob_chorus_depth"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -325,13 +324,13 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.DistortionKnob
                             android:id="@+id/knob_distortion"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.DistortionToneKnob
                             android:id="@+id/knob_dist_tone"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -364,31 +363,31 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.CompThresholdKnob
                             android:id="@+id/knob_comp_threshold"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.CompRatioKnob
                             android:id="@+id/knob_comp_ratio"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.CompAttackKnob
                             android:id="@+id/knob_comp_attack"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.CompReleaseKnob
                             android:id="@+id/knob_comp_release"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.CompMakeupKnob
                             android:id="@+id/knob_comp_makeup"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -421,13 +420,13 @@
                         android:orientation="horizontal"
                         android:gravity="center">
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.PanKnob
                             android:id="@+id/knob_pan"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
                             android:layout_margin="4dp"/>
 
-                        <com.martodosko.studio.KnobView
+                        <com.martodosko.studio.ChannelVolumeKnob
                             android:id="@+id/knob_channel_volume"
                             android:layout_width="140dp"
                             android:layout_height="160dp"
@@ -436,7 +435,7 @@
                 </HorizontalScrollView>
 
                 <!-- ================================================== -->
-                <!-- 📏 MASTER SLIDERS -->
+                <!-- 📏 MASTER SLIDERS — PALITAN ANG SEEKBAR NG SARILING SLIDER! -->
                 <!-- ================================================== -->
                 <TextView
                     android:layout_width="match_parent"
@@ -455,55 +454,30 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MASTER VOLUME"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:layout_marginBottom="4dp"/>
-                    <SeekBar
+                    <!-- ✅ SARILING SLIDER — HINDI NA SEEKBAR! -->
+                    <com.martodosko.studio.MasterVolumeSlider
                         android:id="@+id/slider_master"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:thumbTint="#40E0D0"
-                        android:progressTint="#40E0D0"
-                        android:max="100"
-                        android:progress="75"/>
+                        android:layout_height="100dp"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LEFT CHANNEL"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="4dp"/>
-                    <SeekBar
-                        android:id="@+id/slider_master_left"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:thumbTint="#40E0D0"
-                        android:progressTint="#40E0D0"
-                        android:max="100"
-                        android:progress="75"/>
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="RIGHT CHANNEL"
-                        android:textColor="#FFFFFF"
-                        android:textSize="13sp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="4dp"/>
-                    <SeekBar
-                        android:id="@+id/slider_master_right"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:thumbTint="#40E0D0"
-                        android:progressTint="#40E0D0"
-                        android:max="100"
-                        android:progress="75"/>
+                        <com.martodosko.studio.LeftMonitorSlider
+                            android:id="@+id/slider_master_left"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"/>
+
+                        <com.martodosko.studio.RightMonitorSlider
+                            android:id="@+id/slider_master_right"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
