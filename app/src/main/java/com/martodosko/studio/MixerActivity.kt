@@ -1,7 +1,7 @@
 // ==================================================
 // FILE: MixerActivity.kt — ✅ LAHAT NG KNOBS MAY SAVE NA! WALANG TINANGGAL!
-// VERSION: 2.2.0 — ✅ GAIN + EQ + REVERB + DELAY + CHORUS + DISTORTION + COMPRESSOR + OUTPUT!
-// UPDATED: 2026-09-17 — ORIHINAL NA LOGIC NANDOON PA RIN! IDINAGDAG LANG ANG IBA!
+// VERSION: 2.3.0 — ✅ IDINAGDAG: SARILING KNOB CLASSES + SLIDERS + roundToInt IMPORT!
+// UPDATED: 2026-09-18 — ORIHINAL NA LOGIC NANDOON PA RIN! WALANG TINANGGAL!
 // ==================================================
 package com.martodosko.studio
 
@@ -10,41 +10,47 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.Toast
-import kotlin.math.roundToInt  // ✅ ITO ANG KULANG! IDAGDAG LANG!
+import androidx.drawerlayout.widget.DrawerLayout
+import kotlin.math.roundToInt  // ✅ ITO ANG KULANG! IDINAGDAG NA!
 
 class MixerActivity : Activity() {
 
     private lateinit var sideMenu: SideMenu
 
-    // ✅ LAHAT NG KNOB — DECLARE LANG!
-    private lateinit var gainKnob: KnobView
-    private lateinit var sensitivityKnob: KnobView
-    private lateinit var eqLowKnob: KnobView
-    private lateinit var eqLowMidKnob: KnobView
-    private lateinit var eqMidKnob: KnobView
-    private lateinit var eqHighMidKnob: KnobView
-    private lateinit var eqHighKnob: KnobView
-    private lateinit var eqPresenceKnob: KnobView
-    private lateinit var reverbMixKnob: KnobView
-    private lateinit var reverbDecayKnob: KnobView
-    private lateinit var reverbPredelayKnob: KnobView
-    private lateinit var delayTimeKnob: KnobView
-    private lateinit var delayFeedbackKnob: KnobView
-    private lateinit var delayMixKnob: KnobView
-    private lateinit var chorusMixKnob: KnobView
-    private lateinit var chorusSpeedKnob: KnobView
-    private lateinit var chorusDepthKnob: KnobView
-    private lateinit var distortionKnob: KnobView
-    private lateinit var distortionToneKnob: KnobView
-    private lateinit var compThresholdKnob: KnobView
-    private lateinit var compRatioKnob: KnobView
-    private lateinit var compAttackKnob: KnobView
-    private lateinit var compReleaseKnob: KnobView
-    private lateinit var compMakeupKnob: KnobView
-    private lateinit var panKnob: KnobView
-    private lateinit var channelVolKnob: KnobView
+    // ✅ LAHAT NG KNOB — GINAMIT NA ANG SARILING CLASS NAME! WALANG PINAGBAGO SA IBA!
+    private lateinit var gainKnob: GainKnob
+    private lateinit var sensitivityKnob: SensitivityKnob
+    private lateinit var eqLowKnob: EqLowKnob
+    private lateinit var eqLowMidKnob: EqLowMidKnob
+    private lateinit var eqMidKnob: EqMidKnob
+    private lateinit var eqHighMidKnob: EqHighMidKnob
+    private lateinit var eqHighKnob: EqHighKnob
+    private lateinit var eqPresenceKnob: EqPresenceKnob
+    private lateinit var reverbMixKnob: ReverbMixKnob
+    private lateinit var reverbDecayKnob: ReverbDecayKnob
+    private lateinit var reverbPredelayKnob: ReverbPredelayKnob
+    private lateinit var delayTimeKnob: DelayTimeKnob
+    private lateinit var delayFeedbackKnob: DelayFeedbackKnob
+    private lateinit var delayMixKnob: DelayMixKnob
+    private lateinit var chorusMixKnob: ChorusMixKnob
+    private lateinit var chorusSpeedKnob: ChorusSpeedKnob
+    private lateinit var chorusDepthKnob: ChorusDepthKnob
+    private lateinit var distortionKnob: DistortionKnob
+    private lateinit var distortionToneKnob: DistortionToneKnob
+    private lateinit var compThresholdKnob: CompThresholdKnob
+    private lateinit var compRatioKnob: CompRatioKnob
+    private lateinit var compAttackKnob: CompAttackKnob
+    private lateinit var compReleaseKnob: CompReleaseKnob
+    private lateinit var compMakeupKnob: CompMakeupKnob
+    private lateinit var panKnob: PanKnob
+    private lateinit var channelVolKnob: ChannelVolumeKnob
 
-    // ✅ PANGALAN NG SAVED DATA — LAHAT NG KNOB MAY SARILING KEY!
+    // ✅ SLIDERS — IDINAGDAG! MASTER + LEFT + RIGHT!
+    private lateinit var masterSlider: MasterVolumeSlider
+    private lateinit var leftMonitorSlider: LeftMonitorSlider
+    private lateinit var rightMonitorSlider: RightMonitorSlider
+
+    // ✅ PANGALAN NG SAVED DATA — LAHAT NG KNOB MAY SARILING KEY! WALANG PINAGBAGO!
     companion object {
         private const val PREFS_NAME = "MixerPrefs"
         // INPUT
@@ -81,6 +87,10 @@ class MixerActivity : Activity() {
         // OUTPUT
         private const val KEY_PAN = "pan"
         private const val KEY_CHANNEL_VOL = "channel_vol"
+        // SLIDERS — IDINAGDAG!
+        private const val KEY_MASTER_VOL = "master_vol"
+        private const val KEY_LEFT_MONITOR = "left_monitor"
+        private const val KEY_RIGHT_MONITOR = "right_monitor"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,13 +109,13 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ INPUT SECTION — GAIN + SENSITIVITY
             // ==============================================
-            gainKnob = findViewById<KnobView>(R.id.knob_gain)
+            gainKnob = findViewById<GainKnob>(R.id.knob_gain)
             gainKnob.labelText = "GAIN"
             gainKnob.unitText = "dB"
             gainKnob.minValue = -50f
             gainKnob.maxValue = 50f
 
-            sensitivityKnob = findViewById<KnobView>(R.id.knob_sensitivity)
+            sensitivityKnob = findViewById<SensitivityKnob>(R.id.knob_sensitivity)
             sensitivityKnob.labelText = "SENS"
             sensitivityKnob.unitText = ""
             sensitivityKnob.minValue = 0f
@@ -114,37 +124,37 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ EQ SECTION — LOW, LOW-MID, MID, HIGH-MID, HIGH, PRESENCE
             // ==============================================
-            eqLowKnob = findViewById<KnobView>(R.id.knob_eq_low)
+            eqLowKnob = findViewById<EqLowKnob>(R.id.knob_eq_low)
             eqLowKnob.labelText = "LOW"
             eqLowKnob.unitText = "dB"
             eqLowKnob.minValue = -12f
             eqLowKnob.maxValue = 12f
 
-            eqLowMidKnob = findViewById<KnobView>(R.id.knob_eq_lowmid)
+            eqLowMidKnob = findViewById<EqLowMidKnob>(R.id.knob_eq_lowmid)
             eqLowMidKnob.labelText = "LOW-MID"
             eqLowMidKnob.unitText = "dB"
             eqLowMidKnob.minValue = -12f
             eqLowMidKnob.maxValue = 12f
 
-            eqMidKnob = findViewById<KnobView>(R.id.knob_eq_mid)
+            eqMidKnob = findViewById<EqMidKnob>(R.id.knob_eq_mid)
             eqMidKnob.labelText = "MID"
             eqMidKnob.unitText = "dB"
             eqMidKnob.minValue = -12f
             eqMidKnob.maxValue = 12f
 
-            eqHighMidKnob = findViewById<KnobView>(R.id.knob_eq_highmid)
+            eqHighMidKnob = findViewById<EqHighMidKnob>(R.id.knob_eq_highmid)
             eqHighMidKnob.labelText = "HIGH-MID"
             eqHighMidKnob.unitText = "dB"
             eqHighMidKnob.minValue = -12f
             eqHighMidKnob.maxValue = 12f
 
-            eqHighKnob = findViewById<KnobView>(R.id.knob_eq_high)
+            eqHighKnob = findViewById<EqHighKnob>(R.id.knob_eq_high)
             eqHighKnob.labelText = "HIGH"
             eqHighKnob.unitText = "dB"
             eqHighKnob.minValue = -12f
             eqHighKnob.maxValue = 12f
 
-            eqPresenceKnob = findViewById<KnobView>(R.id.knob_eq_presence)
+            eqPresenceKnob = findViewById<EqPresenceKnob>(R.id.knob_eq_presence)
             eqPresenceKnob.labelText = "PRESENCE"
             eqPresenceKnob.unitText = "dB"
             eqPresenceKnob.minValue = -12f
@@ -153,19 +163,19 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ REVERB SECTION — MIX, DECAY, PRE-DELAY
             // ==============================================
-            reverbMixKnob = findViewById<KnobView>(R.id.knob_reverb_mix)
+            reverbMixKnob = findViewById<ReverbMixKnob>(R.id.knob_reverb_mix)
             reverbMixKnob.labelText = "MIX"
             reverbMixKnob.unitText = "%"
             reverbMixKnob.minValue = 0f
             reverbMixKnob.maxValue = 100f
 
-            reverbDecayKnob = findViewById<KnobView>(R.id.knob_reverb_decay)
+            reverbDecayKnob = findViewById<ReverbDecayKnob>(R.id.knob_reverb_decay)
             reverbDecayKnob.labelText = "DECAY"
             reverbDecayKnob.unitText = "s"
             reverbDecayKnob.minValue = 0.1f
             reverbDecayKnob.maxValue = 5f
 
-            reverbPredelayKnob = findViewById<KnobView>(R.id.knob_reverb_predelay)
+            reverbPredelayKnob = findViewById<ReverbPredelayKnob>(R.id.knob_reverb_predelay)
             reverbPredelayKnob.labelText = "PRE-DELAY"
             reverbPredelayKnob.unitText = "ms"
             reverbPredelayKnob.minValue = 0f
@@ -174,19 +184,19 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ DELAY SECTION — TIME, FEEDBACK, MIX
             // ==============================================
-            delayTimeKnob = findViewById<KnobView>(R.id.knob_delay_time)
+            delayTimeKnob = findViewById<DelayTimeKnob>(R.id.knob_delay_time)
             delayTimeKnob.labelText = "TIME"
             delayTimeKnob.unitText = "ms"
             delayTimeKnob.minValue = 10f
             delayTimeKnob.maxValue = 1000f
 
-            delayFeedbackKnob = findViewById<KnobView>(R.id.knob_delay_feedback)
+            delayFeedbackKnob = findViewById<DelayFeedbackKnob>(R.id.knob_delay_feedback)
             delayFeedbackKnob.labelText = "FEEDBACK"
             delayFeedbackKnob.unitText = "%"
             delayFeedbackKnob.minValue = 0f
             delayFeedbackKnob.maxValue = 100f
 
-            delayMixKnob = findViewById<KnobView>(R.id.knob_delay_mix)
+            delayMixKnob = findViewById<DelayMixKnob>(R.id.knob_delay_mix)
             delayMixKnob.labelText = "MIX"
             delayMixKnob.unitText = "%"
             delayMixKnob.minValue = 0f
@@ -195,19 +205,19 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ CHORUS SECTION — MIX, SPEED, DEPTH
             // ==============================================
-            chorusMixKnob = findViewById<KnobView>(R.id.knob_chorus_mix)
+            chorusMixKnob = findViewById<ChorusMixKnob>(R.id.knob_chorus_mix)
             chorusMixKnob.labelText = "MIX"
             chorusMixKnob.unitText = "%"
             chorusMixKnob.minValue = 0f
             chorusMixKnob.maxValue = 100f
 
-            chorusSpeedKnob = findViewById<KnobView>(R.id.knob_chorus_speed)
+            chorusSpeedKnob = findViewById<ChorusSpeedKnob>(R.id.knob_chorus_speed)
             chorusSpeedKnob.labelText = "SPEED"
             chorusSpeedKnob.unitText = "Hz"
             chorusSpeedKnob.minValue = 0.1f
             chorusSpeedKnob.maxValue = 10f
 
-            chorusDepthKnob = findViewById<KnobView>(R.id.knob_chorus_depth)
+            chorusDepthKnob = findViewById<ChorusDepthKnob>(R.id.knob_chorus_depth)
             chorusDepthKnob.labelText = "DEPTH"
             chorusDepthKnob.unitText = ""
             chorusDepthKnob.minValue = 0f
@@ -216,13 +226,13 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ DISTORTION SECTION — DISTORTION, TONE
             // ==============================================
-            distortionKnob = findViewById<KnobView>(R.id.knob_distortion)
+            distortionKnob = findViewById<DistortionKnob>(R.id.knob_distortion)
             distortionKnob.labelText = "GAIN"
             distortionKnob.unitText = ""
             distortionKnob.minValue = 0f
             distortionKnob.maxValue = 100f
 
-            distortionToneKnob = findViewById<KnobView>(R.id.knob_dist_tone)
+            distortionToneKnob = findViewById<DistortionToneKnob>(R.id.knob_dist_tone)
             distortionToneKnob.labelText = "TONE"
             distortionToneKnob.unitText = ""
             distortionToneKnob.minValue = 0f
@@ -231,31 +241,31 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ COMPRESSOR SECTION — THRESHOLD, RATIO, ATTACK, RELEASE, MAKEUP
             // ==============================================
-            compThresholdKnob = findViewById<KnobView>(R.id.knob_comp_threshold)
+            compThresholdKnob = findViewById<CompThresholdKnob>(R.id.knob_comp_threshold)
             compThresholdKnob.labelText = "THRESHOLD"
             compThresholdKnob.unitText = "dB"
             compThresholdKnob.minValue = -60f
             compThresholdKnob.maxValue = 0f
 
-            compRatioKnob = findViewById<KnobView>(R.id.knob_comp_ratio)
+            compRatioKnob = findViewById<CompRatioKnob>(R.id.knob_comp_ratio)
             compRatioKnob.labelText = "RATIO"
             compRatioKnob.unitText = ":1"
             compRatioKnob.minValue = 1f
             compRatioKnob.maxValue = 20f
 
-            compAttackKnob = findViewById<KnobView>(R.id.knob_comp_attack)
+            compAttackKnob = findViewById<CompAttackKnob>(R.id.knob_comp_attack)
             compAttackKnob.labelText = "ATTACK"
             compAttackKnob.unitText = "ms"
             compAttackKnob.minValue = 0.1f
             compAttackKnob.maxValue = 100f
 
-            compReleaseKnob = findViewById<KnobView>(R.id.knob_comp_release)
+            compReleaseKnob = findViewById<CompReleaseKnob>(R.id.knob_comp_release)
             compReleaseKnob.labelText = "RELEASE"
             compReleaseKnob.unitText = "ms"
             compReleaseKnob.minValue = 10f
             compReleaseKnob.maxValue = 500f
 
-            compMakeupKnob = findViewById<KnobView>(R.id.knob_comp_makeup)
+            compMakeupKnob = findViewById<CompMakeupKnob>(R.id.knob_comp_makeup)
             compMakeupKnob.labelText = "MAKEUP"
             compMakeupKnob.unitText = "dB"
             compMakeupKnob.minValue = 0f
@@ -264,17 +274,24 @@ class MixerActivity : Activity() {
             // ==============================================
             // ✅ OUTPUT SECTION — PAN, CHANNEL VOLUME
             // ==============================================
-            panKnob = findViewById<KnobView>(R.id.knob_pan)
+            panKnob = findViewById<PanKnob>(R.id.knob_pan)
             panKnob.labelText = "PAN"
             panKnob.unitText = ""
             panKnob.minValue = -100f
             panKnob.maxValue = 100f
 
-            channelVolKnob = findViewById<KnobView>(R.id.knob_channel_volume)
+            channelVolKnob = findViewById<ChannelVolumeKnob>(R.id.knob_channel_volume)
             channelVolKnob.labelText = "VOLUME"
             channelVolKnob.unitText = "dB"
             channelVolKnob.minValue = -50f
             channelVolKnob.maxValue = 10f
+
+            // ==============================================
+            // ✅ MASTER SLIDERS — IDINAGDAG!
+            // ==============================================
+            masterSlider = findViewById<MasterVolumeSlider>(R.id.slider_master)
+            leftMonitorSlider = findViewById<LeftMonitorSlider>(R.id.slider_master_left)
+            rightMonitorSlider = findViewById<RightMonitorSlider>(R.id.slider_master_right)
 
             // ✅ BALIKAN ANG NAISAVE NA HALAGA — KUNG MERON!
             loadSavedValues()
@@ -286,7 +303,7 @@ class MixerActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ MAG-ISAVE BAGO MAGSARA! — LAHAT NG KNOB!
+    // ✅ MAG-ISAVE BAGO MAGSARA! — LAHAT NG KNOB + SLIDERS!
     // ==============================================
     private fun saveValues() {
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -326,13 +343,17 @@ class MixerActivity : Activity() {
         // OUTPUT
         editor.putFloat(KEY_PAN, panKnob.value)
         editor.putFloat(KEY_CHANNEL_VOL, channelVolKnob.value)
+        // SLIDERS — IDINAGDAG!
+        editor.putFloat(KEY_MASTER_VOL, masterSlider.value)
+        editor.putFloat(KEY_LEFT_MONITOR, leftMonitorSlider.value)
+        editor.putFloat(KEY_RIGHT_MONITOR, rightMonitorSlider.value)
 
         editor.apply()
         Toast.makeText(this, "✅ Naisave ang lahat ng settings!", Toast.LENGTH_SHORT).show()
     }
 
     // ==============================================
-    // ✅ BALIKAN ANG NAISAVE NA HALAGA! — LAHAT NG KNOB!
+    // ✅ BALIKAN ANG NAISAVE NA HALAGA! — LAHAT NG KNOB + SLIDERS!
     // ==============================================
     private fun loadSavedValues() {
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -371,6 +392,10 @@ class MixerActivity : Activity() {
         // OUTPUT
         panKnob.value = prefs.getFloat(KEY_PAN, 0f)
         channelVolKnob.value = prefs.getFloat(KEY_CHANNEL_VOL, 0f)
+        // SLIDERS — IDINAGDAG!
+        masterSlider.value = prefs.getFloat(KEY_MASTER_VOL, 0f)
+        leftMonitorSlider.value = prefs.getFloat(KEY_LEFT_MONITOR, 0f)
+        rightMonitorSlider.value = prefs.getFloat(KEY_RIGHT_MONITOR, 0f)
     }
 
     // ✅ KAPAG PININDOT ANG BACK BUTTON — MAG-ISAVE MUNA!
