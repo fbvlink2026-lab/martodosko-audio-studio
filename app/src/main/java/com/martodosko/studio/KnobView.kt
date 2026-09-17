@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ BILOG NA PALAGI! SENSITIVITY NUMBERS TAMA NA!
-// VERSION: 5.3.0 — ✅ PANEL = BILOG NA! SENSITIVITY 0-100 KUMPLETO! GAIN HINDI NABAGO!
-// UPDATED: 2026-09-18 — WALANG BINAGO SA TOUCH, SAVE, LOGIC — DRAWING LANG INAYOS!
+// FILE: KnobView.kt — ✅ NABAWASAN ANG PUWANG! NUMERO HINDI NA LUMALABAS!
+// VERSION: 5.3.1 — ✅ NEON GLOW LAPIT SA KNOB! TEXT LAPIT PAPASOK!
+// UPDATED: 2026-09-18 — DALAWANG NUMERO LANG ANG PINALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -66,34 +66,25 @@ open class KnobView @JvmOverloads constructor(
         }
     }
 
-    // ==============================================
-    // ✅ DYNAMIC MARKS — AYOS NA! TAMA NA ANG PAGKAKILALA!
-    // ==============================================
     private fun getMarks(): List<Int> {
         val range = maxValue - minValue
         
         return when {
-            // ✅ GAIN MODE — -50 hanggang +50 — WALANG BINAGO!
             minValue < 0f && maxValue > 0f && range >= 90f -> {
                 listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
             }
-            // ✅ SENSITIVITY MODE — 0 hanggang 100 — KUMPLETO! 0 SA ITAAS!
             minValue == 0f && maxValue == 100f -> {
                 listOf(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
             }
-            // ✅ DEFAULT
             else -> listOf(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
         }
     }
 
-    // ==============================================
-    // ✅ FORMAT NG NUMERO — TAMA NA!
-    // ==============================================
     private fun formatMark(mark: Int): String {
         return when {
             mark == 0 -> "0"
-            minValue < 0f && mark > 0 -> "+$mark" // Gain lang may +
-            else -> "$mark" // Sensitivity — walang +
+            minValue < 0f && mark > 0 -> "+$mark"
+            else -> "$mark"
         }
     }
 
@@ -164,18 +155,20 @@ open class KnobView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
-        val diameter = minOf(width, height) // ✅ PANTAY NA LAKI — SIGURADONG BILOG!
-        val panelRadius = diameter * 0.47f // ✅ BILOG NA PANEL — GAMIT ANG MIN(width,height)!
+        val diameter = minOf(width, height)
+        val panelRadius = diameter * 0.47f
         val knobRadius = diameter * 0.27f
-        val arcRadius = diameter * 0.38f
+        
+        // ✅ PALITAN 1: NEON ARC — LAPIT SA KNOB, BAWAS ANG PUWANG!
+        val arcRadius = diameter * 0.34f  // ← dating 0.38f → 0.34f, LAPIT PAPASOK!
+        
         val tickInner = arcRadius * 1.03f
         val tickOuter = arcRadius * 1.08f
-        val textRadius = diameter * 0.45f
-
-        // ✅ BILOG NA PANEL — HINDI NA OBLONG! drawCircle sa halip na drawRoundRect!
-        canvas.drawCircle(cx, cy, panelRadius, paintPanel)
         
-        // ✅ KNOB CENTER — GANOON PA RIN!
+        // ✅ PALITAN 2: TEXT RADIUS — LAPIT PAPASOK, HINDI NA LUMALABAS!
+        val textRadius = diameter * 0.42f  // ← dating 0.45f → 0.42f, LAPIT PAPASOK!
+
+        canvas.drawCircle(cx, cy, panelRadius, paintPanel)
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
         canvas.translate(cx, cy)
@@ -196,7 +189,6 @@ open class KnobView @JvmOverloads constructor(
             )
         }
 
-        // ✅ DYNAMIC MARKS — SENSITIVITY KUMPLETO NA! 0-100 LAHAT NANDOON!
         val marks = getMarks()
         for (mark in marks) {
             val markFloat = mark.toFloat()
