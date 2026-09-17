@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: ContentActivity.kt — ✅ INAYOS NA! PALIT AGAD ANG FRAGMENT!
-// VERSION: 1.0.4 — ✅ TAMA NA ANG LAHAT! singleTop + onNewIntent + commitAllowingStateLoss!
-// UPDATED: 2026-09-17 — TAMA NA ANG LALABAS SA BAWAT BUTTON! BUILD NA!
+// FILE: ContentActivity.kt — ✅ INAYOS NA! BINASA NA ANG putExtra()! SIGURADO NA ANG FRAGMENT!
+// VERSION: 1.0.5 — ✅ TUGMA SA SideMenu.kt! target_screen EXTRA ANG BINASA! HINDI NA action!
+// UPDATED: 2026-09-17 — WALANG IBANG PINAGBAGO! EXTRA LANG ANG PALIT!
 // ==================================================
 package com.martodosko.studio
 
@@ -31,10 +31,12 @@ class ContentActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ IPALIT ANG FRAGMENT AYON SA PININDOT — IISANG LUGAR LANG!
+    // ✅ INAYOS — BINASA NA ANG "target_screen" EXTRA! HINDI NA action! TUGMA SA SideMenu.kt!
     // ==============================================
     private fun showCorrectFragment(intent: Intent?) {
-        val targetScreen = intent?.action ?: "SETTINGS"
+        // ✅ BASAHIN MUNA ANG EXTRA — ITO ANG TINUTURO NG SideMenu.kt!
+        val targetScreen = intent?.getStringExtra("target_screen") ?: "SETTINGS"
+        
         when (targetScreen) {
             "SETTINGS" -> showFragment(SettingsFragment())
             "HELP"     -> showFragment(HelpFragment())
