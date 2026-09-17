@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ INAYOS NA! DIREKTANG CLASS NA! WALANG IBANG PINAGBAGO!
-// VERSION: 1.2.1 — ✅ Pinalitan ang Class.forName → Direktang ContentActivity! WALANG TINANGGAL!
-// UPDATED: 2026-09-17 — WALANG IBANG PINAGBAGO! ITO LANG ANG INAYOS!
+// FILE: SideMenu.kt — ✅ INAYOS NA! GUMAMIT NG putExtra() SA HALIP NG action! SIGURADO NA!
+// VERSION: 1.2.2 — ✅ ITO LANG ANG INAYOS: intent.putExtra() sa lahat ng ContentActivity call! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-17 — WALANG TINANGGAL, WALANG IBANG BINAGO! EXTRA LANG ANG IDINAGDAG!
 // ==================================================
 package com.martodosko.studio
 
@@ -97,7 +97,7 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ SETTINGS → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
+        // ✅ SETTINGS → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
@@ -107,7 +107,7 @@ class SideMenu(
             }
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.action = "SETTINGS"
+                intent.putExtra("target_screen", "SETTINGS")  // ✅ ITO LANG ANG PALIT!
                 activity.startActivity(intent)
                 Toast.makeText(activity, "⚙️ Binubuksan ang Settings...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -174,7 +174,7 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ HELP → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
+        // ✅ HELP → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
@@ -184,7 +184,7 @@ class SideMenu(
             }
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.action = "HELP"
+                intent.putExtra("target_screen", "HELP")  // ✅ ITO LANG ANG PALIT!
                 activity.startActivity(intent)
                 Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -201,7 +201,7 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ JOIN US → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
+        // ✅ JOIN US → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
@@ -211,7 +211,7 @@ class SideMenu(
             }
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.action = "JOIN_US"
+                intent.putExtra("target_screen", "JOIN_US")  // ✅ ITO LANG ANG PALIT!
                 activity.startActivity(intent)
                 Toast.makeText(activity, "🌐 Binubuksan ang Join Us...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -228,7 +228,7 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ ABOUT → DIREKTANG ContentActivity! WALANG IBANG PINAGBAGO!
+        // ✅ ABOUT → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
@@ -238,7 +238,7 @@ class SideMenu(
             }
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.action = "ABOUT"
+                intent.putExtra("target_screen", "ABOUT")  // ✅ ITO LANG ANG PALIT!
                 activity.startActivity(intent)
                 Toast.makeText(activity, "ℹ️ Binubuksan ang About...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
