@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ DYNAMIC MARKS! GAIN HINDI NABAGO! SENSITIVITY TAMA NA!
-// VERSION: 5.2.0 — ✅ KUNG -50~+50 = GAIN! KUNG 0~100 = SENSITIVITY! PAREHONG 0 SA ITAAS!
-// UPDATED: 2026-09-18 — WALANG BINAGO SA TOUCH, SAVE, DRAWING — MARKS LANG ANG INAYOS!
+// FILE: KnobView.kt — ✅ BILOG NA PALAGI! SENSITIVITY NUMBERS TAMA NA!
+// VERSION: 5.3.0 — ✅ PANEL = BILOG NA! SENSITIVITY 0-100 KUMPLETO! GAIN HINDI NABAGO!
+// UPDATED: 2026-09-18 — WALANG BINAGO SA TOUCH, SAVE, LOGIC — DRAWING LANG INAYOS!
 // ==================================================
 package com.martodosko.studio
 
@@ -67,28 +67,33 @@ open class KnobView @JvmOverloads constructor(
     }
 
     // ==============================================
-    // ✅ DYNAMIC MARKS GENERATOR — AYON SA MIN/MAX!
-    // GAIN (-50~+50): -50, -40...0...+50
-    // SENSITIVITY (0~100): 0, 10, 20...100 — 0 SA ITAAS!
+    // ✅ DYNAMIC MARKS — AYOS NA! TAMA NA ANG PAGKAKILALA!
     // ==============================================
     private fun getMarks(): List<Int> {
-        return if (minValue <= 0f && maxValue >= 0f && maxValue - minValue > 80f) {
-            // ✅ GAIN MODE — -50 hanggang +50
-            listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
-        } else {
-            // ✅ SENSITIVITY MODE — 0 hanggang 100, 0 SA ITAAS!
-            listOf(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+        val range = maxValue - minValue
+        
+        return when {
+            // ✅ GAIN MODE — -50 hanggang +50 — WALANG BINAGO!
+            minValue < 0f && maxValue > 0f && range >= 90f -> {
+                listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
+            }
+            // ✅ SENSITIVITY MODE — 0 hanggang 100 — KUMPLETO! 0 SA ITAAS!
+            minValue == 0f && maxValue == 100f -> {
+                listOf(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+            }
+            // ✅ DEFAULT
+            else -> listOf(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
         }
     }
 
     // ==============================================
-    // ✅ FORMAT NG NUMERO — WALANG NEGATIVE SA SENSITIVITY!
+    // ✅ FORMAT NG NUMERO — TAMA NA!
     // ==============================================
     private fun formatMark(mark: Int): String {
         return when {
             mark == 0 -> "0"
-            minValue < 0f && mark > 0 -> "+$mark" // may negative range → may + sign
-            else -> "$mark" // Sensitivity → walang + sign
+            minValue < 0f && mark > 0 -> "+$mark" // Gain lang may +
+            else -> "$mark" // Sensitivity — walang +
         }
     }
 
@@ -159,15 +164,18 @@ open class KnobView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
-        val size = minOf(cx, cy)
-        val panelRadius = size * 0.95f
-        val knobRadius = size * 0.55f
-        val arcRadius = size * 0.72f
+        val diameter = minOf(width, height) // ✅ PANTAY NA LAKI — SIGURADONG BILOG!
+        val panelRadius = diameter * 0.47f // ✅ BILOG NA PANEL — GAMIT ANG MIN(width,height)!
+        val knobRadius = diameter * 0.27f
+        val arcRadius = diameter * 0.38f
         val tickInner = arcRadius * 1.03f
         val tickOuter = arcRadius * 1.08f
-        val textRadius = size * 0.90f
+        val textRadius = diameter * 0.45f
 
-        canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), panelRadius, panelRadius, paintPanel)
+        // ✅ BILOG NA PANEL — HINDI NA OBLONG! drawCircle sa halip na drawRoundRect!
+        canvas.drawCircle(cx, cy, panelRadius, paintPanel)
+        
+        // ✅ KNOB CENTER — GANOON PA RIN!
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
         canvas.translate(cx, cy)
@@ -176,7 +184,7 @@ open class KnobView @JvmOverloads constructor(
         canvas.restore()
 
         val currentVal = value.roundToInt()
-        val zeroPoint = if (minValue <= 0f) 0f else minValue // ✅ Kung walang 0 → simula sa pinakamababa
+        val zeroPoint = if (minValue <= 0f) 0f else minValue
         if (currentVal != zeroPoint.toInt()) {
             val zeroAngle = valueToAngle(zeroPoint)
             val endAngle = valueToAngle(value)
@@ -188,7 +196,7 @@ open class KnobView @JvmOverloads constructor(
             )
         }
 
-        // ✅ DYNAMIC MARKS — GAYA NG GAIN ANG PWESETO! 0 SA ITAAS!
+        // ✅ DYNAMIC MARKS — SENSITIVITY KUMPLETO NA! 0-100 LAHAT NANDOON!
         val marks = getMarks()
         for (mark in marks) {
             val markFloat = mark.toFloat()
