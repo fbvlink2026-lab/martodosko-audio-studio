@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ LABEL NAKIKITA NA! NEON GLOW TAMA ANG PUWANG!
-// VERSION: 5.3.2 — ✅ PANEL LUMAKI NANG BAHAGYA! WALANG IBANG BINAGO!
-// UPDATED: 2026-09-18 — DALAWANG LINYA LANG ANG PINALITAN!
+// FILE: KnobView.kt — ✅ PANEL NAGING PARISUKAT! WALANG KANTO! LABEL LUMABAS NA!
+// VERSION: 5.3.3 — ✅ drawCircle → drawRect! WALANG IBANG BINAGO!
+// UPDATED: 2026-09-18 — ISANG LINYA LANG ANG PALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -155,21 +155,18 @@ open class KnobView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
-        val diameter = minOf(width, height)
-        
-        // ✅ PALITAN 1: PANEL LUMAKI — MAGKASYA NA ANG LABEL!
-        val panelRadius = diameter * 0.52f
-        
-        val knobRadius = diameter * 0.27f
-        
-        // ✅ PALITAN 2: NEON ARC — TAMA ANG PUWANG!
-        val arcRadius = diameter * 0.36f
-        
+        val size = minOf(width, height)
+        val halfSize = size * 0.5f
+        val panelRadius = size * 0.47f
+        val knobRadius = size * 0.27f
+        val arcRadius = size * 0.34f
         val tickInner = arcRadius * 1.03f
         val tickOuter = arcRadius * 1.08f
-        val textRadius = diameter * 0.42f
+        val textRadius = size * 0.42f
 
-        canvas.drawCircle(cx, cy, panelRadius, paintPanel)
+        // ✅ BINAGO: BILOG → PARISUKAT NA WALANG KANTO!
+        canvas.drawRect(cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize, paintPanel)
+
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
         canvas.translate(cx, cy)
