@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: HelpFragment.kt — ✅ BUONG HELP TEXT! WALANG BINAGO SA LAMAN!
-// VERSION: 1.0.0 — ILIPAT LANG SA FRAGMENT — GANOON PA RIN ANG BUONG GABAY!
-// UPDATED: 2026-09-17 — KINUHA MULA SA HelpActivity — WALANG PINAGBAGO SA TEXT!
+// FILE: HelpFragment.kt — ✅ MAY COLLAPSE/EXPAND! PARANG DOKUMENTASYON!
+// VERSION: 1.1.0 — ✅ NABABASA PINDUTIN ANG BAWAT BAHAGI! NAKAKA-COLLAPSE! WALANG PINAGBAGO SA LAMAN!
+// UPDATED: 2026-09-17 — TEKSTO GANOON PA RIN! INTERAKTIBO NA!
 // ==================================================
 package com.martodosko.studio
 
@@ -21,7 +21,6 @@ class HelpFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // ✅ KUSANG KUNIN ANG VERSION NG APP — HINDI NA KAILANGANG I-MANUAL!
         val versionName = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
 
         // ✅ SCROLL VIEW — DAHIL MAHABA ANG HELP TEXT!
@@ -41,21 +40,14 @@ class HelpFragment : Fragment() {
         title.setPadding(0, 0, 0, 24)
         root.addView(title)
 
-        // ✅ HELP CONTENT — KOPYAHIN ANG BUONG LAMAN! WALANG PINAGBAGO!
-        val helpContent = TextView(requireContext())
-        helpContent.setTextColor(0xFFE0E0E0.toInt())
-        helpContent.textSize = 12f
-        helpContent.setLineSpacing(4f, 1f)
-        helpContent.text = """
-====================================================================
-                    ❓ HELP — MARTODOSKO AUDIO STUDIO
-                    Buong Gabay ng Paggamit — v$versionName
-====================================================================
-
-====================================
-🏠 BAHAGI 1 — MAIN SCREEN (HOME)
-====================================
-
+        // ✅ BUONG HELP CONTENT — GINAWANG INTERAKTIBO!
+        // ==============================================
+        // 📌 BAHAGI 1 — MAIN SCREEN
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "🏠 BAHAGI 1 — MAIN SCREEN (HOME)",
+            content = """
 Ito ang unang makikita mo pagbukas ng app — dito mo makikita at makokontrol
 ang lahat ng iyong aktibong preset.
 
@@ -101,11 +93,16 @@ ang lahat ng iyong aktibong preset.
 ⚠️ TANDAAN: Ang 3 knobs sa harap ay BUOD ng lahat ng kontrol sa loob ng
 Channel. Kapag inilapat ang preset — LAHAT ng detalyadong settings ay
 naaalala — hindi lang tatlo!
+            """.trimIndent()
+        )
 
-====================================
-📋 BAHAGI 2 — PRESETS
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 2 — PRESETS
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "📋 BAHAGI 2 — PRESETS",
+            content = """
 Dito mo pipiliin kung aling preset ang gusto mong gamitin.
 PWEDE KAHIT ILAN ANG PILIIN — hindi lang isa!
 
@@ -123,11 +120,16 @@ PWEDE KAHIT ILAN ANG PILIIN — hindi lang isa!
   • Lahat ng knobs ay kusang mapipihit — ayon sa na-save na halaga
   • Kusang magbabago ang kulay at itsura ng bawat pedal
   • Kung magkaiba ang uri (Vocal + Guitar) → PAGHALUIN ANG TUNOG — sabay lalabas!
+            """.trimIndent()
+        )
 
-====================================
-🎤 BAHAGI 3 — VOCAL MIXER
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 3 — VOCAL MIXER
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "🎤 BAHAGI 3 — VOCAL MIXER",
+            content = """
 Dito mo makikita at makokontrol ang DETALYADONG settings ng boses.
 Maraming knobs dito — lahat pwedeng i-adjust nang isa-isa!
 
@@ -153,11 +155,16 @@ Maraming knobs dito — lahat pwedeng i-adjust nang isa-isa!
   • Kapag pinihit ang VOLUME → kusang gumagalaw ang Master Volume
   • Kapag pinihit ang NOISE GATE → nagbabago ang halaga — hindi makikita
     dito pero gumagana sa tunog
+            """.trimIndent()
+        )
 
-====================================
-🎸 BAHAGI 4 — GUITAR EFFECTS
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 4 — GUITAR EFFECTS
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "🎸 BAHAGI 4 — GUITAR EFFECTS",
+            content = """
 Dito mo makikita at makokontrol ang DETALYADONG settings ng gitara.
 Maraming knobs dito — iba-iba sa Vocal Mixer!
 
@@ -189,11 +196,16 @@ Maraming knobs dito — iba-iba sa Vocal Mixer!
   • Kapag pinihit ang VOLUME → kusang gumagalaw ang Master Volume
   • Kapag pinihit ang NOISE GATE → nagbabago ang halaga — hindi makikita
     dito pero gumagana sa tunog
+            """.trimIndent()
+        )
 
-====================================
-💾 BAHAGI 5 — DALAWANG PARAAN NG PAG-SAVE
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 5 — DALAWANG PARAAN NG PAG-SAVE
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "💾 BAHAGI 5 — DALAWANG PARAAN NG PAG-SAVE",
+            content = """
 ⚠️ ITO ANG PINAKAMAHALAGA — DALAWANG PARAAN ANG PAG-SAVE!
 
 🟢 PARAAN 1 — MAG-SAVE MULA SA CHANNEL SCREEN
@@ -219,23 +231,16 @@ Maraming knobs dito — iba-iba sa Vocal Mixer!
   • Ang 3 knobs sa Pedal ay "BUOD" — isang pihit = maraming nagbabago!
   • Kapag nag-load ka ng preset — LAHAT ng knobs — sa Channel at sa Pedal —
     babalik sa tamang pwesto — kusang kusang!
+            """.trimIndent()
+        )
 
-====================================
-🔊 BAHAGI 6 — PAANO ANG TUNOG?
-====================================
-
-| KALAGAYAN                          | ANO ANG LALABAS NA TUNOG?
-|------------------------------------|------------------------------------------
-| 🎤 Vocal ON, 🎸 Guitar OFF        | Boses lang — walang epekto sa gitara
-| 🎸 Guitar ON, 🎤 Vocal OFF        | Gitara lang — walang epekto sa boses
-| 🎤 + 🎸 PAREHONG ON               | PINAGHALO — Boses + Gitara — sabay!
-| Parehong OFF                       | BYPASS — orihinal na tunog — WALANG EPEKTO
-| 3+ Pedal sabay ON                  | LAHAT PINAGHALO — lahat ng epekto sabay!
-
-====================================================================
-⚡ BAHAGI 6.5 — AUDIO ENGINE — LOW LATENCY / ZERO LATENCY
-====================================================================
-
+        // ==============================================
+        // 📌 BAHAGI 6 — AUDIO ENGINE / LOW LATENCY
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "🔊 BAHAGI 6 — AUDIO ENGINE — LOW / ZERO LATENCY",
+            content = """
 🔊 BAKIT NAPAKABILIS AT WALANG ANTALA ANG TUNOG?
 
   ✅ DIREKTANG PAGPAPROSESO — WALANG PAGKAANTALA!
@@ -275,46 +280,22 @@ Maraming knobs dito — iba-iba sa Vocal Mixer!
   │ Angkop sa Live           │ ❌ Hindi pwede   │ ✅ PERPEKTO SA LIVE!│
   └──────────────────────────┴──────────────────┴─────────────────────┘
 
-🔧 PAANO ITO GUMAGANA SA LOOB:
-
-  📡 INPUT → 🎙️ MIC / INSTRUMENT
-       │
-       ▼
-  ⚡ C++ AUDIO ENGINE — DIREKTANG PAGPAPROSESO
-       │  • Reverb, Delay, EQ, Compressor — lahat kinukwenta sa C++
-       │  • Walang paghihintay — bawat piraso ng tunog ay napoproseso
-       │    agad pagdating pa lang!
-       ▼
-  🔊 OUTPUT — SPEAKER / EARPHONE
-       │
-       ▼
-  🎵 NARIRINIG MO AGAD — WALANG ANTALA!
-
 💡 MGA TIP PARA SA PINAKAMABILIS NA TUNOG:
 
   ✅ GUMAMIT NG EARPHONE O EXTERNAL SPEAKER — hindi built-in speaker!
-     • Ang built-in speaker ng telepono ay may sariling antala — hindi
-       kasali sa latency ng app
-     • Kapag naka-earphone — <10ms ang totoong latency!
-
   ✅ I-ON ANG ZERO LATENCY MODE — Settings → Audio → Zero Latency = ON
-     • Pinakamabilis na daanan — walang dagdag na buffer
-     • ⚠️ Kung may ugong o kalampag — dagdagan nang kaunti ang Buffer Size
-       sa Settings hanggang mawala ang ingay — habang nananatiling mabilis
-
   ✅ ISARA ANG IBANG APP — bago magbukas ng Martodosko
-     • Mas malinis ang pagproseso — mas mabilis ang tugon
-     • Walang ibang gumagamit ng processor — lahat para sa tunog!
-
   ✅ GUMAMIT NG BAGONG TELEPONO — Android 10+
-     • Mas bagong audio driver — mas mababa ang oras ng pagproseso
-     • Sa lumang telepono — maaaring mas mataas nang kaunti ang latency
-       pero mas mababa pa rin kaysa sa karaniwang app!
+            """.trimIndent()
+        )
 
-====================================
-⚙️ BAHAGI 7 — SETTINGS
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 7 — SETTINGS
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "⚙️ BAHAGI 7 — SETTINGS",
+            content = """
 Dito mo mababago ang pangkalahatang pagkilos ng app:
   • Audio Input — Pumili ng Mic, Line-in, o Bluetooth Mic
   • Sample Rate — 44.1kHz / 48kHz — mas mataas = mas malinaw
@@ -323,20 +304,30 @@ Dito mo mababago ang pangkalahatang pagkilos ng app:
   • Dark/Light Mode — Pagbabago ng itsura ng app
   • Auto-save — Awtomatikong i-save ang huling ginamit na preset
   • Clear All — Burahin ang lahat ng preset (INGAT — hindi na mababawi!)
+            """.trimIndent()
+        )
 
-====================================
-🔄 BAHAGI 8 — CHECK UPDATE
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 8 — CHECK UPDATE
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "🔄 BAHAGI 8 — CHECK UPDATE",
+            content = """
   • Awtomatikong tinitingnan kung may bagong bersyon na available
   • Kung meron — lalabas ang mensahe na may opsyon na i-download
   • Kailangan ng internet para gumana
   • Makikita ang kasalukuyang bersyon sa itaas ng Side Menu
+            """.trimIndent()
+        )
 
-====================================
-❓ BAHAGI 9 — MGA MADALAS NA TANONG (FAQ)
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 9 — FAQ
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "❓ BAHAGI 9 — MGA MADALAS NA TANONG (FAQ)",
+            content = """
 ❓ Bakit hindi gumagana ang tunog?
   ✅ Siguraduhing pinayagan ang RECORD_AUDIO permission. Pumunta sa
      Settings → Apps → Martodosko → Permissions → Microphone → Payagan.
@@ -360,11 +351,16 @@ Dito mo mababago ang pangkalahatang pagkilos ng app:
 ❓ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
   ✅ Iyon ang disenyo — gumagana ito sa tunog pero hiwalay ang kontrol.
      Hindi ipinapakita ang halaga sa Channel pero gumagana pa rin.
+            """.trimIndent()
+        )
 
-====================================
-💡 MGA TIP PARA SA MAGANDANG RESULTA
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 10 — TIPS
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "💡 MGA TIP PARA SA MAGANDANG RESULTA",
+            content = """
   🎤 PARA SA BOSES:
     • Simulan sa Reverb = 30-50% — hindi masyadong malaki
     • EQ — bawasan ang Low kung masyadong malalim, dagdagan ang High para malinaw
@@ -381,24 +377,69 @@ Dito mo mababago ang pangkalahatang pagkilos ng app:
     • Gumamit ng magandang earphone o speaker — mas malinaw ang pagkakaiba
     • I-off ang ibang app habang gumagamit — mas malakas ang pagproseso
     • Subukan ang iba't ibang kumbinasyon — walang mali sa eksperimento!
+            """.trimIndent()
+        )
 
-====================================
-📞 KAILANGAN NG TULONG?
-====================================
-
+        // ==============================================
+        // 📌 BAHAGI 11 — KAILANGAN NG TULONG
+        // ==============================================
+        addCollapsibleSection(
+            root = root,
+            title = "📞 KAILANGAN NG TULONG?",
+            content = """
   • 🌐 Join Us — Sumali sa aming komunidad — tanungin ang iba pang user!
   • ℹ️ About — Tingnan ang bersyon at impormasyon ng developer
   • I-report ang problema — Settings → Report Issue — ilarawan ang nangyari
 
-====================================================================
                   ✅ SALAMAT SA PAGGAMIT NG MARTODOSKO!
            "Ang musika — para sa lahat, kahit saan."
                   Version $versionName — 2026-09-16
-====================================================================
-        """.trimIndent()
+            """.trimIndent()
+        )
 
-        root.addView(helpContent)
         scrollView.addView(root)
         return scrollView
+    }
+
+    // ==============================================
+    // ✅ PAMAMARAAN — GUMAGAWA NG NABABASA PINDUTIN NA SECTION!
+    // ==============================================
+    private fun addCollapsibleSection(
+        root: LinearLayout,
+        title: String,
+        content: String
+    ) {
+        val context = root.context
+
+        // ✅ HEADER — PINDUTIN PARA BUKAS/TIKLOP
+        val header = TextView(context)
+        header.text = "▼  $title"
+        header.textSize = 16f
+        header.setTextColor(0xFF40E0D0.toInt())
+        header.setPadding(0, 20, 0, 12)
+        header.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+
+        // ✅ CONTENT — NAKATIKLOP NANG UNA
+        val contentView = TextView(context)
+        contentView.text = content
+        contentView.setTextColor(0xFFE0E0E0.toInt())
+        contentView.textSize = 12f
+        contentView.setLineSpacing(4f, 1f)
+        contentView.setPadding(16, 0, 0, 16)
+        contentView.visibility = View.GONE  // ✅ NAKATIKLOP NANG UNA!
+
+        // ✅ PINDUTIN → BUKAS O TIKLOP!
+        header.setOnClickListener {
+            if (contentView.visibility == View.GONE) {
+                contentView.visibility = View.VISIBLE
+                header.text = "▲  $title"
+            } else {
+                contentView.visibility = View.GONE
+                header.text = "▼  $title"
+            }
+        }
+
+        root.addView(header)
+        root.addView(contentView)
     }
 }
