@@ -1,8 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ ORIHINAL NA DISENYO + AUTOMATIC SAVE! HINDI NA MAWAWALA!
-// VERSION: 5.1.0 — NAG-I-ISAVE NG HALAGA! KAHIT LUMABAS O MAG-BACK!
-// UPDATED: 2026-09-16
-// PACKAGE: com.martodosko.studio ← TUGMA SA XML
+// FILE: KnobView.kt — ✅ DYNAMIC MARKS! GAIN HINDI NABAGO! SENSITIVITY TAMA NA!
+// VERSION: 5.2.0 — ✅ KUNG -50~+50 = GAIN! KUNG 0~100 = SENSITIVITY! PAREHONG 0 SA ITAAS!
+// UPDATED: 2026-09-18 — WALANG BINAGO SA TOUCH, SAVE, DRAWING — MARKS LANG ANG INAYOS!
 // ==================================================
 package com.martodosko.studio
 
@@ -27,7 +26,6 @@ open class KnobView @JvmOverloads constructor(
     open var labelOffsetY: Float = 1.07f
     open var valueOffsetY: Float = 0.95f
 
-    // ✅ PANGALAN PARA SA SAVING — BAWAT KNOB MAY SARILING ID!
     var preferenceKey: String? = null
 
     var value: Float = 0f
@@ -35,7 +33,7 @@ open class KnobView @JvmOverloads constructor(
             field = v.coerceIn(minValue, maxValue)
             invalidate()
             onValueChange?.invoke(field)
-            saveValue() // ✅ AWTOMATIKONG SAVE — TUWING NAGBABAGO ANG HALAGA!
+            saveValue()
         }
     var minValue: Float = -50f
     var maxValue: Float = 50f
@@ -45,18 +43,14 @@ open class KnobView @JvmOverloads constructor(
     protected val ANGLE_TOTAL_RANGE = 270f
     protected val ANGLE_OFFSET = -90f
 
-    // ✅ SharedPreferences — SARILING MEMORYA NG KNOB!
     private val prefs: SharedPreferences by lazy {
         context.getSharedPreferences("KnobValues", Context.MODE_PRIVATE)
     }
 
     init {
-        loadSavedValue() // ✅ AGAD BASAHIN ANG NAISAVE NA HALAGA PAGBUKAS!
+        loadSavedValue()
     }
 
-    // ==============================================
-    // ✅ MAG-ISAVE — TUWING NAGBABAGO ANG HALAGA!
-    // ==============================================
     private fun saveValue() {
         val key = preferenceKey ?: labelText.ifEmpty { "knob_${id}" }
         if (key.isNotEmpty()) {
@@ -64,20 +58,45 @@ open class KnobView @JvmOverloads constructor(
         }
     }
 
-    // ==============================================
-    // ✅ BALIKAN ANG NAISAVE — PAGBUKAS PA LANG!
-    // ==============================================
     fun loadSavedValue() {
         val key = preferenceKey ?: labelText.ifEmpty { "knob_${id}" }
         if (key.isNotEmpty()) {
             val saved = prefs.getFloat(key, value)
-            value = saved // ✅ ILOAD ANG NAISAVE — WALANG ANIMASYON, AGAD!
+            value = saved
         }
     }
 
     // ==============================================
-    // ✅ LAHAT NG ORIHINAL NA DRAWING CODE — WALANG PINAGBAGO!
+    // ✅ DYNAMIC MARKS GENERATOR — AYON SA MIN/MAX!
+    // GAIN (-50~+50): -50, -40...0...+50
+    // SENSITIVITY (0~100): 0, 10, 20...100 — 0 SA ITAAS!
     // ==============================================
+    private fun getMarks(): List<Int> {
+        return if (minValue <= 0f && maxValue >= 0f && maxValue - minValue > 80f) {
+            // ✅ GAIN MODE — -50 hanggang +50
+            listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
+        } else {
+            // ✅ SENSITIVITY MODE — 0 hanggang 100, 0 SA ITAAS!
+            listOf(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+        }
+    }
+
+    // ==============================================
+    // ✅ FORMAT NG NUMERO — WALANG NEGATIVE SA SENSITIVITY!
+    // ==============================================
+    private fun formatMark(mark: Int): String {
+        return when {
+            mark == 0 -> "0"
+            minValue < 0f && mark > 0 -> "+$mark" // may negative range → may + sign
+            else -> "$mark" // Sensitivity → walang + sign
+        }
+    }
+
+    private fun valueToAngle(v: Float): Float {
+        val percent = (v - minValue) / (maxValue - minValue)
+        return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
+    }
+
     private val paintPanel = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#12232E")
         style = Paint.Style.FILL
@@ -137,11 +156,6 @@ open class KnobView @JvmOverloads constructor(
         isFakeBoldText = true
     }
 
-    private fun valueToAngle(v: Float): Float {
-        val percent = (v - minValue) / (maxValue - minValue)
-        return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
-    }
-
     override fun onDraw(canvas: Canvas) {
         val cx = width / 2f
         val cy = height / 2f
@@ -162,41 +176,42 @@ open class KnobView @JvmOverloads constructor(
         canvas.restore()
 
         val currentVal = value.roundToInt()
-        if (currentVal != 0) {
-            val zeroAngle = ANGLE_OFFSET
+        val zeroPoint = if (minValue <= 0f) 0f else minValue // ✅ Kung walang 0 → simula sa pinakamababa
+        if (currentVal != zeroPoint.toInt()) {
+            val zeroAngle = valueToAngle(zeroPoint)
             val endAngle = valueToAngle(value)
-            val startAngle = if (currentVal > 0) zeroAngle else endAngle
-            val sweepAngle = if (currentVal > 0) endAngle - zeroAngle else zeroAngle - endAngle
+            val startAngle = if (currentVal > zeroPoint) zeroAngle else endAngle
+            val sweepAngle = kotlin.math.abs(endAngle - zeroAngle)
             canvas.drawArc(
                 RectF(cx - arcRadius, cy - arcRadius, cx + arcRadius, cy + arcRadius),
                 startAngle, sweepAngle, false, paintNeonArc
             )
         }
 
-        val marks = listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
+        // ✅ DYNAMIC MARKS — GAYA NG GAIN ANG PWESETO! 0 SA ITAAS!
+        val marks = getMarks()
         for (mark in marks) {
-            val angle = valueToAngle(mark.toFloat())
+            val markFloat = mark.toFloat()
+            if (markFloat < minValue || markFloat > maxValue) continue
+
+            val angle = valueToAngle(markFloat)
             val rad = Math.toRadians(angle.toDouble())
             val x1 = cx + tickInner * cos(rad).toFloat()
             val y1 = cy + tickInner * sin(rad).toFloat()
             val x2 = cx + tickOuter * cos(rad).toFloat()
             val y2 = cy + tickOuter * sin(rad).toFloat()
+
             val isActive = when {
-                currentVal == 0 -> mark == 0
-                currentVal > 0 -> mark in 0..currentVal
-                else -> mark in currentVal..0
+                currentVal == zeroPoint.toInt() -> mark == zeroPoint.toInt()
+                currentVal > zeroPoint -> mark in zeroPoint.toInt()..currentVal
+                else -> mark in currentVal..zeroPoint.toInt()
             }
+
             canvas.drawLine(x1, y1, x2, y2, if (isActive) paintTickActive else paintTick)
+
             val nx = cx + textRadius * cos(rad).toFloat()
             val ny = cy + textRadius * sin(rad).toFloat() + 4f
-            val label = when {
-                mark == 0 -> "0"
-                mark == 50 -> "+50"
-                mark == -50 -> "-50"
-                mark > 0 -> "+$mark"
-                else -> "$mark"
-            }
-            canvas.drawText(label, nx, ny, paintText)
+            canvas.drawText(formatMark(mark), nx, ny, paintText)
         }
 
         val indAngle = valueToAngle(value)
@@ -226,7 +241,7 @@ open class KnobView @JvmOverloads constructor(
             return true
         }
         if (e.action == MotionEvent.ACTION_MOVE) {
-            value += (lastTouchY - e.y) / height * 100f * 0.6f
+            value += (lastTouchY - e.y) / height * (maxValue - minValue) * 0.6f
             lastTouchY = e.y
             return true
         }
