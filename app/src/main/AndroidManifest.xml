@@ -38,10 +38,11 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT — BAGONG DAGDAG! -->
+        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT ✅ INAYOS: singleTop = HINDI BAGONG INSTANCE! -->
         <activity
             android:name=".ContentActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <!-- ✅ FileProvider — KAILANGAN PARA MA-INSTALL ANG APK sa Android 7+ -->
