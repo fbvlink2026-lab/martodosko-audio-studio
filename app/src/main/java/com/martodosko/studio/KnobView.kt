@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ NABAWASAN ANG PUWANG! NUMERO HINDI NA LUMALABAS!
-// VERSION: 5.3.1 — ✅ NEON GLOW LAPIT SA KNOB! TEXT LAPIT PAPASOK!
-// UPDATED: 2026-09-18 — DALAWANG NUMERO LANG ANG PINALITAN!
+// FILE: KnobView.kt — ✅ LABEL NAKIKITA NA! NEON GLOW TAMA ANG PUWANG!
+// VERSION: 5.3.2 — ✅ PANEL LUMAKI NANG BAHAGYA! WALANG IBANG BINAGO!
+// UPDATED: 2026-09-18 — DALAWANG LINYA LANG ANG PINALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -156,17 +156,18 @@ open class KnobView @JvmOverloads constructor(
         val cx = width / 2f
         val cy = height / 2f
         val diameter = minOf(width, height)
-        val panelRadius = diameter * 0.47f
+        
+        // ✅ PALITAN 1: PANEL LUMAKI — MAGKASYA NA ANG LABEL!
+        val panelRadius = diameter * 0.52f
+        
         val knobRadius = diameter * 0.27f
         
-        // ✅ PALITAN 1: NEON ARC — LAPIT SA KNOB, BAWAS ANG PUWANG!
-        val arcRadius = diameter * 0.34f  // ← dating 0.38f → 0.34f, LAPIT PAPASOK!
+        // ✅ PALITAN 2: NEON ARC — TAMA ANG PUWANG!
+        val arcRadius = diameter * 0.36f
         
         val tickInner = arcRadius * 1.03f
         val tickOuter = arcRadius * 1.08f
-        
-        // ✅ PALITAN 2: TEXT RADIUS — LAPIT PAPASOK, HINDI NA LUMALABAS!
-        val textRadius = diameter * 0.42f  // ← dating 0.45f → 0.42f, LAPIT PAPASOK!
+        val textRadius = diameter * 0.42f
 
         canvas.drawCircle(cx, cy, panelRadius, paintPanel)
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
