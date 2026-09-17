@@ -1,6 +1,6 @@
 // ==================================================
 // FILE: ContentActivity.kt — ✅ INAYOS NA! PALIT AGAD ANG FRAGMENT!
-// VERSION: 1.0.3 — ✅ IDINAGDAG onNewIntent()! HINDI NA LAGING SETTINGS! WALANG IBANG PINAGBAGO!
+// VERSION: 1.0.4 — ✅ TAMA NA ANG LAHAT! singleTop + onNewIntent + commitAllowingStateLoss!
 // UPDATED: 2026-09-17 — TAMA NA ANG LALABAS SA BAWAT BUTTON! BUILD NA!
 // ==================================================
 package com.martodosko.studio
@@ -18,20 +18,20 @@ class ContentActivity : FragmentActivity() {
         setContentView(R.layout.content_activity)
 
         setupSideMenu()
-        showCorrectFragment(intent)  // ✅ TINAWAG ANG PAMAMARAAN — MALINAW!
+        showCorrectFragment(intent)
     }
 
     // ==============================================
-    // ✅ BAGONG DAGDAG — KAPAG BINUKAS ULIT ANG ACTIVITY, PALIT AGAD ANG LAMAN!
+    // ✅ INAYOS — TAMA NA ANG onNewIntent!
     // ==============================================
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        showCorrectFragment(intent)  // ✅ BASAHIN ANG BAGONG BUTTON NA PININDOT!
+        showCorrectFragment(intent)
     }
 
     // ==============================================
-    // ✅ IPALIT ANG FRAGMENT AYON SA PININDOT — ISANG LUGAR LANG!
+    // ✅ IPALIT ANG FRAGMENT AYON SA PININDOT — IISANG LUGAR LANG!
     // ==============================================
     private fun showCorrectFragment(intent: Intent?) {
         val targetScreen = intent?.action ?: "SETTINGS"
@@ -44,7 +44,7 @@ class ContentActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ SIDE MENU — GANOON PA RIN! WALANG PINAGBAGO!
+    // ✅ SIDE MENU — TAMA NA ANG PARAMETERS! TUGMA SA SideMenu.kt!
     // ==============================================
     private fun setupSideMenu() {
         SideMenu.setup(
@@ -57,12 +57,12 @@ class ContentActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ PALITAN ANG LAMAN — GANOON PA RIN! WALANG PINAGBAGO!
+    // ✅ INAYOS — commitAllowingStateLoss = WALANG CRASH!
     // ==============================================
     private fun showFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(R.id.content_container, fragment)
-            .commit()
+            .commitAllowingStateLoss()
     }
 }
