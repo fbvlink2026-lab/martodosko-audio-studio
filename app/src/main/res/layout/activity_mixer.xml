@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ TUGMA NA SA BUONG MENU! PAREHO SA MAIN! -->
-<!-- VERSION: 5.1.0 — MAY PRESETS + SETTINGS NA! WALANG LABIS WALANG KULANG! -->
-<!-- UPDATED: 2026-09-16 -->
+<!-- FILE: activity_mixer.xml — ✅ GAIN + SENSITIVITY! SCROLLABLE! -->
+<!-- VERSION: 7.1.0 — ✅ DAGDAG: SENSITIVITY KNOB! HORIZONTAL SCROLL! -->
+<!-- UPDATED: 2026-09-18 — MAGKASYA LAHAT SA SCREEN! SWIPEABLE! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- ✅ TOP BAR — MAY HAMBURGER BUTTON! -->
+        <!-- ✅ TOP BAR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -26,7 +26,6 @@
             android:background="#1E1E2F"
             android:paddingHorizontal="16dp">
 
-            <!-- ✅ HAMBURGER BUTTON → BUKAS ANG MENU -->
             <ImageView
                 android:id="@+id/btn_hamburger"
                 android:layout_width="32dp"
@@ -50,7 +49,7 @@
                 android:layout_height="32dp"/>
         </LinearLayout>
 
-        <!-- ✅ MIXER CONTENT — ORIHINAL NA! WALANG PINAGBAGO! -->
+        <!-- ✅ VERTICAL SCROLL — PARA MAGKASYA LAHAT! -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -63,58 +62,60 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- CHANNEL HEADER -->
+                <!-- ================================================== -->
+                <!-- ✅ INPUT SECTION — GAIN + SENSITIVITY! SWIPEABLE HORIZONTAL! -->
+                <!-- ================================================== -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="VOCAL CHANNEL"
+                    android:text="📥 INPUT"
                     android:textColor="#40E0D0"
-                    android:textSize="18sp"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:padding="12dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ KNOB AREA — HANDANG DAGDAGAN! -->
-                <LinearLayout
+                <!-- ✅ HORIZONTAL SCROLL — PAG NAPADAMI, PWEDE I-SWIPE PAKANAN! -->
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
-                    android:background="#12232E"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="12dp">
 
-                    <!-- ✅ GAIN KNOB — ID = knob_gain → TUGMA SA MixerActivity.kt! -->
-                    <com.martodosko.studio.KnobView
-                        android:id="@+id/knob_gain"
-                        android:layout_width="140dp"
-                        android:layout_height="160dp"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
 
-                    <!-- ✅ DAGDAG MO LANG DITO ANG IBA — HANDANG-HANDA NA!
-                    <com.martodosko.studio.KnobView
-                        android:id="@+id/knob_bass"
-                        android:layout_width="140dp"
-                        android:layout_height="160dp"
-                        android:layout_marginTop="24dp"/>
+                        <!-- ✅ GAIN KNOB — UNA! -->
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_gain"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
 
-                    <com.martodosko.studio.KnobView
-                        android:id="@+id/knob_treble"
-                        android:layout_width="140dp"
-                        android:layout_height="160dp"
-                        android:layout_marginTop="24dp"/>
-                    -->
+                        <!-- ✅ BAGONG DAGDAG — SENSITIVITY KNOB! -->
+                        <com.martodosko.studio.KnobView
+                            android:id="@+id/knob_sensitivity"
+                            android:layout_width="140dp"
+                            android:layout_height="160dp"
+                            android:layout_margin="4dp"/>
 
-                </LinearLayout>
+                        <!-- ✅ DITO PWEDE DAGDAGAN — I-SWIPE LANG PAKANAN! -->
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- ================================================== -->
+                <!-- ⏸️ MGA SUSUNOD — DAGDAGAN NATIN PAGKATAPUS! -->
+                <!-- ================================================== -->
 
             </LinearLayout>
         </ScrollView>
 
     </LinearLayout>
 
-    <!-- ✅ SIDE MENU — TUGMA NA SA MAIN! MAY PRESETS + SETTINGS NA! -->
+    <!-- ✅ SIDE MENU — BUO -->
     <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
@@ -123,7 +124,6 @@
         android:orientation="vertical"
         android:elevation="16dp">
 
-        <!-- ✅ MENU HEADER + X BUTTON -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -141,7 +141,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"/>
 
-            <!-- ✅ CLOSE BUTTON — ID = btn_close_menu → TUGMA SA SideMenu.kt! -->
             <ImageView
                 android:id="@+id/btn_close_menu"
                 android:layout_width="32dp"
@@ -156,7 +155,6 @@
             android:layout_height="1dp"
             android:background="#333344"/>
 
-        <!-- ✅ MENU OPTIONS — TUGMA NA SA BUONG MENU! WALANG LABIS WALANG KULANG! -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -174,7 +172,6 @@
                 android:paddingStart="24dp"
                 android:clickable="true"/>
 
-            <!-- ✅ BAGONG DAGDAG — PRESETS! TUGMA SA SideMenu.kt! -->
             <TextView
                 android:id="@+id/menu_presets"
                 android:layout_width="match_parent"
@@ -186,7 +183,6 @@
                 android:paddingStart="24dp"
                 android:clickable="true"/>
 
-            <!-- ✅ BAGONG DAGDAG — SETTINGS! TUGMA SA SideMenu.kt! -->
             <TextView
                 android:id="@+id/menu_settings"
                 android:layout_width="match_parent"
