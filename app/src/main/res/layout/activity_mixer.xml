@@ -1,305 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ GAIN KNOB LANG MUNA! PARA MALAMAN ANG SANHI! -->
-<!-- VERSION: 7.0.1 — ✅ LAHAT IBA NAKA-COMMENT MUNA! WALANG CRASH! -->
-<!-- UPDATED: 2026-09-18 -->
-<!-- ================================================== -->
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#121212">
+suriin ito pero huwag babaguhin ang code, kung kinakailangang dagdag lamang.
 
-    <!-- ✅ PANGUNAHING LAMAN — MIXER SCREEN -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+dito:
 
-        <!-- ✅ TOP BAR — MAY HAMBURGER BUTTON! -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="#1E1E2F"
-            android:paddingHorizontal="16dp">
+// ==================================================
+// FILE: MixerActivity.kt — ✅ NAG-I-ISAVE NG HALAGA! HINDI NA MAWAWALA!
+// VERSION: 2.1.0 — SharedPreferences! NAISAVE KAHIT LUMABAS O MAG-BACK!
+// UPDATED: 2026-09-16
+// ==================================================
+package com.martodosko.studio
 
-            <ImageView
-                android:id="@+id/btn_hamburger"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_hamburger"
-                android:clickable="true"
-                android:focusable="true"/>
+import android.app.Activity
+import android.content.Context
+import android.os.Bundle
+import android.view.Gravity
+import android.widget.Toast
+import kotlin.math.roundToInt  // ✅ ITO ANG KULANG! IDAGDAG LANG!
+class MixerActivity : Activity() {
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="MIXER"
-                android:textColor="#40E0D0"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center"/>
+    private lateinit var sideMenu: SideMenu
+    private lateinit var gainKnob: KnobView
 
-            <View
-                android:layout_width="32dp"
-                android:layout_height="32dp"/>
-        </LinearLayout>
+    // ✅ PANGALAN NG SAVED DATA
+    companion object {
+        private const val PREFS_NAME = "MixerPrefs"
+        private const val KEY_GAIN_VALUE = "gain_value"
+    }
 
-        <!-- ✅ VERTICAL SCROLL -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#081218"
-            android:fillViewport="true">
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_mixer)
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+        try {
+            // ✅ SIDE MENU — GUMAGANA PA RIN!
+            sideMenu = SideMenu.setup(
+                activity = this,
+                drawerLayoutId = R.id.drawer_layout,
+                btnOpenMenuId = R.id.btn_hamburger,
+                btnCloseMenuId = R.id.btn_close_menu
+            )
 
-                <!-- ================================================== -->
-                <!-- ✅ INPUT SECTION — GAIN KNOB LANG MUNA! -->
-                <!-- ================================================== -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="📥 INPUT"
-                    android:textColor="#40E0D0"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:padding="12dp"
-                    android:background="#12232E"/>
+            // ✅ GAIN KNOB — KUKUNIN ANG HALAGA
+            gainKnob = findViewById<KnobView>(R.id.knob_gain)
+            gainKnob.labelText = "GAIN"
+            gainKnob.unitText = "dB"
+            gainKnob.minValue = -50f
+            gainKnob.maxValue = 50f
 
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp">
+            // ✅ BALIKAN ANG NAISAVE NA HALAGA — KUNG MERON!
+            loadSavedValues()
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+        } catch (e: Exception) {
+            Toast.makeText(this, "❌ Error: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+        }
+    }
 
-                        <!-- ✅ GAIN KNOB LANG — UNANG SUSUBUKAN! -->
-                        <com.martodosko.studio.GainKnob
-                            android:id="@+id/knob_gain"
-                            android:layout_width="140dp"
-                            android:layout_height="160dp"
-                            android:layout_margin="4dp"/>
+    // ==============================================
+    // ✅ MAG-ISAVE BAGO MAGSARA! — ITO ANG SOLUSYON!
+    // ==============================================
+    private fun saveValues() {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        editor.putFloat(KEY_GAIN_VALUE, gainKnob.value) // ✅ ISAVE ANG HALAGA NG GAIN
+        editor.apply()
+        Toast.makeText(this, "✅ Naisave: ${gainKnob.value.roundToInt()} dB", Toast.LENGTH_SHORT).show()
+    }
 
-                        <!-- ⏸️ NAKA-COMMENT MUNA — SENSITIVITY MAMAYA NA!
-                        <com.martodosko.studio.SensitivityKnob
-                            android:id="@+id/knob_sensitivity"
-                            android:layout_width="140dp"
-                            android:layout_height="160dp"
-                            android:layout_margin="4dp"/>
-                        -->
-                    </LinearLayout>
-                </HorizontalScrollView>
+    // ==============================================
+    // ✅ BALIKAN ANG NAISAVE NA HALAGA!
+    // ==============================================
+    private fun loadSavedValues() {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val savedGain = prefs.getFloat(KEY_GAIN_VALUE, 0f) // ✅ 0f = default kung wala pang naka-save
+        gainKnob.value = savedGain
+    }
 
-                <!-- ================================================== -->
-                <!-- ⏸️ EQUALIZER — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!--
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🎚️ EQ / TONE"
-                    android:textColor="#40E0D0"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:padding="12dp"
-                    android:layout_marginTop="24dp"
-                    android:background="#12232E"/>
-                ... lahat ng EQ knobs ...
-                -->
+    // ✅ KAPAG PININDOT ANG BACK BUTTON — MAG-ISAVE MUNA!
+    override fun onBackPressed() {
+        saveValues() // ✅ ISAVE MUNA BAGO LUMABAS!
+        if (::sideMenu.isInitialized && sideMenu.drawerLayout.isDrawerOpen(Gravity.START)) {
+            sideMenu.close()
+        } else {
+            super.onBackPressed()
+        }
+    }
 
-                <!-- ================================================== -->
-                <!-- ⏸️ REVERB — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!--
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🏛️ REVERB"
-                    ...
-                -->
-
-                <!-- ================================================== -->
-                <!-- ⏸️ DELAY — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!-- ... -->
-
-                <!-- ================================================== -->
-                <!-- ⏸️ CHORUS — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!-- ... -->
-
-                <!-- ================================================== -->
-                <!-- ⏸️ DISTORTION — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!-- ... -->
-
-                <!-- ================================================== -->
-                <!-- ⏸️ COMPRESSOR — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!-- ... -->
-
-                <!-- ================================================== -->
-                <!-- ⏸️ OUTPUT — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!-- ... -->
-
-                <!-- ================================================== -->
-                <!-- ⏸️ MASTER SLIDERS — NAKA-COMMENT MUNA! -->
-                <!-- ================================================== -->
-                <!-- ... -->
-
-            </LinearLayout>
-        </ScrollView>
-
-    </LinearLayout>
-
-    <!-- ✅ SIDE MENU — BUO, KAILANGAN ITO! -->
-    <LinearLayout
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#1A1A2E"
-        android:orientation="vertical"
-        android:elevation="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:background="#16162A">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="MENU"
-                android:textColor="#40E0D0"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:id="@+id/btn_close_menu"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_close"
-                android:clickable="true"
-                android:focusable="true"/>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#333344"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:id="@+id/menu_mixer"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🎚️  Mixer"
-                android:textColor="#40E0D0"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_presets"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="📋  Presets"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_settings"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="⚙️  Settings"
-                android:textColor="#40E0D0"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_effects"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🎸  Guitar Effects"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_update"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🔄  Check Update"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_help"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="❓  Help"
-                android:textColor="#40E0D0"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_join"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🌐  Join Us"
-                android:textColor="#00BFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_about"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="ℹ️  About"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-        </LinearLayout>
-    </LinearLayout>
-
-</androidx.drawerlayout.widget.DrawerLayout>
+    // ✅ KAPAG PININDOT ANG MENU BUTTON (pumunta sa ibang screen) — MAG-ISAVE MUNA!
+    override fun onPause() {
+        super.onPause()
+        if (::gainKnob.isInitialized) {
+            saveValues() // ✅ ISAVE KAPAG UMALIS SA SCREEN — ANUMAN ANG DAHILAN!
+        }
+    }
+}
