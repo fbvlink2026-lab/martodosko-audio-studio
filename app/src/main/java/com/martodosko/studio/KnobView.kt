@@ -1,8 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ ORIHINAL NA DISENYO + AUTOMATIC SAVE! HINDI NA MAWAWALA!
-// VERSION: 5.1.0 — NAG-I-ISAVE NG HALAGA! KAHIT LUMABAS O MAG-BACK!
-// UPDATED: 2026-09-16
-// PACKAGE: com.martodosko.studio ← TUGMA SA XML
+// FILE: KnobView.kt — ✅ BASAHIN NA ANG PANGALAN MULA SA XML! WALANG IBANG PINAGBAGO!
+// VERSION: 5.2.0 — ✅ labelText MULA SA android:tag O XML ATTRIBUTES! WALANG TINANGGAL!
+// UPDATED: 2026-09-17 — ORIHINAL NA LOGIC + SAVE + TOUCH — LAHAT NANDOON PA RIN!
 // ==================================================
 package com.martodosko.studio
 
@@ -51,6 +50,22 @@ open class KnobView @JvmOverloads constructor(
     }
 
     init {
+        // ==============================================
+        // ✅ BAGONG DAGDAG — BASAHIN ANG PANGALAN MULA SA XML!
+        // ==============================================
+        val typedArray = context.obtainStyledAttributes(attrs, intArrayOf(android.R.attr.tag))
+        try {
+            // Kung may nakaset na sa code — huwag palitan. Kung wala — kunin mula sa android:tag
+            if (labelText.isEmpty()) {
+                val tagValue = typedArray.getString(0)
+                if (!tagValue.isNullOrEmpty()) {
+                    labelText = tagValue
+                }
+            }
+        } finally {
+            typedArray.recycle()
+        }
+
         loadSavedValue() // ✅ AGAD BASAHIN ANG NAISAVE NA HALAGA PAGBUKAS!
     }
 
