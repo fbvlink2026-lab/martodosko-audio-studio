@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ PANEL NAGING PARISUKAT! WALANG KANTO! LABEL LUMABAS NA!
-// VERSION: 5.3.3 — ✅ drawCircle → drawRect! WALANG IBANG BINAGO!
-// UPDATED: 2026-09-18 — ISANG LINYA LANG ANG PALITAN!
+// FILE: KnobView.kt — ✅ LABEL SA LABAS NA NG PANEL! LUMABAS NA!
+// VERSION: 5.3.4 — ✅ LABEL POSITION INILIPAT SA LABAS NG PANEL!
+// UPDATED: 2026-09-18 — LABEL LANG ANG INILIPAT! WALANG IBANG BINAGO!
 // ==================================================
 package com.martodosko.studio
 
@@ -23,8 +23,8 @@ open class KnobView @JvmOverloads constructor(
 
     open var labelText: String = ""
     open var unitText: String = ""
-    open var labelOffsetY: Float = 1.07f
-    open var valueOffsetY: Float = 0.95f
+    open var labelOffsetY: Float = 1.25f  // ✅ INILIPAT SA LABAS NG PANEL!
+    open var valueOffsetY: Float = 1.15f   // ✅ VALUE NILIPAT DIN SA LABAS SA BABA!
 
     var preferenceKey: String? = null
 
@@ -164,7 +164,7 @@ open class KnobView @JvmOverloads constructor(
         val tickOuter = arcRadius * 1.08f
         val textRadius = size * 0.42f
 
-        // ✅ BINAGO: BILOG → PARISUKAT NA WALANG KANTO!
+        // ✅ PARISUKAT NA PANEL — WALANG KANTO!
         canvas.drawRect(cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize, paintPanel)
 
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
@@ -227,9 +227,11 @@ open class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
+        // ✅ LABEL — NASA LABAS NA NG PANEL! HINDI NA TAKPAN!
         if (labelText.isNotEmpty()) {
             canvas.drawText(labelText, cx, cy - panelRadius * labelOffsetY, paintLabel)
         }
+        // ✅ VALUE — NASA LABAS NA RIN SA BABA!
         canvas.drawText("${value.roundToInt()} $unitText", cx, cy + panelRadius * valueOffsetY, paintValueText)
     }
 
