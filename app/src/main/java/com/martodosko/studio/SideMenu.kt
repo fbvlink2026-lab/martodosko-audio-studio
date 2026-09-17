@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ INAYOS NA! GUMAMIT NG putExtra() SA HALIP NG action! SIGURADO NA!
-// VERSION: 1.2.2 — ✅ ITO LANG ANG INAYOS: intent.putExtra() sa lahat ng ContentActivity call! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-17 — WALANG TINANGGAL, WALANG IBANG BINAGO! EXTRA LANG ANG IDINAGDAG!
+// FILE: SideMenu.kt — ✅ INAYOS NA! TINANGGAL ANG HARANG! LAGING NAGPAPALIT NG FRAGMENT!
+// VERSION: 1.2.3 — ✅ TINANGGAL ANG "KUNG NASA CONTENTACTIVITY NA" CHECK! LAGING NAGPAPASA NG BAGONG EXTRA!
+// UPDATED: 2026-09-17 — WALANG IBANG PINAGBAGO! HARANG LANG ANG TINANGGAL!
 // ==================================================
 package com.martodosko.studio
 
@@ -53,7 +53,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! DIREKTANG CONTENTACTIVITY NA!
+    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! HARANG LANG ANG INALIS!
     // ==============================================
     private fun setupMenuButtons() {
         // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
@@ -97,17 +97,15 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ SETTINGS → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
+        // ✅ SETTINGS — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
-            if (activity is ContentActivity) {
-                Toast.makeText(activity, "✅ Nasa Settings ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "SETTINGS")  // ✅ ITO LANG ANG PALIT!
+                intent.putExtra("target_screen", "SETTINGS")
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
                 Toast.makeText(activity, "⚙️ Binubuksan ang Settings...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -174,17 +172,15 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ HELP → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
+        // ✅ HELP — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
-            if (activity is ContentActivity) {
-                Toast.makeText(activity, "✅ Nasa Help ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "HELP")  // ✅ ITO LANG ANG PALIT!
+                intent.putExtra("target_screen", "HELP")
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
                 Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -201,17 +197,15 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ JOIN US → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
+        // ✅ JOIN US — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
-            if (activity is ContentActivity) {
-                Toast.makeText(activity, "✅ Nasa Join Us ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "JOIN_US")  // ✅ ITO LANG ANG PALIT!
+                intent.putExtra("target_screen", "JOIN_US")
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
                 Toast.makeText(activity, "🌐 Binubuksan ang Join Us...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
@@ -228,17 +222,15 @@ class SideMenu(
         }
 
         // ==============================================
-        // ✅ ABOUT → DIREKTANG ContentActivity! ✅ GUMAMIT NG putExtra()! WALANG IBANG PINAGBAGO!
+        // ✅ ABOUT — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
         // ==============================================
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
-            if (activity is ContentActivity) {
-                Toast.makeText(activity, "✅ Nasa About ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "ABOUT")  // ✅ ITO LANG ANG PALIT!
+                intent.putExtra("target_screen", "ABOUT")
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
                 Toast.makeText(activity, "ℹ️ Binubuksan ang About...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
