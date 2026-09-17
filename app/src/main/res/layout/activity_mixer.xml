@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ SENSITIVITY NASA IBABA! VERTICAL NA! -->
-<!-- VERSION: 7.2.0 — ✅ HORIZONTAL → VERTICAL! WALANG IBANG BINAGO! -->
-<!-- UPDATED: 2026-09-18 -->
+<!-- FILE: activity_mixer.xml — ✅ VOCAL CHANNEL + PAREHONG BILOG! -->
+<!-- VERSION: 7.3.0 — ✅ INPUT→VOCAL CHANNEL + 160x160 PAREHO! -->
+<!-- UPDATED: 2026-09-18 — TATLONG LINYA LANG ANG PINALITAN! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -61,18 +61,18 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- ✅ INPUT SECTION -->
+                <!-- ✅ PALITAN 1: INPUT → VOCAL CHANNEL -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="📥 INPUT"
+                    android:text="🎤 VOCAL CHANNEL"
                     android:textColor="#40E0D0"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:padding="12dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ VERTICAL NA — SENSITIVITY NASA IBABA NG GAIN! WALANG HORIZONTAL SCROLL! -->
+                <!-- ✅ VERTICAL NA -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,17 +80,17 @@
                     android:gravity="center"
                     android:layout_marginTop="12dp">
 
-                    <!-- ✅ GAIN KNOB -->
+                    <!-- ✅ PALITAN 2: 140x160 → 160x160 (BILOG) -->
                     <com.martodosko.studio.KnobView
                         android:id="@+id/knob_gain"
-                        android:layout_width="140dp"
+                        android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:layout_margin="4dp"/>
 
-                    <!-- ✅ SENSITIVITY KNOB — NASA IBABA NA! -->
+                    <!-- ✅ PALITAN 3: 140x160 → 160x160 (BILOG) -->
                     <com.martodosko.studio.KnobView
                         android:id="@+id/knob_sensitivity"
-                        android:layout_width="140dp"
+                        android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:layout_margin="4dp"/>
 
