@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ================================================== -->
+<!-- FILE: fragment_admin_login.xml — ✅ ADMIN LOGIN LAYOUT! -->
+<!-- VERSION: 1.0.0 — SIMPLE! WALANG IBANG PINAGBAGO! -->
+<!-- UPDATED: 2026-09-19 -->
+<!-- ================================================== -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="#121212">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔐 ADMIN LOGIN"
+        android:textColor="#FFD700"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"/>
+
+    <EditText
+        android:id="@+id/et_admin_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        android:textColorHint="#888888"
+        android:textColor="#FFFFFF"
+        android:background="#1E1E2F"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/et_admin_pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:textColorHint="#888888"
+        android:textColor="#FFFFFF"
+        android:background="#1E1E2F"
+        android:padding="16dp"
+        android:inputType="textPassword"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btn_admin_login"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="LOGIN"
+        android:backgroundTint="#FFD700"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+</LinearLayout>
