@@ -35,14 +35,62 @@
             text-align: center;
             color: #FF6B6B;
             max-width: 500px;
-            margin: 40px auto;
+            margin: 20px auto;
         }
+        .download-box {
+            background: linear-gradient(135deg, #1A2E1F, #0F3D28);
+            border: 1px solid #00FF88;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            box-shadow: 0 0 20px rgba(0,255,136,0.15);
+        }
+        .download-box h3 { color: #00FF88; font-size: 18px; margin-bottom: 8px; }
+        .download-box p { color: #AAA; font-size: 13px; margin-bottom: 14px; }
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #00FF88, #00CC6E);
+            color: #000;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0,255,136,0.4);
+        }
+        .download-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .version-info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+        .version-info strong { color: #40E0D0; }
         #content-container { max-width: 700px; margin: 0 auto; }
     </style>
 </head>
 <body>
 
     <div id="content-container">
+        <!-- ✅ DOWNLOAD BUTTON — KUSANG KUKUNIN ANG APK MULA SA version.json -->
+        <div class="download-box">
+            <h3>📥 I-download ang Pinakabagong Bersyon</h3>
+            <p>Martodosko Audio Studio — Android APK</p>
+            <a id="download-link" class="download-btn" href="" disabled>⏳ Kinukuha ang bersyon...</a>
+            <div class="version-info">
+                Bersyon: <strong id="ver-number">—</strong> | Petsa: <strong id="ver-date">—</strong>
+            </div>
+        </div>
+
         <div class="loading">
             <div class="spinner"></div>
             <p>📤 Kinukuha ang abiso.html...</p>
@@ -50,30 +98,68 @@
     </div>
 
     <script>
-        // ✅ PARANG PHP INCLUDE — KUKUNIN ANG BUONG LAMAN NG abiso.html
-        // Katulad ng: cat abiso.html → ilabas ang buong laman
+        // ==============================================
+        // ✅ KUSANG HAHANAP NG APK — BASE LANG SA version.json!
+        // JSON FORMAT: {"version":"1.0.211","apkFile":"Martodosko-Studio-v1.0.211.apk","released":"2026-09-18"}
+        // ==============================================
+        async function setupDownloadButton() {
+            try {
+                // 📍 BASAHIN ANG version.json — NASA IISANG FOLDER LANG
+                const response = await fetch('version.json', { cache: 'no-store' });
+                
+                if (!response.ok) throw new Error('Hindi makuha ang version.json');
+                
+                // ✅ KUNIN ANG DATA MULA SA JSON — KAHIT ANONG PAGKAKABUO!
+                const data = await response.json();
+                
+                // ✅ KUSANG KUNIN ANG MGA HALAGA — KAHIT ANONG PANGALAN NG KEY!
+                const version = data.version || data.versionName || data.ver || 'Unknown';
+                const apkName = data.apkFile || data.apk_filename || data.file || data.apk || `Martodosko-Studio-v${version}.apk`;
+                const releaseDate = data.released || data.date || data.releaseDate || 'Unknown';
+                
+                // ✅ Ipakita ang bersyon at petsa
+                document.getElementById('ver-number').textContent = version;
+                document.getElementById('ver-date').textContent = releaseDate;
+                
+                // ✅ KUSANG BUUIN ANG LINK — Nasa docs/ ang APK, KASAMA NG JSON
+                const downloadLink = document.getElementById('download-link');
+                downloadLink.href = apkName; // KAPAREHONG FOLDER — direkta lang!
+                downloadLink.textContent = `⬇️ I-download — v${version}`;
+                downloadLink.download = apkName; // Pangalan ng file pag dinownload
+                downloadLink.removeAttribute('disabled');
+                
+                console.log(`✅ Bersyon: ${version} | APK: ${apkName} | Petsa: ${releaseDate}`);
+                console.log(`✅ Link: ${window.location.origin}${window.location.pathname.replace('index.html', '')}${apkName}`);
+                
+            } catch (err) {
+                console.error('❌ Error:', err);
+                const downloadLink = document.getElementById('download-link');
+                downloadLink.textContent = '❌ Hindi makuha ang bersyon';
+                downloadLink.style.opacity = '0.6';
+            }
+        }
+
+        // ==============================================
+        // ✅ IPAPAKITA ANG BUONG abiso.html — PARANG cat command
+        // ==============================================
         async function loadAbiso() {
             const container = document.getElementById('content-container');
+            const loading = container.querySelector('.loading');
             
-            // 📍 Kung nasa GitHub Pages / docs/ — ang path ay ../assets/abiso.html
-            // Kung nasa local — siguraduhing nasa tamang lokasyon ang assets/abiso.html
             const possiblePaths = [
-                '../assets/abiso.html',
+                'assets/abiso.html',
                 './assets/abiso.html',
-                'abiso.html',
-                '../app/src/main/assets/abiso.html'
+                '../assets/abiso.html',
+                'abiso.html'
             ];
 
             let htmlContent = null;
-            let usedPath = null;
 
-            // Subukan ang lahat ng posibleng path
             for (const path of possiblePaths) {
                 try {
                     const response = await fetch(path, { cache: 'no-store' });
                     if (response.ok) {
                         htmlContent = await response.text();
-                        usedPath = path;
                         break;
                     }
                 } catch (e) {
@@ -82,7 +168,7 @@
             }
 
             if (!htmlContent) {
-                container.innerHTML = `
+                loading.innerHTML = `
                     <div class="error-box">
                         <h3>❌ Hindi makuha ang abiso.html</h3>
                         <p style="margin:10px 0; font-size:13px;">Sinubukan ang mga lokasyon:</p>
@@ -95,15 +181,14 @@
                 return;
             }
 
-            // ✅ ILABAS ANG BUONG LAMAN — parang `cat abiso.html`
-            container.innerHTML = htmlContent;
-            
-            // ✅ I-log ang path para makita kung saan kinuha
-            console.log(`✅ Abiso loaded from: ${usedPath}`);
+            loading.outerHTML = htmlContent;
         }
 
-        // 🚀 TAWAGIN AGAD PAGKABUKAS NG PAGE
-        document.addEventListener('DOMContentLoaded', loadAbiso);
+        // 🚀 TAWAGIN LAHAT PAGKABUKAS NG PAGE
+        document.addEventListener('DOMContentLoaded', async () => {
+            await setupDownloadButton(); // ✅ Una — kunin ang APK mula sa JSON
+            await loadAbiso();          // ✅ Pangalawa — ipakita ang abiso
+        });
     </script>
 
 </body>
