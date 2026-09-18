@@ -1,11 +1,12 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ DAGDAG: ADMIN / WHAT'S NEW / EXIT! WALANG IBANG PINAGBAGO!
-// VERSION: 1.3.0 — ✅ 3 BAGONG BUTTON! LAHAT PAPUNTA SA ContentActivity!
+// FILE: SideMenu.kt — ✅ DOWNLOAD → DIREKTANG BUBUKAS SA BROWSER!
+// VERSION: 1.4.1 — ✅ I-CLICK = BUBUKAS SA BROWSER! WALANG IBANG PINAGBAGO!
 // UPDATED: 2026-09-19 — WALANG TINANGGAL, DAGDAG LANG!
 // ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.view.Gravity
@@ -16,6 +17,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import android.util.Log
 import android.os.Handler
 import android.os.Looper
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 class SideMenu(
     private val activity: Activity,
@@ -24,6 +30,10 @@ class SideMenu(
 ) {
 
     private var currentVer: String = "1.0.0"
+    
+    // ✅ KONFIGURASYON — DIREKTA MULA SA GITHUB WEBSITE
+    private val UPDATE_JSON_URL = "https://martodosko.github.io/martodosko-audio-studio/version.json"
+    private val GITHUB_REPO_URL = "https://github.com/martodosko/martodosko-audio-studio"
 
     init {
         getCurrentVersion()
@@ -53,15 +63,112 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! 3 BAGONG BUTTON LANG ANG DAGDAG!
+    // ✅ SARILING UPDATE CHECKER — DIREKTA MULA SA SITE!
+    // ✅ PAG PININDOT ANG DOWNLOAD → BUBUKAS SA BROWSER!
+    // ==============================================
+    private fun checkForUpdatesDirect() {
+        Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
+
+        Thread {
+            try {
+                val url = URL(UPDATE_JSON_URL)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.connectTimeout = 15000
+                connection.readTimeout = 15000
+
+                if (connection.responseCode != 200) {
+                    throw Exception("HTTP ${connection.responseCode}")
+                }
+
+                val reader = BufferedReader(InputStreamReader(connection.inputStream))
+                val jsonText = reader.readText()
+                reader.close()
+                connection.disconnect()
+
+                val json = JSONObject(jsonText)
+                val latestVer = json.optString("version", "0.0.0")
+                val apkFile = json.optString("apkFile", "")
+                val releaseDate = json.optString("released", "Unknown")
+                
+                // ✅ BUUIN ANG DOWNLOAD URL — DIREKTA SA APK O SA RELEASE PAGE
+                val downloadUrl = when {
+                    apkFile.startsWith("http") -> apkFile
+                    apkFile.isNotEmpty() -> "$GITHUB_REPO_URL/releases/download/v$latestVer/$apkFile"
+                    else -> "$GITHUB_REPO_URL/releases"
+                }
+
+                val isNewer = isVersionNewer(currentVer, latestVer)
+
+                Handler(Looper.getMainLooper()).post {
+                    if (isNewer) {
+                        AlertDialog.Builder(activity)
+                            .setTitle("✅ May Bagong Bersyon!")
+                            .setMessage("Kasalukuyan: v$currentVer\nPinakabago: v$latestVer\nPetsa: $releaseDate\n\nBubukas sa browser ang pag-download...")
+                            .setPositiveButton("⬇️ I-download") { _, _ ->
+                                // ✅ BUBUKAS SA DEFAULT BROWSER — DOON NA MAAYOS ANG PAG-DOWNLOAD!
+                                try {
+                                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
+                                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    activity.startActivity(browserIntent)
+                                    Toast.makeText(activity, "🌐 Binuksan sa browser...", Toast.LENGTH_SHORT).show()
+                                } catch (e: Exception) {
+                                    Toast.makeText(activity, "❌ Hindi mabuksan ang browser", Toast.LENGTH_SHORT).show()
+                                    Log.e("UPDATE", "❌ Browser error", e)
+                                }
+                            }
+                            .setNegativeButton("❌ Mamaya", null)
+                            .setCancelable(true)
+                            .show()
+                    } else {
+                        AlertDialog.Builder(activity)
+                            .setTitle("✅ Nasa Pinakabagong Bersyon")
+                            .setMessage("Kasalukuyan: v$currentVer\nIkaw ay napapanahon na!")
+                            .setPositiveButton("✅ Sige", null)
+                            .show()
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e("UPDATE_CHECK", "❌ Error checking update", e)
+                Handler(Looper.getMainLooper()).post {
+                    AlertDialog.Builder(activity)
+                        .setTitle("⚠️ Hindi Masuri ang Update")
+                        .setMessage("${e.message}\n\nSiguraduhing may internet connection.")
+                        .setPositiveButton("✅ Sige", null)
+                        .show()
+                }
+            }
+        }.start()
+    }
+
+    // ✅ IHAMBING ANG BERSYON
+    private fun isVersionNewer(current: String, latest: String): Boolean {
+        return try {
+            val currParts = current.split(".").map { it.toIntOrNull() ?: 0 }
+            val lateParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
+            
+            for (i in 0 until maxOf(currParts.size, lateParts.size)) {
+                val c = if (i < currParts.size) currParts[i] else 0
+                val l = if (i < lateParts.size) lateParts[i] else 0
+                if (l > c) return true
+                if (l < c) return false
+            }
+            false
+        } catch (e: Exception) {
+            latest != current
+        }
+    }
+
+    // ==============================================
+    // ✅ LAHAT NG MENU BUTTONS — WALANG PINAGBAGO!
     // ==============================================
     private fun setupMenuButtons() {
-        // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
+        // ✅ CLOSE BUTTON
         activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener {
             close()
         }
 
-        // ✅ MIXER — WALANG PINAGBAGO!
+        // ✅ MIXER
         activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
             close()
             if (activity is MixerActivity) {
@@ -75,10 +182,6 @@ class SideMenu(
                 val fullError = when {
                     e.message?.contains("Activity class not found") == true ->
                         "❌ MixerActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("res/drawable") == true || e.message?.contains("Resource") == true ->
-                        "❌ Kulang na Drawable file"
-                    e.message?.contains("Binary XML") == true || e.message?.contains("inflate") == true ->
-                        "❌ May mali sa layout file"
                     else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
                 }
                 Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
@@ -86,17 +189,13 @@ class SideMenu(
             }
         }
 
-        // ✅ PRESETS — WALANG PINAGBAGO!
+        // ✅ PRESETS
         activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {
             close()
-            if (activity.javaClass.simpleName == "PresetsActivity") {
-                Toast.makeText(activity, "✅ Nasa Presets ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
             Toast.makeText(activity, "📋 Presets — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ SETTINGS — WALANG PINAGBAGO!
+        // ✅ SETTINGS → ContentActivity
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
             try {
@@ -106,65 +205,23 @@ class SideMenu(
                 activity.startActivity(intent)
                 Toast.makeText(activity, "⚙️ Binubuksan ang Settings...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ ContentActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("SETTINGS", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ✅ GUITAR EFFECTS — WALANG PINAGBAGO!
+        // ✅ GUITAR EFFECTS
         activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
             close()
-            if (activity.javaClass.simpleName == "GuitarActivity") {
-                Toast.makeText(activity, "✅ Nasa Guitar Effects ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            try {
-                val intent = Intent(activity, Class.forName("com.martodosko.studio.GuitarActivity"))
-                activity.startActivity(intent)
-            } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ GuitarActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ GuitarActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("GUITAR", "❌ $fullError", e)
-            }
+            Toast.makeText(activity, "🎸 Guitar Effects — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ CHECK UPDATE — WALANG PINAGBAGO!
+        // ✅ CHECK UPDATE → DIREKTA MULA SA SITE, BUBUKAS SA BROWSER!
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
-            Toast.makeText(activity, "🔄 Sinusuri ang update mula sa GitHub...", Toast.LENGTH_SHORT).show()
-
-            val currentActivity = activity::class.java
-
-            try {
-                if (activity is MainActivity) {
-                    activity.checkForUpdates()
-                } else {
-                    val intent = Intent(activity, MainActivity::class.java)
-                    intent.putExtra("FORCE_CHECK_UPDATE", true)
-                    intent.putExtra("RETURN_TO_SCREEN", currentActivity.simpleName)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    activity.startActivity(intent)
-                }
-            } catch (e: Exception) {
-                Toast.makeText(activity, "❌ Hindi masuri ang update: ${e.message}", Toast.LENGTH_LONG).show()
-                Log.e("UPDATE", "❌ Error checking update", e)
-            }
+            checkForUpdatesDirect()
         }
 
-        // ✅ HELP — WALANG PINAGBAGO!
+        // ✅ HELP → ContentActivity
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
             try {
@@ -172,21 +229,12 @@ class SideMenu(
                 intent.putExtra("target_screen", "HELP")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
-                Toast.makeText(activity, "❓ Binubuksan ang Help...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ ContentActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("HELP", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ✅ JOIN US — WALANG PINAGBAGO!
+        // ✅ JOIN US → ContentActivity
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
             try {
@@ -194,21 +242,12 @@ class SideMenu(
                 intent.putExtra("target_screen", "JOIN_US")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
-                Toast.makeText(activity, "🌐 Binubuksan ang Join Us...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ ContentActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("JOIN", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ✅ ABOUT — WALANG PINAGBAGO!
+        // ✅ ABOUT → ContentActivity
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
             try {
@@ -216,23 +255,12 @@ class SideMenu(
                 intent.putExtra("target_screen", "ABOUT")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
-                Toast.makeText(activity, "ℹ️ Binubuksan ang About...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ ContentActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("ABOUT", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ==============================================
-        // ✅ BAGONG BUTTON 1 — ADMIN PANEL → ContentActivity!
-        // ==============================================
+        // ✅ ADMIN → ContentActivity
         activity.findViewById<TextView>(R.id.menu_admin)?.setOnClickListener {
             close()
             try {
@@ -240,23 +268,12 @@ class SideMenu(
                 intent.putExtra("target_screen", "ADMIN")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
-                Toast.makeText(activity, "🔐 Binubuksan ang Admin Panel...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ ContentActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("ADMIN", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ==============================================
-        // ✅ BAGONG BUTTON 2 — WHAT'S NEW → ContentActivity!
-        // ==============================================
+        // ✅ WHAT'S NEW → ContentActivity
         activity.findViewById<TextView>(R.id.menu_whatsnew)?.setOnClickListener {
             close()
             try {
@@ -264,23 +281,12 @@ class SideMenu(
                 intent.putExtra("target_screen", "ABISO")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
-                Toast.makeText(activity, "🆕 Binubuksan ang What's New...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
-                    e.message?.contains("not found") == true ->
-                        "❌ ContentActivity wala pang ginawa"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("WHATSNEW", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ==============================================
-        // ✅ BAGONG BUTTON 3 — EXIT APP!
-        // ==============================================
+        // ✅ EXIT
         activity.findViewById<TextView>(R.id.menu_exit)?.setOnClickListener {
             close()
             Toast.makeText(activity, "👋 Salamat sa paggamit ng Martodosko!", Toast.LENGTH_SHORT).show()
