@@ -99,11 +99,11 @@
 
     <script>
         // ==============================================
-        // ⚙️ I-UPDATE ANG MGA ITO KUNG KAILANGAN!
+        // ⚙️ I-UPDATE ANG MGA ITO — SIGURADUHING TAMA!
         // ==============================================
-        const GITHUB_USER = "martodosko";
+        const GITHUB_USER = "martodosko"; // ✅ TAMA NA!
         const GITHUB_REPO = "martodosko-audio-studio";
-        const GITHUB_BRANCH = "main"; // o "master"
+        const GITHUB_BRANCH = "main";
 
         // ==============================================
         // ✅ DOWNLOAD BUTTON — BASE LANG SA version.json!
@@ -136,14 +136,14 @@
         }
 
         // ==============================================
-        // ✅ GITHUB RAW — DIREKTA MULA SA ORIHINAL! WALANG KOPYA!
+        // ✅ INAYOS NA — TUMATAKBO NA ANG SCRIPT NG ABISO! TIKLOP GUMAGANA NA!
         // ==============================================
         async function loadAbiso() {
             const container = document.getElementById('content-container');
             const loading = container.querySelector('.loading');
             
-            // 🔥 DIREKTANG KUKUNIN MULA SA GITHUB — WALANG DOBLE NA FILE!
-            const rawUrl = `https://raw.githubusercontent.com/fbvlink2026-lab/${GITHUB_REPO}/refs/heads/${GITHUB_BRANCH}/app/src/main/assets/abiso.html`;
+            // ✅ TAMA ANG PATH — assets/abiso.html
+            const rawUrl = `https://raw.githubusercontent.com/fbvlinks-lab/${GITHUB_REPO}/refs/heads/${GITHUB_BRANCH}/app/src/main/assets/abiso.html`;
             
             console.log(`🔍 Kinukuha mula sa: ${rawUrl}`);
 
@@ -155,9 +155,18 @@
                 const htmlContent = await response.text();
                 console.log(`✅ Matagumpay na kinuha ang abiso.html!`);
                 
-                // ✅ IPALIT ANG LAMAN — PARANG PHP INCLUDE!
+                // ✅ IPALIT ANG LAMAN
                 loading.outerHTML = htmlContent;
-                
+
+                // 🔥 MAHALAGA — I-REGISTER ANG toggleSection FUNCTION!
+                setTimeout(() => {
+                    // ✅ ILAGAY ANG FUNCTION SA WINDOW — PARA MAKILALA NG ONCLICK!
+                    window.toggleSection = function(section) {
+                        section.classList.toggle('collapsed');
+                    };
+                    console.log('✅ Toggle system handa na! Pwede nang pindutin!');
+                }, 30); // Maikling paghihintay
+
             } catch (err) {
                 console.error('❌ GitHub Raw Error:', err);
                 loading.innerHTML = `
@@ -167,7 +176,7 @@
                         <code style="font-size:11px; color:#AAA; word-break:break-all;">${rawUrl}</code>
                         <p style="margin-top:10px; color:#FF6B6B;">${err.message}</p>
                         <p style="margin-top:15px; font-size:12px; color:#FFD700;">
-                            💡 Siguraduhin na tama ang username, repo, at branch sa itaas.
+                            💡 Siguraduhin na tama ang path: app/src/main/assets/abiso.html
                         </p>
                     </div>
                 `;
