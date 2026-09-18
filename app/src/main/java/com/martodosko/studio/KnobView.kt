@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ PANEL = RECTANGLE (HUMABA PAITAAS)! LABEL UMANGAT PAITAAS!
-// VERSION: 5.7.0 — ✅ PANEL HUMABA PAITAAS (1.18f) + LABEL PALAYO (1.05f)! WALANG IBANG BINAGO!
-// UPDATED: 2026-09-18 — PANEL HINDI NA IBABALIK SA PARISUKAT!
+// FILE: KnobView.kt — ✅ PANEL HUMABA PA! 1.28f! LABEL UMANGAT! WALANG IBANG BINAGO!
+// VERSION: 5.7.1 — ✅ PANEL = 1.28f MAS HABA PAITAAS! labelOffsetY = 1.05f!
+// UPDATED: 2026-09-18 — DAGDAG LANG SA HABA NG PANEL! WALA NANG IBA!
 // ==================================================
 package com.martodosko.studio
 
@@ -163,8 +163,8 @@ open class KnobView @JvmOverloads constructor(
         val tickOuter = arcRadius * 1.08f
         val textRadius = size * 0.42f
 
-        // ✅ PANEL — RECTANGLE NA! HUMABA PAITAAS! HINDI NA IBABALIK SA PARISUKAT!
-        canvas.drawRect(cx - halfSize, cy - halfSize * 1.18f, cx + halfSize, cy + halfSize, paintPanel)
+        // ✅ PANEL — DAGDAGAN ANG HABA PAITAAS! 1.28f NA!
+        canvas.drawRect(cx - halfSize, cy - halfSize * 1.28f, cx + halfSize, cy + halfSize, paintPanel)
 
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
