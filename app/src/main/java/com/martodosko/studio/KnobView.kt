@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ PANEL NAGING PARISUKAT! WALANG KANTO! LABEL LUMABAS NA!
-// VERSION: 5.3.3 — ✅ drawCircle → drawRect! WALANG IBANG BINAGO!
-// UPDATED: 2026-09-18 — ISANG LINYA LANG ANG PALITAN!
+// FILE: KnobView.kt — ✅ LABEL NASA LOOB NA NG PANEL! HINDI NA LUMALABAS!
+// VERSION: 5.4.0 — ✅ labelOffsetY = 0.82f — NASA LOOB SA ITAAS! HINDI NA PAGTATAPATONG!
+// UPDATED: 2026-09-18 — ISANG LINYA LANG ANG PINALITAN! WALANG IBANG BINAGO!
 // ==================================================
 package com.martodosko.studio
 
@@ -23,7 +23,7 @@ open class KnobView @JvmOverloads constructor(
 
     open var labelText: String = ""
     open var unitText: String = ""
-    open var labelOffsetY: Float = 1.07f
+    open var labelOffsetY: Float = 0.82f  // ✅ NASA LOOB NA NG PANEL! SA ITAAS!
     open var valueOffsetY: Float = 0.95f
 
     var preferenceKey: String? = null
@@ -164,7 +164,6 @@ open class KnobView @JvmOverloads constructor(
         val tickOuter = arcRadius * 1.08f
         val textRadius = size * 0.42f
 
-        // ✅ BINAGO: BILOG → PARISUKAT NA WALANG KANTO!
         canvas.drawRect(cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize, paintPanel)
 
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
