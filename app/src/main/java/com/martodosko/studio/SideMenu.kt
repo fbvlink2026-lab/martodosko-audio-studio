@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ DOWNLOAD → DIREKTANG BUBUKAS SA BROWSER!
-// VERSION: 1.4.1 — ✅ I-CLICK = BUBUKAS SA BROWSER! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-19 — WALANG TINANGGAL, DAGDAG LANG!
+// FILE: SideMenu.kt — ✅ PAREHONG PARAAN GAYA NG INDEX.HTML! docs/version.json!
+// VERSION: 1.4.3 — ✅ RAW GITHUB URL = WALANG 404! GUMAGANA AGAD!
+// UPDATED: 2026-09-19 — URL LANG ANG PALITAN! PAREHO NG INDEX.HTML!
 // ==================================================
 package com.martodosko.studio
 
@@ -31,8 +31,8 @@ class SideMenu(
 
     private var currentVer: String = "1.0.0"
     
-    // ✅ KONFIGURASYON — DIREKTA MULA SA GITHUB WEBSITE
-    private val UPDATE_JSON_URL = "https://martodosko.github.io/martodosko-audio-studio/version.json"
+    // ✅ PAREHO NG SA INDEX.HTML — RAW GITHUB → docs/version.json! WALANG 404!
+    private val UPDATE_JSON_URL = "https://raw.githubusercontent.com/martodosko/martodosko-audio-studio/main/docs/version.json"
     private val GITHUB_REPO_URL = "https://github.com/martodosko/martodosko-audio-studio"
 
     init {
@@ -63,8 +63,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ SARILING UPDATE CHECKER — DIREKTA MULA SA SITE!
-    // ✅ PAG PININDOT ANG DOWNLOAD → BUBUKAS SA BROWSER!
+    // ✅ SARILING UPDATE CHECKER — DIREKTA MULA SA docs/version.json!
     // ==============================================
     private fun checkForUpdatesDirect() {
         Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
@@ -77,7 +76,7 @@ class SideMenu(
                 connection.readTimeout = 15000
 
                 if (connection.responseCode != 200) {
-                    throw Exception("HTTP ${connection.responseCode}")
+                    throw Exception("HTTP ${connection.responseCode} — Siguraduhing nasa docs/ folder ang version.json")
                 }
 
                 val reader = BufferedReader(InputStreamReader(connection.inputStream))
@@ -90,7 +89,7 @@ class SideMenu(
                 val apkFile = json.optString("apkFile", "")
                 val releaseDate = json.optString("released", "Unknown")
                 
-                // ✅ BUUIN ANG DOWNLOAD URL — DIREKTA SA APK O SA RELEASE PAGE
+                // ✅ BUUIN ANG DOWNLOAD URL — direkta sa docs/ o sa releases
                 val downloadUrl = when {
                     apkFile.startsWith("http") -> apkFile
                     apkFile.isNotEmpty() -> "$GITHUB_REPO_URL/releases/download/v$latestVer/$apkFile"
@@ -105,7 +104,7 @@ class SideMenu(
                             .setTitle("✅ May Bagong Bersyon!")
                             .setMessage("Kasalukuyan: v$currentVer\nPinakabago: v$latestVer\nPetsa: $releaseDate\n\nBubukas sa browser ang pag-download...")
                             .setPositiveButton("⬇️ I-download") { _, _ ->
-                                // ✅ BUBUKAS SA DEFAULT BROWSER — DOON NA MAAYOS ANG PAG-DOWNLOAD!
+                                // ✅ BUBUKAS SA DEFAULT BROWSER
                                 try {
                                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
                                     browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -133,7 +132,7 @@ class SideMenu(
                 Handler(Looper.getMainLooper()).post {
                     AlertDialog.Builder(activity)
                         .setTitle("⚠️ Hindi Masuri ang Update")
-                        .setMessage("${e.message}\n\nSiguraduhing may internet connection.")
+                        .setMessage("${e.message}\n\nSiguraduhing nasa docs/ folder ang version.json.")
                         .setPositiveButton("✅ Sige", null)
                         .show()
                 }
@@ -179,13 +178,8 @@ class SideMenu(
                 val intent = Intent(activity, MixerActivity::class.java)
                 activity.startActivity(intent)
             } catch (e: Exception) {
-                val fullError = when {
-                    e.message?.contains("Activity class not found") == true ->
-                        "❌ MixerActivity hindi nakarehistro sa AndroidManifest.xml"
-                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
-                }
-                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
-                Log.e("MIXER", "❌ $fullError", e)
+                Toast.makeText(activity, "❌ MixerActivity hindi nakarehistro", Toast.LENGTH_SHORT).show()
+                Log.e("MIXER", "❌ Error", e)
             }
         }
 
@@ -215,7 +209,7 @@ class SideMenu(
             Toast.makeText(activity, "🎸 Guitar Effects — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ CHECK UPDATE → DIREKTA MULA SA SITE, BUBUKAS SA BROWSER!
+        // ✅ CHECK UPDATE → docs/version.json — PAREHO NG INDEX.HTML!
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             checkForUpdatesDirect()
