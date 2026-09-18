@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ INAYOS NA! TINANGGAL ANG HARANG! LAGING NAGPAPALIT NG FRAGMENT!
-// VERSION: 1.2.3 — ✅ TINANGGAL ANG "KUNG NASA CONTENTACTIVITY NA" CHECK! LAGING NAGPAPASA NG BAGONG EXTRA!
-// UPDATED: 2026-09-17 — WALANG IBANG PINAGBAGO! HARANG LANG ANG TINANGGAL!
+// FILE: SideMenu.kt — ✅ DAGDAG: ADMIN / WHAT'S NEW / EXIT! WALANG IBANG PINAGBAGO!
+// VERSION: 1.3.0 — ✅ 3 BAGONG BUTTON! LAHAT PAPUNTA SA ContentActivity!
+// UPDATED: 2026-09-19 — WALANG TINANGGAL, DAGDAG LANG!
 // ==================================================
 package com.martodosko.studio
 
@@ -53,7 +53,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! HARANG LANG ANG INALIS!
+    // ✅ LAHAT NG MENU BUTTONS — WALANG TINANGGAL! 3 BAGONG BUTTON LANG ANG DAGDAG!
     // ==============================================
     private fun setupMenuButtons() {
         // ✅ CLOSE BUTTON — ISARA — WALANG PINAGBAGO!
@@ -96,12 +96,9 @@ class SideMenu(
             Toast.makeText(activity, "📋 Presets — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ==============================================
-        // ✅ SETTINGS — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
-        // ==============================================
+        // ✅ SETTINGS — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
-            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
                 intent.putExtra("target_screen", "SETTINGS")
@@ -121,9 +118,7 @@ class SideMenu(
             }
         }
 
-        // ==============================================
         // ✅ GUITAR EFFECTS — WALANG PINAGBAGO!
-        // ==============================================
         activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
             close()
             if (activity.javaClass.simpleName == "GuitarActivity") {
@@ -146,9 +141,7 @@ class SideMenu(
             }
         }
 
-        // ==============================================
         // ✅ CHECK UPDATE — WALANG PINAGBAGO!
-        // ==============================================
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             Toast.makeText(activity, "🔄 Sinusuri ang update mula sa GitHub...", Toast.LENGTH_SHORT).show()
@@ -171,12 +164,9 @@ class SideMenu(
             }
         }
 
-        // ==============================================
-        // ✅ HELP — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
-        // ==============================================
+        // ✅ HELP — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
-            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
                 intent.putExtra("target_screen", "HELP")
@@ -196,12 +186,9 @@ class SideMenu(
             }
         }
 
-        // ==============================================
-        // ✅ JOIN US — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
-        // ==============================================
+        // ✅ JOIN US — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
-            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
                 intent.putExtra("target_screen", "JOIN_US")
@@ -221,12 +208,9 @@ class SideMenu(
             }
         }
 
-        // ==============================================
-        // ✅ ABOUT — ✅ TINANGGAL ANG HARANG! LAGING NAGPAPASA NG EXTRA! WALANG IBANG PINAGBAGO!
-        // ==============================================
+        // ✅ ABOUT — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
-            // ❌ TINANGGAL ANG HARANG — HINDI NA NAGBABALIK AGAD KAHIT NASA CONTENTACTIVITY NA!
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
                 intent.putExtra("target_screen", "ABOUT")
@@ -244,6 +228,66 @@ class SideMenu(
                 Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
                 Log.e("ABOUT", "❌ $fullError", e)
             }
+        }
+
+        // ==============================================
+        // ✅ BAGONG BUTTON 1 — ADMIN PANEL → ContentActivity!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_admin)?.setOnClickListener {
+            close()
+            try {
+                val intent = Intent(activity, ContentActivity::class.java)
+                intent.putExtra("target_screen", "ADMIN")
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                activity.startActivity(intent)
+                Toast.makeText(activity, "🔐 Binubuksan ang Admin Panel...", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("not found") == true ->
+                        "❌ ContentActivity wala pang ginawa"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("ADMIN", "❌ $fullError", e)
+            }
+        }
+
+        // ==============================================
+        // ✅ BAGONG BUTTON 2 — WHAT'S NEW → ContentActivity!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_whatsnew)?.setOnClickListener {
+            close()
+            try {
+                val intent = Intent(activity, ContentActivity::class.java)
+                intent.putExtra("target_screen", "WHATS_NEW")
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                activity.startActivity(intent)
+                Toast.makeText(activity, "🆕 Binubuksan ang What's New...", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                val fullError = when {
+                    e.message?.contains("Activity class not found") == true ->
+                        "❌ ContentActivity hindi nakarehistro sa AndroidManifest.xml"
+                    e.message?.contains("not found") == true ->
+                        "❌ ContentActivity wala pang ginawa"
+                    else -> "❌ ${e.javaClass.simpleName}: ${e.message}"
+                }
+                Toast.makeText(activity, fullError, Toast.LENGTH_LONG).show()
+                Log.e("WHATSNEW", "❌ $fullError", e)
+            }
+        }
+
+        // ==============================================
+        // ✅ BAGONG BUTTON 3 — EXIT APP!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.menu_exit)?.setOnClickListener {
+            close()
+            Toast.makeText(activity, "👋 Salamat sa paggamit ng Martodosko!", Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).postDelayed({
+                activity.finishAffinity()
+                System.exit(0)
+            }, 300)
         }
     }
 
