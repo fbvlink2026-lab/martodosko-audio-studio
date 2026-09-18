@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: ContentActivity.kt — ✅ INAYOS NA! BINASA NA ANG putExtra()! SIGURADO NA ANG FRAGMENT!
-// VERSION: 1.0.5 — ✅ TUGMA SA SideMenu.kt! target_screen EXTRA ANG BINASA! HINDI NA action!
-// UPDATED: 2026-09-17 — WALANG IBANG PINAGBAGO! EXTRA LANG ANG PALIT!
+// FILE: ContentActivity.kt — ✅ ADMIN + ABISO NA LANG! WALANG DUPLIKADO!
+// VERSION: 1.3.0 — ✅ TINANGGAL ANG WHATS_NEW! ABISO NA LANG! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-19 — TANGGAL LANG ANG DUPLIKADO!
 // ==================================================
 package com.martodosko.studio
 
@@ -31,10 +31,9 @@ class ContentActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ INAYOS — BINASA NA ANG "target_screen" EXTRA! HINDI NA action! TUGMA SA SideMenu.kt!
+    // ✅ ADMIN + ABISO NA LANG! TINANGGAL ANG WHATS_NEW! WALANG IBANG PINAGBAGO!
     // ==============================================
     private fun showCorrectFragment(intent: Intent?) {
-        // ✅ BASAHIN MUNA ANG EXTRA — ITO ANG TINUTURO NG SideMenu.kt!
         val targetScreen = intent?.getStringExtra("target_screen") ?: "SETTINGS"
         
         when (targetScreen) {
@@ -42,6 +41,8 @@ class ContentActivity : FragmentActivity() {
             "HELP"     -> showFragment(HelpFragment())
             "JOIN_US"  -> showFragment(JoinUsFragment())
             "ABOUT"    -> showFragment(AboutFragment())
+            "ADMIN"    -> showFragment(AdminLoginFragment())
+            "ABISO"    -> showFragment(AbisoFragment()) // ✅ ABISO NA LANG!
         }
     }
 
