@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📢 Abiso — Martodosko Audio Studio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #0A0A12, #121224);
+            min-height: 100vh;
+            padding: 20px;
+            color: #E0E0E0;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #2A2A5A;
+            border-top-color: #00FF88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-box {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid #F44336;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #FF6B6B;
+            max-width: 500px;
+            margin: 40px auto;
+        }
+        #content-container { max-width: 700px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+    <div id="content-container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>📤 Kinukuha ang abiso.html...</p>
+        </div>
+    </div>
+
+    <script>
+        // ✅ PARANG PHP INCLUDE — KUKUNIN ANG BUONG LAMAN NG abiso.html
+        // Katulad ng: cat abiso.html → ilabas ang buong laman
+        async function loadAbiso() {
+            const container = document.getElementById('content-container');
+            
+            // 📍 Kung nasa GitHub Pages / docs/ — ang path ay ../assets/abiso.html
+            // Kung nasa local — siguraduhing nasa tamang lokasyon ang assets/abiso.html
+            const possiblePaths = [
+                '../assets/abiso.html',
+                './assets/abiso.html',
+                'abiso.html',
+                '../app/src/main/assets/abiso.html'
+            ];
+
+            let htmlContent = null;
+            let usedPath = null;
+
+            // Subukan ang lahat ng posibleng path
+            for (const path of possiblePaths) {
+                try {
+                    const response = await fetch(path, { cache: 'no-store' });
+                    if (response.ok) {
+                        htmlContent = await response.text();
+                        usedPath = path;
+                        break;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+
+            if (!htmlContent) {
+                container.innerHTML = `
+                    <div class="error-box">
+                        <h3>❌ Hindi makuha ang abiso.html</h3>
+                        <p style="margin:10px 0; font-size:13px;">Sinubukan ang mga lokasyon:</p>
+                        <code style="font-size:11px; color:#AAA;">${possiblePaths.join('<br>')}</code>
+                        <p style="margin-top:15px; font-size:12px; color:#888;">
+                            Siguraduhing nasa tamang folder ang <strong>assets/abiso.html</strong>
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // ✅ ILABAS ANG BUONG LAMAN — parang `cat abiso.html`
+            container.innerHTML = htmlContent;
+            
+            // ✅ I-log ang path para makita kung saan kinuha
+            console.log(`✅ Abiso loaded from: ${usedPath}`);
+        }
+
+        // 🚀 TAWAGIN AGAD PAGKABUKAS NG PAGE
+        document.addEventListener('DOMContentLoaded', loadAbiso);
+    </script>
+
+</body>
+</html>
