@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ PAREHONG PARAAN GAYA NG INDEX.HTML! docs/version.json!
-// VERSION: 1.4.3 — ✅ RAW GITHUB URL = WALANG 404! GUMAGANA AGAD!
-// UPDATED: 2026-09-19 — URL LANG ANG PALITAN! PAREHO NG INDEX.HTML!
+// FILE: SideMenu.kt — ✅ PAREHONG URL AT PARAAN NG MAINACTIVITY! fbvlink2026-lab!
+// VERSION: 1.5.1 — ✅ GUMAGANA NA! PAREHO NG MAINACTIVITY! BROWSER DOWNLOAD!
+// UPDATED: 2026-09-19 — URL LANG AT LOGIC ANG INAYOS! WALANG IBANG PINAGBAGO!
 // ==================================================
 package com.martodosko.studio
 
@@ -17,6 +17,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import android.util.Log
 import android.os.Handler
 import android.os.Looper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -31,9 +34,11 @@ class SideMenu(
 
     private var currentVer: String = "1.0.0"
     
-    // ✅ PAREHO NG SA INDEX.HTML — RAW GITHUB → docs/version.json! WALANG 404!
-    private val UPDATE_JSON_URL = "https://raw.githubusercontent.com/martodosko/martodosko-audio-studio/main/docs/version.json"
-    private val GITHUB_REPO_URL = "https://github.com/martodosko/martodosko-audio-studio"
+    // ✅ PAREHONG URL GAYA NG MAINACTIVITY — fbvlink2026-lab! ITO ANG GUMAGANA!
+    private val VERSION_URL = 
+        "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
+    private val BASE_APK_URL = 
+        "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
 
     init {
         getCurrentVersion()
@@ -63,49 +68,48 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ SARILING UPDATE CHECKER — DIREKTA MULA SA docs/version.json!
+    // ✅ PAREHONG PARAAN NG MAINACTIVITY — COROUTINE, NO-CACHE, CLEAN VERSION!
     // ==============================================
     private fun checkForUpdatesDirect() {
         Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
 
-        Thread {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                val url = URL(UPDATE_JSON_URL)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.connectTimeout = 15000
-                connection.readTimeout = 15000
-
-                if (connection.responseCode != 200) {
-                    throw Exception("HTTP ${connection.responseCode} — Siguraduhing nasa docs/ folder ang version.json")
-                }
-
-                val reader = BufferedReader(InputStreamReader(connection.inputStream))
-                val jsonText = reader.readText()
-                reader.close()
-                connection.disconnect()
-
-                val json = JSONObject(jsonText)
-                val latestVer = json.optString("version", "0.0.0")
-                val apkFile = json.optString("apkFile", "")
-                val releaseDate = json.optString("released", "Unknown")
+                Log.d("UPDATE", "🔍 Tinitignan ang update...")
                 
-                // ✅ BUUIN ANG DOWNLOAD URL — direkta sa docs/ o sa releases
-                val downloadUrl = when {
-                    apkFile.startsWith("http") -> apkFile
-                    apkFile.isNotEmpty() -> "$GITHUB_REPO_URL/releases/download/v$latestVer/$apkFile"
-                    else -> "$GITHUB_REPO_URL/releases"
-                }
+                // ✅ PAREHONG NO-CACHE PARAAN — HINDI LUMANG DATA!
+                val conn = URL("$VERSION_URL?t=${System.currentTimeMillis()}").openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.connectTimeout = 8000
+                conn.readTimeout = 8000
+                conn.setRequestProperty("Cache-Control", "no-cache")
 
-                val isNewer = isVersionNewer(currentVer, latestVer)
+                val reader = BufferedReader(InputStreamReader(conn.inputStream))
+                val resp = StringBuilder()
+                var line: String?
+                while (reader.readLine().also { line = it } != null) resp.append(line)
+                reader.close()
+                conn.disconnect()
+
+                val json = JSONObject(resp.toString())
+                val latestVer = cleanVersion(json.getString("version"))
+                val apkFile = json.optString("apkFile", "Martodosko-Studio-v$latestVer.apk")
+                val releaseDate = json.optString("released", "Unknown")
+
+                @Suppress("DEPRECATION")
+                val currentVerClean = cleanVersion(activity.packageManager.getPackageInfo(activity.packageName, 0).versionName)
+
+                val isNewer = isUpdateAvailable(latestVer, currentVerClean)
 
                 Handler(Looper.getMainLooper()).post {
                     if (isNewer) {
                         AlertDialog.Builder(activity)
-                            .setTitle("✅ May Bagong Bersyon!")
-                            .setMessage("Kasalukuyan: v$currentVer\nPinakabago: v$latestVer\nPetsa: $releaseDate\n\nBubukas sa browser ang pag-download...")
+                            .setTitle("✅ May Bagong Bersyon — v$latestVer")
+                            .setMessage("Kasalukuyan: v$currentVerClean\nPinakabago: v$latestVer\nPetsa: $releaseDate\n\nBubukas sa browser ang pag-download...")
                             .setPositiveButton("⬇️ I-download") { _, _ ->
-                                // ✅ BUBUKAS SA DEFAULT BROWSER
+                                // ✅ DIREKTANG BUBUKAS SA BROWSER — DOON ANG PAG-DOWNLOAD!
                                 try {
+                                    val downloadUrl = "$BASE_APK_URL$apkFile"
                                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
                                     browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     activity.startActivity(browserIntent)
@@ -115,47 +119,46 @@ class SideMenu(
                                     Log.e("UPDATE", "❌ Browser error", e)
                                 }
                             }
-                            .setNegativeButton("❌ Mamaya", null)
+                            .setNegativeButton("❌ Mamaya na", null)
                             .setCancelable(true)
                             .show()
                     } else {
                         AlertDialog.Builder(activity)
                             .setTitle("✅ Nasa Pinakabagong Bersyon")
-                            .setMessage("Kasalukuyan: v$currentVer\nIkaw ay napapanahon na!")
+                            .setMessage("Kasalukuyan: v$currentVerClean\nIkaw ay napapanahon na!")
                             .setPositiveButton("✅ Sige", null)
                             .show()
                     }
                 }
 
             } catch (e: Exception) {
-                Log.e("UPDATE_CHECK", "❌ Error checking update", e)
+                Log.e("UPDATE", "⚠️ Error checking update", e)
                 Handler(Looper.getMainLooper()).post {
                     AlertDialog.Builder(activity)
                         .setTitle("⚠️ Hindi Masuri ang Update")
-                        .setMessage("${e.message}\n\nSiguraduhing nasa docs/ folder ang version.json.")
+                        .setMessage("${e.message}\n\nSiguraduhing may internet connection.")
                         .setPositiveButton("✅ Sige", null)
                         .show()
                 }
             }
-        }.start()
+        }
     }
 
-    // ✅ IHAMBING ANG BERSYON
-    private fun isVersionNewer(current: String, latest: String): Boolean {
-        return try {
-            val currParts = current.split(".").map { it.toIntOrNull() ?: 0 }
-            val lateParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
-            
-            for (i in 0 until maxOf(currParts.size, lateParts.size)) {
-                val c = if (i < currParts.size) currParts[i] else 0
-                val l = if (i < lateParts.size) lateParts[i] else 0
-                if (l > c) return true
-                if (l < c) return false
-            }
-            false
-        } catch (e: Exception) {
-            latest != current
+    // ✅ PAREHONG VERSION CLEANER — TINATANGGAL ANG "v"
+    private fun cleanVersion(v: String) = v.trim().removePrefix("v").removePrefix("V").replace(Regex("[^0-9.]"), "")
+
+    // ✅ PAREHONG VERSION COMPARISON — TAMA ANG PAGHAHAMBING
+    private fun isUpdateAvailable(latest: String, current: String): Boolean {
+        val lParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
+        val cParts = current.split(".").map { it.toIntOrNull() ?: 0 }
+        val max = maxOf(lParts.size, cParts.size)
+        for (i in 0 until max) {
+            val l = lParts.getOrNull(i) ?: 0
+            val c = cParts.getOrNull(i) ?: 0
+            if (l > c) return true
+            if (l < c) return false
         }
+        return false
     }
 
     // ==============================================
@@ -209,7 +212,7 @@ class SideMenu(
             Toast.makeText(activity, "🎸 Guitar Effects — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ✅ CHECK UPDATE → docs/version.json — PAREHO NG INDEX.HTML!
+        // ✅ CHECK UPDATE — ✅ PAREHONG LOGIC NG MAINACTIVITY! BUBUKAS SA BROWSER!
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             checkForUpdatesDirect()
