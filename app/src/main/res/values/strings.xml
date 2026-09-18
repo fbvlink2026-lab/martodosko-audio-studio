@@ -1,4 +1,11 @@
-<string name="abiso_proyekto"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ✅ APP NAME -->
+    <string name="app_name">Martodosko Studio</string>
+
+    <!-- ✅ ABISO SA PROYEKTO — PURONG HTML, TUGMA SA AbisoFragment.kt! -->
+    <string name="abiso_proyekto"><![CDATA[
 &lt;h2 style="color:#00FF88; text-align:center;">📢 ABISO SA MGA NAG-AABANG&lt;/h2&gt;
 &lt;p style="text-align:center; color:#888888; font-size:13px;">Proyekto: Kasalukuyang Ginagawa — Updated: 2026-09-19&lt;/p&gt;
 
@@ -52,3 +59,5 @@
 &lt;p style="text-align:center; color:#888888; margin-top:30px; font-style:italic;">🙏 MARAMING SALAMAT SA PAGTITIIS&lt;br>
 "Ang musika — para sa lahat, kahit saan."&lt;/p&gt;
 ]]></string>
+
+</resources>
