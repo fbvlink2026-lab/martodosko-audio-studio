@@ -38,11 +38,23 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT ✅ INAYOS: singleTop = HINDI BAGONG INSTANCE! -->
+        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT / ADMIN / WHAT'S NEW ✅ singleTop = HINDI BAGONG INSTANCE! -->
         <activity
             android:name=".ContentActivity"
             android:exported="false"
             android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- ✅ Guitar Effects Activity — 🎸 -->
+        <activity
+            android:name=".GuitarActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- ✅ Presets Activity — 📋 -->
+        <activity
+            android:name=".PresetsActivity"
+            android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <!-- ✅ FileProvider — KAILANGAN PARA MA-INSTALL ANG APK sa Android 7+ -->
