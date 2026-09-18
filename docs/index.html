@@ -93,43 +93,39 @@
 
         <div class="loading">
             <div class="spinner"></div>
-            <p>📤 Kinukuha ang abiso.html...</p>
+            <p>📤 Kinukuha ang abiso.html mula sa GitHub...</p>
         </div>
     </div>
 
     <script>
         // ==============================================
-        // ✅ KUSANG HAHANAP NG APK — BASE LANG SA version.json!
-        // JSON FORMAT: {"version":"1.0.211","apkFile":"Martodosko-Studio-v1.0.211.apk","released":"2026-09-18"}
+        // ⚙️ I-UPDATE ANG MGA ITO KUNG KAILANGAN!
+        // ==============================================
+        const GITHUB_USER = "martodosko";
+        const GITHUB_REPO = "martodosko-audio-studio";
+        const GITHUB_BRANCH = "main"; // o "master"
+
+        // ==============================================
+        // ✅ DOWNLOAD BUTTON — BASE LANG SA version.json!
         // ==============================================
         async function setupDownloadButton() {
             try {
-                // 📍 BASAHIN ANG version.json — NASA IISANG FOLDER LANG
                 const response = await fetch('version.json', { cache: 'no-store' });
-                
                 if (!response.ok) throw new Error('Hindi makuha ang version.json');
-                
-                // ✅ KUNIN ANG DATA MULA SA JSON — KAHIT ANONG PAGKAKABUO!
                 const data = await response.json();
                 
-                // ✅ KUSANG KUNIN ANG MGA HALAGA — KAHIT ANONG PANGALAN NG KEY!
-                const version = data.version || data.versionName || data.ver || 'Unknown';
-                const apkName = data.apkFile || data.apk_filename || data.file || data.apk || `Martodosko-Studio-v${version}.apk`;
-                const releaseDate = data.released || data.date || data.releaseDate || 'Unknown';
+                const version = data.version || 'Unknown';
+                const apkName = data.apkFile || `Martodosko-Studio-v${version}.apk`;
+                const releaseDate = data.released || 'Unknown';
                 
-                // ✅ Ipakita ang bersyon at petsa
                 document.getElementById('ver-number').textContent = version;
                 document.getElementById('ver-date').textContent = releaseDate;
                 
-                // ✅ KUSANG BUUIN ANG LINK — Nasa docs/ ang APK, KASAMA NG JSON
                 const downloadLink = document.getElementById('download-link');
-                downloadLink.href = apkName; // KAPAREHONG FOLDER — direkta lang!
+                downloadLink.href = apkName;
                 downloadLink.textContent = `⬇️ I-download — v${version}`;
-                downloadLink.download = apkName; // Pangalan ng file pag dinownload
+                downloadLink.download = apkName;
                 downloadLink.removeAttribute('disabled');
-                
-                console.log(`✅ Bersyon: ${version} | APK: ${apkName} | Petsa: ${releaseDate}`);
-                console.log(`✅ Link: ${window.location.origin}${window.location.pathname.replace('index.html', '')}${apkName}`);
                 
             } catch (err) {
                 console.error('❌ Error:', err);
@@ -140,54 +136,48 @@
         }
 
         // ==============================================
-        // ✅ IPAPAKITA ANG BUONG abiso.html — PARANG cat command
+        // ✅ GITHUB RAW — DIREKTA MULA SA ORIHINAL! WALANG KOPYA!
         // ==============================================
         async function loadAbiso() {
             const container = document.getElementById('content-container');
             const loading = container.querySelector('.loading');
             
-            const possiblePaths = [
-                'assets/abiso.html',
-                './assets/abiso.html',
-                '../assets/abiso.html',
-                'abiso.html'
-            ];
+            // 🔥 DIREKTANG KUKUNIN MULA SA GITHUB — WALANG DOBLE NA FILE!
+            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${GITHUB_BRANCH}/app/src/main/assets/abiso.html`;
+            
+            console.log(`🔍 Kinukuha mula sa: ${rawUrl}`);
 
-            let htmlContent = null;
-
-            for (const path of possiblePaths) {
-                try {
-                    const response = await fetch(path, { cache: 'no-store' });
-                    if (response.ok) {
-                        htmlContent = await response.text();
-                        break;
-                    }
-                } catch (e) {
-                    continue;
-                }
-            }
-
-            if (!htmlContent) {
+            try {
+                const response = await fetch(rawUrl, { cache: 'no-store' });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const htmlContent = await response.text();
+                console.log(`✅ Matagumpay na kinuha ang abiso.html!`);
+                
+                // ✅ IPALIT ANG LAMAN — PARANG PHP INCLUDE!
+                loading.outerHTML = htmlContent;
+                
+            } catch (err) {
+                console.error('❌ GitHub Raw Error:', err);
                 loading.innerHTML = `
                     <div class="error-box">
                         <h3>❌ Hindi makuha ang abiso.html</h3>
-                        <p style="margin:10px 0; font-size:13px;">Sinubukan ang mga lokasyon:</p>
-                        <code style="font-size:11px; color:#AAA;">${possiblePaths.join('<br>')}</code>
-                        <p style="margin-top:15px; font-size:12px; color:#888;">
-                            Siguraduhing nasa tamang folder ang <strong>assets/abiso.html</strong>
+                        <p style="margin:10px 0; font-size:13px;">Sinubukan ang:</p>
+                        <code style="font-size:11px; color:#AAA; word-break:break-all;">${rawUrl}</code>
+                        <p style="margin-top:10px; color:#FF6B6B;">${err.message}</p>
+                        <p style="margin-top:15px; font-size:12px; color:#FFD700;">
+                            💡 Siguraduhin na tama ang username, repo, at branch sa itaas.
                         </p>
                     </div>
                 `;
-                return;
             }
-
-            loading.outerHTML = htmlContent;
         }
 
         // 🚀 TAWAGIN LAHAT PAGKABUKAS NG PAGE
         document.addEventListener('DOMContentLoaded', async () => {
-            await setupDownloadButton(); // ✅ Una — kunin ang APK mula sa JSON
-            await loadAbiso();          // ✅ Pangalawa — ipakita ang abiso
+            await setupDownloadButton();
+            await loadAbiso();
         });
     </script>
 
