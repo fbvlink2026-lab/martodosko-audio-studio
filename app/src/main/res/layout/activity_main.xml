@@ -196,6 +196,42 @@
                 android:gravity="center_vertical"
                 android:paddingStart="24dp"
                 android:clickable="true"/>
+
+            <!-- ✅ BAGONG BUTTON 1 — ADMIN PANEL -->
+            <TextView
+                android:id="@+id/menu_admin"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="🔐  Admin Panel"
+                android:textColor="#FFD700"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
+
+            <!-- ✅ BAGONG BUTTON 2 — WHAT'S NEW -->
+            <TextView
+                android:id="@+id/menu_whatsnew"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="🆕  What's New"
+                android:textColor="#00FF88"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
+
+            <!-- ✅ BAGONG BUTTON 3 — EXIT -->
+            <TextView
+                android:id="@+id/menu_exit"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="❌  Exit"
+                android:textColor="#FF6B6B"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:clickable="true"/>
         </LinearLayout>
     </LinearLayout>
 
