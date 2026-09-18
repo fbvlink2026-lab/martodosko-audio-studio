@@ -29,7 +29,7 @@
         .header-box p { color: #888; font-size: 13px; }
         .greeting { color: #40E0D0; margin-top: 12px; font-size: 15px; }
 
-        /* ===== COLLAPSE SECTION ===== */
+        /* ===== COLLAPSE SECTION — ✅ NAKATIKLOP MUNA PAGBUKAS! ===== */
         .section {
             background: #16162A;
             border-radius: 12px;
@@ -53,11 +53,13 @@
             color: #00FF88;
             transition: transform 0.3s ease;
         }
+        /* ✅ DEFAULT: NAKATIKLOP LAHAT PAGBUKAS! */
         .section.collapsed .icon-toggle { transform: rotate(-90deg); }
         .section.collapsed .section-content {
             max-height: 0;
             opacity: 0;
             padding: 0 20px;
+            overflow: hidden;
         }
         .section-content {
             max-height: 3000px;
@@ -131,8 +133,8 @@
         Maraming salamat po sa inyong pag-aabang at pagtitiwala sa proyektong ito.</p>
     </div>
 
-    <!-- ===== PROGRESS ===== -->
-    <div class="section">
+    <!-- ===== PROGRESS — ✅ NAKATIKLOP MUNA ===== -->
+    <div class="section collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2 style="color:#40E0D0;">📊 KASALUKUYANG ANTAS NG PROYEKTO — ~30% TAPOS</h2>
             <span class="icon-toggle">▼</span>
@@ -143,7 +145,7 @@
                 <div class="progress-bar"><div class="progress-fill"></div></div>
             </div>
 
-            <div class="section color-done">
+            <div class="section color-done collapsed">
                 <div class="section-header" onclick="toggleSection(this.parentElement)">
                     <h2>✅ TAPOS NA — Ang Balangkas at Pundasyon</h2>
                     <span class="icon-toggle">▼</span>
@@ -159,7 +161,7 @@
                 </div>
             </div>
 
-            <div class="section color-doing">
+            <div class="section color-doing collapsed">
                 <div class="section-header" onclick="toggleSection(this.parentElement)">
                     <h2>⏳ KASALUKUYANG GINAGAWA — Ang Detalyadong Mixer</h2>
                     <span class="icon-toggle">▼</span>
@@ -172,7 +174,7 @@
                 </div>
             </div>
 
-            <div class="section color-future">
+            <div class="section color-future collapsed">
                 <div class="section-header" onclick="toggleSection(this.parentElement)">
                     <h2>🔴 HINDI PA NASISIMULA — Ang Puso ng Proyekto</h2>
                     <span class="icon-toggle">▼</span>
@@ -188,8 +190,8 @@
         </div>
     </div>
 
-    <!-- ===== DESIGN ===== -->
-    <div class="section color-design">
+    <!-- ===== DESIGN — ✅ NAKATIKLOP MUNA ===== -->
+    <div class="section color-design collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>🎨 INAASAHANG PAGBABAGO SA DISENYO AT KONSEPTO</h2>
             <span class="icon-toggle">▼</span>
@@ -208,8 +210,8 @@
         </div>
     </div>
 
-    <!-- ===== NAV & FEATURES ===== -->
-    <div class="section color-nav">
+    <!-- ===== NAV & FEATURES — ✅ NAKATIKLOP MUNA ===== -->
+    <div class="section color-nav collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>🧭 MGA BAGONG NAVIGATION AT DAGDAG NA KAKAYAHAN</h2>
             <span class="icon-toggle">▼</span>
@@ -228,8 +230,8 @@
         </div>
     </div>
 
-    <!-- ===== GOAL ===== -->
-    <div class="section color-goal">
+    <!-- ===== GOAL — ✅ NAKATIKLOP MUNA ===== -->
+    <div class="section color-goal collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>🎯 ANG BUKOD-TANGING LAYUNIN NG PROYEKTO</h2>
             <span class="icon-toggle">▼</span>
@@ -244,8 +246,8 @@
         </div>
     </div>
 
-    <!-- ===== NOTE ===== -->
-    <div class="section color-note">
+    <!-- ===== NOTE — ✅ NAKATIKLOP MUNA ===== -->
+    <div class="section color-note collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>📅 HINDI PA ITO TAPOS — NGUNIT NAGPAPATULOY TAYO</h2>
             <span class="icon-toggle">▼</span>
@@ -260,8 +262,8 @@
         </div>
     </div>
 
-    <!-- ===== CONTACT ===== -->
-    <div class="section color-contact">
+    <!-- ===== CONTACT — ✅ NAKATIKLOP MUNA ===== -->
+    <div class="section color-contact collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>💌 MANATILING NAKAKONEKTA</h2>
             <span class="icon-toggle">▼</span>
