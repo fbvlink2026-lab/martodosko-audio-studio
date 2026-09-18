@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ VOCAL CHANNEL + PAREHONG BILOG! -->
-<!-- VERSION: 7.3.0 — ✅ INPUT→VOCAL CHANNEL + 160x160 PAREHO! -->
-<!-- UPDATED: 2026-09-18 — TATLONG LINYA LANG ANG PINALITAN! -->
+<!-- FILE: activity_mixer.xml — ✅ LABEL HINDI NA TAKPAN! HEIGHT LANG PINALITAN! -->
+<!-- VERSION: 7.3.1 — ✅ 160x200 PARA MAY ESPASYO SA ITAAS AT BABA! -->
+<!-- UPDATED: 2026-09-18 — DALAWANG LINYA LANG! WIDTH NAGING 160dp, HEIGHT 200dp! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -61,7 +61,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- ✅ PALITAN 1: INPUT → VOCAL CHANNEL -->
+                <!-- ✅ VOCAL CHANNEL HEADER -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                     android:padding="12dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ VERTICAL NA -->
+                <!-- ✅ KNOBS CONTAINER -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,18 +80,18 @@
                     android:gravity="center"
                     android:layout_marginTop="12dp">
 
-                    <!-- ✅ PALITAN 2: 140x160 → 160x160 (BILOG) -->
+                    <!-- ✅ GAIN KNOB — WIDTH 160dp, HEIGHT 200dp PARA SA LABEL! -->
                     <com.martodosko.studio.KnobView
                         android:id="@+id/knob_gain"
                         android:layout_width="160dp"
-                        android:layout_height="160dp"
+                        android:layout_height="200dp"
                         android:layout_margin="4dp"/>
 
-                    <!-- ✅ PALITAN 3: 140x160 → 160x160 (BILOG) -->
+                    <!-- ✅ SENSITIVITY KNOB — WIDTH 160dp, HEIGHT 200dp! -->
                     <com.martodosko.studio.KnobView
                         android:id="@+id/knob_sensitivity"
                         android:layout_width="160dp"
-                        android:layout_height="160dp"
+                        android:layout_height="200dp"
                         android:layout_margin="4dp"/>
 
                 </LinearLayout>
