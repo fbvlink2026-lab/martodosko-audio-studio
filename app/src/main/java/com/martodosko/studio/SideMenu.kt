@@ -261,7 +261,7 @@ class SideMenu(
             close()
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "WHATS_NEW")
+                intent.putExtra("target_screen", "ABISO")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
                 Toast.makeText(activity, "🆕 Binubuksan ang What's New...", Toast.LENGTH_SHORT).show()
