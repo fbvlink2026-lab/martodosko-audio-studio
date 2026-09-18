@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ LABEL NASA LOOB NA NG PANEL! HINDI NA LUMALABAS!
-// VERSION: 5.4.0 — ✅ labelOffsetY = 0.82f — NASA LOOB SA ITAAS! HINDI NA PAGTATAPATONG!
+// FILE: KnobView.kt — ✅ PANEL HUMABA PAITAAS! RECTANGLE NA! LABEL HINDI GINALAW!
+// VERSION: 5.5.0 — ✅ PANEL LANG PINAHABA! LABEL AT VALUE NASA LUGAR PA RIN!
 // UPDATED: 2026-09-18 — ISANG LINYA LANG ANG PINALITAN! WALANG IBANG BINAGO!
 // ==================================================
 package com.martodosko.studio
@@ -23,8 +23,8 @@ open class KnobView @JvmOverloads constructor(
 
     open var labelText: String = ""
     open var unitText: String = ""
-    open var labelOffsetY: Float = 0.82f  // ✅ NASA LOOB NA NG PANEL! SA ITAAS!
-    open var valueOffsetY: Float = 0.95f
+    open var labelOffsetY: Float = 0.82f  // ✅ HINDI GINALAW! NASA LUGAR PA RIN!
+    open var valueOffsetY: Float = 0.95f   // ✅ HINDI GINALAW! NASA LUGAR PA RIN!
 
     var preferenceKey: String? = null
 
@@ -164,7 +164,8 @@ open class KnobView @JvmOverloads constructor(
         val tickOuter = arcRadius * 1.08f
         val textRadius = size * 0.42f
 
-        canvas.drawRect(cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize, paintPanel)
+        // ✅ PINAHABA PANEL PANGITAAS — NAGING RECTANGLE! LABEL HINDI GINALAW!
+        canvas.drawRect(cx - halfSize, cy - halfSize * 1.18f, cx + halfSize, cy + halfSize, paintPanel)
 
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
@@ -226,6 +227,7 @@ open class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
+        // ✅ LABEL AT VALUE — HINDI GINALAW! NASA LUGAR PA RIN!
         if (labelText.isNotEmpty()) {
             canvas.drawText(labelText, cx, cy - panelRadius * labelOffsetY, paintLabel)
         }
