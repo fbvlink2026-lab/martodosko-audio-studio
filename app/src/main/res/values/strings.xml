@@ -1,79 +1,54 @@
 <string name="abiso_proyekto"><![CDATA[
-&lt;div style="max-width: 100%; font-family: sans-serif; color: #fff; line-height: 1.6;">
+&lt;h2 style="color:#00FF88; text-align:center;">📢 ABISO SA MGA NAG-AABANG&lt;/h2&gt;
+&lt;p style="text-align:center; color:#888888; font-size:13px;">Proyekto: Kasalukuyang Ginagawa — Updated: 2026-09-19&lt;/p&gt;
 
-&lt;!-- 📢 HEADER -->
-&lt;div style="background: linear-gradient(135deg, #0F3460, #1A1A2E); padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-  &lt;h1 style="color: #00FF88; margin: 0; font-size: 22px;">📢 ABISO SA MGA NAG-AABANG&lt;/h1>
-  &lt;p style="color: #888; margin: 8px 0 0 0; font-size: 13px;">Martodosko Audio Studio — Kasalukuyang Ginagawa&lt;br>Updated: 2026-09-19&lt;/p>
-&lt;/div>
+&lt;h3 style="color:#40E0D0; margin-top:20px;">📊 KASALUKUYANG ANTAS NG PROYEKTO — ~30% TAPOS&lt;/h3&gt;
 
-&lt;!-- 📊 PROGRESS -->
-&lt;div style="background: #1E1E2F; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-  &lt;h2 style="color: #40E0D0; margin-top: 0; font-size: 18px;">📊 KASALUKUYANG ANTAS — ~30% TAPOS&lt;/h2>
-  
-  &lt;div style="background: #2A2A3C; border-radius: 6px; height: 10px; margin: 12px 0;">
-    &lt;div style="background: linear-gradient(90deg, #00FF88, #40E0D0); width: 30%; height: 100%; border-radius: 6px;">&lt;/div>
-  &lt;/div>
+&lt;p style="color:#4CAF50; font-weight:bold;">✅ TAPOS NA — ANG BALANGKAS AT PUNDASYON:&lt;/p&gt;
+&lt;ul style="margin:5px 0 15px 20px; padding:0;">
+&lt;li>Buong sistema ng menu — Side Menu, Main Screen, Mixer, Help, Settings&lt;/li&gt;
+&lt;li>Custom na disenyo ng pihitan — neon glow, indikasyon, auto-save&lt;/li&gt;
+&lt;li>Vocal Channel — Gain at Sensitivity — gumagana nang maayos&lt;/li&gt;
+&lt;li>Sistema ng pag-update — awtomatikong tinitingnan ang bagong bersyon&lt;/li&gt;
+&lt;li>Gabay ng paggamit — buong dokumentasyon nakahanda na&lt;/li&gt;
+&lt;/ul&gt;
 
-  &lt;h3 style="color: #4CAF50; font-size: 15px; margin: 16px 0 8px 0;">✅ TAPOS NA — PUNDASYON&lt;/h3>
-  &lt;ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #CCC;">
-    &lt;li>Buong sistema ng menu at paglipat ng screen&lt;/li>
-    &lt;li>Custom na pihitan — neon glow, indikasyon, auto-save&lt;/li>
-    &lt;li>Vocal Channel — Gain at Sensitivity&lt;/li>
-    &lt;li>Auto Update System mula sa GitHub&lt;/li>
-    &lt;li>Gabay at dokumentasyon&lt;/li>
-  &lt;/ul>
+&lt;p style="color:#FFC107; font-weight:bold;">⏳ KASALUKUYANG GINAGAWA — ANG DETALYADONG MIXER:&lt;/p&gt;
+&lt;ul style="margin:5px 0 15px 20px; padding:0;">
+&lt;li>Lahat ng pihitan sa Vocal Channel — Reverb, Delay, EQ, Compressor, Noise Gate, Master — 12+ na pihitan&lt;/li&gt;
+&lt;li>Guitar Effects Channel — Distortion, Overdrive, Wah-Wah, Chorus, at iba pa&lt;/li&gt;
+&lt;/ul&gt;
 
-  &lt;h3 style="color: #FFC107; font-size: 15px; margin: 16px 0 8px 0;">⏳ GINAGAWA — DETALYADONG MIXER&lt;/h3>
-  &lt;ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #CCC;">
-    &lt;li>Lahat ng pihitan sa Vocal Channel — 12+ na kontrol&lt;/li>
-    &lt;li>Guitar Effects — Distortion, Wah-Wah, Chorus, at iba pa&lt;/li>
-  &lt;/ul>
+&lt;p style="color:#F44336; font-weight:bold;">🔴 HINDI PA NASISIMULA — ANG PUSO NG PROYEKTO:&lt;/p&gt;
+&lt;ul style="margin:5px 0 15px 20px; padding:0;">
+&lt;li>Preset System — pag-save at pagbukas ng sariling mga setting&lt;/li&gt;
+&lt;li>Pedal Interface — 3-pihit na kontrol sa pangunahing screen&lt;/li&gt;
+&lt;li>AUDIO ENGINE — C++ na pagpoproseso ng tunog na may mababang antala&lt;/li&gt;
+&lt;/ul&gt;
 
-  &lt;h3 style="color: #F44336; font-size: 15px; margin: 16px 0 8px 0;">🔴 HINDI PA NASISIMULA — PUSO NG PROYEKTO&lt;/h3>
-  &lt;ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #CCC;">
-    &lt;li>Preset System — Save &amp; Load&lt;/li>
-    &lt;li>Pedal Interface — 3-knob control sa Home Screen&lt;/li>
-    &lt;li>Audio Engine — C++ low-latency processing &lt;10ms&lt;/li>
-  &lt;/ul>
-&lt;/div>
+&lt;h3 style="color:#40E0D0; margin-top:20px;">🎨 INAASAHANG PAGBABAGO SA DISENYO&lt;/h3&gt;
+&lt;ul style="margin:5px 0 15px 20px; padding:0;">
+&lt;li>&lt;b>Pangunahing Screen → Pedal Board&lt;/b> — parang totoong sahig na may mga pedal&lt;/li&gt;
+&lt;li>&lt;b>Mixer Screen — TAB Switch&lt;/b> — 🎤 Vocal ↔ 🎸 Guitar, VU Meter, kulay bawat kategorya&lt;/li&gt;
+&lt;li>&lt;b>Preset Screen — Preview&lt;/b> — makikita mo ang itsura bago piliin, Export/Import&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;!-- 🎨 INAASAHANG PAGBABAGO -->
-&lt;div style="background: #1E1E2F; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-  &lt;h2 style="color: #40E0D0; margin-top: 0; font-size: 18px;">🎨 INAASAHANG DISENYO&lt;/h2>
-  
-  &lt;div style="display: grid; gap: 12px; font-size: 14px; color: #CCC;">
-    &lt;div style="background: #2A2A3C; padding: 12px; border-radius: 6px;">
-      &lt;b style="color: #00FF88;">🖥️ Pedal Board —&lt;/b> Ang Home Screen ay magiging pisikal na pedal board
-    &lt;/div>
-    &lt;div style="background: #2A2A3C; padding: 12px; border-radius: 6px;">
-      &lt;b style="color: #40E0D0;">🎚️ Mixer Tabs —&lt;/b> Mabilis na lipat: 🎤 Vocal ↔ 🎸 Guitar
-    &lt;/div>
-    &lt;div style="background: #2A2A3C; padding: 12px; border-radius: 6px;">
-      &lt;b style="color: #FFD700;">📋 Preset Preview —&lt;/b> Makikita ang pedal bago piliin
-    &lt;/div>
-    &lt;div style="background: #2A2A3C; padding: 12px; border-radius: 6px;">
-      &lt;b style="color: #FF6B6B;">⚡ Real-time Audio —&lt;/b> Naririnig agad habang pinipihit
-    &lt;/div>
-  &lt;/div>
-&lt;/div>
+&lt;h3 style="color:#40E0D0; margin-top:20px;">🧭 MGA BAGONG KAKAYAHAN&lt;/h3&gt;
+&lt;ul style="margin:5px 0 15px 20px; padding:0;">
+&lt;li>Bottom Navigation Bar — 🏠 Home 🎚️ Mixer 📋 Presets ⚙️ Settings&lt;/li&gt;
+&lt;li>Real-time na pagbabago — naririnig AGAD habang pinipihit&lt;/li&gt;
+&lt;li>Auto-save, Favorites, Backup&lt;/li&gt;
+&lt;li>Bluetooth Audio, Share Preset, Dark Mode&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;!-- 🎯 LAYUNIN -->
-&lt;div style="background: linear-gradient(135deg, #2C003E, #1A1A2E); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-  &lt;h2 style="color: #FFD700; margin-top: 0; font-size: 18px;">🎯 ANG LAYUNIN NATIN&lt;/h2>
-  &lt;ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #F0E68C;">
-    &lt;li>&lt;b>TOTOONG MABILIS —&lt;/b> &lt;10ms na antala, halos hindi maririnig&lt;/li>
-    &lt;li>&lt;b>DIREKTANG DALOY —&lt;/b> Mikropono → Pandinig, walang pagkaantala&lt;/li>
-    &lt;li>&lt;b>PARA SA LAHAT —&lt;/b> Boses man o gitara, libre at walang bayad&lt;/li>
-  &lt;/ul>
-&lt;/div>
+&lt;h3 style="color:#FFD700; margin-top:20px;">🎯 ANG LAYUNIN NATIN&lt;/h3&gt;
+&lt;ul style="margin:5px 0 15px 20px; padding:0;">
+&lt;li>&lt;b>TOTOONG MABILIS&lt;/b> — &lt;10ms na antala&lt;/li&gt;
+&lt;li>&lt;b>DIREKTANG DALOY NG TUNOG&lt;/b> — mikropono → pandinig&lt;/li&gt;
+&lt;li>&lt;b>PARA SA LAHAT&lt;/b> — boses man o gitara&lt;/li&gt;
+&lt;li>&lt;b>WALANG BAYAD&lt;/b> — para sa lahat na mahal ang musika&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;!-- 🙏 PANGWAKAS -->
-&lt;div style="text-align: center; padding: 20px; color: #888; font-size: 13px; font-style: italic;">
-  🙏 MARAMING SALAMAT SA PAGTITIIS&lt;br>&lt;br>
-  &lt;span style="color: #00FF88; font-size: 15px;">&quot;Ang musika — para sa lahat, kahit saan.&quot;&lt;/span>&lt;br>&lt;br>
-  Patuloy tayong gagawa — para sa inyo.
-&lt;/div>
-
-&lt;/div>
+&lt;p style="text-align:center; color:#888888; margin-top:30px; font-style:italic;">🙏 MARAMING SALAMAT SA PAGTITIIS&lt;br>
+"Ang musika — para sa lahat, kahit saan."&lt;/p&gt;
 ]]></string>
