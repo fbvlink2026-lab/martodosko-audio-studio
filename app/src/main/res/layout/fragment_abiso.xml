@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ================================================== -->
-<!-- FILE: fragment_abiso.xml — ✅ HTML VIEW LANG! -->
-<!-- VERSION: 1.0.0 -->
-<!-- UPDATED: 2026-09-19 -->
-<!-- ================================================== -->
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
-    android:padding="16dp">
+    android:background="#12121F">
 
-    <TextView
-        android:id="@+id/tv_abiso_html"
+    <WebView
+        android:id="@+id/web_abiso"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"/>
+        android:layout_height="match_parent"/>
 
-</ScrollView>
+</LinearLayout>
