@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ PANEL HUMABA PAITAAS! RECTANGLE NA! LABEL HINDI GINALAW!
-// VERSION: 5.5.0 — ✅ PANEL LANG PINAHABA! LABEL AT VALUE NASA LUGAR PA RIN!
-// UPDATED: 2026-09-18 — ISANG LINYA LANG ANG PINALITAN! WALANG IBANG BINAGO!
+// FILE: KnobView.kt — ✅ LABEL UMANGAT PAITAAS! HINDI NA PUMATONG SA NUMERO!
+// VERSION: 5.6.1 — ✅ labelOffsetY = 1.05f — PALAYO SA -10 / 0 / +10!
+// UPDATED: 2026-09-18 — WALANG IBANG BINAGO! PANEL = PARISUKAT!
 // ==================================================
 package com.martodosko.studio
 
@@ -23,7 +23,7 @@ open class KnobView @JvmOverloads constructor(
 
     open var labelText: String = ""
     open var unitText: String = ""
-    open var labelOffsetY: Float = 0.82f  // ✅ HINDI GINALAW! NASA LUGAR PA RIN!
+    open var labelOffsetY: Float = 1.05f  // ✅ UMANGAT PAITAAS! HINDI NA PUMATONG SA NUMERO!
     open var valueOffsetY: Float = 0.95f   // ✅ HINDI GINALAW! NASA LUGAR PA RIN!
 
     var preferenceKey: String? = null
@@ -68,7 +68,6 @@ open class KnobView @JvmOverloads constructor(
 
     private fun getMarks(): List<Int> {
         val range = maxValue - minValue
-        
         return when {
             minValue < 0f && maxValue > 0f && range >= 90f -> {
                 listOf(-50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50)
@@ -164,8 +163,8 @@ open class KnobView @JvmOverloads constructor(
         val tickOuter = arcRadius * 1.08f
         val textRadius = size * 0.42f
 
-        // ✅ PINAHABA PANEL PANGITAAS — NAGING RECTANGLE! LABEL HINDI GINALAW!
-        canvas.drawRect(cx - halfSize, cy - halfSize * 1.18f, cx + halfSize, cy + halfSize, paintPanel)
+        // ✅ PANEL — PARISUKAT! HINDI HUMABA!
+        canvas.drawRect(cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize, paintPanel)
 
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
@@ -227,7 +226,7 @@ open class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL AT VALUE — HINDI GINALAW! NASA LUGAR PA RIN!
+        // ✅ LABEL — UMANGAT PAITAAS! HINDI NA PUMATONG SA NUMERO!
         if (labelText.isNotEmpty()) {
             canvas.drawText(labelText, cx, cy - panelRadius * labelOffsetY, paintLabel)
         }
