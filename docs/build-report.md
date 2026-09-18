@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-18 20:29 UTC
-🏷️ **Bersyon:** v1.0.207
+📅 **Petsa:** 2026-09-18 20:43 UTC
+🏷️ **Bersyon:** v1.0.208
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-18 20:29:09 UTC
-🏷️ BERSYON:    v1.0.207
+⏰ ORAS:       2026-09-18 20:43:12 UTC
+🏷️ BERSYON:    v1.0.208
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -35,15 +35,47 @@ Daemon will be stopped at the end of the build
 > Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:mergeReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:parseReleaseLocalResources
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:javaPreCompileRelease
+> Task :app:extractProguardFiles
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:desugarReleaseFileDependencies
+> Task :app:processReleaseManifestForPackage
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseResources
+> Task :app:mergeExtDexRelease
+> Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:optimizeReleaseResources
 
-> Task :app:mergeReleaseResources FAILED
-ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_admin_login.xmll: Resource and asset merger: The file name must end with .xml
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AbisoFragment.kt:26:36 Unresolved reference: string
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:mergeReleaseResources'.
-> /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_admin_login.xmll: Error: The file name must end with .xml
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -51,8 +83,8 @@ Execution failed for task ':app:mergeReleaseResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 20s
-7 actionable tasks: 6 executed, 1 up-to-date
+BUILD FAILED in 1m 9s
+32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
 
