@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KnobView.kt — ✅ LABEL UMANGAT PAITAAS! HINDI NA PUMATONG SA NUMERO!
-// VERSION: 5.6.1 — ✅ labelOffsetY = 1.05f — PALAYO SA -10 / 0 / +10!
-// UPDATED: 2026-09-18 — WALANG IBANG BINAGO! PANEL = PARISUKAT!
+// FILE: KnobView.kt — ✅ PANEL = RECTANGLE (HUMABA PAITAAS)! LABEL UMANGAT PAITAAS!
+// VERSION: 5.7.0 — ✅ PANEL HUMABA PAITAAS (1.18f) + LABEL PALAYO (1.05f)! WALANG IBANG BINAGO!
+// UPDATED: 2026-09-18 — PANEL HINDI NA IBABALIK SA PARISUKAT!
 // ==================================================
 package com.martodosko.studio
 
@@ -23,8 +23,8 @@ open class KnobView @JvmOverloads constructor(
 
     open var labelText: String = ""
     open var unitText: String = ""
-    open var labelOffsetY: Float = 1.05f  // ✅ UMANGAT PAITAAS! HINDI NA PUMATONG SA NUMERO!
-    open var valueOffsetY: Float = 0.95f   // ✅ HINDI GINALAW! NASA LUGAR PA RIN!
+    open var labelOffsetY: Float = 1.05f  // ✅ UMANGAT PAITAAS! PALAYO SA NUMERO!
+    open var valueOffsetY: Float = 0.95f   // ✅ HINDI GINALAW!
 
     var preferenceKey: String? = null
 
@@ -163,8 +163,8 @@ open class KnobView @JvmOverloads constructor(
         val tickOuter = arcRadius * 1.08f
         val textRadius = size * 0.42f
 
-        // ✅ PANEL — PARISUKAT! HINDI HUMABA!
-        canvas.drawRect(cx - halfSize, cy - halfSize, cx + halfSize, cy + halfSize, paintPanel)
+        // ✅ PANEL — RECTANGLE NA! HUMABA PAITAAS! HINDI NA IBABALIK SA PARISUKAT!
+        canvas.drawRect(cx - halfSize, cy - halfSize * 1.18f, cx + halfSize, cy + halfSize, paintPanel)
 
         canvas.drawCircle(cx, cy, knobRadius, paintKnobBg)
         canvas.save()
@@ -226,7 +226,7 @@ open class KnobView @JvmOverloads constructor(
         canvas.drawPath(path, paintIndicator)
         canvas.restore()
 
-        // ✅ LABEL — UMANGAT PAITAAS! HINDI NA PUMATONG SA NUMERO!
+        // ✅ LABEL — UMANGAT PAITAAS! PALAYO SA NUMERO!
         if (labelText.isNotEmpty()) {
             canvas.drawText(labelText, cx, cy - panelRadius * labelOffsetY, paintLabel)
         }
