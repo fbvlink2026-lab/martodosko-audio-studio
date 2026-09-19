@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ COLLAPSE/GUMAGANA NA! TAMA NA ANG PANGALAN! BUONG SUB-MENU!
-// VERSION: 2.2.0 — ✅ VOCAL CHANNEL HINDI GINALAW! PRESETS = PANGKALAT + NON-MEMBER! GUITAR SUB-MENU KUMPLETO!
-// UPDATED: 2026-09-19 — AYON SA LAHAT NG UTOS MO! WALANG BINAGO SA HINDI INUTOS!
+// FILE: SideMenu.kt — ✅ HINDI TINANGGAL ANG submenu_mixer_presets! MAY MENSAHE LANG!
+// VERSION: 2.2.1 — ✅ TINANGGAL ANG ERROR! LAGYAN NG MENSAHE! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-19 — AYON SA UTOS: HUWAG TANGGALIN, LAGYAN LANG NG MENSAHE!
 // ==================================================
 package com.martodosko.studio
 
@@ -73,7 +73,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ COLLAPSE/EXPAND — INAYOS ANG PAGBILANG NG ARROW! GUMAGANA NA!
+    // ✅ COLLAPSE/EXPAND — GUMAGANA NA!
     // ==============================================
     private fun setupCollapsible(
         headerId: Int,
@@ -86,7 +86,6 @@ class SideMenu(
         menuExpanded[headerId] = defaultExpanded
         container.visibility = if (defaultExpanded) View.VISIBLE else View.GONE
         
-        // ✅ HUWAG DOBLEHIN ANG ARROW — KUNIN ANG TOTOONG PANGALAN MUNA
         val originalText = when (headerId) {
             R.id.menu_mixer -> "🎚️  Mixer"
             R.id.menu_guitar -> "🎸  Guitar Effects"
@@ -112,7 +111,6 @@ class SideMenu(
         }
     }
 
-    // ✅ LAHAT NG MAY SUB-MENU — TUGMA SA side_menu.xml!
     private fun setupCollapsibleMenus() {
         setupCollapsible(R.id.menu_mixer, R.id.submenu_mixer, defaultExpanded = true)
         setupCollapsible(R.id.menu_guitar, R.id.submenu_guitar, defaultExpanded = false)
@@ -121,12 +119,10 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ SUB-MENU CLICK HANDLERS — AYON SA LAHAT NG UTOS MO!
+    // ✅ SUB-MENU CLICK HANDLERS — HUWAG TANGGALIN! MAY MENSAHE LANG!
     // ==============================================
     private fun setupSubMenuButtons() {
-        // ==============================================
-        // ✅ MIXER SUB-MENU — VOCAL CHANNEL HINDI GINALAW! PANGALAN = PRESETS!
-        // ==============================================
+        // ✅ MIXER → VOCAL CHANNEL — BUMUBUKAS NG MIXER!
         activity.findViewById<TextView>(R.id.submenu_mixer_vocal)?.setOnClickListener {
             close()
             if (activity is MixerActivity) {
@@ -137,31 +133,24 @@ class SideMenu(
             }
         }
 
-        // ✅ PINALITAN: Mixer Controls → Vocal Channel Presets — AYON SA UTOS!
+        // ✅ HUWAG TANGGALIN — MAY MENSAHE LANG! HINDI PA HANDANG BUKAS!
         activity.findViewById<TextView>(R.id.submenu_mixer_presets)?.setOnClickListener {
             close()
-            Toast.makeText(activity, "📋 Vocal Channel Presets — Bubukas...", Toast.LENGTH_SHORT).show()
-            // ✅ Ilagay ang preset activity kapag handa na
+            Toast.makeText(activity, "📋 Vocal Preset Controls — Darating pa sa susunod na update!", Toast.LENGTH_SHORT).show()
         }
 
-        // ==============================================
-        // ✅ GUITAR EFFECTS SUB-MENU — DALAWANG BAHAGI! AYON SA UTOS!
-        // ==============================================
+        // ✅ GUITAR → CHANNEL + PRESET
         activity.findViewById<TextView>(R.id.submenu_guitar_channel)?.setOnClickListener {
             close()
             Toast.makeText(activity, "🎸 Guitar Effects Channel — Bubukas...", Toast.LENGTH_SHORT).show()
-            // ✅ Ilagay ang GuitarActivity kapag handa na
         }
 
         activity.findViewById<TextView>(R.id.submenu_guitar_presets)?.setOnClickListener {
             close()
             Toast.makeText(activity, "📋 Guitar Effects Presets — Bubukas...", Toast.LENGTH_SHORT).show()
-            // ✅ Ilagay ang preset activity kapag handa na
         }
 
-        // ==============================================
-        // ✅ PRESETS SUB-MENU — PANGKALAT + NON-MEMBER! AYON SA UTOS!
-        // ==============================================
+        // ✅ PRESETS → PANGKALAHATAN + NON-MEMBER
         activity.findViewById<TextView>(R.id.submenu_presets_global)?.setOnClickListener {
             close()
             Toast.makeText(activity, "📋 Pangkalahatang Presets — Bubukas...", Toast.LENGTH_SHORT).show()
@@ -172,9 +161,7 @@ class SideMenu(
             Toast.makeText(activity, "🆓 Non-Member Presets — Bubukas...", Toast.LENGTH_SHORT).show()
         }
 
-        // ==============================================
-        // ✅ SETTINGS SUB-MENU — HANDANG-HANDA NA!
-        // ==============================================
+        // ✅ SETTINGS → AUDIO + APPEARANCE
         activity.findViewById<TextView>(R.id.submenu_settings_audio)?.setOnClickListener {
             close()
             openContentScreen("SETTINGS_AUDIO")
@@ -286,13 +273,11 @@ class SideMenu(
     private fun setupMenuButtons() {
         activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener { close() }
 
-        // ✅ PANGUNAHING BUTTONS = COLLAPSE/EXPAND LANG — ANG SUB-MENU ANG LUMILIPAT!
         activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {}
         activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {}
         activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {}
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {}
 
-        // ✅ IBA PANG BUTTONS — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             checkForUpdatesDirect()
