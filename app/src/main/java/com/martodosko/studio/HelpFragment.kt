@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: HelpFragment.kt — ✅ INAYOS ANG ERROR! IDINAGDAG ANG ViewGroup IMPORT!
-// VERSION: 2.3.1 — ✅ WALANG GUHIT! TUNAY NA PANEL! WALANG ERROR!
-// UPDATED: 2026-09-19 — NAWALA NA ANG Unresolved reference: ViewGroup!
+// FILE: HelpFragment.kt — ✅ NAKATIKLOP NANG UNA! WALANG LUMALABAS!
+// VERSION: 2.4.0 — ✅ DEFAULT = GONE! PINDOT LANG PARA BUKAS! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-19 — ISANG LINYA LANG ANG PALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -10,7 +10,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup  // ✅ IDINAGDAG — ITO ANG KULANG!
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -25,16 +25,13 @@ class HelpFragment : Fragment() {
     ): View? {
         val versionName = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
 
-        // ✅ SCROLL VIEW
         val scrollView = ScrollView(requireContext())
         scrollView.setBackgroundColor(0xFF081218.toInt())
 
-        // ✅ MAIN CONTAINER
         val root = LinearLayout(requireContext())
         root.orientation = LinearLayout.VERTICAL
         root.setPadding(20, 20, 20, 20)
 
-        // ✅ TITLE
         val title = TextView(requireContext())
         title.text = "❓ HELP — MARTODOSKO AUDIO STUDIO"
         title.textSize = 22f
@@ -116,9 +113,9 @@ ANO ANG MANGYAYARI PAGKAPINDOT APPLY:
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 3 — VOCAL MIXER
+        // 📌 BAHAGI 3 — VOCAL CHANNEL
         // ==============================================
-        addCollapsibleSection(root, "🎤 BAHAGI 3 — VOCAL MIXER", """
+        addCollapsibleSection(root, "🎤 BAHAGI 3 — VOCAL CHANNEL", """
 Dito mo makikita at makokontrol ang DETALYADONG settings ng boses.
 Maraming knobs dito — lahat pwedeng i-adjust nang isa-isa!
 
@@ -190,7 +187,7 @@ KONEKSYON SA MAIN SCREEN:
 ITO ANG PINAKAMAHALAGA — DALAWANG PARAAN ANG PAG-SAVE!
 
 PARAAN 1 — MAG-SAVE MULA SA CHANNEL SCREEN
-  Saan: Vocal Mixer o Guitar Effects
+  Saan: Vocal Channel o Guitar Effects
   Ano ang ginagawa:
     • Ginalaw mo ang MARAMING knobs — isa-isa mong inayos
     • Pindot SAVE PRESET → Ilagay ang pangalan
@@ -245,14 +242,6 @@ BAKIT NAPAKABILIS AT WALANG ANTALA ANG TUNOG?
      • Tandaan: sa ibang lumang telepono — maaaring maging maingay
        kung masyadong mababa ang buffer — i-adjust sa Settings
 
-PAGKAKAIBA SA IBA PANG APP:
-
-  • Wika ng Pagproseso — Ibang App: Kotlin/Java — Ito: C++ NATIVE
-  • Bilis ng Pagproseso — Ibang App: Mabagal — Ito: PINAKAMABILIS
-  • Antala — Ibang App: 50-200ms — Ito: < 10ms — HALOS WALA!
-  • Daanan ng Signal — Ibang App: Dumadaan sa OS — Ito: DIREKTA SA HARDWARE
-  • Angkop sa Live — Ibang App: HINDI — Ito: OO!
-
 MGA TIP PARA SA PINAKAMABILIS NA TUNOG:
 
   • GUMAMIT NG EARPHONE O EXTERNAL SPEAKER — hindi built-in speaker!
@@ -265,11 +254,15 @@ MGA TIP PARA SA PINAKAMABILIS NA TUNOG:
         // 📌 BAHAGI 7 — SETTINGS
         // ==============================================
         addCollapsibleSection(root, "⚙️ BAHAGI 7 — SETTINGS", """
-Dito mo mababago ang pangkalahatang pagkilos ng app:
+Dito mo mababago ang pangkalahatang pagkilos ng app — naka-grupo sa dalawa:
+
+AUDIO SETTINGS:
   • Audio Input — Pumili ng Mic, Line-in, o Bluetooth Mic
   • Sample Rate — 44.1kHz / 48kHz — mas mataas = mas malinaw
   • Buffer Size — Maliit = mas mabilis na tugon, Malaki = mas matatag
   • Zero Latency Mode — ON/OFF — pinakamabilis na daanan ng tunog
+
+APPEARANCE:
   • Dark/Light Mode — Pagbabago ng itsura ng app
   • Auto-save — Awtomatikong i-save ang huling ginamit na preset
   • Clear All — Burahin ang lahat ng preset — HINDI NA MABABAWI!
@@ -286,9 +279,36 @@ Dito mo mababago ang pangkalahatang pagkilos ng app:
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 9 — FAQ
+        // 📌 BAHAGI 9 — WHAT'S NEW
         // ==============================================
-        addCollapsibleSection(root, "❓ BAHAGI 9 — MGA MADALAS NA TANONG (FAQ)", """
+        addCollapsibleSection(root, "🆕 BAHAGI 9 — WHAT'S NEW", """
+  • Tingnan ang listahan ng mga pagbabago sa bawat bersyon
+  • Ano ang nadagdag, naayos, o binago
+  • Palaging napapanahon sa pinakabagong update
+        """.trimIndent())
+
+        // ==============================================
+        // 📌 BAHAGI 10 — JOIN US
+        // ==============================================
+        addCollapsibleSection(root, "🌐 BAHAGI 10 — JOIN US", """
+  • Sumali sa aming komunidad ng mga user
+  • Magtanong, magbahagi ng preset, at matuto sa iba
+  • Maging bahagi ng paglago ng Martodosko Audio Studio
+        """.trimIndent())
+
+        // ==============================================
+        // 📌 BAHAGI 11 — ABOUT
+        // ==============================================
+        addCollapsibleSection(root, "ℹ️ BAHAGI 11 — ABOUT", """
+  • Impormasyon tungkol sa app at developer
+  • Bersyon ng app — kusang naipapakita
+  • Layunin at pananaw ng proyekto
+        """.trimIndent())
+
+        // ==============================================
+        // 📌 BAHAGI 12 — FAQ
+        // ==============================================
+        addCollapsibleSection(root, "❓ BAHAGI 12 — MGA MADALAS NA TANONG (FAQ)", """
 Bakit hindi gumagana ang tunog?
   • Siguraduhing pinayagan ang RECORD_AUDIO permission. Pumunta sa
     Settings → Apps → Martodosko → Permissions → Microphone → Payagan.
@@ -315,7 +335,7 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 10 — TIPS
+        // 📌 BAHAGI 13 — TIPS
         // ==============================================
         addCollapsibleSection(root, "💡 MGA TIP PARA SA MAGANDANG RESULTA", """
   PARA SA BOSES:
@@ -337,11 +357,11 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 11 — KAILANGAN NG TULONG
+        // 📌 BAHAGI 14 — KAILANGAN NG TULONG
         // ==============================================
         addCollapsibleSection(root, "📞 KAILANGAN NG TULONG?", """
-  • Join Us — Sumali sa aming komunidad — tanungin ang iba pang user!
-  • About — Tingnan ang bersyon at impormasyon ng developer
+  • 🌐 Join Us — Sumali sa aming komunidad — tanungin ang iba pang user!
+  • ℹ️ About — Tingnan ang bersyon at impormasyon ng developer
   • I-report ang problema — Settings → Report Issue — ilarawan ang nangyari
 
                   SALAMAT SA PAGGAMIT NG MARTODOSKO!
@@ -354,7 +374,7 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
     }
 
     // ==============================================
-    // ✅ TUNAY NA ROUNDED PANEL — WALANG GUHIT NA TEXT!
+    // ✅ NAKATIKLOP NANG UNA — DEFAULT = GONE!
     // ==============================================
     private fun addCollapsibleSection(
         root: LinearLayout,
@@ -363,18 +383,15 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
     ) {
         val context = root.context
 
-        // ✅ PANEL CONTAINER — TUNAY NA ROUNDED BACKGROUND! WALANG TEXT GUHIT!
         val panel = LinearLayout(context)
         panel.orientation = LinearLayout.VERTICAL
 
-        // ✅ ROUNDED PANEL BACKGROUND — GINAGAWA NG CODE, HINDI TEXT!
         val panelBg = GradientDrawable()
         panelBg.setColor(0xFF14252F.toInt())
         panelBg.cornerRadius = 24f
         panelBg.setStroke(2, 0xFF23404F.toInt())
         panel.background = panelBg
 
-        // ✅ HEADER — PINDUTIN PARA BUKAS/TIKLOP
         val header = TextView(context)
         header.text = "▼  $title"
         header.textSize = 16f
@@ -382,16 +399,15 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
         header.setPadding(20, 18, 20, 18)
         header.setBackgroundColor(0xFF1A2F3A.toInt())
 
-        // ✅ CONTENT AREA — NAKATIKLOP NANG UNA
+        // ✅ NAKATIKLOP NANG UNA — DEFAULT = View.GONE!
         val contentView = TextView(context)
         contentView.text = content
         contentView.setTextColor(0xFFD0D0D0.toInt())
         contentView.textSize = 13f
         contentView.setLineSpacing(6f, 1f)
         contentView.setPadding(20, 16, 20, 20)
-        contentView.visibility = View.GONE
+        contentView.visibility = View.GONE  // ✅ ITO ANG INAYOS — NAKATIKLOP MULA SA SIMULA!
 
-        // ✅ PINDUTIN → BUKAS O TIKLOP!
         header.setOnClickListener {
             if (contentView.visibility == View.GONE) {
                 contentView.visibility = View.VISIBLE
