@@ -19,7 +19,7 @@
             border-radius: 16px;
             box-shadow: 0 0 30px rgba(64,224,208,0.15);
             width: 100%;
-            max-width: 420px;
+            max-width: 520px; /* ✅ PINALAWAK: 420 → 520px — mas malaki ang kahon */
             border: 1px solid #2A2A4A;
         }
         h2 { text-align: center; color: #40E0D0; margin-bottom: 8px; font-size: 22px; }
@@ -42,12 +42,18 @@
         .input-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; color: #B0B0C0; font-size: 14px; }
         input {
-            width: 100%; padding: 14px 15px; border-radius: 8px;
-            border: 1px solid #3A3A5A; background: #252538;
-            color: #fff; font-size: 16px;
-            outline: none; transition: border 0.3s, box-shadow 0.3s;
+            width: 100%; 
+            padding: 16px 18px; /* ✅ PINALAKI ANG PADDING — mas malawak ang loob */
+            border-radius: 8px;
+            border: 1px solid #3A3A5A; 
+            background: #252538;
+            color: #fff; 
+            font-size: 15px; /* ✅ PINALIIT NG KONTI — mas maraming makasya */
+            outline: none; 
+            transition: border 0.3s, box-shadow 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px; /* ✅ MAS MALUWAG ANG PAGKAKASULAT */
+            font-family: monospace; /* ✅ PAREHONG LAPAD ANG LETRA — mas madaling basahin */
         }
         input:focus { border-color: #40E0D0; box-shadow: 0 0 0 3px rgba(64,224,208,0.15); }
         input::placeholder { color: #666; text-transform: none; letter-spacing: normal; }
@@ -90,7 +96,8 @@
         <div id="loginForm">
             <div class="input-group">
                 <label for="keyCode">🔑 Member / Admin / Owner Key Code</label>
-                <input type="text" id="keyCode" placeholder="HAL: XXXX-XXXX-XXXX-XXXX" maxlength="19">
+                <!-- ✅ TINANGGAL ANG MAXLENGTH — KASYA NA ANG KAHIT ANONG HABA! -->
+                <input type="text" id="keyCode" placeholder="HAL: MARTODOSKO-OWNER-0000-DEVELOPER">
             </div>
             <button onclick="verifyKeyCode()">✅ I-VERIFY AT BUKSAN</button>
             
@@ -163,7 +170,7 @@
         // ✅ IPROSESO ANG RESULTA NG PAG-VERIFY
         // ==============================================
         function processVerificationResult(keyCode, result) {
-            // Result mula sa Kotlin: { level: "OWNER"|"ADMIN"|"MEMBER"|null, valid: boolean }
+            // Resulta mula sa Kotlin: { level: "OWNER"|"ADMIN"|"MEMBER"|null, valid: boolean }
             if (!result || !result.valid) {
                 showBadge('invalid', '❌ MALI ANG KEY CODE — Hindi rehistrado o mali ang pagkakasulat');
                 return;
@@ -193,7 +200,7 @@
             let label = '';
 
             // SIMULASYON LANG — TOTOONG LOGIC NASA KOTLIN
-            if (input.startsWith('OWNER-')) {
+            if (input.startsWith('MARTODOSKO-OWNER-') || input.startsWith('OWNER-')) {
                 level = 'OWNER';
                 label = '👑 OWNER — BUONG KAPANGYARIHAN';
             } else if (input.startsWith('ADMIN-')) {
