@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: side_menu.xml — ✅ IBINALIK ANG submenu_mixer_presets! HINDI TINANGGAL! MAY MENSAHE LANG! -->
-<!-- VERSION: 1.2.1 — ✅ TUGMA NA SA SideMenu.kt! WALA NANG ERROR! AYON SA UTOS MO! -->
-<!-- UPDATED: 2026-09-19 — HUWAG TANGGALIN, ILAGAY LANG SA ILALIM! WALANG IBANG PINAGBAGO! -->
+<!-- FILE: side_menu.xml — ✅ LAHAT NAKATIKLOP SA SIMULA! TUGMA NA SA SideMenu.kt! -->
+<!-- VERSION: 1.3.0 — ✅ MIXER NAKATIKLOP NA! ARROW TAMA! LAHAT NAKA-gone! WALANG IBANG PINAGBAGO! -->
+<!-- UPDATED: 2026-09-19 — AYON SA LAHAT NG UTOS! HINDI TINANGGAL ANG submenu_mixer_presets! -->
 <!-- ================================================== -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,7 +46,7 @@
         android:layout_height="1dp"
         android:background="#333344"/>
 
-    <!-- ✅ MENU OPTIONS — KOMPLETO! MAY COLLAPSE/EXPAND STRUCTURE! -->
+    <!-- ✅ MENU OPTIONS — KOMPLETO! LAHAT NAKATIKLOP SA SIMULA! -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
         android:paddingTop="8dp">
 
         <!-- ============================================== -->
-        <!-- ✅ 1 — MIXER → DEFAULT BUKAS → VOCAL PRESET + PRESET CONTROLS! HINDI TINANGGAL! -->
+        <!-- ✅ 1 — MIXER → NAKATIKLOP SA SIMULA! ▶ ARROW! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                 android:id="@+id/menu_mixer"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="▼  🎚️  Mixer"
+                android:text="▶  🎚️  Mixer"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
@@ -73,14 +73,14 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- ✅ SUB-MENU — VOCAL PRESET + PRESET CONTROLS! HINDI TINANGGAL! -->
+            <!-- ✅ SUB-MENU — NAKATIKLOP SA SIMULA! visibility="gone"! -->
             <LinearLayout
                 android:id="@+id/submenu_mixer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="40dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <!-- ✅ VOCAL PRESET — BUMUBUKAS NG MIXER! -->
                 <TextView
@@ -94,7 +94,7 @@
                     android:clickable="true"
                     android:focusable="true"/>
 
-                <!-- ✅ IBINALIK — HINDI TINANGGAL! MAY MENSAHE LANG SA KOTLIN! -->
+                <!-- ✅ HINDI TINANGGAL — NANDOON PA RIN! MAY MENSAHE LANG SA KOTLIN! -->
                 <TextView
                     android:id="@+id/submenu_mixer_presets"
                     android:layout_width="match_parent"
@@ -109,7 +109,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 2 — GUITAR EFFECTS → CHANNEL + PRESET! -->
+        <!-- ✅ 2 — GUITAR EFFECTS → NAKATIKLOP NA! TAMA NA! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -128,7 +128,6 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- ✅ SUB-MENU — 2 LANG: CHANNEL + PRESET! -->
             <LinearLayout
                 android:id="@+id/submenu_guitar"
                 android:layout_width="match_parent"
@@ -162,7 +161,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 3 — PRESETS → PANGKALATAN + NON-MEMBER! AYON SA UTOS! -->
+        <!-- ✅ 3 — PRESETS → NAKATIKLOP NA! TAMA NA! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -214,7 +213,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 4 — SETTINGS → AUDIO + APPEARANCE! -->
+        <!-- ✅ 4 — SETTINGS → NAKATIKLOP NA! TAMA NA! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
