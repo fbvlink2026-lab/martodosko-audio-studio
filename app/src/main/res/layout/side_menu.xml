@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: side_menu.xml — ✅ SARILING XML! HINDI NA UMAASA SA MAIN! -->
-<!-- VERSION: 1.0.0 — ✅ GUITAR EFFECTS = PANGALAWANG BUTTON! MAY COLLAPSE/EXPAND STRUCTURE! -->
-<!-- UPDATED: 2026-09-19 — HIWALAY NA — PWEDENG TAWAGIN KAHIT SAAN! -->
+<!-- FILE: side_menu.xml — ✅ AYON SA PLANO! VOCAL PRESET + GUITAR CHANNEL + GUITAR PRESET! -->
+<!-- VERSION: 1.1.0 — ✅ TINANGGAL ANG KULANG! TAMA NA ANG PANGALAN! TUGMA SA SideMenu.kt! -->
+<!-- UPDATED: 2026-09-19 — WALANG IBANG PINAGBAGO! PANGALAN + TANGGAL LANG! -->
 <!-- ================================================== -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -54,7 +54,7 @@
         android:paddingTop="8dp">
 
         <!-- ============================================== -->
-        <!-- ✅ 1 — MIXER (PANG-UNA) → DEFAULT BUKAS -->
+        <!-- ✅ 1 — MIXER (PANG-UNA) → DEFAULT BUKAS → VOCAL PRESET NA! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- ✅ SUB-MENU — NAKABUKAS NANG UNA -->
+            <!-- ✅ SUB-MENU — VOCAL PRESET NA! TINANGGAL ANG Mixer Controls! -->
             <LinearLayout
                 android:id="@+id/submenu_mixer"
                 android:layout_width="match_parent"
@@ -82,32 +82,24 @@
                 android:paddingStart="40dp"
                 android:visibility="visible">
 
+                <!-- ✅ VOCAL PRESET — PALIT NA! -->
                 <TextView
                     android:id="@+id/submenu_mixer_vocal"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="🎤  Vocal Channel"
+                    android:text="🎤  Vocal Preset"
                     android:textColor="#CCCCCC"
                     android:textSize="15sp"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"/>
 
-                <TextView
-                    android:id="@+id/submenu_mixer_controls"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="🎛️  Mixer Controls"
-                    android:textColor="#CCCCCC"
-                    android:textSize="15sp"
-                    android:gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="true"/>
+                <!-- ❌ TINANGGAL — Mixer Controls — HINDI NA KAILANGAN! -->
             </LinearLayout>
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 2 — GUITAR EFFECTS (PANG-ALAWA — AYON SA UTOS!) -->
+        <!-- ✅ 2 — GUITAR EFFECTS (PANG-ALAWA) → GUITAR CHANNEL + GUITAR PRESET! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -126,7 +118,7 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- ✅ SUB-MENU — NAKATIKLOP NANG UNA, HANDANG BUKAS! -->
+            <!-- ✅ SUB-MENU — 2 LANG: GUITAR CHANNEL + GUITAR PRESET! -->
             <LinearLayout
                 android:id="@+id/submenu_guitar"
                 android:layout_width="match_parent"
@@ -135,43 +127,36 @@
                 android:paddingStart="40dp"
                 android:visibility="gone">
 
+                <!-- ✅ GUITAR CHANNEL — PANG-UNA! -->
                 <TextView
                     android:id="@+id/submenu_guitar_channel"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="🎚️  Effects Channel"
+                    android:text="🎸  Guitar Channel"
                     android:textColor="#CCCCCC"
                     android:textSize="15sp"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"/>
 
-                <TextView
-                    android:id="@+id/submenu_guitar_pedal"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="🎛️  Pedal Controls"
-                    android:textColor="#CCCCCC"
-                    android:textSize="15sp"
-                    android:gravity="center_vertical"
-                    android:clickable="true"
-                    android:focusable="true"/>
-
+                <!-- ✅ GUITAR PRESET — PANGALAWA! -->
                 <TextView
                     android:id="@+id/submenu_guitar_presets"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="📋  Presets"
+                    android:text="📋  Guitar Preset"
                     android:textColor="#CCCCCC"
                     android:textSize="15sp"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"/>
+
+                <!-- ❌ TINANGGAL — Pedal Controls — HINDI NA KAILANGAN DITO! -->
             </LinearLayout>
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 3 — PRESETS -->
+        <!-- ✅ 3 — PRESETS → WALANG PAGBABAGO -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -223,7 +208,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 4 — SETTINGS -->
+        <!-- ✅ 4 — SETTINGS → WALANG PAGBABAGO -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -275,7 +260,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 5 — CHECK UPDATE (WALANG SUB-MENU) -->
+        <!-- ✅ 5 — CHECK UPDATE HANGGANG 11 — WALANG PAGBABAGO -->
         <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_update"
@@ -289,9 +274,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- ============================================== -->
-        <!-- ✅ 6 — HELP -->
-        <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_help"
             android:layout_width="match_parent"
@@ -304,9 +286,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- ============================================== -->
-        <!-- ✅ 7 — JOIN US -->
-        <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_join"
             android:layout_width="match_parent"
@@ -319,9 +298,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- ============================================== -->
-        <!-- ✅ 8 — ABOUT -->
-        <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_about"
             android:layout_width="match_parent"
@@ -334,9 +310,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- ============================================== -->
-        <!-- ✅ 9 — ADMIN PANEL -->
-        <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_admin"
             android:layout_width="match_parent"
@@ -349,9 +322,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- ============================================== -->
-        <!-- ✅ 10 — WHAT'S NEW -->
-        <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_whatsnew"
             android:layout_width="match_parent"
@@ -364,9 +334,6 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <!-- ============================================== -->
-        <!-- ✅ 11 — EXIT -->
-        <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_exit"
             android:layout_width="match_parent"
