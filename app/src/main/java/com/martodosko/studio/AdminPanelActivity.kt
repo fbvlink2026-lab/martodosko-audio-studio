@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ TAMA NA ANG btn_hamburger! TUGMA SA XML!
-// VERSION: 1.0.2 — ✅ btnOpenMenuId = R.id.btn_hamburger! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-20 — BUILD NA! WALANG ERROR!
+// FILE: AdminPanelActivity.kt — ✅ TUGMA NA SA SIDEMENU NG MAIN/MIXER!
+// VERSION: 1.0.3 — ✅ HAMBURGER BUKAS + X NASA LOOB NG PANEL! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-20 — PAREHO NA NG DESIGN SA LAHAT NG SCREEN! BUILD NA!
 // ==================================================
 package com.martodosko.studio
 
@@ -27,12 +27,12 @@ class AdminPanelActivity : Activity() {
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
-        // ✅ INAYOS: btn_hamburger na — TUGMA SA XML!
+        // ✅ TUGMA NA SA LAHAT — HAMBURGER BUKAS, X NASA LOOB NG PANEL!
         sideMenu = SideMenu.setup(
             activity = this,
             drawerLayoutId = R.id.drawer_layout,
-            btnOpenMenuId = R.id.btn_hamburger,  // ✅ TAMA NA! GINAYA MO NA!
-            btnCloseMenuId = R.id.btn_close_menu,
+            btnOpenMenuId = R.id.btn_hamburger,   // 🍔 BUKAS — nasa Top Bar
+            btnCloseMenuId = R.id.btn_close_menu, // ❌ SARA — nasa loob ng side_menu_panel
             tvVersionId = R.id.tv_version
         )
 
