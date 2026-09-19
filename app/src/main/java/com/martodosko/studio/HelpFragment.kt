@@ -1,27 +1,28 @@
 // ==================================================
-// FILE: HelpFragment.kt — ✅ WALANG GUHIT! TUNAY NA PANEL! MALINIS NA TEKSTO!
-// VERSION: 2.3.0 — ✅ TINANGGAL LAHAT NG ┌┐└┘│─ GUHIT! TUNAY NA ROUNDED PANEL ANG FRAME!
-// UPDATED: 2026-09-19 — WALANG TEXT-BOX GUHIT — UI CARD LANG ANG MAKIKITA!
+// FILE: HelpFragment.kt — ✅ INAYOS ANG ERROR! IDINAGDAG ANG ViewGroup IMPORT!
+// VERSION: 2.3.1 — ✅ WALANG GUHIT! TUNAY NA PANEL! WALANG ERROR!
+// UPDATED: 2026-09-19 — NAWALA NA ANG Unresolved reference: ViewGroup!
 // ==================================================
 package com.martodosko.studio
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup  // ✅ IDINAGDAG — ITO ANG KULANG!
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 
 class HelpFragment : Fragment() {
 
     override fun onCreateView(
-        inflater: android.view.LayoutInflater,
+        inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         val versionName = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
 
         // ✅ SCROLL VIEW
@@ -369,8 +370,8 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
         // ✅ ROUNDED PANEL BACKGROUND — GINAGAWA NG CODE, HINDI TEXT!
         val panelBg = GradientDrawable()
         panelBg.setColor(0xFF14252F.toInt())
-        panelBg.cornerRadius = 24f // ✅ ROUNDED KANTO
-        panelBg.setStroke(2, 0xFF23404F.toInt()) // ✅ BORDER
+        panelBg.cornerRadius = 24f
+        panelBg.setStroke(2, 0xFF23404F.toInt())
         panel.background = panelBg
 
         // ✅ HEADER — PINDUTIN PARA BUKAS/TIKLOP
