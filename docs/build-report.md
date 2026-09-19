@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-19 22:21 UTC
-🏷️ **Bersyon:** v1.0.227
+📅 **Petsa:** 2026-09-19 22:48 UTC
+🏷️ **Bersyon:** v1.0.228
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-19 22:21:01 UTC
-🏷️ BERSYON:    v1.0.227
+⏰ ORAS:       2026-09-19 22:48:41 UTC
+🏷️ BERSYON:    v1.0.228
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -44,27 +44,14 @@ Daemon will be stopped at the end of the build
 > Task :app:processReleaseManifest
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:desugarReleaseFileDependencies
-> Task :app:checkReleaseDuplicateClasses
-> Task :app:mergeReleaseArtProfile
-> Task :app:mergeReleaseShaders
-> Task :app:compileReleaseShaders NO-SOURCE
-> Task :app:processReleaseManifestForPackage
-> Task :app:generateReleaseAssets UP-TO-DATE
-> Task :app:mergeReleaseAssets
-> Task :app:compressReleaseAssets
-> Task :app:collectReleaseDependencies
-> Task :app:sdkReleaseDependencyData
-> Task :app:validateSigningRelease
-> Task :app:writeReleaseAppMetadata
-> Task :app:writeReleaseSigningConfigVersions
 > Task :app:processReleaseResources FAILED
-> Task :app:mergeExtDexRelease
+> Task :app:checkReleaseDuplicateClasses
 
 FAILURE: Build failed with an exception.
 
@@ -72,9 +59,7 @@ FAILURE: Build failed with an exception.
 Execution failed for task ':app:processReleaseResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
    > Android resource linking failed
-     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_admin_panel.xml:35: AAPT: error: resource drawable/ic_menu (aka com.martodosko.studio:drawable/ic_menu) not found.
-         
-     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_admin_panel.xml:261: AAPT: error: resource layout/side_menu_panel (aka com.martodosko.studio:layout/side_menu_panel) not found.
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_admin_panel.xml:264: AAPT: error: resource layout/side_menu_panel (aka com.martodosko.studio:layout/side_menu_panel) not found.
          
 
 * Try:
@@ -83,8 +68,8 @@ Execution failed for task ':app:processReleaseResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 47s
-30 actionable tasks: 29 executed, 1 up-to-date
+BUILD FAILED in 23s
+19 actionable tasks: 18 executed, 1 up-to-date
 
 ==================================================
 
