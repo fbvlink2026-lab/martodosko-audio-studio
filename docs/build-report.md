@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-19 22:48 UTC
-🏷️ **Bersyon:** v1.0.228
+📅 **Petsa:** 2026-09-19 22:57 UTC
+🏷️ **Bersyon:** v1.0.229
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-19 22:48:41 UTC
-🏷️ BERSYON:    v1.0.228
+⏰ ORAS:       2026-09-19 22:57:56 UTC
+🏷️ BERSYON:    v1.0.229
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -44,14 +44,17 @@ Daemon will be stopped at the end of the build
 > Task :app:processReleaseManifest
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:processReleaseResources FAILED
+> Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
+> Task :app:mergeReleaseArtProfile
+> Task :app:processReleaseResources FAILED
+> Task :app:mergeExtDexRelease
 
 FAILURE: Build failed with an exception.
 
@@ -68,8 +71,8 @@ Execution failed for task ':app:processReleaseResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 23s
-19 actionable tasks: 18 executed, 1 up-to-date
+BUILD FAILED in 53s
+22 actionable tasks: 21 executed, 1 up-to-date
 
 ==================================================
 
