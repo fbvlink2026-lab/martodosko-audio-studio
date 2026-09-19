@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-19 08:42 UTC
-🏷️ **Bersyon:** v1.0.218
+📅 **Petsa:** 2026-09-19 09:12 UTC
+🏷️ **Bersyon:** v1.0.219
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-19 08:42:13 UTC
-🏷️ BERSYON:    v1.0.218
+⏰ ORAS:       2026-09-19 09:12:25 UTC
+🏷️ BERSYON:    v1.0.219
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.5M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.218.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -59,9 +54,9 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
-> Task :app:processReleaseManifestForPackage
 > Task :app:compressReleaseAssets
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
@@ -73,30 +68,25 @@ Daemon will be stopped at the end of the build
 > Task :app:optimizeReleaseResources
 
 > Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:216:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:265:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:91:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/SideMenu.kt:340:13 Parameter 'btnCloseMenuId' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:32:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:33:13 Lateinit is unnecessary: definitely initialized in constructors
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/SideMenu.kt:141:46 Unresolved reference: submenu_mixer_presets
 
-> Task :app:compileReleaseJavaWithJavac NO-SOURCE
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:dexBuilderRelease
-> Task :app:mergeReleaseGlobalSynthetics
-> Task :app:processReleaseJavaRes
-> Task :app:mergeReleaseJavaResource
-> Task :app:mergeDexRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:assembleRelease
+> Task :app:compileReleaseKotlin FAILED
 
-BUILD SUCCESSFUL in 1m 11s
-44 actionable tasks: 43 executed, 1 up-to-date
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 2s
+32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
 
