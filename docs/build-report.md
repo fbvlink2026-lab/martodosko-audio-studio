@@ -3,7 +3,7 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-19 21:54 UTC
+📅 **Petsa:** 2026-09-19 22:21 UTC
 🏷️ **Bersyon:** v1.0.227
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
@@ -12,7 +12,7 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-19 21:54:39 UTC
+⏰ ORAS:       2026-09-19 22:21:01 UTC
 🏷️ BERSYON:    v1.0.227
 ==================================================
 
@@ -53,8 +53,8 @@ Daemon will be stopped at the end of the build
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
-> Task :app:processReleaseManifestForPackage
 > Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
@@ -63,34 +63,19 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseResources
+> Task :app:processReleaseResources FAILED
 > Task :app:mergeExtDexRelease
-> Task :app:optimizeReleaseResources
-
-> Task :app:compileReleaseKotlin
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:34:29 No value passed for parameter 'drawerLayout'
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:35:18 Unresolved reference: setup
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:4:42 Unresolved reference: Context
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:6:24 Unresolved reference: SharedPreferences
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:6:90 Unresolved reference: Context
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:19:30 Unresolved reference: EncryptionManager
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:24:9 Unresolved reference: Toast
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:24:70 Unresolved reference: Toast
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:32:16 Unresolved reference: EncryptionManager
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:52:19 Unresolved reference: JSONObject
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:67:15 Unresolved reference: JSONObject
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:76:86 Unresolved reference: JSONObject
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:81:84 Unresolved reference: JSONObject
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GitHubManager.kt:82:31 Unresolved reference: JSONObject
-
-> Task :app:compileReleaseKotlin FAILED
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:compileReleaseKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+Execution failed for task ':app:processReleaseResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+   > Android resource linking failed
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_admin_panel.xml:35: AAPT: error: resource drawable/ic_menu (aka com.martodosko.studio:drawable/ic_menu) not found.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/activity_admin_panel.xml:261: AAPT: error: resource layout/side_menu_panel (aka com.martodosko.studio:layout/side_menu_panel) not found.
+         
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -98,8 +83,8 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 2s
-32 actionable tasks: 31 executed, 1 up-to-date
+BUILD FAILED in 47s
+30 actionable tasks: 29 executed, 1 up-to-date
 
 ==================================================
 
