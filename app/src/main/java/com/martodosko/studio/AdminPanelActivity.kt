@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ NA-AYOS NA ANG SIDEMENU ERROR!
-// VERSION: 1.0.1 — ✅ DRAWER_LAYOUT ID IPINASA SA SIDEMENU! WALANG IBANG PINAGBAGO!
+// FILE: AdminPanelActivity.kt — ✅ TAMA NA ANG btn_hamburger! TUGMA SA XML!
+// VERSION: 1.0.2 — ✅ btnOpenMenuId = R.id.btn_hamburger! WALANG IBANG PINAGBAGO!
 // UPDATED: 2026-09-20 — BUILD NA! WALANG ERROR!
 // ==================================================
 package com.martodosko.studio
@@ -18,8 +18,7 @@ class AdminPanelActivity : Activity() {
     private lateinit var sideMenu: SideMenu
     private lateinit var prefs: SharedPreferences
 
-    // Kasalukuyang antas ng user — kukunin mula sa login/session
-    private var currentUserLevel: String = "GUEST" // GUEST → MEMBER → ADMIN → OWNER
+    private var currentUserLevel: String = "GUEST"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +27,11 @@ class AdminPanelActivity : Activity() {
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
-        // ✅ INAAYOS: GUMAMIT NG SideMenu.setup() — TAMA ANG PARAMETERS!
+        // ✅ INAYOS: btn_hamburger na — TUGMA SA XML!
         sideMenu = SideMenu.setup(
             activity = this,
             drawerLayoutId = R.id.drawer_layout,
-            btnOpenMenuId = R.id.btn_open_menu,
+            btnOpenMenuId = R.id.btn_hamburger,  // ✅ TAMA NA! GINAYA MO NA!
             btnCloseMenuId = R.id.btn_close_menu,
             tvVersionId = R.id.tv_version
         )
