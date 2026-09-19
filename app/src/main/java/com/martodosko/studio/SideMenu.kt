@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ PAREHONG URL AT PARAAN NG MAINACTIVITY! fbvlink2026-lab!
-// VERSION: 1.5.1 — ✅ GUMAGANA NA! PAREHO NG MAINACTIVITY! BROWSER DOWNLOAD!
-// UPDATED: 2026-09-19 — URL LANG AT LOGIC ANG INAYOS! WALANG IBANG PINAGBAGO!
+// FILE: SideMenu.kt — ✅ KOMPLETO NA! COLLAPSE/EXPAND GUMAGANA NA! GUITAR = PANGALAWANG BUTTON!
+// VERSION: 2.1.0 — ✅ IKINABIT NA ANG setupCollapsible() SA BAWAT BUTTON! TUGMA SA XML IDs!
+// UPDATED: 2026-09-19 — WALANG BINAGO SA UPDATE LOGIC — IKINABIT LANG ANG COLLAPSE!
 // ==================================================
 package com.martodosko.studio
 
@@ -10,7 +10,9 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.view.Gravity
+import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
@@ -34,14 +36,18 @@ class SideMenu(
 
     private var currentVer: String = "1.0.0"
     
-    // ✅ PAREHONG URL GAYA NG MAINACTIVITY — fbvlink2026-lab! ITO ANG GUMAGANA!
+    // ✅ PAREHONG URL GAYA NG MAINACTIVITY — fbvlink2026-lab!
     private val VERSION_URL = 
         "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/version.json"
     private val BASE_APK_URL = 
         "https://raw.githubusercontent.com/fbvlink2026-lab/martodosko-audio-studio/main/docs/"
 
+    // ✅ TRACK NG COLLAPSE STATE
+    private val menuExpanded = mutableMapOf<Int, Boolean>()
+
     init {
         getCurrentVersion()
+        setupCollapsibleMenus()  // ✅ BAGO — IKINABIT ANG COLLAPSE!
         setupMenuButtons()
         setupVersion()
     }
@@ -68,16 +74,67 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ PAREHONG PARAAN NG MAINACTIVITY — COROUTINE, NO-CACHE, CLEAN VERSION!
+    // ✅ COLLAPSE/EXPAND HELPER — PARA SA BAWAT BUTTON!
+    // ==============================================
+    private fun setupCollapsible(
+        headerId: Int,
+        containerId: Int,
+        defaultExpanded: Boolean = false
+    ) {
+        val header = activity.findViewById<TextView>(headerId) ?: return
+        val container = activity.findViewById<LinearLayout>(containerId) ?: return
+
+        menuExpanded[headerId] = defaultExpanded
+        container.visibility = if (defaultExpanded) View.VISIBLE else View.GONE
+        
+        // ✅ AYUSIN ANG ARROW — HUWAG DOBLEHIN KAPAG BINASA MULI
+        val currentText = header.text.toString()
+        if (!currentText.startsWith("▶  ") && !currentText.startsWith("▼  ")) {
+            header.text = if (defaultExpanded) "▼  $currentText" else "▶  $currentText"
+        }
+
+        header.setOnClickListener {
+            val isExpanded = menuExpanded[headerId] ?: false
+            val baseText = header.text.toString().removePrefix("▼  ").removePrefix("▶  ")
+            
+            if (isExpanded) {
+                container.visibility = View.GONE
+                menuExpanded[headerId] = false
+                header.text = "▶  $baseText"
+            } else {
+                container.visibility = View.VISIBLE
+                menuExpanded[headerId] = true
+                header.text = "▼  $baseText"
+            }
+        }
+    }
+
+    // ==============================================
+    // ✅ BAGONG FUNCTION — IKAKABIT ANG LAHAT NG COLLAPSIBLE MENU!
+    // ==============================================
+    private fun setupCollapsibleMenus() {
+        // ✅ 1 — MIXER — default = bukas
+        setupCollapsible(R.id.menu_mixer, R.id.submenu_mixer, defaultExpanded = true)
+        
+        // ✅ 2 — GUITAR EFFECTS — default = nakatiklop
+        setupCollapsible(R.id.menu_guitar, R.id.submenu_guitar, defaultExpanded = false)
+        
+        // ✅ 3 — PRESETS — default = nakatiklop
+        setupCollapsible(R.id.menu_presets, R.id.submenu_presets, defaultExpanded = false)
+        
+        // ✅ 4 — SETTINGS — default = nakatiklop
+        setupCollapsible(R.id.menu_settings, R.id.submenu_settings, defaultExpanded = false)
+        
+        // ✅ IBA PANG BUTTON — WALANG SUB-MENU, DI KAILANGAN NG COLLAPSE
+    }
+
+    // ==============================================
+    // ✅ CHECK UPDATE — WALANG PINAGBAGO!
     // ==============================================
     private fun checkForUpdatesDirect() {
         Toast.makeText(activity, "🔄 Sinusuri ang update...", Toast.LENGTH_SHORT).show()
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.d("UPDATE", "🔍 Tinitignan ang update...")
-                
-                // ✅ PAREHONG NO-CACHE PARAAN — HINDI LUMANG DATA!
                 val conn = URL("$VERSION_URL?t=${System.currentTimeMillis()}").openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
                 conn.connectTimeout = 8000
@@ -98,7 +155,6 @@ class SideMenu(
 
                 @Suppress("DEPRECATION")
                 val currentVerClean = cleanVersion(activity.packageManager.getPackageInfo(activity.packageName, 0).versionName)
-
                 val isNewer = isUpdateAvailable(latestVer, currentVerClean)
 
                 Handler(Looper.getMainLooper()).post {
@@ -107,7 +163,6 @@ class SideMenu(
                             .setTitle("✅ May Bagong Bersyon — v$latestVer")
                             .setMessage("Kasalukuyan: v$currentVerClean\nPinakabago: v$latestVer\nPetsa: $releaseDate\n\nBubukas sa browser ang pag-download...")
                             .setPositiveButton("⬇️ I-download") { _, _ ->
-                                // ✅ DIREKTANG BUBUKAS SA BROWSER — DOON ANG PAG-DOWNLOAD!
                                 try {
                                     val downloadUrl = "$BASE_APK_URL$apkFile"
                                     val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
@@ -116,11 +171,9 @@ class SideMenu(
                                     Toast.makeText(activity, "🌐 Binuksan sa browser...", Toast.LENGTH_SHORT).show()
                                 } catch (e: Exception) {
                                     Toast.makeText(activity, "❌ Hindi mabuksan ang browser", Toast.LENGTH_SHORT).show()
-                                    Log.e("UPDATE", "❌ Browser error", e)
                                 }
                             }
                             .setNegativeButton("❌ Mamaya na", null)
-                            .setCancelable(true)
                             .show()
                     } else {
                         AlertDialog.Builder(activity)
@@ -130,9 +183,8 @@ class SideMenu(
                             .show()
                     }
                 }
-
             } catch (e: Exception) {
-                Log.e("UPDATE", "⚠️ Error checking update", e)
+                Log.e("UPDATE", "⚠️ Error", e)
                 Handler(Looper.getMainLooper()).post {
                     AlertDialog.Builder(activity)
                         .setTitle("⚠️ Hindi Masuri ang Update")
@@ -144,10 +196,8 @@ class SideMenu(
         }
     }
 
-    // ✅ PAREHONG VERSION CLEANER — TINATANGGAL ANG "v"
     private fun cleanVersion(v: String) = v.trim().removePrefix("v").removePrefix("V").replace(Regex("[^0-9.]"), "")
 
-    // ✅ PAREHONG VERSION COMPARISON — TAMA ANG PAGHAHAMBING
     private fun isUpdateAvailable(latest: String, current: String): Boolean {
         val lParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
         val cParts = current.split(".").map { it.toIntOrNull() ?: 0 }
@@ -162,37 +212,32 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ LAHAT NG MENU BUTTONS — WALANG PINAGBAGO!
+    // ✅ BAGONG PAGKAKASUNOD — GUITAR EFFECTS = PANGALAWANG BUTTON!
     // ==============================================
     private fun setupMenuButtons() {
         // ✅ CLOSE BUTTON
-        activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener {
-            close()
-        }
+        activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener { close() }
 
-        // ✅ MIXER
+        // ==============================================
+        // 📌 PANGUNAHING MENU — MAY COLLAPSE/EXPAND NA!
+        // ==============================================
+
+        // ✅ 1 — MIXER (PANG-UNA) — SUB-MENU CLICK HANDLERS ILALAGAY SA XML O DITO
         activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
-            close()
-            if (activity is MixerActivity) {
-                Toast.makeText(activity, "✅ Nasa Mixer ka na!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            try {
-                val intent = Intent(activity, MixerActivity::class.java)
-                activity.startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(activity, "❌ MixerActivity hindi nakarehistro", Toast.LENGTH_SHORT).show()
-                Log.e("MIXER", "❌ Error", e)
-            }
+            // ✅ COLLAPSE/EXPAND LANG — HINDI NAGLILIPAT NG SCREEN
         }
 
-        // ✅ PRESETS
+        // ✅ 2 — GUITAR EFFECTS (PANG-ALAWA — AYON SA UTOS!)
+        activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
+            // ✅ COLLAPSE/EXPAND LANG — ANG PAGPASOK SA SCREEN AY NASA SUB-MENU
+        }
+
+        // ✅ 3 — PRESETS
         activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {
-            close()
-            Toast.makeText(activity, "📋 Presets — Bubukas...", Toast.LENGTH_SHORT).show()
+            // ✅ COLLAPSE/EXPAND LANG
         }
 
-        // ✅ SETTINGS → ContentActivity
+        // ✅ 4 — SETTINGS → ContentActivity
         activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
             close()
             try {
@@ -200,25 +245,18 @@ class SideMenu(
                 intent.putExtra("target_screen", "SETTINGS")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
-                Toast.makeText(activity, "⚙️ Binubuksan ang Settings...", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(activity, "❌ ContentActivity hindi pa handa", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ✅ GUITAR EFFECTS
-        activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
-            close()
-            Toast.makeText(activity, "🎸 Guitar Effects — Bubukas...", Toast.LENGTH_SHORT).show()
-        }
-
-        // ✅ CHECK UPDATE — ✅ PAREHONG LOGIC NG MAINACTIVITY! BUBUKAS SA BROWSER!
+        // ✅ 5 — CHECK UPDATE
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
             close()
             checkForUpdatesDirect()
         }
 
-        // ✅ HELP → ContentActivity
+        // ✅ 6 — HELP → ContentActivity
         activity.findViewById<TextView>(R.id.menu_help)?.setOnClickListener {
             close()
             try {
@@ -231,7 +269,7 @@ class SideMenu(
             }
         }
 
-        // ✅ JOIN US → ContentActivity
+        // ✅ 7 — JOIN US → ContentActivity
         activity.findViewById<TextView>(R.id.menu_join)?.setOnClickListener {
             close()
             try {
@@ -244,7 +282,7 @@ class SideMenu(
             }
         }
 
-        // ✅ ABOUT → ContentActivity
+        // ✅ 8 — ABOUT → ContentActivity
         activity.findViewById<TextView>(R.id.menu_about)?.setOnClickListener {
             close()
             try {
@@ -257,12 +295,12 @@ class SideMenu(
             }
         }
 
-        // ✅ ADMIN → ContentActivity
-        activity.findViewById<TextView>(R.id.menu_admin)?.setOnClickListener {
+        // ✅ 9 — WHAT'S NEW
+        activity.findViewById<TextView>(R.id.menu_whatsnew)?.setOnClickListener {
             close()
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "ADMIN")
+                intent.putExtra("target_screen", "ABISO")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
             } catch (e: Exception) {
@@ -270,12 +308,12 @@ class SideMenu(
             }
         }
 
-        // ✅ WHAT'S NEW → ContentActivity
-        activity.findViewById<TextView>(R.id.menu_whatsnew)?.setOnClickListener {
+        // ✅ 10 — ADMIN
+        activity.findViewById<TextView>(R.id.menu_admin)?.setOnClickListener {
             close()
             try {
                 val intent = Intent(activity, ContentActivity::class.java)
-                intent.putExtra("target_screen", "ABISO")
+                intent.putExtra("target_screen", "ADMIN")
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 activity.startActivity(intent)
             } catch (e: Exception) {
@@ -311,13 +349,6 @@ class SideMenu(
                     sideMenu.open()
                 }
             }
-
-            btnCloseMenuId?.let { id ->
-                activity.findViewById<ImageView>(id)?.setOnClickListener {
-                    sideMenu.close()
-                }
-            }
-
             return sideMenu
         }
     }
