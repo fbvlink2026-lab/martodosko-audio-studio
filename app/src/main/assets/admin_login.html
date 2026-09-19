@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login — Martodosko</title>
+    <title>🔐 Admin & Member Login — Martodosko Audio Studio</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body {
@@ -19,26 +19,48 @@
             border-radius: 16px;
             box-shadow: 0 0 30px rgba(64,224,208,0.15);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             border: 1px solid #2A2A4A;
         }
-        h2 { text-align: center; color: #40E0D0; margin-bottom: 25px; }
+        h2 { text-align: center; color: #40E0D0; margin-bottom: 8px; font-size: 22px; }
+        .subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 25px; }
+        
+        /* --- ANTAS BADGE --- */
+        .level-badge {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            display: none;
+        }
+        .badge-owner { background: rgba(255,215,0,0.15); color: #FFD700; border: 1px solid #FFD700; display: block !important; }
+        .badge-admin { background: rgba(156,39,176,0.15); color: #E1BEE7; border: 1px solid #9C27B0; display: block !important; }
+        .badge-member { background: rgba(3,218,198,0.15); color: #03DAC6; border: 1px solid #03DAC6; display: block !important; }
+        .badge-invalid { background: rgba(255,82,82,0.15); color: #FF5252; border: 1px solid #FF5252; display: block !important; }
+
         .input-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; color: #B0B0C0; font-size: 14px; }
         input {
-            width: 100%; padding: 12px 15px; border-radius: 8px;
+            width: 100%; padding: 14px 15px; border-radius: 8px;
             border: 1px solid #3A3A5A; background: #252538;
-            color: #fff; font-size: 15px;
-            outline: none; transition: border 0.3s;
+            color: #fff; font-size: 16px;
+            outline: none; transition: border 0.3s, box-shadow 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        input:focus { border-color: #40E0D0; }
+        input:focus { border-color: #40E0D0; box-shadow: 0 0 0 3px rgba(64,224,208,0.15); }
+        input::placeholder { color: #666; text-transform: none; letter-spacing: normal; }
+        
         button {
-            width: 100%; padding: 13px; border-radius: 8px;
+            width: 100%; padding: 14px; border-radius: 8px;
             border: none; background: linear-gradient(90deg, #40E0D0, #20B0A0);
             color: #000; font-weight: bold; font-size: 16px; cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, opacity 0.2s;
         }
         button:hover { transform: scale(1.02); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
         .session-box {
             margin-top: 25px; padding: 15px;
             background: #19192C; border-radius: 10px;
@@ -46,85 +68,222 @@
         }
         .session-box h3 { color: #FFD700; font-size: 14px; margin-bottom: 10px; }
         .session-item { display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px; border-bottom: 1px solid #2A2A4A; }
-        .note { margin-top: 15px; font-size: 12px; color: #888; font-style: italic; }
+        .note { margin-top: 15px; font-size: 12px; color: #888; line-height: 1.6; }
+        .hint-box { 
+            margin-top: 15px; padding: 12px; background: rgba(64,224,208,0.05); 
+            border-radius: 8px; font-size: 12px; color: #999; line-height: 1.5; 
+        }
         .hidden { display: none !important; }
+        .btn-logout { background: linear-gradient(90deg, #FF6B6B, #DD4444); margin-top: 15px; }
+        .btn-dashboard { background: linear-gradient(90deg, #9C27B0, #7B1FA2); margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h2>🔐 ADMIN LOGIN</h2>
+        <h2>🔐 ACCESS PANEL</h2>
+        <p class="subtitle">Martodosko Audio Studio — Ipasok ang Key Code</p>
 
+        <!-- ✅ ANTAS NG USER — LALABAS PAGKATAPOS IPASOK ANG KEY CODE -->
+        <div id="levelBadge" class="level-badge"></div>
+
+        <!-- ✅ LOGIN FORM — KEY CODE LANG! WALANG USERNAME/PASSWORD! -->
         <div id="loginForm">
             <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" placeholder="Ilagay ang username">
+                <label for="keyCode">🔑 Member / Admin / Owner Key Code</label>
+                <input type="text" id="keyCode" placeholder="HAL: XXXX-XXXX-XXXX-XXXX" maxlength="19">
             </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Ilagay ang password">
+            <button onclick="verifyKeyCode()">✅ I-VERIFY AT BUKSAN</button>
+            
+            <div class="hint-box">
+                💡 <strong>Paano gumagana?</strong><br>
+                • 👑 <strong>Owner Key</strong> → Buong Admin Panel + Key Generator<br>
+                • 🔐 <strong>Admin Key</strong> → User Management + Preset Moderation<br>
+                • 👤 <strong>Member Key</strong> → Pangkalahatang Presets + Upload Access<br>
+                • 🆓 Walang Key → Libre pa rin — Limited lang ang kakayahan
             </div>
-            <button onclick="login()">LOGIN</button>
-            <p class="note">Tandaan: Ang mga detalye ay naka-save nang lokal lamang.</p>
+            
+            <p class="note">Ang Key Code ay naka-save nang lokal lamang. Hindi ito ipapadala sa ibang server maliban sa pag-verify ng katumpakan.</p>
         </div>
 
+        <!-- ✅ SUCCESS SCREEN — LALABAS KAPAG TAMA ANG KEY CODE -->
         <div id="sessionInfo" class="hidden">
             <div class="session-box">
-                <h3>⏱ SESSION HISTORY</h3>
-                <div class="session-item"><span>Huling Login:</span><span id="lastLogin">-</span></div>
-                <div class="session-item"><span>Oras:</span><span id="sessHours">0 oras</span></div>
+                <h3>⏱ SESSION DETALYE</h3>
+                <div class="session-item"><span>Uri ng Key:</span><span id="keyType">—</span></div>
+                <div class="session-item"><span>Huling Pag-verify:</span><span id="lastLogin">—</span></div>
+                <div class="session-item"><span>Tagal ng Session:</span><span id="sessHours">0 oras</span></div>
                 <div class="session-item"><span>Araw:</span><span id="sessDays">0 araw</span></div>
                 <div class="session-item"><span>Linggo:</span><span id="sessWeeks">0 linggo</span></div>
                 <div class="session-item"><span>Buwan:</span><span id="sessMonths">0 buwan</span></div>
             </div>
+            
             <div style="margin-top:20px; text-align:center;">
-                <p style="color:#40E0D0; font-weight:bold;">✅ Naka-login bilang: <span id="userDisplay"></span></p>
-                <button onclick="logout()" style="margin-top:15px; background:linear-gradient(90deg,#FF6B6B,#DD4444);">LOGOUT</button>
+                <p style="color:#40E0D0; font-weight:bold; font-size:15px;">✅ Naka-aktibo: <span id="userDisplay"></span></p>
+                
+                <!-- ✅ BUKSAN ANG ADMIN PANEL — KUNG MAY KARAPATAN -->
+                <button id="btnOpenDashboard" class="btn-dashboard hidden" onclick="openAdminPanel()">
+                    📊 BUKSAN ANG ADMIN PANEL
+                </button>
+                
+                <button class="btn-logout" onclick="logout()">🚪 MAG-LOGOUT / ALISIN ANG KEY</button>
             </div>
         </div>
     </div>
 
     <script>
         let loginTime = null;
+        let currentLevel = null; // OWNER / ADMIN / MEMBER / null
 
-        function updateSessionInfo(lastLogin, hours, days, weeks, months, username) {
-            if (username) {
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('sessionInfo').classList.remove('hidden');
-                document.getElementById('lastLogin').textContent = lastLogin;
-                document.getElementById('sessHours').textContent = hours + ' oras';
-                document.getElementById('sessDays').textContent = days + ' araw';
-                document.getElementById('sessWeeks').textContent = weeks + ' linggo';
-                document.getElementById('sessMonths').textContent = months + ' buwan';
-                document.getElementById('userDisplay').textContent = username;
-                loginTime = Date.now();
-                startSessionTimer();
+        // ==============================================
+        // ✅ PANGUNAHING FUNKSYON — I-VERIFY ANG KEY CODE
+        // ==============================================
+        function verifyKeyCode() {
+            const input = document.getElementById('keyCode').value.trim().toUpperCase();
+            const badge = document.getElementById('levelBadge');
+            const btnDashboard = document.getElementById('btnOpenDashboard');
+
+            if (!input || input.length < 5) {
+                showBadge('invalid', '❌ WALANG LAMAN — Ilagay ang Key Code');
+                return;
+            }
+
+            // ✅ TAWAG SA KOTLIN — I-VERIFY ANG KEY CODE
+            // Kotlin ang magsasabi kung OWNER, ADMIN, MEMBER, o HINDI TAMA
+            if (typeof Android !== 'undefined' && Android.verifyKeyCode) {
+                // ✅ TOTOONG PAG-VERIFY — KOTLIN SIDE
+                const result = Android.verifyKeyCode(input);
+                processVerificationResult(input, result);
+            } else {
+                // ✅ PARA SA WEB PREVIEW — SIMULASYON LANG
+                simulateVerification(input);
             }
         }
 
-        function login() {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value;
-            if (!user) { alert('Ilagay ang username!'); return; }
+        // ==============================================
+        // ✅ IPROSESO ANG RESULTA NG PAG-VERIFY
+        // ==============================================
+        function processVerificationResult(keyCode, result) {
+            // Result mula sa Kotlin: { level: "OWNER"|"ADMIN"|"MEMBER"|null, valid: boolean }
+            if (!result || !result.valid) {
+                showBadge('invalid', '❌ MALI ANG KEY CODE — Hindi rehistrado o mali ang pagkakasulat');
+                return;
+            }
 
-            // ✅ I-save sa SharedPreferences — papasa sa Kotlin
-            Android.saveAdminLogin(user);
+            currentLevel = result.level;
+            const levelLabel = {
+                'OWNER': '👑 OWNER — BUONG KAPANGYARIHAN',
+                'ADMIN': '🔐 ADMIN — PAMAMAHALA NG USER AT PRESET',
+                'MEMBER': '👤 MEMBER — PAGBAHAGI AT PANGKALAHATANG PRESETS'
+            }[currentLevel] || '❌ DI KILALANG ANTAS';
 
+            // ✅ IPASA SA KOTLIN — I-SAVE ANG SESSION
+            if (typeof Android !== 'undefined' && Android.saveSession) {
+                Android.saveSession(keyCode, currentLevel);
+            }
+
+            // ✅ I-PAKITA ANG SUCCESS SCREEN
+            showSuccessScreen(keyCode, currentLevel, levelLabel);
+        }
+
+        // ==============================================
+        // ✅ SIMULASYON — PARA SA WEB PREVIEW LANG
+        // ==============================================
+        function simulateVerification(input) {
+            let level = null;
+            let label = '';
+
+            // SIMULASYON LANG — TOTOONG LOGIC NASA KOTLIN
+            if (input.startsWith('OWNER-')) {
+                level = 'OWNER';
+                label = '👑 OWNER — BUONG KAPANGYARIHAN';
+            } else if (input.startsWith('ADMIN-')) {
+                level = 'ADMIN';
+                label = '🔐 ADMIN — PAMAMAHALA NG USER AT PRESET';
+            } else if (input.startsWith('MEMBER-')) {
+                level = 'MEMBER';
+                label = '👤 MEMBER — PAGBAHAGI AT PANGKALAHATANG PRESETS';
+            } else {
+                showBadge('invalid', '❌ MALI ANG KEY CODE — Hindi rehistrado o mali ang pagkakasulat');
+                return;
+            }
+
+            currentLevel = level;
+            showSuccessScreen(input, level, label);
+        }
+
+        // ==============================================
+        // ✅ I-PAKITA ANG BADGE NG ANTAS
+        // ==============================================
+        function showBadge(type, message) {
+            const badge = document.getElementById('levelBadge');
+            badge.className = 'level-badge badge-' + type;
+            badge.textContent = message;
+        }
+
+        // ==============================================
+        // ✅ SUCCESS — IPALIT ANG SCREEN
+        // ==============================================
+        function showSuccessScreen(keyCode, level, levelLabel) {
+            // Badge
+            const badgeClass = {
+                'OWNER': 'owner',
+                'ADMIN': 'admin',
+                'MEMBER': 'member'
+            }[level];
+            showBadge(badgeClass, '✅ TAMA ANG KEY CODE — ' + levelLabel);
+
+            // Palit ng Screen
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('sessionInfo').classList.remove('hidden');
-            document.getElementById('userDisplay').textContent = user;
+            
+            // Detalye
+            document.getElementById('keyType').textContent = levelLabel;
+            document.getElementById('userDisplay').textContent = keyCode;
             document.getElementById('lastLogin').textContent = new Date().toLocaleString('tl-PH');
+            
+            // ✅ ADMIN PANEL BUTTON — LALABAS LANG KUNG OWNER O ADMIN
+            const btnDashboard = document.getElementById('btnOpenDashboard');
+            if (level === 'OWNER' || level === 'ADMIN') {
+                btnDashboard.classList.remove('hidden');
+            } else {
+                btnDashboard.classList.add('hidden');
+            }
+
             loginTime = Date.now();
             startSessionTimer();
         }
 
-        function logout() {
-            Android.logoutAdmin();
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('sessionInfo').classList.add('hidden');
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+        // ==============================================
+        // ✅ BUKSAN ANG ADMIN PANEL
+        // ==============================================
+        function openAdminPanel() {
+            if (typeof Android !== 'undefined' && Android.openAdminPanel) {
+                Android.openAdminPanel();
+            } else {
+                alert('📊 Bubuksan ang Admin Panel...\nAntas: ' + currentLevel);
+            }
         }
 
+        // ==============================================
+        // ✅ LOGOUT — ALISIN ANG KEY CODE AT SESSION
+        // ==============================================
+        function logout() {
+            if (typeof Android !== 'undefined' && Android.logoutAdmin) {
+                Android.logoutAdmin();
+            }
+
+            // I-reset ang screen
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('sessionInfo').classList.add('hidden');
+            document.getElementById('levelBadge').className = 'level-badge';
+            document.getElementById('keyCode').value = '';
+            currentLevel = null;
+            loginTime = null;
+        }
+
+        // ==============================================
+        // ✅ SESSION TIMER — BILANG NG TAGAL
+        // ==============================================
         function startSessionTimer() {
             setInterval(() => {
                 if (!loginTime) return;
