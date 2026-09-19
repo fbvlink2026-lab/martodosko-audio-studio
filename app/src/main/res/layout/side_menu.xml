@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: side_menu.xml — ✅ AYON SA PLANO! VOCAL PRESET + GUITAR CHANNEL + GUITAR PRESET! -->
-<!-- VERSION: 1.1.0 — ✅ TINANGGAL ANG KULANG! TAMA NA ANG PANGALAN! TUGMA SA SideMenu.kt! -->
-<!-- UPDATED: 2026-09-19 — WALANG IBANG PINAGBAGO! PANGALAN + TANGGAL LANG! -->
+<!-- FILE: side_menu.xml — ✅ TUGMA NA SA SideMenu.kt! IDs TAMA! PANGALAN TAMA! -->
+<!-- VERSION: 1.2.0 — ✅ VOCAL PRESET + GUITAR CHANNEL + GUITAR PRESET! PRESETS = GLOBAL + FREE! -->
+<!-- UPDATED: 2026-09-19 — AYON SA LAHAT NG UTOS! WALANG IBANG PINAGBAGO! -->
 <!-- ================================================== -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -54,7 +54,7 @@
         android:paddingTop="8dp">
 
         <!-- ============================================== -->
-        <!-- ✅ 1 — MIXER (PANG-UNA) → DEFAULT BUKAS → VOCAL PRESET NA! -->
+        <!-- ✅ 1 — MIXER → DEFAULT BUKAS → VOCAL PRESET! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- ✅ SUB-MENU — VOCAL PRESET NA! TINANGGAL ANG Mixer Controls! -->
+            <!-- ✅ SUB-MENU — VOCAL PRESET LANG! TINANGGAL ANG Mixer Controls! -->
             <LinearLayout
                 android:id="@+id/submenu_mixer"
                 android:layout_width="match_parent"
@@ -82,7 +82,6 @@
                 android:paddingStart="40dp"
                 android:visibility="visible">
 
-                <!-- ✅ VOCAL PRESET — PALIT NA! -->
                 <TextView
                     android:id="@+id/submenu_mixer_vocal"
                     android:layout_width="match_parent"
@@ -93,13 +92,11 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"/>
-
-                <!-- ❌ TINANGGAL — Mixer Controls — HINDI NA KAILANGAN! -->
             </LinearLayout>
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 2 — GUITAR EFFECTS (PANG-ALAWA) → GUITAR CHANNEL + GUITAR PRESET! -->
+        <!-- ✅ 2 — GUITAR EFFECTS → CHANNEL + PRESET! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -118,7 +115,7 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- ✅ SUB-MENU — 2 LANG: GUITAR CHANNEL + GUITAR PRESET! -->
+            <!-- ✅ SUB-MENU — 2 LANG: CHANNEL + PRESET! -->
             <LinearLayout
                 android:id="@+id/submenu_guitar"
                 android:layout_width="match_parent"
@@ -127,7 +124,6 @@
                 android:paddingStart="40dp"
                 android:visibility="gone">
 
-                <!-- ✅ GUITAR CHANNEL — PANG-UNA! -->
                 <TextView
                     android:id="@+id/submenu_guitar_channel"
                     android:layout_width="match_parent"
@@ -139,7 +135,6 @@
                     android:clickable="true"
                     android:focusable="true"/>
 
-                <!-- ✅ GUITAR PRESET — PANGALAWA! -->
                 <TextView
                     android:id="@+id/submenu_guitar_presets"
                     android:layout_width="match_parent"
@@ -150,13 +145,11 @@
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"/>
-
-                <!-- ❌ TINANGGAL — Pedal Controls — HINDI NA KAILANGAN DITO! -->
             </LinearLayout>
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 3 — PRESETS → WALANG PAGBABAGO -->
+        <!-- ✅ 3 — PRESETS → PANGKALATAN + NON-MEMBER! AYON SA UTOS! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -183,22 +176,24 @@
                 android:paddingStart="40dp"
                 android:visibility="gone">
 
+                <!-- ✅ PANGKALAHATANG PRESETS — AYON SA UTOS! -->
                 <TextView
-                    android:id="@+id/submenu_presets_vocal"
+                    android:id="@+id/submenu_presets_global"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="🎤  Vocal Presets"
+                    android:text="📋  Pangkalahatang Presets"
                     android:textColor="#CCCCCC"
                     android:textSize="15sp"
                     android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"/>
 
+                <!-- ✅ NON-MEMBER PRESETS — AYON SA UTOS! -->
                 <TextView
-                    android:id="@+id/submenu_presets_guitar"
+                    android:id="@+id/submenu_presets_free"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:text="🎸  Guitar Presets"
+                    android:text="🆓  Non-Member Presets"
                     android:textColor="#CCCCCC"
                     android:textSize="15sp"
                     android:gravity="center_vertical"
@@ -208,7 +203,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 4 — SETTINGS → WALANG PAGBABAGO -->
+        <!-- ✅ 4 — SETTINGS → AUDIO + APPEARANCE! -->
         <!-- ============================================== -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -260,7 +255,7 @@
         </LinearLayout>
 
         <!-- ============================================== -->
-        <!-- ✅ 5 — CHECK UPDATE HANGGANG 11 — WALANG PAGBABAGO -->
+        <!-- ✅ 5 — CHECK UPDATE HANGGANG 11 — WALANG PAGBABAGO! -->
         <!-- ============================================== -->
         <TextView
             android:id="@+id/menu_update"
