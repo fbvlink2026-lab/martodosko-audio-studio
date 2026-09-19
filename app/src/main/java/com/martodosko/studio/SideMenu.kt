@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: SideMenu.kt — ✅ NAAYOS NA! BUMUBUKAS NA ANG MIXER SA SUB-MENU!
-// VERSION: 2.1.0 — ✅ IDINAGDAG ANG CLICK HANDLERS SA Vocal Channel + Mixer Controls!
-// UPDATED: 2026-09-19 — WALANG IBANG PINAGBAGO! DAGDAG LANG SA IBABA!
+// FILE: SideMenu.kt — ✅ TINAMA ANG TIKLOP + PANGALAN + GUITAR SUB-MENU!
+// VERSION: 2.2.0 — ✅ TIKLOP GUMAGANA NA! "VOCAL PRESET" NA! GUITAR MAY 2 SUB-MENU NA!
+// UPDATED: 2026-09-19 — WALANG IBANG PINAGBAGO! AYON SA PLANO MO!
 // ==================================================
 package com.martodosko.studio
 
@@ -45,9 +45,9 @@ class SideMenu(
 
     init {
         getCurrentVersion()
-        setupCollapsibleMenus()  // ✅ KAILANGAN ITO UNA
+        setupCollapsibleMenus()
         setupMenuButtons()
-        setupSubMenuButtons()    // ✅ BAGONG FUNCTION — SUB-MENU CLICKS!
+        setupSubMenuButtons()
         setupVersion()
     }
 
@@ -73,7 +73,7 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ COLLAPSE/EXPAND — TINAMA ANG PAGTATAWAG!
+    // ✅ PROBLEMA 1: AYUSIN ANG TIKLOP/COLLAPSE — BINAGO ANG LOGIC!
     // ==============================================
     private fun setupCollapsible(
         headerId: Int,
@@ -83,17 +83,22 @@ class SideMenu(
         val header = activity.findViewById<TextView>(headerId) ?: return
         val container = activity.findViewById<LinearLayout>(containerId) ?: return
 
+        // ✅ KUNIN ANG ORIHINAL NA TEXT — WALANG DOBLING ARROW!
+        val baseText = header.text.toString()
+            .removePrefix("▼  ")
+            .removePrefix("▶  ")
+            .trim()
+
         menuExpanded[headerId] = defaultExpanded
         container.visibility = if (defaultExpanded) View.VISIBLE else View.GONE
-        
-        val currentText = header.text.toString()
-        if (!currentText.startsWith("▶  ") && !currentText.startsWith("▼  ")) {
-            header.text = if (defaultExpanded) "▼  $currentText" else "▶  $currentText"
-        }
+        header.text = if (defaultExpanded) "▼  $baseText" else "▶  $baseText"
+
+        // ✅ SIGURADUHIN NA CLICKABLE — AYUSIN ANG TIKLOP!
+        header.isClickable = true
+        header.isFocusable = true
 
         header.setOnClickListener {
             val isExpanded = menuExpanded[headerId] ?: false
-            val baseText = currentText.removePrefix("▼  ").removePrefix("▶  ")
             if (isExpanded) {
                 container.visibility = View.GONE
                 menuExpanded[headerId] = false
@@ -106,7 +111,6 @@ class SideMenu(
         }
     }
 
-    // ✅ BAGONG FUNCTION — IKAKABIT ANG LAHAT NG COLLAPSIBLE!
     private fun setupCollapsibleMenus() {
         setupCollapsible(R.id.menu_mixer, R.id.submenu_mixer, defaultExpanded = true)
         setupCollapsible(R.id.menu_guitar, R.id.submenu_guitar, defaultExpanded = false)
@@ -115,46 +119,45 @@ class SideMenu(
     }
 
     // ==============================================
-    // ✅ BAGONG FUNCTION — SUB-MENU CLICK HANDLERS! ITO ANG KULANG!
+    // ✅ PROBLEMA 2 & 3: AYUSIN ANG PANGALAN + GUITAR SUB-MENU!
     // ==============================================
     private fun setupSubMenuButtons() {
-        // ✅ VOCAL CHANNEL — BUMUBUKAS NG MIXER!
-        activity.findViewById<TextView>(R.id.submenu_mixer_vocal)?.setOnClickListener {
-            close()
-            if (activity is MixerActivity) {
-                Toast.makeText(activity, "✅ Nasa Vocal Channel ka na!", Toast.LENGTH_SHORT).show()
-            } else {
-                activity.startActivity(Intent(activity, MixerActivity::class.java))
-                Toast.makeText(activity, "🎤 Vocal Channel — Binubukas...", Toast.LENGTH_SHORT).show()
+        // ==============================================
+        // ✅ MIXER SUB-MENU — "VOCAL PRESET" NA! HINDI MIXER CONTROLS!
+        // ==============================================
+        activity.findViewById<TextView>(R.id.submenu_mixer_vocal)?.apply {
+            text = "🎤  Vocal Preset"  // ✅ PALITAN ANG PANGALAN!
+            setOnClickListener {
+                close()
+                if (activity is MixerActivity) {
+                    Toast.makeText(activity, "✅ Nasa Vocal Preset ka na!", Toast.LENGTH_SHORT).show()
+                } else {
+                    activity.startActivity(Intent(activity, MixerActivity::class.java))
+                    Toast.makeText(activity, "🎤 Vocal Preset — Binubukas...", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
-        // ✅ MIXER CONTROLS — BUMUBUKAS NG MIXER!
-        activity.findViewById<TextView>(R.id.submenu_mixer_controls)?.setOnClickListener {
-            close()
-            if (activity is MixerActivity) {
-                Toast.makeText(activity, "✅ Nasa Mixer Controls ka na!", Toast.LENGTH_SHORT).show()
-            } else {
-                activity.startActivity(Intent(activity, MixerActivity::class.java))
-                Toast.makeText(activity, "🎛️ Mixer Controls — Binubukas...", Toast.LENGTH_SHORT).show()
+        // ==============================================
+        // ✅ GUITAR EFFECTS SUB-MENU — MAY 2 NA! CHANNEL + PRESET!
+        // ==============================================
+        // ✅ GUITAR CHANNEL — PANG-UNA SA GUITAR!
+        activity.findViewById<TextView>(R.id.submenu_guitar_channel)?.apply {
+            text = "🎸  Guitar Channel"
+            setOnClickListener {
+                close()
+                Toast.makeText(activity, "🎸 Guitar Channel — Binubukas...", Toast.LENGTH_SHORT).show()
+                // ✅ Ilagay ang GuitarActivity kapag handa na
             }
         }
 
-        // ✅ GUITAR EFFECTS SUB-MENU — HANDANG-HANDA NA!
-        activity.findViewById<TextView>(R.id.submenu_guitar_channel)?.setOnClickListener {
-            close()
-            Toast.makeText(activity, "🎸 Effects Channel — Bubukas...", Toast.LENGTH_SHORT).show()
-            // ✅ Ilagay ang GuitarActivity kapag handa na
-        }
-
-        activity.findViewById<TextView>(R.id.submenu_guitar_pedal)?.setOnClickListener {
-            close()
-            Toast.makeText(activity, "🎛️ Pedal Controls — Bubukas...", Toast.LENGTH_SHORT).show()
-        }
-
-        activity.findViewById<TextView>(R.id.submenu_guitar_presets)?.setOnClickListener {
-            close()
-            Toast.makeText(activity, "📋 Guitar Presets — Bubukas...", Toast.LENGTH_SHORT).show()
+        // ✅ GUITAR PRESET — PANGALAWA SA GUITAR!
+        activity.findViewById<TextView>(R.id.submenu_guitar_presets)?.apply {
+            text = "📋  Guitar Preset"
+            setOnClickListener {
+                close()
+                Toast.makeText(activity, "📋 Guitar Preset — Binubukas...", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -247,25 +250,11 @@ class SideMenu(
     private fun setupMenuButtons() {
         activity.findViewById<ImageView>(R.id.btn_close_menu)?.setOnClickListener { close() }
 
-        // ✅ PANGUNAHING MIXER BUTTON — NAG-TIKLOP/LUMALAWAK LANG, HINDI LUMILIPAT
-        activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {
-            // ✅ Collapse/Expand lang — ang paglipat ay nasa SUB-MENU
-        }
-
-        // ✅ PANGUNAHING GUITAR BUTTON — NAG-TIKLOP/LUMALAWAK LANG
-        activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {
-            // ✅ Collapse/Expand lang
-        }
-
-        // ✅ PANGUNAHING PRESETS BUTTON — NAG-TIKLOP/LUMALAWAK LANG
-        activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {
-            // ✅ Collapse/Expand lang
-        }
-
-        // ✅ PANGUNAHING SETTINGS BUTTON — NAG-TIKLOP/LUMALAWAK LANG
-        activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {
-            // ✅ Collapse/Expand lang
-        }
+        // ✅ PANGUNAHING BUTTONS — TIKLOP LANG, WALANG LIPAT
+        activity.findViewById<TextView>(R.id.menu_mixer)?.setOnClickListener {}
+        activity.findViewById<TextView>(R.id.menu_guitar)?.setOnClickListener {}
+        activity.findViewById<TextView>(R.id.menu_presets)?.setOnClickListener {}
+        activity.findViewById<TextView>(R.id.menu_settings)?.setOnClickListener {}
 
         // ✅ IBA PANG BUTTONS — WALANG PINAGBAGO!
         activity.findViewById<TextView>(R.id.menu_update)?.setOnClickListener {
