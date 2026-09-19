@@ -29,7 +29,7 @@
         .header-box p { color: #888; font-size: 13px; }
         .greeting { color: #40E0D0; margin-top: 12px; font-size: 15px; }
 
-        /* ===== COLLAPSE SECTION — ✅ NAKATIKLOP MUNA PAGBUKAS! ===== */
+        /* ===== COLLAPSE SECTION — NAKATIKLOP MUNA ===== */
         .section {
             background: #16162A;
             border-radius: 12px;
@@ -53,7 +53,6 @@
             color: #00FF88;
             transition: transform 0.3s ease;
         }
-        /* ✅ DEFAULT: NAKATIKLOP LAHAT PAGBUKAS! */
         .section.collapsed .icon-toggle { transform: rotate(-90deg); }
         .section.collapsed .section-content {
             max-height: 0;
@@ -77,6 +76,8 @@
         .color-goal h2 { color: #FFD700; }
         .color-note h2 { color: #FF9800; }
         .color-contact h2 { color: #03DAC6; }
+        .color-menu h2 { color: #FF6B9D; }
+        .color-admin h2 { color: #FF5722; }
 
         /* ===== PROGRESS BAR ===== */
         .progress-wrap { margin: 14px 0; }
@@ -89,7 +90,7 @@
         }
         .progress-fill {
             height: 100%;
-            width: 30%;
+            width: 32%;
             background: linear-gradient(90deg, #00FF88, #40E0D0);
             border-radius: 5px;
         }
@@ -97,12 +98,18 @@
         /* ===== LISTS & TEXT ===== */
         ul { padding-left: 22px; margin: 10px 0; }
         li { margin-bottom: 8px; font-size: 14px; color: #D0D0E0; }
-        .sub-item { margin-left: 16px; list-style-type: "• "; padding-left: 8px; }
         .highlight { color: #00FF88; font-weight: 500; }
         .divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, #333366, transparent);
             margin: 18px 0;
+        }
+        .note-box {
+            background: rgba(255, 87, 34, 0.1);
+            border-left: 3px solid #FF5722;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
         }
 
         /* ===== FOOTER ===== */
@@ -128,15 +135,64 @@
     <!-- ===== HEADER ===== -->
     <div class="header-box">
         <h1>📢 ABISO SA MGA NAG-AABANG</h1>
-        <p>Martodosko Audio Studio — Kasalukuyang Ginagawa<br>Updated: 2026-09-19 — May Dagdag na Detalye</p>
+        <p>Martodosko Audio Studio — Kasalukuyang Ginagawa<br>Updated: 2026-09-19 — ✅ TINAMA: TOTOONG ANTAS NG ADMIN SYSTEM!</p>
         <p class="greeting"><strong>Mga Kapatid, Mga Kasama sa Musika —</strong><br>
         Maraming salamat po sa inyong pag-aabang at pagtitiwala sa proyektong ito.</p>
     </div>
 
-    <!-- ===== PROGRESS — ✅ NAKATIKLOP MUNA ===== -->
+    <!-- ===== ✅ BAGONG BAHAGI — ADMIN SYSTEM STATUS ===== -->
+    <div class="section color-admin collapsed">
+        <div class="section-header" onclick="toggleSection(this.parentElement)">
+            <h2>🔐 ADMIN SYSTEM — TOTOONG KATAYUAN</h2>
+            <span class="icon-toggle">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="note-box">
+                <strong>⚠️ TANDAAN:</strong> Hindi pa 100% ang Admin System — <em>Login pa lang ang gumagana.</em>
+            </div>
+            <ul>
+                <li><strong>✅ Admin Login — GUMAGANA NA</strong> — Pagpasok at pagkilala ng admin</li>
+                <li><strong>⏳ Admin Panel — HINDI PA KUMPLETO</strong> — Dashboard, estadistika, at pangunahing kontrol wala pa</li>
+                <li><strong>🔴 User Management — HINDI PA SIMULA</strong> — Paglikha, pag-edit, at pagbura ng user account</li>
+                <li><strong>🔴 Permission Control — HINDI PA SIMULA</strong> — Pagtakda ng antas ng karapatan</li>
+                <li><strong>🔴 Moderation & Settings — HINDI PA SIMULA</strong> — Pagkontrol sa nilalaman ng app</li>
+            </ul>
+            <div class="divider"></div>
+            <p style="color:#FF9800; font-size:14px;">
+                📊 <strong>Admin System Kabuuan: ~10% TAPOS</strong><br>
+                — Login pa lang ang nakahanda. Ang buong Admin Panel at mga kakayahan nito ay kasama sa mga susunod na yugto ng pagbuo.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== ✅ BAGONG BAHAGI — BUONG SIDE MENU ===== -->
+    <div class="section color-menu collapsed">
+        <div class="section-header" onclick="toggleSection(this.parentElement)">
+            <h2>📋 BUONG SIDE MENU — LAHAT NG BUTTON KASAMA!</h2>
+            <span class="icon-toggle">▼</span>
+        </div>
+        <div class="section-content">
+            <p style="margin-bottom: 12px;">Ito ang kumpletong listahan ng lahat ng button sa Side Menu — lahat gumagana at nakahanda:</p>
+            <ul>
+                <li><strong>🏠 Home</strong> — Pangunahing screen — Pedal Board view</li>
+                <li><strong>🎚️ Mixer</strong> — Detalyadong kontrol — 🎤 Vocal Channel ↔ 🎸 Guitar Effects</li>
+                <li><strong>📋 Presets</strong> — Pumili, i-check, at i-apply ang mga naka-save na preset</li>
+                <li><strong>⚙️ Settings</strong> — Audio, Input, Buffer, Latency, at Itsura ng app</li>
+                <li><strong>❓ Help</strong> — Buong gabay ng paggamit — lahat ng detalyadong paliwanag</li>
+                <li><strong>🆕 What's New</strong> — Listahan ng mga pagbabago sa bawat bersyon</li>
+                <li><strong>🌐 Join Us</strong> — Sumali sa komunidad, magtanong, magbahagi ng preset</li>
+                <li><strong>ℹ️ About</strong> — Impormasyon ng app, bersyon, at developer</li>
+                <li><strong>🔄 Check Update</strong> — Awtomatikong tignan kung may bagong bersyon</li>
+            </ul>
+            <div class="divider"></div>
+            <p style="color:#00FF88; font-size:13px;">✅ Lahat ng button ay nakakonekta na sa kaukulang screen — ContentActivity ang humahawak sa Settings/Help/Join Us/About!</p>
+        </div>
+    </div>
+
+    <!-- ===== PROGRESS ===== -->
     <div class="section collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
-            <h2 style="color:#40E0D0;">📊 KASALUKUYANG ANTAS NG PROYEKTO — ~30% TAPOS</h2>
+            <h2 style="color:#40E0D0;">📊 KASALUKUYANG ANTAS NG PROYEKTO — ~32% TAPOS</h2>
             <span class="icon-toggle">▼</span>
         </div>
         <div class="section-content">
@@ -152,11 +208,14 @@
                 </div>
                 <div class="section-content">
                     <ul>
-                        <li>Buong sistema ng menu at paglipat ng screen — Side Menu, Main Screen, Mixer, Help, Settings — lahat nakahanda at gumagana</li>
-                        <li>Custom na disenyo ng mga pihitan (Knob) — may neon glow, indikasyon, label, at awtomatikong pag-save ng halaga</li>
-                        <li>Vocal Channel — unang dalawang pihitan (GAIN at SENSITIVITY) — gumagana nang maayos bilang pundasyon</li>
-                        <li>Sistema ng pag-update — awtomatikong tinitingnan kung may bagong bersyon</li>
-                        <li>Gabay ng paggamit — buong dokumentasyon nakahanda na</li>
+                        <li>✅ Buong sistema ng Side Menu — lahat ng 9 na button nakahanda at gumagana</li>
+                        <li>✅ ContentActivity — iisang sistema para sa Settings/Help/Join Us/About</li>
+                        <li>✅ Buong sistema ng paglipat ng screen — Main, Mixer, Presets, Content</li>
+                        <li>✅ Custom na disenyo ng mga pihitan — neon glow, indikasyon, auto-save</li>
+                        <li>✅ Vocal Channel — GAIN at SENSITIVITY — gumagana nang maayos</li>
+                        <li>✅ Sistema ng pag-update — awtomatikong tinitingnan ang bagong bersyon</li>
+                        <li>✅ HelpFragment — buong gabay na may collapsible sections at dynamic version</li>
+                        <li>✅ Dokumentasyon at Plano — kumpleto na ang buong direksyon ng proyekto</li>
                     </ul>
                 </div>
             </div>
@@ -168,8 +227,10 @@
                 </div>
                 <div class="section-content">
                     <ul>
-                        <li>Pagdaragdag ng lahat ng kailangang pihitan sa Vocal Channel — Reverb, Delay, Equalizer (Low/Mid/High), Compressor, Noise Gate, Master Volume — kabuuang 12+ na pihitan</li>
-                        <li>Paghiwalay at pagbuo ng Guitar Effects Channel — Distortion, Overdrive, Wah-Wah, Chorus, Reverb, Delay, at iba pa</li>
+                        <li>Pagdaragdag ng lahat ng pihitan sa Vocal Channel — Reverb, Delay, EQ, Compressor, Noise Gate, Master Volume — 12+ knobs</li>
+                        <li>Pagbuo ng Guitar Effects Channel — Distortion, Overdrive, Wah-Wah, Chorus, Reverb, Delay, at iba pa</li>
+                        <li>Preset System — pag-save at pagbukas ng mga setting</li>
+                        <li>🔐 Admin Panel — kasunod na yugto pagkatapos ng Mixer</li>
                     </ul>
                 </div>
             </div>
@@ -181,16 +242,17 @@
                 </div>
                 <div class="section-content">
                     <ul>
-                        <li><strong>Preset System</strong> — pag-save at pagbukas ng sariling mga setting</li>
-                        <li><strong>Pedal Interface</strong> — ang 3-pihit na kontrol sa pangunahing screen</li>
-                        <li><strong>AUDIO ENGINE</strong> — C++ na pagpoproseso ng tunog na may mababang antala — ito ang magbibigay ng totoong tunog na wala pang hinihintay</li>
+                        <li><strong>Pedal Interface</strong> — 3-knob na kontrol sa Main Screen — EFFECTS, VOLUME, NOISE GATE</li>
+                        <li><strong>AUDIO ENGINE</strong> — C++ na pagpoproseso — &lt;10ms low latency — totoong real-time tunog</li>
+                        <li><strong>Export/Import Preset</strong> — makakapagbahagi sa iba</li>
+                        <li><strong>Advanced Admin Features</strong> — User Management, Permission Control, Dashboard</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== DESIGN — ✅ NAKATIKLOP MUNA ===== -->
+    <!-- ===== DESIGN ===== -->
     <div class="section color-design collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>🎨 INAASAHANG PAGBABAGO SA DISENYO AT KONSEPTO</h2>
@@ -198,89 +260,46 @@
         </div>
         <div class="section-content">
             <ul>
-                <li><strong>🖥️ Pangunahing Screen → Pedal Board</strong><br>
-                Hindi mananatiling blangko — magiging pisikal na pedal board. Bawat preset — may sariling itsura, kulay, at 3 pihitan. May ilaw: 🟢 ON / 🔴 OFF. Pwede ring ayusin ang pagkakasunod-sunod.</li>
-                <li><strong>🎚️ Mixer Screen — Mas Malinaw</strong><br>
-                TAB switch: 🎤 Vocal ↔ 🎸 Guitar. May VU Meter — nakikita ang lakas ng tunog. May sariling kulay bawat kategorya: 🟦 EQ, 🟩 Reverb/Delay, 🟧 Dynamics, 🟥 Distortion.</li>
-                <li><strong>🎸 Guitar Effects — Ibang Itsura</strong><br>
-                Mas maitim, mas matapang na kulay. Makikita ang hugis ng Distortion, Wah-Wah habang pinipihit. Pwede baguhin ang pagkakasunod-sunod ng epekto.</li>
+                <li><strong>🖥️ Main Screen → Pedal Board</strong><br>
+                Bawat preset — may sariling pedal, kulay, at 3 pihitan. 🟢 ON / 🔴 OFF ilaw. Pwede ayusin ang pagkakasunod-sunod.</li>
+                <li><strong>🎚️ Mixer Screen — TAB Switch</strong><br>
+                🎤 Vocal ↔ 🎸 Guitar. May VU Meter. Bawat kategorya may kulay: 🟦 EQ, 🟩 Reverb/Delay, 🟧 Dynamics, 🟥 Distortion.</li>
                 <li><strong>📋 Preset Screen — May Preview</strong><br>
-                Hindi lang listahan — makikita mo ang itsura ng pedal bago piliin. May paghahanap, pangkat, at Export/Import — makakapagbahagi ng preset sa iba.</li>
+                Hindi lang listahan — makikita ang itsura ng pedal bago piliin. May search, group, at Export/Import.</li>
             </ul>
         </div>
     </div>
 
-    <!-- ===== NAV & FEATURES — ✅ NAKATIKLOP MUNA ===== -->
-    <div class="section color-nav collapsed">
-        <div class="section-header" onclick="toggleSection(this.parentElement)">
-            <h2>🧭 MGA BAGONG NAVIGATION AT DAGDAG NA KAKAYAHAN</h2>
-            <span class="icon-toggle">▼</span>
-        </div>
-        <div class="section-content">
-            <ul>
-                <li><strong>🔄 Mabilis na Paglipat — Bottom Bar</strong><br>
-                🏠 Home 🎚️ Mixer 📋 Presets ⚙️ Settings — laging nasa ibaba. Pwede ring mag-swipe pakaliwa/pakanan.</li>
-                <li><strong>🎵 Real-time — Naririnig AGAD</strong><br>
-                Hindi na kailangang bitawan — naririnig mo agad ang pagbabago. May Bypass at Compare button para ihambing.</li>
-                <li><strong>💾 Dagdag na Pag-save</strong><br>
-                Auto-save, Save As, Favorites, at Backup — hindi mawawala ang iyong mga setting.</li>
-                <li><strong>🎛️ Hahangad na Kakayahan</strong><br>
-                📲 Share Preset, 🎧 Bluetooth Audio, 🎤 Multiple Input, 📊 Visual Feedback, 🌙 Dark Mode — at marami pang darating.</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- ===== GOAL — ✅ NAKATIKLOP MUNA ===== -->
+    <!-- ===== GOAL ===== -->
     <div class="section color-goal collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
-            <h2>🎯 ANG BUKOD-TANGING LAYUNIN NG PROYEKTO</h2>
+            <h2>🎯 ANG BUKOD-TANGING LAYUNIN</h2>
             <span class="icon-toggle">▼</span>
         </div>
         <div class="section-content">
             <ul>
-                <li><span class="highlight">✅ TOTOONG MABILIS</span> — &lt;10ms na antala, halos hindi maririnig</li>
-                <li><span class="highlight">✅ DIREKTANG DALOY NG TUNOG</span> — mula mikropono papunta sa pandinig</li>
-                <li><span class="highlight">✅ PARA SA LAHAT</span> — boses man o gitara, simpleng gamitin ngunit malalim ang kakayahan</li>
-                <li><span class="highlight">✅ WALANG BAYAD</span> — para sa lahat na mahal ang musika</li>
+                <li><span class="highlight">✅ &lt;10ms Low Latency</span> — halos walang antala</li>
+                <li><span class="highlight">✅ C++ Audio Engine</span> — direktang signal, mabilis na pagproseso</li>
+                <li><span class="highlight">✅ Simple pero Malalim</span> — madaling gamitin, pero kumpleto ang kontrol</li>
+                <li><span class="highlight">✅ Libre para sa Lahat</span> — walang bayad, walang lock na feature</li>
             </ul>
         </div>
     </div>
 
-    <!-- ===== NOTE — ✅ NAKATIKLOP MUNA ===== -->
+    <!-- ===== NOTE ===== -->
     <div class="section color-note collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
             <h2>📅 HINDI PA ITO TAPOS — NGUNIT NAGPAPATULOY TAYO</h2>
             <span class="icon-toggle">▼</span>
         </div>
         <div class="section-content">
-            <p>Alam kong marami na ang nag-aabang. Hindi ko kayo makapangako ng tiyak na petsa — dahil ang kalidad ay mas mahalaga kaysa sa bilis.</p>
-            <ul>
-                <li>Ang bawat bahagi ay ginagawa nang maingat</li>
-                <li>Ang bawat pihitan ay sinusubukan bago ilagay</li>
-                <li>Ang audio engine ay ang pinakamahalagang bahagi — ito ang huling ilalagay ngunit ito ang unang dapat gumana nang perpekto</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- ===== CONTACT — ✅ NAKATIKLOP MUNA ===== -->
-    <div class="section color-contact collapsed">
-        <div class="section-header" onclick="toggleSection(this.parentElement)">
-            <h2>💌 MANATILING NAKAKONEKTA</h2>
-            <span class="icon-toggle">▼</span>
-        </div>
-        <div class="section-content">
-            <p>Ang mga pagbabago at balita ay ilalabas sa pamamagitan ng:</p>
-            <ul>
-                <li>Side Menu → Check Update — sa loob ng mismong app</li>
-                <li>Gabay ng Paggamit — palaging napapanahon</li>
-                <li>Preset System — sa hinaharap, makakapagbahagi rin kayo ng inyong sariling mga paglikha</li>
-            </ul>
+            <p>Ang bawat bahagi ay ginagawa nang maingat. Ang Side Menu at balangkas ay tapos na — ngayon ay dahan-dahang pupunan ang Mixer, Preset System, at ang pinakamahalaga — ang Audio Engine. Ang Admin Panel ay susunod na pagtutuunan pagkatapos ng pangunahing mga tampok.</p>
         </div>
     </div>
 
     <!-- ===== FOOTER ===== -->
     <div class="footer-box">
-        <p>🙏 MARAMING SALAMAT SA PAGTITIIS</p>
+        <p>🙏 MARAMING SALAMAT SA PAGTITIIS AT PAG-AABANG</p>
         <p class="footer-quote">"Ang musika — para sa lahat, kahit saan."</p>
         <p>Patuloy tayong gagawa — para sa inyo.</p>
     </div>
