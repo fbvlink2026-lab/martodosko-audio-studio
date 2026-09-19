@@ -1,7 +1,7 @@
 // ==================================================
 // FILE: HelpFragment.kt — ✅ NAKATIKLOP NANG UNA! WALANG LUMALABAS!
-// VERSION: 2.4.0 — ✅ DEFAULT = GONE! PINDOT LANG PARA BUKAS! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-19 — ISANG LINYA LANG ANG PALITAN!
+// VERSION: 2.5.0 — ✅ IDINAGDAG: BAHAGI 12 — MEMBER & NON-MEMBER BENEFITS!
+// UPDATED: 2026-09-20 — WALANG IBANG PINAGBAGO! DAGDAG LANG!
 // ==================================================
 package com.martodosko.studio
 
@@ -110,6 +110,11 @@ ANO ANG MANGYAYARI PAGKAPINDOT APPLY:
   • Lahat ng knobs ay kusang mapipihit — ayon sa na-save na halaga
   • Kusang magbabago ang kulay at itsura ng bawat pedal
   • Kung magkaiba ang uri (Vocal + Guitar) → PAGHALUIN ANG TUNOG — sabay lalabas!
+
+DALAWANG URI NG PRESETS SA MENU:
+  • Pangkalahatang Presets — Para sa mga miyembro na may Member Key Code
+  • Non-Member Presets — Mga libreng preset na handang gamitin agad
+  • Tingnan ang BAHAGI 12 — Member & Non-Member Benefits para sa buong detalye
         """.trimIndent())
 
         // ==============================================
@@ -306,9 +311,63 @@ APPEARANCE:
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 12 — FAQ
+        // 📌 BAHAGI 12 — MEMBER & NON-MEMBER BENEFITS — ADMIN PANEL
         // ==============================================
-        addCollapsibleSection(root, "❓ BAHAGI 12 — MGA MADALAS NA TANONG (FAQ)", """
+        addCollapsibleSection(root, "🔐 BAHAGI 12 — MEMBER & NON-MEMBER BENEFITS", """
+ANO BA TALAGA ANG PLANO BUKOD SA AUDIO STUDIO? BAKIT MAY ADMIN PANEL?
+
+SAGOT: Ang Admin button na nakikita sa loob ng app ay isang paraan upang
+mabigyan ng KARAGDAGANG BENEPISYO ang mga miyembro o users ng Martodosko
+Audio Studio — upang makapag-avail ng PRO o FULL VERSION ng app.
+
+────────────────────────────────────────────────────────────────────
+
+👑 MEMBER — MAY MEMBER KEY CODE (FULL BENEFITS)
+────────────────────────────────────────────────────────────────────
+  Kapag may MEMBER KEY CODE ang user → mapapabilang siya bilang
+  mababang antas na Admin — CONTRIBUTOR na ng mga PRESETS!
+
+  KAKAYAHAN NG MEMBER:
+     • May kakayahang MAG-EDIT ng kanyang sariling presets
+     • Makapag-upload ng PRESETS sa PANGKALAHATANG LISTAHAN
+     • Makikita at magagamit ang PANGKALAHATANG PRESETS
+     • Full Benefits — walang limitasyon sa pag-save at pagbabahagi
+     • Maaaring maging bahagi ng paglago ng komunidad
+
+────────────────────────────────────────────────────────────────────
+
+🆓 NON-MEMBER — WALANG MEMBER KEY CODE (LIMITED BENEFITS)
+────────────────────────────────────────────────────────────────────
+  Ang mga regular users na WALANG KEY CODE ay napapabilang lamang
+  bilang CONTRIBUTOR na WALANG KAKAYAHANG MAG-EDIT ng kanyang
+  sariling preset via online saved.
+
+  KAKAYAHAN NG NON-MEMBER:
+     • Makakapag-SHARE ng kanyang sariling preset
+     • Awtomatikong ipapadala sa GitHub bilang NON-MEMBER PRESET
+     • Makikita ang kanyang preset sa NON-MEMBER PRESETS
+     • HINDI MAKAPAG-EDIT ng na-upload na preset
+     • HINDI MAKAKITA ng PANGKALAHATANG PRESETS ng mga miyembro
+     • Libre at walang bayad — pero LIMITADO ang kakayahan
+
+────────────────────────────────────────────────────────────────────
+
+BUOD NG PAGKAKAIBA:
+
+  • Member = Full Version — Mag-edit + Pangkalahatang Presets + Walang Limit
+  • Non-Member = Limited Version — Makapag-share lang, hindi makapag-edit
+
+PAANO MAGING MEMBER?
+  • Pumunta sa Side Menu → Settings → Enter Member Key Code
+  • Ilagay ang natanggap na Key Code
+  • Awtomatikong magiging Member — lalabas agad ang Full Benefits!
+  • Kung wala pang Key Code — manatiling Non-Member — LIBRE PA RIN!
+        """.trimIndent())
+
+        // ==============================================
+        // 📌 BAHAGI 13 — FAQ
+        // ==============================================
+        addCollapsibleSection(root, "❓ BAHAGI 13 — MGA MADALAS NA TANONG (FAQ)", """
 Bakit hindi gumagana ang tunog?
   • Siguraduhing pinayagan ang RECORD_AUDIO permission. Pumunta sa
     Settings → Apps → Martodosko → Permissions → Microphone → Payagan.
@@ -320,6 +379,7 @@ Bakit may pagka-antala ang tunog?
 Bakit hindi lumalabas ang na-save kong preset?
   • Pumunta sa Presets — hanapin sa listahan — i-check — pindot APPLY.
     Tandaan: naka-grupo ito — hanapin sa ilalim ng VOCAL o GUITAR.
+    Kung Non-Member — hanapin sa Non-Member Presets.
 
 Pwede ba sabay ang Vocal at Guitar?
   • OO! Pumili ng isa sa bawat uri — i-check pareho — pindot APPLY —
@@ -332,10 +392,19 @@ Nawawala ba ang settings kapag isinara ang app?
 Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
   • Iyon ang disenyo — gumagana ito sa tunog pero hiwalay ang kontrol.
     Hindi ipinapakita ang halaga sa Channel pero gumagana pa rin.
+
+Ano ang pagkakaiba ng Member at Non-Member?
+  • Tingnan ang BAHAGI 12 — Member = Full Benefits + Pangkalahatang Presets +
+    Makapag-edit. Non-Member = Limited — makapag-share lang, hindi makapag-edit.
+
+Paano makakuha ng Member Key Code?
+  • Abangan ang mga anunsyo — Join Us → Komunidad — lalabas ang impormasyon
+    kung kailan at paano makakakuha ng Key Code. Libre man o may halaga —
+    ang layunin ay suportahan ang paglago ng proyekto!
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 13 — TIPS
+        // 📌 BAHAGI 14 — TIPS
         // ==============================================
         addCollapsibleSection(root, "💡 MGA TIP PARA SA MAGANDANG RESULTA", """
   PARA SA BOSES:
@@ -354,10 +423,13 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
     • Gumamit ng magandang earphone o speaker — mas malinaw ang pagkakaiba
     • I-off ang ibang app habang gumagamit — mas malakas ang pagproseso
     • Subukan ang iba't ibang kumbinasyon — walang mali sa eksperimento!
+    • Kung Non-Member ka pa — mag-share ng preset! Awtomatikong mapupunta
+      sa Non-Member Presets — makikita ng iba — at maaaring maging bahagi ng
+      Pangkalahatang Presets balang araw!
         """.trimIndent())
 
         // ==============================================
-        // 📌 BAHAGI 14 — KAILANGAN NG TULONG
+        // 📌 BAHAGI 15 — KAILANGAN NG TULONG
         // ==============================================
         addCollapsibleSection(root, "📞 KAILANGAN NG TULONG?", """
   • 🌐 Join Us — Sumali sa aming komunidad — tanungin ang iba pang user!
@@ -366,7 +438,7 @@ Bakit hindi makita ang pagbabago ng Noise Gate sa Channel?
 
                   SALAMAT SA PAGGAMIT NG MARTODOSKO!
            Ang musika — para sa lahat, kahit saan.
-                  Version $versionName — 2026-09-19
+                  Version $versionName — 2026-09-20
         """.trimIndent())
 
         scrollView.addView(root)
