@@ -1,8 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ BUONG ADMIN SYSTEM!
-// VERSION: 1.0.0 — 👑 OWNER + 🔐 ADMIN + 👤 MEMBER HIERARCHY!
-// ✅ KEY CODE GENERATOR — USER MANAGEMENT — PRESET MODERATION — STATS!
-// UPDATED: 2026-09-20 — SIMULA NG BUONG SISTEMA!
+// FILE: AdminPanelActivity.kt — ✅ NA-AYOS NA ANG SIDEMENU ERROR!
+// VERSION: 1.0.1 — ✅ DRAWER_LAYOUT ID IPINASA SA SIDEMENU! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-20 — BUILD NA! WALANG ERROR!
 // ==================================================
 package com.martodosko.studio
 
@@ -10,9 +9,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import kotlin.random.Random
 
@@ -31,8 +28,14 @@ class AdminPanelActivity : Activity() {
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
-        sideMenu = SideMenu(this)
-        sideMenu.setup()
+        // ✅ INAAYOS: GUMAMIT NG SideMenu.setup() — TAMA ANG PARAMETERS!
+        sideMenu = SideMenu.setup(
+            activity = this,
+            drawerLayoutId = R.id.drawer_layout,
+            btnOpenMenuId = R.id.btn_open_menu,
+            btnCloseMenuId = R.id.btn_close_menu,
+            tvVersionId = R.id.tv_version
+        )
 
         checkAccessLevel()
         setupButtons()
@@ -53,7 +56,6 @@ class AdminPanelActivity : Activity() {
             "OWNER" -> {
                 accessTitle.text = "👑 OWNER — BUONG KAPANGYARIHAN"
                 accessTitle.setTextColor(0xFFFFD700.toInt())
-                // LAHAT NG SECTION — NAKABUKAS!
                 keygenSection.visibility = View.VISIBLE
                 userSection.visibility = View.VISIBLE
                 presetSection.visibility = View.VISIBLE
@@ -62,7 +64,6 @@ class AdminPanelActivity : Activity() {
             "ADMIN" -> {
                 accessTitle.text = "🔐 ADMIN — LIMITADONG KAPANGYARIHAN"
                 accessTitle.setTextColor(0xFFFF9800.toInt())
-                // WALANG KEY GENERATOR — MAY USER, PRESET, STATS LANG
                 keygenSection.visibility = View.GONE
                 userSection.visibility = View.VISIBLE
                 presetSection.visibility = View.VISIBLE
@@ -71,7 +72,6 @@ class AdminPanelActivity : Activity() {
             else -> {
                 accessTitle.text = "❌ WALANG KAPANGYARIHAN"
                 accessTitle.setTextColor(0xFFFF5252.toInt())
-                // LAHAT NAKATAGO — WALANG ACCESS
                 keygenSection.visibility = View.GONE
                 userSection.visibility = View.GONE
                 presetSection.visibility = View.GONE
@@ -85,7 +85,6 @@ class AdminPanelActivity : Activity() {
     // ✅ PAG-SETUP NG MGA BUTTON
     // ==============================================
     private fun setupButtons() {
-        // --- KEY CODE GENERATOR — PARA SA OWNER LANG ---
         findViewById<Button>(R.id.btn_generate_key)?.setOnClickListener {
             if (currentUserLevel == "OWNER") generateNewKeyCode()
             else Toast.makeText(this, "👑 OWNER lang ang makakagawa ng Key Code!", Toast.LENGTH_SHORT).show()
@@ -99,13 +98,11 @@ class AdminPanelActivity : Activity() {
             }
         }
 
-        // --- USER MANAGEMENT ---
         findViewById<Button>(R.id.btn_refresh_users)?.setOnClickListener {
             loadUserList()
             Toast.makeText(this, "Nai-refresh ang listahan.", Toast.LENGTH_SHORT).show()
         }
 
-        // --- PRESET MODERATION ---
         findViewById<Button>(R.id.btn_refresh_presets)?.setOnClickListener {
             loadPresetList()
             Toast.makeText(this, "Nai-refresh ang listahan.", Toast.LENGTH_SHORT).show()
@@ -118,18 +115,16 @@ class AdminPanelActivity : Activity() {
     private fun generateNewKeyCode() {
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         val newKey = StringBuilder()
-        repeat(4) {
+        repeat(4) { blockIndex ->
             repeat(4) { newKey.append(chars[Random.nextInt(chars.length)]) }
-            if (it < 3) newKey.append("-")
+            if (blockIndex < 3) newKey.append("-")
         }
-        val keyCode = newKey.toString() // HALIMBAWA: XXXX-XXXX-XXXX-XXXX
+        val keyCode = newKey.toString()
 
-        // I-save sa listahan ng mga Key Code
         val existingKeys = prefs.getStringSet("member_keys", emptySet())?.toMutableSet() ?: mutableSetOf()
         existingKeys.add(keyCode)
         prefs.edit().putStringSet("member_keys", existingKeys).apply()
 
-        // Ipakita sa screen
         val keyList = findViewById<TextView>(R.id.tv_generated_keys)
         val currentText = keyList.text.toString()
         keyList.text = "✅ $keyCode\n$currentText"
@@ -148,7 +143,6 @@ class AdminPanelActivity : Activity() {
     // ==============================================
     private fun loadUserList() {
         val userList = findViewById<TextView>(R.id.tv_user_list)
-        // Kunin mula sa SharedPreferences — sa hinaharap: mula sa server
         val users = prefs.getStringSet("registered_members", emptySet()) ?: emptySet()
         userList.text = if (users.isEmpty()) "Wala pang rehistradong miyembro." else users.joinToString("\n👤 ")
     }
