@@ -38,13 +38,6 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT / ADMIN / ABISO ✅ singleTop = HINDI BAGONG INSTANCE! -->
-        <activity
-            android:name=".ContentActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
         <!-- ✅ Guitar Effects Activity — 🎸 -->
         <activity
             android:name=".GuitarActivity"
@@ -55,6 +48,20 @@
         <activity
             android:name=".PresetsActivity"
             android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT / ADMIN / ABISO ✅ singleTop = HINDI BAGONG INSTANCE! -->
+        <activity
+            android:name=".ContentActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- ✅ Admin Panel Activity — 🔐 KEY CODE LOGIN + ADMIN DASHBOARD! -->
+        <activity
+            android:name=".AdminPanelActivity"
+            android:exported="false"
+            android:label="Admin Panel"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <!-- ✅ FileProvider — KAILANGAN PARA MA-INSTALL ANG APK sa Android 7+ -->
