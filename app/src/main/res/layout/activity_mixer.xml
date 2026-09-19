@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_mixer.xml — ✅ MAY 3 BAGONG BUTTON NA! TUGMA SA SIDEMENU! -->
-<!-- VERSION: 7.3.5 — ✅ ADMIN / WHAT'S NEW / EXIT! WALANG IBANG PINAGBAGO! -->
-<!-- UPDATED: 2026-09-19 — DAGDAG LANG SA IBABA! -->
+<!-- FILE: activity_mixer.xml — ✅ TINANGGAL ANG DUPLICATE SIDE MENU! <include> NA LANG! -->
+<!-- VERSION: 8.0.0 — ✅ GUITAR EFFECTS = PANGALAWANG BUTTON! TUGMA SA SIDE_MENU.XML! WALANG CRASH! -->
+<!-- UPDATED: 2026-09-19 — SIDE MENU TINANGGAL → <include> NA! MAIN CONTENT GANOON PA RIN! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,6 +11,7 @@
     android:layout_height="match_parent"
     android:background="#121212">
 
+    <!-- ✅ PANGUNAHING LAMAN — WALANG BINAGO! -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,7 +49,7 @@
                 android:layout_height="32dp"/>
         </LinearLayout>
 
-        <!-- ✅ VERTICAL SCROLL -->
+        <!-- ✅ VERTICAL SCROLL — WALANG BINAGO -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -61,7 +62,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- ✅ VOCAL CHANNEL HEADER -->
+                <!-- ✅ VOCAL CHANNEL HEADER — WALANG BINAGO -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -72,7 +73,7 @@
                     android:padding="12dp"
                     android:background="#12232E"/>
 
-                <!-- ✅ KNOBS CONTAINER — DIKIT NA! WALANG PAGITAN! -->
+                <!-- ✅ KNOBS CONTAINER — WALANG BINAGO -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,13 +81,13 @@
                     android:gravity="center"
                     android:layout_marginTop="12dp">
 
-                    <!-- ✅ GAIN KNOB — 160x180! WALANG MARGIN! -->
+                    <!-- ✅ GAIN KNOB -->
                     <com.martodosko.studio.KnobView
                         android:id="@+id/knob_gain"
                         android:layout_width="160dp"
                         android:layout_height="180dp"/>
 
-                    <!-- ✅ SENSITIVITY KNOB — DIKIT NA SA TAAS! WALANG PAGITAN! -->
+                    <!-- ✅ SENSITIVITY KNOB -->
                     <com.martodosko.studio.KnobView
                         android:id="@+id/knob_sensitivity"
                         android:layout_width="160dp"
@@ -99,176 +100,11 @@
 
     </LinearLayout>
 
-    <!-- ✅ SIDE MENU — 3 BAGONG BUTTON LANG ANG DAGDAG! WALANG IBANG PINAGBAGO! -->
-    <LinearLayout
+    <!-- ✅ SIDE MENU — TINANGGAL ANG BUONG DUPLICATE! <include> NA LANG! TUGMA SA SIDE_MENU.XML! -->
+    <include
+        layout="@layout/side_menu"
         android:layout_width="280dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#1A1A2E"
-        android:orientation="vertical"
-        android:elevation="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:background="#16162A">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="MENU"
-                android:textColor="#40E0D0"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:id="@+id/btn_close_menu"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_close"
-                android:clickable="true"
-                android:focusable="true"/>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#333344"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp">
-
-            <TextView
-                android:id="@+id/menu_mixer"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🎚️  Mixer"
-                android:textColor="#40E0D0"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_presets"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="📋  Presets"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_settings"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="⚙️  Settings"
-                android:textColor="#40E0D0"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_effects"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🎸  Guitar Effects"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_update"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🔄  Check Update"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_help"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="❓  Help"
-                android:textColor="#40E0D0"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_join"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🌐  Join Us"
-                android:textColor="#00BFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <TextView
-                android:id="@+id/menu_about"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="ℹ️  About"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <!-- ✅ BAGONG BUTTON 1 — ADMIN PANEL -->
-            <TextView
-                android:id="@+id/menu_admin"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🔐  Admin Panel"
-                android:textColor="#FFD700"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <!-- ✅ BAGONG BUTTON 2 — WHAT'S NEW -->
-            <TextView
-                android:id="@+id/menu_whatsnew"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🆕  What's New"
-                android:textColor="#00FF88"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-
-            <!-- ✅ BAGONG BUTTON 3 — EXIT -->
-            <TextView
-                android:id="@+id/menu_exit"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="❌  Exit"
-                android:textColor="#FF6B6B"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:paddingStart="24dp"
-                android:clickable="true"/>
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_gravity="start"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
