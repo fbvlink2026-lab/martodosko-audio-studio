@@ -61,7 +61,7 @@
             overflow: hidden;
         }
         .section-content {
-            max-height: 3000px;
+            max-height: 4000px;
             opacity: 1;
             padding: 0 20px 20px 20px;
             transition: all 0.3s ease;
@@ -78,6 +78,7 @@
         .color-contact h2 { color: #03DAC6; }
         .color-menu h2 { color: #FF6B9D; }
         .color-admin h2 { color: #FF5722; }
+        .color-member h2 { color: #9C27B0; }
 
         /* ===== PROGRESS BAR ===== */
         .progress-wrap { margin: 14px 0; }
@@ -90,7 +91,7 @@
         }
         .progress-fill {
             height: 100%;
-            width: 32%;
+            width: 35%;
             background: linear-gradient(90deg, #00FF88, #40E0D0);
             border-radius: 5px;
         }
@@ -111,6 +112,16 @@
             border-radius: 6px;
             margin: 10px 0;
         }
+        .member-box {
+            background: rgba(156, 39, 176, 0.1);
+            border-left: 3px solid #9C27B0;
+            padding: 14px;
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+        .member-box h3 { color: #E1BEE7; font-size: 15px; margin-bottom: 8px; }
+        .tag-member { display: inline-block; background: #9C27B0; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-right: 6px; }
+        .tag-nonmember { display: inline-block; background: #607D8B; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-right: 6px; }
 
         /* ===== FOOTER ===== */
         .footer-box {
@@ -135,9 +146,52 @@
     <!-- ===== HEADER ===== -->
     <div class="header-box">
         <h1>📢 ABISO SA MGA NAG-AABANG</h1>
-        <p>Martodosko Audio Studio — Kasalukuyang Ginagawa<br>Updated: 2026-09-19 — ✅ TINAMA: TOTOONG ANTAS NG ADMIN SYSTEM!</p>
+        <p>Martodosko Audio Studio — Kasalukuyang Ginagawa<br>Updated: 2026-09-20 — ✅ IDINAGDAG: MEMBER SYSTEM + BUONG PLANO SA HINAHARAP!</p>
         <p class="greeting"><strong>Mga Kapatid, Mga Kasama sa Musika —</strong><br>
         Maraming salamat po sa inyong pag-aabang at pagtitiwala sa proyektong ito.</p>
+    </div>
+
+    <!-- ===== ✅ BAGONG BAHAGI — MEMBER & NON-MEMBER SYSTEM ===== -->
+    <div class="section color-member collapsed">
+        <div class="section-header" onclick="toggleSection(this.parentElement)">
+            <h2>👑 MEMBER & NON-MEMBER — ANG PLANO SA HINAHARAP</h2>
+            <span class="icon-toggle">▼</span>
+        </div>
+        <div class="section-content">
+            <div class="member-box">
+                <h3>💡 Bakit may ganitong sistema?</h3>
+                <p>Ang layunin ay hindi paghigpit — kundi <strong>pagpapalakas ng komunidad</strong>. Ang app ay mananatiling libre, ngunit ang mga miyembro ay may karagdagang kakayahan na makapag-ambag at makagamit ng mas malawak na nilalaman.</p>
+            </div>
+
+            <h3 style="color:#9C27B0; margin-top:16px;">👑 MEMBER — MAY MEMBER KEY CODE (Full Benefits)</h3>
+            <ul>
+                <li><span class="tag-member">MEMBER</span> May kakayahang <strong>mag-edit</strong> ng sariling presets</li>
+                <li><span class="tag-member">MEMBER</span> Makapag-upload ng presets sa <strong>PANGKALAHATANG LISTAHAN</strong></li>
+                <li><span class="tag-member">MEMBER</span> Makakita at makagamit ng lahat ng <strong>Pangkalahatang Presets</strong></li>
+                <li><span class="tag-member">MEMBER</span> Walang limitasyon sa pag-save at pagbabahagi</li>
+                <li><span class="tag-member">MEMBER</span> Awtomatikong nakakasali sa paglago ng proyekto</li>
+            </ul>
+
+            <h3 style="color:#90A4AE; margin-top:20px;">🆓 NON-MEMBER — WALANG KEY CODE (Limited Benefits)</h3>
+            <ul>
+                <li><span class="tag-nonmember">LIBRE</span> Makakapag-<strong>share</strong> ng sariling preset</li>
+                <li><span class="tag-nonmember">LIBRE</span> Awtomatikong ipapadala bilang <strong>Non-Member Preset</strong></li>
+                <li><span class="tag-nonmember">LIBRE</span> Makikita ang preset sa Non-Member Presets list</li>
+                <li><span class="tag-nonmember">LIBRE</span> <strong>HINDI</strong> makapag-edit ng na-upload na preset</li>
+                <li><span class="tag-nonmember">LIBRE</span> <strong>HINDI</strong> makakita ng Pangkalahatang Presets ng mga Miyembro</li>
+                <li><span class="tag-nonmember">LIBRE</span> — <strong>WALANG BAYAD, WALANG PAGPIPILIT!</strong></li>
+            </ul>
+
+            <div class="divider"></div>
+
+            <h3 style="color:#FFD700;">🔮 PAANO MAGING MEMBER SA HINAHARAP?</h3>
+            <ul>
+                <li>📍 Side Menu → Settings → <strong>Enter Member Key Code</strong></li>
+                <li>📍 Manatiling nakatutok — ibibigay ang mga paraan upang makakuha ng Key Code</li>
+                <li>📍 Maaaring ibigay nang libre sa mga aktibong tagasuporta ng komunidad</li>
+                <li>📍 <strong>Sa ngayon — lahat ay LIBRE at walang limitasyon!</strong> Ang sistema ay nakahanda lamang para sa hinaharap.</li>
+            </ul>
+        </div>
     </div>
 
     <!-- ===== ✅ BAGONG BAHAGI — ADMIN SYSTEM STATUS ===== -->
@@ -176,10 +230,10 @@
             <ul>
                 <li><strong>🏠 Home</strong> — Pangunahing screen — Pedal Board view</li>
                 <li><strong>🎚️ Mixer</strong> — Detalyadong kontrol — 🎤 Vocal Channel ↔ 🎸 Guitar Effects</li>
-                <li><strong>📋 Presets</strong> — Pumili, i-check, at i-apply ang mga naka-save na preset</li>
-                <li><strong>⚙️ Settings</strong> — Audio, Input, Buffer, Latency, at Itsura ng app</li>
-                <li><strong>❓ Help</strong> — Buong gabay ng paggamit — lahat ng detalyadong paliwanag</li>
-                <li><strong>🆕 What's New</strong> — Listahan ng mga pagbabago sa bawat bersyon</li>
+                <li><strong>📋 Presets</strong> — Pumili, i-check, at i-apply ang mga naka-save na preset — may Pangkalahatan at Non-Member list</li>
+                <li><strong>⚙️ Settings</strong> — Audio, Input, Buffer, Latency, Itsura, at <strong>Member Key Code</strong></li>
+                <li><strong>❓ Help</strong> — Buong gabay ng paggamit — kasama ang Member & Non-Member Benefits</li>
+                <li><strong>🆕 What's New</strong> — Ito ang binabasa mo ngayon — listahan ng mga pagbabago</li>
                 <li><strong>🌐 Join Us</strong> — Sumali sa komunidad, magtanong, magbahagi ng preset</li>
                 <li><strong>ℹ️ About</strong> — Impormasyon ng app, bersyon, at developer</li>
                 <li><strong>🔄 Check Update</strong> — Awtomatikong tignan kung may bagong bersyon</li>
@@ -192,7 +246,7 @@
     <!-- ===== PROGRESS ===== -->
     <div class="section collapsed">
         <div class="section-header" onclick="toggleSection(this.parentElement)">
-            <h2 style="color:#40E0D0;">📊 KASALUKUYANG ANTAS NG PROYEKTO — ~32% TAPOS</h2>
+            <h2 style="color:#40E0D0;">📊 KASALUKUYANG ANTAS NG PROYEKTO — ~35% TAPOS</h2>
             <span class="icon-toggle">▼</span>
         </div>
         <div class="section-content">
@@ -214,8 +268,9 @@
                         <li>✅ Custom na disenyo ng mga pihitan — neon glow, indikasyon, auto-save</li>
                         <li>✅ Vocal Channel — GAIN at SENSITIVITY — gumagana nang maayos</li>
                         <li>✅ Sistema ng pag-update — awtomatikong tinitingnan ang bagong bersyon</li>
-                        <li>✅ HelpFragment — buong gabay na may collapsible sections at dynamic version</li>
+                        <li>✅ HelpFragment — buong gabay na may collapsible sections + <strong>Member System</strong></li>
                         <li>✅ Dokumentasyon at Plano — kumpleto na ang buong direksyon ng proyekto</li>
+                        <li>✅ Member System Framework — nakahanda na ang konsepto at estruktura</li>
                     </ul>
                 </div>
             </div>
@@ -229,8 +284,9 @@
                     <ul>
                         <li>Pagdaragdag ng lahat ng pihitan sa Vocal Channel — Reverb, Delay, EQ, Compressor, Noise Gate, Master Volume — 12+ knobs</li>
                         <li>Pagbuo ng Guitar Effects Channel — Distortion, Overdrive, Wah-Wah, Chorus, Reverb, Delay, at iba pa</li>
-                        <li>Preset System — pag-save at pagbukas ng mga setting</li>
+                        <li>Preset System — pag-save at pagbukas ng mga setting — <strong>hahati sa Pangkalahatan at Non-Member</strong></li>
                         <li>🔐 Admin Panel — kasunod na yugto pagkatapos ng Mixer</li>
+                        <li>👑 Member Key System — pagtanggap at pagkilala ng Member Key Code</li>
                     </ul>
                 </div>
             </div>
@@ -242,10 +298,12 @@
                 </div>
                 <div class="section-content">
                     <ul>
-                        <li><strong>Pedal Interface</strong> — 3-knob na kontrol sa Main Screen — EFFECTS, VOLUME, NOISE GATE</li>
-                        <li><strong>AUDIO ENGINE</strong> — C++ na pagpoproseso — &lt;10ms low latency — totoong real-time tunog</li>
-                        <li><strong>Export/Import Preset</strong> — makakapagbahagi sa iba</li>
-                        <li><strong>Advanced Admin Features</strong> — User Management, Permission Control, Dashboard</li>
+                        <li><strong>Pedal Interface</strong> — 3-knob na kontrol sa Main Screen — EFFECTS, VOLUME, NOISE GATE — kusang kumokonekta sa Mixer</li>
+                        <li><strong>AUDIO ENGINE</strong> — C++ na pagpoproseso — &lt;10ms low latency — totoong real-time tunog — direktang signal flow</li>
+                        <li><strong>Preset Sharing System</strong> — Non-Member preset → awtomatikong ipapadala sa Non-Member list</li>
+                        <li><strong>Member Upload System</strong> — Member preset → mapupunta sa Pangkalahatang Presets — makikita ng lahat ng miyembro</li>
+                        <li><strong>Export/Import Preset</strong> — makakapagbahagi sa iba — file o link</li>
+                        <li><strong>Advanced Admin Features</strong> — User Management, Permission Control, Dashboard, Moderation</li>
                     </ul>
                 </div>
             </div>
@@ -261,11 +319,13 @@
         <div class="section-content">
             <ul>
                 <li><strong>🖥️ Main Screen → Pedal Board</strong><br>
-                Bawat preset — may sariling pedal, kulay, at 3 pihitan. 🟢 ON / 🔴 OFF ilaw. Pwede ayusin ang pagkakasunod-sunod.</li>
+                Bawat preset — may sariling pedal, kulay, at 3 pihitan. 🟢 ON / 🔴 OFF ilaw. Pwede ayusin ang pagkakasunod-sunod. Kapag pinindot ang EFFECTS — kusang gumagalaw ang lahat ng knobs sa loob ng Channel.</li>
                 <li><strong>🎚️ Mixer Screen — TAB Switch</strong><br>
-                🎤 Vocal ↔ 🎸 Guitar. May VU Meter. Bawat kategorya may kulay: 🟦 EQ, 🟩 Reverb/Delay, 🟧 Dynamics, 🟥 Distortion.</li>
-                <li><strong>📋 Preset Screen — May Preview</strong><br>
-                Hindi lang listahan — makikita ang itsura ng pedal bago piliin. May search, group, at Export/Import.</li>
+                🎤 Vocal ↔ 🎸 Guitar. May VU Meter. Bawat kategorya may kulay: 🟦 EQ, 🟩 Reverb/Delay, 🟧 Dynamics, 🟥 Distortion. Lahat ng ginalaw — na-sa-save lahat, hindi lang tatlo!</li>
+                <li><strong>📋 Preset Screen — May Preview at Kategorya</strong><br>
+                Hindi lang listahan — makikita ang itsura ng pedal bago piliin. May search, group, at Export/Import. Naka-grupo: <strong>🎤 Vocal Presets, 🎸 Guitar Presets, 👑 Pangkalahatang Presets, 🆓 Non-Member Presets</strong>.</li>
+                <li><strong>🔐 Member Badge — Makikita sa UI</strong><br>
+                Kapag may Member Key Code — lalabas ang 👑 na tanda sa itaas ng app. Ipinapakita na may buong kakayahan ang user.</li>
             </ul>
         </div>
     </div>
@@ -278,10 +338,11 @@
         </div>
         <div class="section-content">
             <ul>
-                <li><span class="highlight">✅ &lt;10ms Low Latency</span> — halos walang antala</li>
-                <li><span class="highlight">✅ C++ Audio Engine</span> — direktang signal, mabilis na pagproseso</li>
-                <li><span class="highlight">✅ Simple pero Malalim</span> — madaling gamitin, pero kumpleto ang kontrol</li>
-                <li><span class="highlight">✅ Libre para sa Lahat</span> — walang bayad, walang lock na feature</li>
+                <li><span class="highlight">✅ &lt;10ms Low Latency</span> — halos walang antala — parang totoong hardware</li>
+                <li><span class="highlight">✅ C++ Audio Engine</span> — direktang signal, mabilis na pagproseso — hindi dumadaan sa mabagal na sistema</li>
+                <li><span class="highlight">✅ Simple pero Malalim</span> — madaling gamitin sa harap, pero kumpleto ang kontrol sa loob</li>
+                <li><span class="highlight">✅ LIBRE PARA SA LAHAT</span> — Walang bayad, walang lock na tampok. Ang Member System ay para sa pagpapalawak ng komunidad — hindi paghihigpit!</li>
+                <li><span class="highlight">✅ PAGBABAHAGI NG KARUNUNGAN</span> — Hindi lang app — komunidad ng mga musikero na nagtutulungan</li>
             </ul>
         </div>
     </div>
@@ -293,7 +354,11 @@
             <span class="icon-toggle">▼</span>
         </div>
         <div class="section-content">
-            <p>Ang bawat bahagi ay ginagawa nang maingat. Ang Side Menu at balangkas ay tapos na — ngayon ay dahan-dahang pupunan ang Mixer, Preset System, at ang pinakamahalaga — ang Audio Engine. Ang Admin Panel ay susunod na pagtutuunan pagkatapos ng pangunahing mga tampok.</p>
+            <p>Ang bawat bahagi ay ginagawa nang maingat. Ang Side Menu at balangkas ay tapos na — ngayon ay dahan-dahang pupunan ang Mixer, Preset System, at ang pinakamahalaga — ang Audio Engine. Ang Admin Panel at Member System ay susunod na pagtutuunan pagkatapos ng pangunahing mga tampok.</p>
+            <div class="divider"></div>
+            <p style="color:#00FF88; font-size:14px;">
+                💡 <strong>TANDAAN:</strong> Sa ngayon — lahat ay gumagana at walang limitasyon. Ang Member System ay nakahanda lamang para sa hinaharap — upang mapalawak ang kakayahan ng app at ng komunidad. Walang pipilitin, walang bayad — mananatiling libre ang Martodosko Audio Studio.
+            </p>
         </div>
     </div>
 
@@ -301,7 +366,8 @@
     <div class="footer-box">
         <p>🙏 MARAMING SALAMAT SA PAGTITIIS AT PAG-AABANG</p>
         <p class="footer-quote">"Ang musika — para sa lahat, kahit saan."</p>
-        <p>Patuloy tayong gagawa — para sa inyo.</p>
+        <p>Patuloy tayong gagawa — para sa inyo, para sa musika.</p>
+        <p style="margin-top:12px; font-size:12px; color:#666;">Martodosko Audio Studio — Bersyon 2026.09.20</p>
     </div>
 
 </div>
