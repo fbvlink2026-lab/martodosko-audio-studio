@@ -1,11 +1,12 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ PURONG HTML + JAVASCRIPT INTERFACE!
-// VERSION: 2.0.0 — SESSION TRACKING + LOGOUT + SHARED PREFERENCES!
-// UPDATED: 2026-09-19 — WALANG IBANG PINAGBAGO!
+// FILE: AdminLoginFragment.kt — ✅ NAILAGAY NA ANG openAdminPanel()! BUBUKAS NA!
+// VERSION: 2.1.0 — ✅ IDINAGDAG: openAdminPanel() + verifyKeyCode() + saveSession()! WALANG BINURA!
+// UPDATED: 2026-09-20 — KASAMA NA ANG LAHAT NG KAILANGANG BRIDGE!
 // ==================================================
 package com.martodosko.studio
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment
 class AdminLoginFragment : Fragment() {
 
     private lateinit var prefs: SharedPreferences
+    private lateinit var webView: WebView // ✅ GINAWING GLOBAL — para magamit sa logout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,8 +30,9 @@ class AdminLoginFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
         prefs = requireContext().getSharedPreferences("AdminPrefs", Context.MODE_PRIVATE)
 
-        val webView = root.findViewById<WebView>(R.id.web_admin)
+        webView = root.findViewById<WebView>(R.id.web_admin) // ✅ GLOBAL NA
         webView.settings.javaScriptEnabled = true
+        webView.settings.domStorageEnabled = true // ✅ IDINAGDAG — para sa session
         webView.addJavascriptInterface(AdminBridge(), "Android")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -59,9 +62,42 @@ class AdminLoginFragment : Fragment() {
                 .apply()
         }
 
+        // ✅ IDINAGDAG — ITO ANG KULANG! BUBUKASIN ANG ADMIN PANEL!
+        @JavascriptInterface
+        fun openAdminPanel() {
+            val intent = Intent(requireContext(), AdminPanelActivity::class.java)
+            startActivity(intent)
+        }
+
+        // ✅ IDINAGDAG — KEY CODE VERIFICATION — tugma sa HTML!
+        @JavascriptInterface
+        fun verifyKeyCode(input: String): String {
+            val trimmed = input.uppercase().trim()
+            val result = when {
+                trimmed.startsWith("MARTODOSKO-OWNER-") || trimmed.startsWith("OWNER-") ->
+                    """{"valid":true,"level":"OWNER"}"""
+                trimmed.startsWith("ADMIN-") -> """{"valid":true,"level":"ADMIN"}"""
+                trimmed.startsWith("MEMBER-") -> """{"valid":true,"level":"MEMBER"}"""
+                else -> """{"valid":false,"level":null}"""
+            }
+            return result
+        }
+
+        // ✅ IDINAGDAG — I-SAVE ANG SESSION — tugma sa HTML!
+        @JavascriptInterface
+        fun saveSession(keyCode: String, level: String) {
+            prefs.edit()
+                .putString("key_code", keyCode)
+                .putString("user_level", level)
+                .putLong("login_time", System.currentTimeMillis())
+                .apply()
+        }
+
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
+            // ✅ I-refresh ang page pagkatapos mag-logout
+            webView.post { webView.reload() }
         }
     }
 }
