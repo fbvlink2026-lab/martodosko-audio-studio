@@ -101,7 +101,7 @@ class AdminPanelActivity : FragmentActivity() {
         // ✅ 🐙 GITHUB TOKEN SETUP — BAGONG DAGDAG! KULANG ITO KANINA!
         findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
             if (currentUserLevel == "OWNER") {
-                showFragment(KeyGeneratorFragment()) // ✅ Kasama na ang Token + Encryption sa Fragment
+                showFragment(GithubManagerFragment()) // ✅ Kasama na ang Token + Encryption sa Fragment
             } else {
                 Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makapag-setup ng GitHub Token!", Toast.LENGTH_SHORT).show()
             }
