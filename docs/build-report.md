@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-20 17:00 UTC
-🏷️ **Bersyon:** v1.0.255
+📅 **Petsa:** 2026-09-20 17:44 UTC
+🏷️ **Bersyon:** v1.0.256
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-20 17:00:20 UTC
-🏷️ BERSYON:    v1.0.255
+⏰ ORAS:       2026-09-20 17:44:01 UTC
+🏷️ BERSYON:    v1.0.256
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.6M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.255.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -42,14 +37,13 @@ Daemon will be stopped at the end of the build
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
 > Task :app:mergeReleaseResources
+> Task :app:parseReleaseLocalResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
-> Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
@@ -58,45 +52,83 @@ Daemon will be stopped at the end of the build
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:mergeReleaseArtProfile
-> Task :app:processReleaseResources
-> Task :app:mergeExtDexRelease
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
+> Task :app:processReleaseManifestForPackage
 > Task :app:compressReleaseAssets
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseResources
+> Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
 
 > Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:216:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:265:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:91:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/SideMenu.kt:293:13 Parameter 'btnCloseMenuId' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:32:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:33:13 Lateinit is unnecessary: definitely initialized in constructors
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:19:28 Unresolved reference: FragmentActivity
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:28:5 'onCreate' overrides nothing
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:29:15 Unresolved reference: onCreate
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:30:9 Unresolved reference: setContentView
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:32:17 Unresolved reference: getSharedPreferences
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:33:24 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:39:24 Type mismatch: inferred type is AdminPanelActivity but Activity was expected
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:60:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:61:37 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:65:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:66:38 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:70:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:74:23 None of the following functions can be called with the arguments supplied: 
+public open fun makeText(p0: Context!, p1: CharSequence!, p2: Int): Toast! defined in android.widget.Toast
+public open fun makeText(p0: Context!, p1: Int, p2: Int): Toast! defined in android.widget.Toast
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:76:38 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:80:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:84:23 None of the following functions can be called with the arguments supplied: 
+public open fun makeText(p0: Context!, p1: CharSequence!, p2: Int): Toast! defined in android.widget.Toast
+public open fun makeText(p0: Context!, p1: Int, p2: Int): Toast! defined in android.widget.Toast
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:86:38 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:90:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:94:23 None of the following functions can be called with the arguments supplied: 
+public open fun makeText(p0: Context!, p1: CharSequence!, p2: Int): Toast! defined in android.widget.Toast
+public open fun makeText(p0: Context!, p1: Int, p2: Int): Toast! defined in android.widget.Toast
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:96:38 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:100:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:102:38 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:106:9 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:112:19 None of the following functions can be called with the arguments supplied: 
+public open fun makeText(p0: Context!, p1: CharSequence!, p2: Int): Toast! defined in android.widget.Toast
+public open fun makeText(p0: Context!, p1: Int, p2: Int): Toast! defined in android.widget.Toast
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:113:38 Unresolved reference: findViewById
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:114:13 Unresolved reference: finish
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:120:9 Unresolved reference: supportFragmentManager
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:131:19 None of the following functions can be called with the arguments supplied: 
+public open fun makeText(p0: Context!, p1: CharSequence!, p2: Int): Toast! defined in android.widget.Toast
+public open fun makeText(p0: Context!, p1: Int, p2: Int): Toast! defined in android.widget.Toast
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:132:13 Unresolved reference: finish
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:137:19 None of the following functions can be called with the arguments supplied: 
+public open fun makeText(p0: Context!, p1: CharSequence!, p2: Int): Toast! defined in android.widget.Toast
+public open fun makeText(p0: Context!, p1: Int, p2: Int): Toast! defined in android.widget.Toast
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:138:13 Unresolved reference: finish
 
-> Task :app:compileReleaseJavaWithJavac NO-SOURCE
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:dexBuilderRelease
-> Task :app:mergeReleaseGlobalSynthetics
-> Task :app:processReleaseJavaRes
-> Task :app:mergeReleaseJavaResource
-> Task :app:mergeDexRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:assembleRelease
+> Task :app:compileReleaseKotlin FAILED
 
-BUILD SUCCESSFUL in 1m 26s
-44 actionable tasks: 43 executed, 1 up-to-date
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 59s
+32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
 
