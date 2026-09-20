@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-20 23:23 UTC
-🏷️ **Bersyon:** v1.0.264
+📅 **Petsa:** 2026-09-20 23:32 UTC
+🏷️ **Bersyon:** v1.0.265
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-20 23:23:52 UTC
-🏷️ BERSYON:    v1.0.264
+⏰ ORAS:       2026-09-20 23:32:50 UTC
+🏷️ BERSYON:    v1.0.265
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -52,8 +52,8 @@ Daemon will be stopped at the end of the build
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:mergeReleaseArtProfile
-> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseShaders
+> Task :app:processReleaseManifestForPackage
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -74,10 +74,10 @@ e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:39:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoName()Ljava/lang/String;):
     fun `<get-repoName>`(): String defined in com.martodosko.studio.AdminPanelActivity
     fun getRepoName(): String defined in com.martodosko.studio.AdminPanelActivity
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:120:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoOwner()Ljava/lang/String;):
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:123:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoOwner()Ljava/lang/String;):
     fun `<get-repoOwner>`(): String defined in com.martodosko.studio.AdminPanelActivity
     fun getRepoOwner(): String defined in com.martodosko.studio.AdminPanelActivity
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:121:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoName()Ljava/lang/String;):
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:124:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoName()Ljava/lang/String;):
     fun `<get-repoName>`(): String defined in com.martodosko.studio.AdminPanelActivity
     fun getRepoName(): String defined in com.martodosko.studio.AdminPanelActivity
 
@@ -94,7 +94,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 13s
+BUILD FAILED in 57s
 32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
