@@ -1,10 +1,11 @@
 // ==================================================
-// FILE: GithubManagerFragment.kt — ✅ UNA! TOKEN SETUP + ENCRYPTION + VERIFICATION!
-// VERSION: 1.0.0 — ✅ I-INPUT • I-ENCRYPT • I-SAVE • I-VERIFY • AUTO-FILL SA FILE EDITOR!
-// UPDATED: 2026-09-21 — DAPAT ITO UNA — KAILANGAN NG FILE EDITOR!
+// FILE: GithubManagerFragment.kt — ✅ INA-ADAPTOR SA ADMIN PANEL! WALANG HIWALAY NA XML!
+// VERSION: 1.1.0 — ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML! TUGMA SA ADMIN PANEL IDs!
+// UPDATED: 2026-09-21 — ✅ LAHAT NG ID TUGMA SA NAKA-EMBED NA LAYOUT!
 // ==================================================
 package com.martodosko.studio
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -52,26 +53,30 @@ class GithubManagerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_github_manager, container, false)
-        prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
-        initViews(view)
-        loadSavedConfig()
-        setupButtons()
-
-        return view
+        // ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML — NAKA-EMBED NA SA ADMIN PANEL!
+        return null
     }
 
-    private fun initViews(view: View) {
-        etToken = view.findViewById(R.id.et_github_token)
-        etRepoOwner = view.findViewById(R.id.et_repo_owner)
-        etRepoName = view.findViewById(R.id.et_repo_name)
-        btnSave = view.findViewById(R.id.btn_save_token)
-        btnVerify = view.findViewById(R.id.btn_verify_token)
-        btnClear = view.findViewById(R.id.btn_clear_token)
-        tvStatus = view.findViewById(R.id.github_status)
-        progressBar = view.findViewById(R.id.github_progress)
-        tvCurrentToken = view.findViewById(R.id.tv_current_token)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        // ✅ KUKUNIN ANG MGA VIEWS MULA SA ADMIN PANEL — TUGMA SA MGA ID!
+        initViews(requireActivity())
+        loadSavedConfig()
+        setupButtons()
+    }
+
+    private fun initViews(activity: android.app.Activity) {
+        etToken = activity.findViewById(R.id.et_github_token)
+        etRepoOwner = activity.findViewById(R.id.et_repo_owner)
+        etRepoName = activity.findViewById(R.id.et_repo_name)
+        btnSave = activity.findViewById(R.id.btn_save_token)
+        btnVerify = activity.findViewById(R.id.btn_verify_token)
+        btnClear = activity.findViewById(R.id.btn_clear_token)
+        tvStatus = activity.findViewById(R.id.github_status)
+        progressBar = activity.findViewById(R.id.github_progress)
+        tvCurrentToken = activity.findViewById(R.id.tv_current_token)
     }
 
     private fun loadSavedConfig() {
@@ -112,7 +117,6 @@ class GithubManagerFragment : Fragment() {
             return
         }
 
-        // ✅ KUNG MAY BAGONG TOKEN — I-ENCRYPT AT I-SAVE
         if (tokenInput.isNotEmpty()) {
             if (!tokenInput.startsWith("ghp_") && !tokenInput.startsWith("github_pat_")) {
                 showStatus("⚠️ Hindi wastong format ng GitHub Token.\nDapat: ghp_... o github_pat_...", false)
@@ -138,7 +142,6 @@ class GithubManagerFragment : Fragment() {
                 showStatus("❌ Hindi ma-encrypt: ${e.message}", false)
             }
         } else {
-            // ✅ WALANG BAGONG TOKEN — I-SAVE LANG ANG REPO DETAILS
             prefs.edit()
                 .putString(REPO_OWNER_KEY, owner)
                 .putString(REPO_NAME_KEY, repo)
@@ -283,7 +286,7 @@ class GithubManagerFragment : Fragment() {
     private fun decryptData(encryptedText: String): String {
         val key = getSecretKey()
         val combined = Base64.decode(encryptedText, Base64.DEFAULT)
-        val ivSize = 12 // GCM IV size
+        val ivSize = 12
         val iv = combined.copyOfRange(0, ivSize)
         val data = combined.copyOfRange(ivSize, combined.size)
 
