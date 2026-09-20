@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ NA-AYOS NA! DOBLENG DECLARATION TINANGGAL!
-// VERSION: 5.1.1 — ✅ TANGGAL ANG DOBLENG getRepoOwner/getRepoName! PROPERTY NA LANG!
-// UPDATED: 2026-09-21 — 2 LINYA LANG ANG TINANGGAL! LAHAT NG IBA GANOON PA RIN!
+// FILE: AdminPanelActivity.kt — ✅ FINAL NA! WALANG DOBLENG DECLARATION!
+// VERSION: 5.1.2 — ✅ PRIVATE ANG PROPERTY! GETTER LANG ANG PUBLIC! WALANG BANGGA!
+// UPDATED: 2026-09-21 — 2 LANG NA SALITA ANG DINAGDAG! LAHAT NG IBA GANOON PA RIN!
 // ==================================================
 package com.martodosko.studio
 
@@ -34,9 +34,10 @@ class AdminPanelActivity : FragmentActivity() {
     // ==============================================
     var decryptedGithubToken: String? = null
         private set
-    var repoOwner: String = ""
+    // ✅ PRIVATE — WALANG AUTO-GENERATE NA GETTER! WALA NANG BANGGA!
+    private var repoOwner: String = ""
         private set
-    var repoName: String = ""
+    private var repoName: String = ""
         private set
     var isGithubVerified: Boolean = false
         private set
@@ -54,9 +55,6 @@ class AdminPanelActivity : FragmentActivity() {
         isSessionActive = prefs.getBoolean("session_active", false)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
-        // ==============================================
-        // 🔑 DECRYPT GITHUB TOKEN — ISANG BESES LANG DITO!
-        // ==============================================
         loadAndDecryptGithubConfig()
 
         sideMenu = SideMenu.setup(
@@ -75,9 +73,6 @@ class AdminPanelActivity : FragmentActivity() {
         }
     }
 
-    // ==============================================
-    // 🔑 DECRYPT ONCE — LAHAT NG ONLINE PROSESO GAGAMIT DITO!
-    // ==============================================
     private fun loadAndDecryptGithubConfig() {
         repoOwner = githubPrefs.getString("repo_owner", "") ?: ""
         repoName = githubPrefs.getString("repo_name", "") ?: ""
@@ -93,9 +88,6 @@ class AdminPanelActivity : FragmentActivity() {
         }
     }
 
-    // ==============================================
-    // 🔐 DECRYPTION — GINAGAWA LANG DITO SA ACTIVITY!
-    // ==============================================
     private fun decryptData(encryptedText: String): String {
         val keyStore = KeyStore.getInstance("AndroidKeyStore")
         keyStore.load(null)
@@ -114,20 +106,13 @@ class AdminPanelActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ PUBLIC GETTERS — PARA SA LAHAT NG FRAGMENT
+    // ✅ PUBLIC GETTERS — ITO LANG ANG TATAWAGIN NG FRAGMENT! WALANG BANGGA!
     // ==============================================
     fun getGithubToken(): String? = decryptedGithubToken
-    
-    // ✅ NAAYOS — TINANGGAL ANG DOBLENG getRepoOwner() at getRepoName()!
-    // Ginagamit na lang ang property direktang: repoOwner, repoName
     fun getRepoOwner(): String = repoOwner
     fun getRepoName(): String = repoName
-    
     fun isGithubReady(): Boolean = !decryptedGithubToken.isNullOrEmpty() && repoOwner.isNotEmpty() && repoName.isNotEmpty()
 
-    // ==============================================
-    // ✅ KANANG SIDEMENU — 🏠 HOME UNA! 7 BUTTONS NA! KUMPLETO!
-    // ==============================================
     private fun setupAdminSideMenu() {
         findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
             drawerLayout.openDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
@@ -137,15 +122,11 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // ==============================================
-        // 🏠 HOME — PINAKA-UNA! BUMABALIK SA REPORT BOARD!
-        // ==============================================
         findViewById<TextView>(R.id.btn_admin_home)?.setOnClickListener {
             showFragment(AdminHomeFragment())
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 🔑 KEY GENERATOR — 👑 OWNER LANG
         findViewById<TextView>(R.id.btn_admin_keys)?.setOnClickListener {
             if (currentUserLevel == "OWNER") {
                 showFragment(KeyGeneratorFragment())
@@ -155,7 +136,6 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 🐙 GITHUB TOKEN SETUP — 👑 OWNER LANG — I-REFRESH PAGKATAPUS!
         findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
             if (currentUserLevel == "OWNER") {
                 showFragment(GithubManagerFragment())
@@ -165,7 +145,6 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // ✅ 📂 FILE EDITOR — 👑 OWNER + 🔐 ADMIN — KUKUHA NA LANG SA ACTIVITY!
         findViewById<TextView>(R.id.btn_admin_file_editor)?.setOnClickListener {
             if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
                 if (!isGithubReady()) {
@@ -180,7 +159,6 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 📋 PRESET MODERATION — 👑 OWNER + 🔐 ADMIN
         findViewById<TextView>(R.id.btn_admin_presets)?.setOnClickListener {
             if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
                 showFragment(PresetModerationFragment())
@@ -190,7 +168,6 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 👤 USER MANAGEMENT — 👑 OWNER + 🔐 ADMIN
         findViewById<TextView>(R.id.btn_admin_users)?.setOnClickListener {
             if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
                 showFragment(UserManagementFragment())
@@ -200,13 +177,11 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 📊 ESTATISTIKA — Lahat ng naka-login
         findViewById<TextView>(R.id.btn_admin_stats)?.setOnClickListener {
             showFragment(StatisticsFragment())
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 🔐 LOGOUT — Lahat — BURAHIN ANG DECRYPTED TOKEN!
         findViewById<TextView>(R.id.btn_admin_logout)?.setOnClickListener {
             prefs.edit()
                 .remove("user_level")
@@ -214,7 +189,6 @@ class AdminPanelActivity : FragmentActivity() {
                 .putBoolean("session_active", false)
                 .apply()
 
-            // ✅ BURAHIN ANG DECRYPTED TOKEN SA MEMORY PAG-LOGOUT!
             decryptedGithubToken = null
             repoOwner = ""
             repoName = ""
@@ -261,7 +235,6 @@ class AdminPanelActivity : FragmentActivity() {
         }
     }
 
-    // ✅ PAGBALIK MULA GITHUB SETUP — I-REFRESH ANG DECRYPTED TOKEN!
     override fun onResume() {
         super.onResume()
         if (decryptedGithubToken.isNullOrEmpty()) {
