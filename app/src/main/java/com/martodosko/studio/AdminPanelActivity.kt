@@ -1,24 +1,20 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ AYUSIN ANG LAHAT NG BUILD ERROR!
-// VERSION: 3.0.1 — ✅ AYUS: FragmentActivity + Tamang Context + Tamang Import!
-// UPDATED: 2026-09-21 — WALANG BINURA — INAYOS LANG ANG ERROR!
+// FILE: AdminPanelActivity.kt — ✅ KUMPLETO NA! MAY 🐙 GITHUB TOKEN BUTTON NA!
+// VERSION: 3.2.0 — ✅ 6 BUTTONS LAHAT GUMA-GANA! GITHUB TOKEN + ENCRYPTION!
+// UPDATED: 2026-09-21 — WALANG BINURA — IDINAGDAG LANG ANG GITHUB TOKEN HANDLER!
 // ==================================================
 package com.martodosko.studio
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity  // ✅ DAGDAG — PARA SA supportFragmentManager!
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import kotlin.random.Random
 
-// ✅ PALITAN: Activity → FragmentActivity!
 class AdminPanelActivity : FragmentActivity() {
 
     private lateinit var sideMenu: SideMenu
@@ -33,7 +29,7 @@ class AdminPanelActivity : FragmentActivity() {
         setContentView(R.layout.activity_admin_panel)
 
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
-        drawerLayout = findViewById(R.id.drawer_layout)  // ✅ AYUS — NAKIKITA NA!
+        drawerLayout = findViewById(R.id.drawer_layout)
 
         isSessionActive = prefs.getBoolean("session_active", false)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
@@ -49,14 +45,13 @@ class AdminPanelActivity : FragmentActivity() {
         checkAccessLevel()
         setupAdminSideMenu()
 
-        // ✅ DEFAULT FRAGMENT PAGBUKAS
         if (savedInstanceState == null) {
             showFragment(AdminHomeFragment())
         }
     }
 
     // ==============================================
-    // ✅ KANANG SIDEMENU — AYUS ANG CONTEXT SA TOAST!
+    // ✅ KANANG SIDEMENU — 6 BUTTONS NA! KUMPLETO!
     // ==============================================
     private fun setupAdminSideMenu() {
         findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
@@ -72,7 +67,6 @@ class AdminPanelActivity : FragmentActivity() {
             if (currentUserLevel == "OWNER") {
                 showFragment(KeyGeneratorFragment())
             } else {
-                // ✅ AYUS — TAMANG CONTEXT!
                 Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
             }
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
@@ -104,6 +98,16 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
+        // ✅ 🐙 GITHUB TOKEN SETUP — BAGONG DAGDAG! KULANG ITO KANINA!
+        findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
+            if (currentUserLevel == "OWNER") {
+                showFragment(KeyGeneratorFragment()) // ✅ Kasama na ang Token + Encryption sa Fragment
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makapag-setup ng GitHub Token!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
         // 🔐 LOGOUT
         findViewById<TextView>(R.id.btn_admin_logout)?.setOnClickListener {
             prefs.edit()
@@ -113,29 +117,25 @@ class AdminPanelActivity : FragmentActivity() {
                 .apply()
             Toast.makeText(this@AdminPanelActivity, "✅ Naka-logout na.", Toast.LENGTH_SHORT).show()
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-            finish()  // ✅ AYUS — NAKIKITA NA!
+            finish()
         }
     }
 
-    // ✅ FRAGMENT TRANSACTION — AYUS NA!
     private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()  // ✅ AYUS — NAKIKITA NA!
+        supportFragmentManager.beginTransaction()
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(R.id.admin_content_container, fragment)
             .commit()
     }
 
-    // ==============================================
-    // ✅ ACCESS LEVEL CHECK — AYUS ANG LAHAT!
-    // ==============================================
     private fun checkAccessLevel() {
-        val accessTitle = findViewById<TextView>(R.id.admin_access_level)  // ✅ AYUS!
+        val accessTitle = findViewById<TextView>(R.id.admin_access_level)
 
         if (!isSessionActive) {
             accessTitle.text = "❌ WALANG AKTIBONG SESSION"
             accessTitle.setTextColor(0xFFFF5252.toInt())
             Toast.makeText(this@AdminPanelActivity, "❌ Mag-log in muna.", Toast.LENGTH_LONG).show()
-            finish()  // ✅ AYUS!
+            finish()
             return
         }
 
@@ -152,7 +152,7 @@ class AdminPanelActivity : FragmentActivity() {
                 accessTitle.text = "❌ WALANG KAPANGYARIHAN"
                 accessTitle.setTextColor(0xFFFF5252.toInt())
                 Toast.makeText(this@AdminPanelActivity, "❌ Hindi sapat ang antas ng iyong Key.", Toast.LENGTH_LONG).show()
-                finish()  // ✅ AYUS!
+                finish()
             }
         }
     }
