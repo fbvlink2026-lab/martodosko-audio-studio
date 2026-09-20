@@ -19,13 +19,12 @@
             border-radius: 16px;
             box-shadow: 0 0 30px rgba(64,224,208,0.15);
             width: 100%;
-            max-width: 520px; /* ✅ PINALAWAK: 420 → 520px — mas malaki ang kahon */
+            max-width: 520px;
             border: 1px solid #2A2A4A;
         }
         h2 { text-align: center; color: #40E0D0; margin-bottom: 8px; font-size: 22px; }
         .subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 25px; }
         
-        /* --- ANTAS BADGE --- */
         .level-badge {
             text-align: center;
             padding: 10px;
@@ -43,17 +42,17 @@
         label { display: block; margin-bottom: 8px; color: #B0B0C0; font-size: 14px; }
         input {
             width: 100%; 
-            padding: 16px 18px; /* ✅ PINALAKI ANG PADDING — mas malawak ang loob */
+            padding: 16px 18px;
             border-radius: 8px;
             border: 1px solid #3A3A5A; 
             background: #252538;
             color: #fff; 
-            font-size: 15px; /* ✅ PINALIIT NG KONTI — mas maraming makasya */
+            font-size: 15px;
             outline: none; 
             transition: border 0.3s, box-shadow 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1.5px; /* ✅ MAS MALUWAG ANG PAGKAKASULAT */
-            font-family: monospace; /* ✅ PAREHONG LAPAD ANG LETRA — mas madaling basahin */
+            letter-spacing: 1.5px;
+            font-family: monospace;
         }
         input:focus { border-color: #40E0D0; box-shadow: 0 0 0 3px rgba(64,224,208,0.15); }
         input::placeholder { color: #666; text-transform: none; letter-spacing: normal; }
@@ -89,14 +88,11 @@
         <h2>🔐 ACCESS PANEL</h2>
         <p class="subtitle">Martodosko Audio Studio — Ipasok ang Key Code</p>
 
-        <!-- ✅ ANTAS NG USER — LALABAS PAGKATAPOS IPASOK ANG KEY CODE -->
         <div id="levelBadge" class="level-badge"></div>
 
-        <!-- ✅ LOGIN FORM — KEY CODE LANG! WALANG USERNAME/PASSWORD! -->
         <div id="loginForm">
             <div class="input-group">
                 <label for="keyCode">🔑 Member / Admin / Owner Key Code</label>
-                <!-- ✅ TINANGGAL ANG MAXLENGTH — KASYA NA ANG KAHIT ANONG HABA! -->
                 <input type="text" id="keyCode" placeholder="HAL: MARTODOSKO-OWNER-0000-DEVELOPER">
             </div>
             <button onclick="verifyKeyCode()">✅ I-VERIFY AT BUKSAN</button>
@@ -112,7 +108,6 @@
             <p class="note">Ang Key Code ay naka-save nang lokal lamang. Hindi ito ipapadala sa ibang server maliban sa pag-verify ng katumpakan.</p>
         </div>
 
-        <!-- ✅ SUCCESS SCREEN — LALABAS KAPAG TAMA ANG KEY CODE -->
         <div id="sessionInfo" class="hidden">
             <div class="session-box">
                 <h3>⏱ SESSION DETALYE</h3>
@@ -127,7 +122,6 @@
             <div style="margin-top:20px; text-align:center;">
                 <p style="color:#40E0D0; font-weight:bold; font-size:15px;">✅ Naka-aktibo: <span id="userDisplay"></span></p>
                 
-                <!-- ✅ BUKSAN ANG ADMIN PANEL — KUNG MAY KARAPATAN -->
                 <button id="btnOpenDashboard" class="btn-dashboard hidden" onclick="openAdminPanel()">
                     📊 BUKSAN ANG ADMIN PANEL
                 </button>
@@ -139,11 +133,8 @@
 
     <script>
         let loginTime = null;
-        let currentLevel = null; // OWNER / ADMIN / MEMBER / null
+        let currentLevel = null;
 
-        // ==============================================
-        // ✅ PANGUNAHING FUNKSYON — I-VERIFY ANG KEY CODE
-        // ==============================================
         function verifyKeyCode() {
             const input = document.getElementById('keyCode').value.trim().toUpperCase();
             const badge = document.getElementById('levelBadge');
@@ -154,52 +145,49 @@
                 return;
             }
 
-            // ✅ TAWAG SA KOTLIN — I-VERIFY ANG KEY CODE
-            // Kotlin ang magsasabi kung OWNER, ADMIN, MEMBER, o HINDI TAMA
             if (typeof Android !== 'undefined' && Android.verifyKeyCode) {
-                // ✅ TOTOONG PAG-VERIFY — KOTLIN SIDE
                 const result = Android.verifyKeyCode(input);
                 processVerificationResult(input, result);
             } else {
-                // ✅ PARA SA WEB PREVIEW — SIMULASYON LANG
                 simulateVerification(input);
             }
         }
 
-        // ==============================================
-        // ✅ IPROSESO ANG RESULTA NG PAG-VERIFY
-        // ==============================================
+        // ✅ AYUSIN — NAI-PARSE NA ANG JSON STRING MULA SA KOTLIN!
         function processVerificationResult(keyCode, result) {
-            // Resulta mula sa Kotlin: { level: "OWNER"|"ADMIN"|"MEMBER"|null, valid: boolean }
-            if (!result || !result.valid) {
+            let parsedResult;
+            try {
+                parsedResult = typeof result === 'string' ? JSON.parse(result) : result;
+            } catch (e) {
+                console.error("❌ JSON Parse Error:", e);
+                showBadge('invalid', '❌ ERROR: Hindi naintindihan ang sagot');
+                return;
+            }
+
+            if (!parsedResult || !parsedResult.valid) {
                 showBadge('invalid', '❌ MALI ANG KEY CODE — Hindi rehistrado o mali ang pagkakasulat');
                 return;
             }
 
-            currentLevel = result.level;
+            currentLevel = parsedResult.level;
             const levelLabel = {
                 'OWNER': '👑 OWNER — BUONG KAPANGYARIHAN',
                 'ADMIN': '🔐 ADMIN — PAMAMAHALA NG USER AT PRESET',
                 'MEMBER': '👤 MEMBER — PAGBAHAGI AT PANGKALAHATANG PRESETS'
             }[currentLevel] || '❌ DI KILALANG ANTAS';
 
-            // ✅ IPASA SA KOTLIN — I-SAVE ANG SESSION
+            // ✅ NGAYON — TATAWAG NA ANG saveSession()!
             if (typeof Android !== 'undefined' && Android.saveSession) {
                 Android.saveSession(keyCode, currentLevel);
             }
 
-            // ✅ I-PAKITA ANG SUCCESS SCREEN
             showSuccessScreen(keyCode, currentLevel, levelLabel);
         }
 
-        // ==============================================
-        // ✅ SIMULASYON — PARA SA WEB PREVIEW LANG
-        // ==============================================
         function simulateVerification(input) {
             let level = null;
             let label = '';
 
-            // SIMULASYON LANG — TOTOONG LOGIC NASA KOTLIN
             if (input.startsWith('MARTODOSKO-OWNER-') || input.startsWith('OWNER-')) {
                 level = 'OWNER';
                 label = '👑 OWNER — BUONG KAPANGYARIHAN';
@@ -218,20 +206,13 @@
             showSuccessScreen(input, level, label);
         }
 
-        // ==============================================
-        // ✅ I-PAKITA ANG BADGE NG ANTAS
-        // ==============================================
         function showBadge(type, message) {
             const badge = document.getElementById('levelBadge');
             badge.className = 'level-badge badge-' + type;
             badge.textContent = message;
         }
 
-        // ==============================================
-        // ✅ SUCCESS — IPALIT ANG SCREEN
-        // ==============================================
         function showSuccessScreen(keyCode, level, levelLabel) {
-            // Badge
             const badgeClass = {
                 'OWNER': 'owner',
                 'ADMIN': 'admin',
@@ -239,16 +220,13 @@
             }[level];
             showBadge(badgeClass, '✅ TAMA ANG KEY CODE — ' + levelLabel);
 
-            // Palit ng Screen
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('sessionInfo').classList.remove('hidden');
             
-            // Detalye
             document.getElementById('keyType').textContent = levelLabel;
             document.getElementById('userDisplay').textContent = keyCode;
             document.getElementById('lastLogin').textContent = new Date().toLocaleString('tl-PH');
             
-            // ✅ ADMIN PANEL BUTTON — LALABAS LANG KUNG OWNER O ADMIN
             const btnDashboard = document.getElementById('btnOpenDashboard');
             if (level === 'OWNER' || level === 'ADMIN') {
                 btnDashboard.classList.remove('hidden');
@@ -260,9 +238,6 @@
             startSessionTimer();
         }
 
-        // ==============================================
-        // ✅ BUKSAN ANG ADMIN PANEL
-        // ==============================================
         function openAdminPanel() {
             if (typeof Android !== 'undefined' && Android.openAdminPanel) {
                 Android.openAdminPanel();
@@ -271,15 +246,11 @@
             }
         }
 
-        // ==============================================
-        // ✅ LOGOUT — ALISIN ANG KEY CODE AT SESSION
-        // ==============================================
         function logout() {
             if (typeof Android !== 'undefined' && Android.logoutAdmin) {
                 Android.logoutAdmin();
             }
 
-            // I-reset ang screen
             document.getElementById('loginForm').classList.remove('hidden');
             document.getElementById('sessionInfo').classList.add('hidden');
             document.getElementById('levelBadge').className = 'level-badge';
@@ -288,9 +259,6 @@
             loginTime = null;
         }
 
-        // ==============================================
-        // ✅ SESSION TIMER — BILANG NG TAGAL
-        // ==============================================
         function startSessionTimer() {
             setInterval(() => {
                 if (!loginTime) return;
@@ -303,7 +271,7 @@
                 document.getElementById('sessDays').textContent = days + ' araw';
                 document.getElementById('sessWeeks').textContent = weeks + ' linggo';
                 document.getElementById('sessMonths').textContent = months + ' buwan';
-            }, 60000); // ✅ Update bawat 1 minuto
+            }, 60000);
         }
     </script>
 </body>
