@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ MAY 🏠 HOME BUTTON NA! DECRYPT ONCE!
-// VERSION: 5.1.0 — ✅ IDINAGDAG: 🏠 HOME BUTTON SA PINAKA-ITAAS! BUMABALIK SA ADMIN HOME!
-// UPDATED: 2026-09-21 — WALANG IBANG BINAGO — HOME BUTTON LANG ANG IDINAGDAG!
+// FILE: AdminPanelActivity.kt — ✅ NA-AYOS NA! DOBLENG DECLARATION TINANGGAL!
+// VERSION: 5.1.1 — ✅ TANGGAL ANG DOBLENG getRepoOwner/getRepoName! PROPERTY NA LANG!
+// UPDATED: 2026-09-21 — 2 LINYA LANG ANG TINANGGAL! LAHAT NG IBA GANOON PA RIN!
 // ==================================================
 package com.martodosko.studio
 
@@ -117,8 +117,12 @@ class AdminPanelActivity : FragmentActivity() {
     // ✅ PUBLIC GETTERS — PARA SA LAHAT NG FRAGMENT
     // ==============================================
     fun getGithubToken(): String? = decryptedGithubToken
+    
+    // ✅ NAAYOS — TINANGGAL ANG DOBLENG getRepoOwner() at getRepoName()!
+    // Ginagamit na lang ang property direktang: repoOwner, repoName
     fun getRepoOwner(): String = repoOwner
     fun getRepoName(): String = repoName
+    
     fun isGithubReady(): Boolean = !decryptedGithubToken.isNullOrEmpty() && repoOwner.isNotEmpty() && repoName.isNotEmpty()
 
     // ==============================================
