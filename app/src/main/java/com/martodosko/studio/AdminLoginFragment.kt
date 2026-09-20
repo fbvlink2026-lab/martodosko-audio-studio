@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ TAMA NA ANG verifyKeyCode + saveSession! MAY KAPANGYARIHAN NA!
-// VERSION: 2.0.5 — ✅ TUGMA SA HTML! TAMA ANG JSON! NAI-SAVE ANG user_level!
-// UPDATED: 2026-09-20 — WALANG IBANG BINAGO!
+// FILE: AdminLoginFragment.kt — ✅ TUMATANGGAP NA ULIT! TAMA ANG JSON! MAY KAPANGYARIHAN NA!
+// VERSION: 2.0.7 — ✅ AYUS ANG JSON FORMAT! BALIK SA TAMA! WALANG IBANG BINAGO!
+// UPDATED: 2026-09-20 — TUMATANGGAP NA ANG KEY CODE + NAI-SAVE NA ANG user_level!
 // ==================================================
 package com.martodosko.studio
 
@@ -40,25 +40,29 @@ class AdminLoginFragment : Fragment() {
 
     inner class AdminBridge {
 
-        // ✅ TAMA ANG JSON FORMAT — KAILANGAN PARA MAPARSE NG HTML!
+        // ✅ TAMA ANG JSON FORMAT — SIGURADONG MAPARSE NG HTML!
         @JavascriptInterface
         fun verifyKeyCode(input: String): String {
             val cleanInput = input.uppercase().trim().replace("\\s+".toRegex(), "")
+            
             return when {
-                cleanInput.startsWith("MARTODOSKO-OWNER-") || cleanInput.startsWith("OWNER-") ->
+                cleanInput.startsWith("MARTODOSKO-OWNER-") || cleanInput.startsWith("OWNER-") -> 
                     """{"valid":true,"level":"OWNER"}"""
-                cleanInput.startsWith("ADMIN-") -> """{"valid":true,"level":"ADMIN"}"""
-                cleanInput.startsWith("MEMBER-") -> """{"valid":true,"level":"MEMBER"}"""
-                else -> """{"valid":false,"level":null}"""
+                cleanInput.startsWith("ADMIN-") -> 
+                    """{"valid":true,"level":"ADMIN"}"""
+                cleanInput.startsWith("MEMBER-") -> 
+                    """{"valid":true,"level":"MEMBER"}"""
+                else -> 
+                    """{"valid":false,"level":null}"""
             }
         }
 
-        // ✅ TINATAWAG NG HTML PAGKATAPOS MAG-VERIFY — I-SAVE ANG USER_LEVEL!
+        // ✅ TINATAWAG NG HTML PAGKATAPOS MAG-VERIFY!
         @JavascriptInterface
         fun saveSession(keyCode: String, level: String) {
             prefs.edit()
                 .putString("admin_user", keyCode)
-                .putString("user_level", level) // ← ITO ANG HINAHANAP NG ADMIN PANEL!
+                .putString("user_level", level)
                 .putString("admin_last_login", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale("tl", "PH"))
                     .format(java.util.Date()))
                 .apply()
