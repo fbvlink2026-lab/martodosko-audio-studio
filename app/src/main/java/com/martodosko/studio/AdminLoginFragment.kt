@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ TUGMA NA SA AdminPanelActivity! "admin_session" + "user_level"!
-// VERSION: 2.0.2 — ✅ WALANG BINAWASAN — PANGALAN NG PREFS AT user_level LANG ANG INAYOS!
-// UPDATED: 2026-09-20 — ORIHINAL NA CODE + TAMA NA ANG SESSION PARA MAKILALA NG ADMIN PANEL!
+// FILE: AdminLoginFragment.kt — ✅ MAY saveSession() NA! TUGMA SA HTML! MAY KAPANGYARIHAN NA!
+// VERSION: 2.0.4 — ✅ IDINAGDAG LANG ANG saveSession() — TINATAWAG NG HTML! WALANG IBANG BINAGO!
+// UPDATED: 2026-09-20 — ORIHINAL NA CODE + saveSession LANG ANG IDINAGDAG!
 // ==================================================
 package com.martodosko.studio
 
@@ -28,7 +28,7 @@ class AdminLoginFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
         
-        // ✅ PALITAN — "admin_session" HINDI "AdminPrefs" — TUGMA SA AdminPanelActivity!
+        // ✅ PAREHO SA AdminPanelActivity — "admin_session"!
         prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
 
         val webView = root.findViewById<WebView>(R.id.web_admin)
@@ -37,7 +37,6 @@ class AdminLoginFragment : Fragment() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                // ✅ Kung may naka-save na login — i-load agad
                 val savedUser = prefs.getString("admin_user", null)
                 if (savedUser != null) {
                     val lastLogin = prefs.getString("admin_last_login", "-")
@@ -53,23 +52,36 @@ class AdminLoginFragment : Fragment() {
     }
 
     inner class AdminBridge {
+
+        // ✅ IDINAGDAG — ITO ANG TINATAWAG NG HTML! saveSession HINDI saveAdminLogin!
         @JavascriptInterface
-        fun saveAdminLogin(username: String) {
+        fun saveSession(keyCode: String, level: String) {
             prefs.edit()
-                .putString("admin_user", username)
-                // ✅ DAGDAG — KUNIN ANG LEVEL MULA SA KEY CODE!
-                .putString("user_level", when {
-                    username.startsWith("MARTODOSKO-OWNER-") || username.startsWith("OWNER-") -> "OWNER"
-                    username.startsWith("ADMIN-") -> "ADMIN"
-                    username.startsWith("MEMBER-") -> "MEMBER"
-                    else -> "GUEST"
-                })
+                .putString("admin_user", keyCode)
+                .putString("user_level", level) // ← ITO ANG HINAHANAP NG ADMIN PANEL!
                 .putString("admin_last_login", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale("tl", "PH"))
                     .format(java.util.Date()))
                 .apply()
         }
 
-        // ✅ DAGDAG — BUBUKASIN ANG ADMIN PANEL!
+        // ✅ ORIHINAL — NANDOON PA RIN!
+        @JavascriptInterface
+        fun saveAdminLogin(username: String) {
+            val level = when {
+                username.startsWith("MARTODOSKO-OWNER-") || username.startsWith("OWNER-") -> "OWNER"
+                username.startsWith("ADMIN-") -> "ADMIN"
+                username.startsWith("MEMBER-") -> "MEMBER"
+                else -> "GUEST"
+            }
+            prefs.edit()
+                .putString("admin_user", username)
+                .putString("user_level", level)
+                .putString("admin_last_login", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale("tl", "PH"))
+                    .format(java.util.Date()))
+                .apply()
+        }
+
+        // ✅ BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
         fun openAdminPanel() {
             val intent = Intent(requireContext(), AdminPanelActivity::class.java)
@@ -77,6 +89,7 @@ class AdminLoginFragment : Fragment() {
             startActivity(intent)
         }
 
+        // ✅ LOGOUT — ORIHINAL PA RIN!
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
