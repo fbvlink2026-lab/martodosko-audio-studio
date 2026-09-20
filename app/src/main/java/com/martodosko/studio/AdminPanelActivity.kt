@@ -1,256 +1,259 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- ================================================== -->
-<!-- FILE: activity_admin_panel.xml — ✅ KUMPLETO NA! MAY 📂 FILE EDITOR NA! -->
-<!-- VERSION: 3.0.0 — ✅ 7 BUTTONS NA! KEY / GITHUB / FILE EDITOR / PRESETS / USERS / STATS / LOGOUT! -->
-<!-- UPDATED: 2026-09-21 — IDINAGDAG: 📂 FILE EDITOR — Local ↔ GitHub + Source Code Editing! -->
-<!-- ================================================== -->
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#12121F">
+// ==================================================
+// FILE: AdminPanelActivity.kt — ✅ NAKA-EMBED NA ANG GITHUB TOKEN! ISANG BESES LANG MAG-DECRYPT!
+// VERSION: 5.0.0 — ✅ DECRYPT ONCE → IBABAHAGI SA LAHAT NG FRAGMENT VIA ARGUMENTS O GETTER!
+// UPDATED: 2026-09-21 — LAHAT NG ONLINE PROSESO — KUKUHA NA LANG DITO! HINDI NA UULIT-ULIT!
+// ==================================================
+package com.martodosko.studio
 
-    <!-- ✅ PANGUNAHING LAMAN — TOP BAR + FRAGMENT CONTAINER! -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.util.Base64
+import android.view.View
+import android.widget.*
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
+import javax.crypto.Cipher
+import javax.crypto.spec.GCMParameterSpec
+import java.security.KeyStore
 
-        <!-- ✅ TOP BAR — WALANG BINAGO! -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="#1E1E2F"
-            android:paddingHorizontal="16dp">
+class AdminPanelActivity : FragmentActivity() {
 
-            <!-- ✅ HAMBURGER BUTTON -->
-            <ImageView
-                android:id="@+id/btn_hamburger"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_hamburger"
-                android:clickable="true"
-                android:focusable="true"/>
+    private lateinit var sideMenu: SideMenu
+    private lateinit var prefs: SharedPreferences
+    private lateinit var githubPrefs: SharedPreferences
+    private lateinit var drawerLayout: DrawerLayout
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="🔐 ADMIN PANEL"
-                android:textColor="#40E0D0"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center"/>
+    private var currentUserLevel: String = "GUEST"
+    private var isSessionActive: Boolean = false
 
-            <!-- ⚙️ ADMIN MENU BUTTON -->
-            <TextView
-                android:id="@+id/btn_admin_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⚙️"
-                android:textColor="#40E0D0"
-                android:textSize="22sp"
-                android:clickable="true"
-                android:focusable="true"
-                android:paddingHorizontal="8dp"/>
+    // ==============================================
+    // 🔑 NAKA-EMBED NA — DECRYPTED ONCE, IBABAHAGI SA LAHAT!
+    // ==============================================
+    var decryptedGithubToken: String? = null
+        private set
+    var repoOwner: String = ""
+        private set
+    var repoName: String = ""
+        private set
+    var isGithubVerified: Boolean = false
+        private set
 
-            <TextView
-                android:id="@+id/tv_version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="v1.1.0"
-                android:textColor="#666666"
-                android:textSize="12sp"
-                android:layout_marginStart="8dp"/>
-        </LinearLayout>
+    private val KEY_ALIAS = "martodosko_github_key"
 
-        <!-- ✅ ACCESS LEVEL TITLE — NAKITA PALAGI SA TAAS! -->
-        <TextView
-            android:id="@+id/admin_access_level"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="❌ WALANG KAPANGYARIHAN"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="16dp"
-            android:gravity="center"
-            android:layout_marginBottom="8dp"/>
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_admin_panel)
 
-        <!-- ✅ FRAGMENT CONTAINER — DITO ILALAGAY ANG LAHAT NG SEKSYON! -->
-        <FrameLayout
-            android:id="@+id/admin_content_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#12121F"/>
+        prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
+        githubPrefs = getSharedPreferences("github_prefs", Context.MODE_PRIVATE)
+        drawerLayout = findViewById(R.id.drawer_layout)
 
-    </LinearLayout>
+        isSessionActive = prefs.getBoolean("session_active", false)
+        currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
-    <!-- ✅ KALIWA — SIDE MENU — WALANG BINAGO! -->
-    <include
-        layout="@layout/side_menu"
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"/>
+        // ==============================================
+        // 🔑 DECRYPT GITHUB TOKEN — ISANG BESES LANG DITO!
+        // ==============================================
+        loadAndDecryptGithubConfig()
 
-    <!-- ✅ KANANG ADMIN SIDEMENU — ✅ KUMPLETO NA! LAHAT NG KAKAYAHAN! -->
-    <LinearLayout
-        android:id="@+id/drawer_admin"
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:orientation="vertical"
-        android:background="#1A1A2E">
+        sideMenu = SideMenu.setup(
+            activity = this,
+            drawerLayoutId = R.id.drawer_layout,
+            btnOpenMenuId = R.id.btn_hamburger,
+            btnCloseMenuId = R.id.btn_close_menu,
+            tvVersionId = R.id.tv_version
+        )
 
-        <!-- HEADER -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:background="#1E1E2F">
+        checkAccessLevel()
+        setupAdminSideMenu()
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="⚙️ ADMIN CONTROLS"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#40E0D0"/>
+        if (savedInstanceState == null) {
+            showFragment(AdminHomeFragment())
+        }
+    }
 
-            <!-- ✕ CLOSE BUTTON -->
-            <TextView
-                android:id="@+id/btn_close_admin_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="✕"
-                android:textColor="#40E0D0"
-                android:textSize="20sp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="4dp"/>
-        </LinearLayout>
+    // ==============================================
+    // 🔑 DECRYPT ONCE — LAHAT NG ONLINE PROSESO GAGAMIT DITO!
+    // ==============================================
+    private fun loadAndDecryptGithubConfig() {
+        repoOwner = githubPrefs.getString("repo_owner", "") ?: ""
+        repoName = githubPrefs.getString("repo_name", "") ?: ""
+        isGithubVerified = githubPrefs.getBoolean("token_verified", false)
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#2E2E4A"/>
+        val encryptedToken = githubPrefs.getString("encrypted_github_token", null)
+        if (!encryptedToken.isNullOrEmpty()) {
+            try {
+                decryptedGithubToken = decryptData(encryptedToken)
+            } catch (e: Exception) {
+                decryptedGithubToken = null
+            }
+        }
+    }
 
-        <!-- 👑 OWNER LANG — 🔑 KEY GENERATOR -->
-        <TextView
-            android:id="@+id/btn_admin_keys"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔑 KEY GENERATOR"
-            android:padding="16dp"
-            android:textColor="#FFD700"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tag="OWNER"/>
+    // ==============================================
+    // 🔐 DECRYPTION — GINAGAWA LANG DITO SA ACTIVITY!
+    // ==============================================
+    private fun decryptData(encryptedText: String): String {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore")
+        keyStore.load(null)
+        val entry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry
+        val secretKey = entry.secretKey
 
-        <!-- 👑 OWNER LANG — 🐙 GITHUB TOKEN SETUP -->
-        <TextView
-            android:id="@+id/btn_admin_github_token"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🐙 GITHUB TOKEN"
-            android:padding="16dp"
-            android:textColor="#40E0D0"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tag="OWNER"/>
+        val combined = Base64.decode(encryptedText, Base64.DEFAULT)
+        val ivSize = 12
+        val iv = combined.copyOfRange(0, ivSize)
+        val data = combined.copyOfRange(ivSize, combined.size)
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 📂 FILE EDITOR: Local ↔ GitHub + Source Code Editing -->
-        <TextView
-            android:id="@+id/btn_admin_file_editor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📂 FILE EDITOR"
-            android:padding="16dp"
-            android:textColor="#00E676"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"
-            android:layout_marginTop="4dp"/>
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
+        val decrypted = cipher.doFinal(data)
+        return String(decrypted, Charsets.UTF_8)
+    }
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 📋 PRESET MODERATION -->
-        <TextView
-            android:id="@+id/btn_admin_presets"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📋 PRESET MODERATION"
-            android:padding="16dp"
-            android:textColor="#BB86FC"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"/>
+    // ==============================================
+    // ✅ PUBLIC GETTERS — PARA SA LAHAT NG FRAGMENT
+    // ==============================================
+    fun getGithubToken(): String? = decryptedGithubToken
+    fun getRepoOwner(): String = repoOwner
+    fun getRepoName(): String = repoName
+    fun isGithubReady(): Boolean = !decryptedGithubToken.isNullOrEmpty() && repoOwner.isNotEmpty() && repoName.isNotEmpty()
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 👤 USER MANAGEMENT -->
-        <TextView
-            android:id="@+id/btn_admin_users"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="👤 USER MANAGEMENT"
-            android:padding="16dp"
-            android:textColor="#03DAC6"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"/>
+    // ==============================================
+    // ✅ KANANG SIDEMENU — 7 BUTTONS NA! KUMPLETO!
+    // ==============================================
+    private fun setupAdminSideMenu() {
+        findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
+            drawerLayout.openDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 📊 ESTATISTIKA -->
-        <TextView
-            android:id="@+id/btn_admin_stats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📊 ESTATISTIKA"
-            android:padding="16dp"
-            android:textColor="#FFD700"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"/>
+        findViewById<TextView>(R.id.btn_close_admin_menu)?.setOnClickListener {
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#2E2E4A"
-            android:layout_marginVertical="8dp"/>
+        // 🔑 KEY GENERATOR — 👑 OWNER LANG
+        findViewById<TextView>(R.id.btn_admin_keys)?.setOnClickListener {
+            if (currentUserLevel == "OWNER") {
+                showFragment(KeyGeneratorFragment())
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
 
-        <!-- LAHAT — 🔐 LOGOUT -->
-        <TextView
-            android:id="@+id/btn_admin_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔐 MAG-LOGOUT"
-            android:padding="16dp"
-            android:textColor="#FF5252"
-            android:textSize="15sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="8dp"/>
+        // 🐙 GITHUB TOKEN SETUP — 👑 OWNER LANG — I-REFRESH PAGKATAPUS!
+        findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
+            if (currentUserLevel == "OWNER") {
+                showFragment(GithubManagerFragment())
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makapag-setup ng GitHub Token!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        // ✅ 📂 FILE EDITOR — 👑 OWNER + 🔐 ADMIN — KUKUHA NA LANG SA ACTIVITY!
+        findViewById<TextView>(R.id.btn_admin_file_editor)?.setOnClickListener {
+            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
+                if (!isGithubReady()) {
+                    Toast.makeText(this@AdminPanelActivity, "⚠️ I-setup muna ang GitHub Token bago gamitin ang File Editor!", Toast.LENGTH_LONG).show()
+                    showFragment(GithubManagerFragment())
+                } else {
+                    showFragment(FileEditorFragment())
+                }
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Martodosko Audio Studio"
-            android:padding="16dp"
-            android:textColor="#666"
-            android:textSize="12sp"
-            android:gravity="center"/>
-    </LinearLayout>
+        // 📋 PRESET MODERATION — 👑 OWNER + 🔐 ADMIN
+        findViewById<TextView>(R.id.btn_admin_presets)?.setOnClickListener {
+            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
+                showFragment(PresetModerationFragment())
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
 
-</androidx.drawerlayout.widget.DrawerLayout>
+        // 👤 USER MANAGEMENT — 👑 OWNER + 🔐 ADMIN
+        findViewById<TextView>(R.id.btn_admin_users)?.setOnClickListener {
+            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
+                showFragment(UserManagementFragment())
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 📊 ESTATISTIKA — Lahat ng naka-login
+        findViewById<TextView>(R.id.btn_admin_stats)?.setOnClickListener {
+            showFragment(StatisticsFragment())
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 🔐 LOGOUT — Lahat — BURAHIN ANG DECRYPTED TOKEN!
+        findViewById<TextView>(R.id.btn_admin_logout)?.setOnClickListener {
+            prefs.edit()
+                .remove("user_level")
+                .remove("active_member_key")
+                .putBoolean("session_active", false)
+                .apply()
+
+            // ✅ BURAHIN ANG DECRYPTED TOKEN SA MEMORY PAG-LOGOUT!
+            decryptedGithubToken = null
+            repoOwner = ""
+            repoName = ""
+
+            Toast.makeText(this@AdminPanelActivity, "✅ Naka-logout na. Burado ang Token sa memory.", Toast.LENGTH_SHORT).show()
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+            finish()
+        }
+    }
+
+    private fun showFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .replace(R.id.admin_content_container, fragment)
+            .commit()
+    }
+
+    private fun checkAccessLevel() {
+        val accessTitle = findViewById<TextView>(R.id.admin_access_level)
+
+        if (!isSessionActive) {
+            accessTitle.text = "❌ WALANG AKTIBONG SESSION"
+            accessTitle.setTextColor(0xFFFF5252.toInt())
+            Toast.makeText(this@AdminPanelActivity, "❌ Mag-log in muna.", Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+
+        when (currentUserLevel) {
+            "OWNER" -> {
+                accessTitle.text = "👑 OWNER — BUONG KAPANGYARIHAN"
+                accessTitle.setTextColor(0xFFFFD700.toInt())
+            }
+            "ADMIN" -> {
+                accessTitle.text = "🔐 ADMIN — LIMITADONG KAPANGYARIHAN"
+                accessTitle.setTextColor(0xFFFF9800.toInt())
+            }
+            else -> {
+                accessTitle.text = "❌ WALANG KAPANGYARIHAN"
+                accessTitle.setTextColor(0xFFFF5252.toInt())
+                Toast.makeText(this@AdminPanelActivity, "❌ Hindi sapat ang antas ng iyong Key.", Toast.LENGTH_LONG).show()
+                finish()
+            }
+        }
+    }
+
+    // ✅ PAGBALIK MULA GITHUB SETUP — I-REFRESH ANG DECRYPTED TOKEN!
+    override fun onResume() {
+        super.onResume()
+        if (decryptedGithubToken.isNullOrEmpty()) {
+            loadAndDecryptGithubConfig()
+        }
+    }
+}
