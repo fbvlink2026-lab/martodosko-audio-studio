@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: UserManagementFragment.kt — ✅ KUMPLETONG USER MANAGEMENT!
-// VERSION: 1.0.0 — ✅ LISTAHAN • STATUS • SESSION • ANTAS • BAWAL • ITAAAS/BABAAN!
-// UPDATED: 2026-09-21 — 👑 OWNER + 🔐 ADMIN — MAY LIMITASYON ANG ADMIN!
+// FILE: UserManagementFragment.kt — ✅ REWORKED! WALANG XML! BINUBUO SA KOTLIN!
+// VERSION: 2.0.0 — ✅ LISTAHAN • STATUS • SESSION • ANTAS • BAWAL • ITAAAS/BABAAN!
+// UPDATED: 2026-09-21 — 👑 OWNER + 🔐 ADMIN — MAY LIMITASYON ANG ADMIN! WALANG XML KAILANGAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -9,6 +9,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,25 +34,90 @@ class UserManagementFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_user_management, container, false)
+    ): View {
+        // ✅ BINUBUO ANG LAHAT NG UI DITO — WALANG XML!
+        val root = ScrollView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(0xFF12121F.toInt())
+            setPadding(20, 20, 20, 40)
+        }
+
+        val mainContainer = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
         prefsKeys = requireContext().getSharedPreferences("issued_keys", Context.MODE_PRIVATE)
         prefsSession = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
-
         currentUserLevel = prefsSession.getString("user_level", "GUEST") ?: "GUEST"
 
-        initViews(view)
+        // ==============================================
+        // 🎨 HEADER
+        // ==============================================
+        mainContainer.addView(createHeader())
+
+        // ==============================================
+        // 📋 LISTAHAN NG MGA MIYEMBRO
+        // ==============================================
+        tvStatus = TextView(requireContext()).apply {
+            text = "⏳ Kinakarga ang mga miyembro..."
+            textSize = 14f
+            setTextColor(0xFF888888.toInt())
+            setPadding(0, 16, 0, 8)
+        }
+        mainContainer.addView(tvStatus)
+
+        usersContainer = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        mainContainer.addView(usersContainer)
+
+        root.addView(mainContainer)
+
         checkPermission()
         loadAllUsers()
 
-        return view
+        return root
     }
 
-    private fun initViews(view: View) {
-        tvUserLevel = view.findViewById(R.id.tv_usermanage_user_level)
-        usersContainer = view.findViewById(R.id.users_container)
-        progressBar = view.findViewById(R.id.user_manage_progress)
-        tvStatus = view.findViewById(R.id.user_manage_status)
+    // ==============================================
+    // 🎨 HEADER
+    // ==============================================
+    private fun createHeader(): View {
+        val card = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 28, 24, 28)
+            setBackgroundColor(0xFF1E1E2F.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+            gravity = Gravity.CENTER
+        }
+
+        val title = TextView(requireContext()).apply {
+            text = "👤 PAMAMAHALA NG MIYEMBRO"
+            textSize = 24f
+            setTextColor(0xFFFF9800.toInt())
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        tvUserLevel = TextView(requireContext()).apply {
+            text = "Kasalukuyang Antas: $currentUserLevel"
+            textSize = 13f
+            setTextColor(0xFF888888.toInt())
+            setPadding(0, 6, 0, 0)
+        }
+
+        card.addView(title)
+        card.addView(tvUserLevel)
+        return card
     }
 
     // ==============================================
@@ -89,7 +155,6 @@ class UserManagementFragment : Fragment() {
             val expires = prefsKeys.getLong("${keyId}_expires", 0L)
             val active = prefsKeys.getBoolean("${keyId}_active", true)
 
-            // Check kung nag-expire na
             val isExpired = expires != 0L && System.currentTimeMillis() > expires
 
             addUserItem(keyId, name, level, created, expires, active, isExpired)
@@ -118,10 +183,9 @@ class UserManagementFragment : Fragment() {
             ).apply { setMargins(0, 0, 0, 8) }
         }
 
-        // Top row: Name + Level + Status
         val topRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
-            gravity = android.view.Gravity.CENTER_VERTICAL
+            gravity = Gravity.CENTER_VERTICAL
         }
 
         val nameTv = TextView(requireContext()).apply {
@@ -168,7 +232,6 @@ class UserManagementFragment : Fragment() {
         topRow.addView(levelTv)
         topRow.addView(statusTv)
 
-        // Dates
         val expiryText = if (expires == 0L) "Walang Expiry" else dateFormat.format(Date(expires))
         val dateTv = TextView(requireContext()).apply {
             text = "📅 Binuo: ${dateFormat.format(Date(created))} • Expires: $expiryText"
@@ -177,7 +240,6 @@ class UserManagementFragment : Fragment() {
             setPadding(0, 6, 0, 0)
         }
 
-        // Key ID
         val keyTv = TextView(requireContext()).apply {
             text = "🔑 $keyId"
             textSize = 10f
@@ -186,13 +248,11 @@ class UserManagementFragment : Fragment() {
             setTextIsSelectable(true)
         }
 
-        // Buttons — Limitasyon: Admin hindi makakapagbago ng OWNER
         val btnRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 12, 0, 0)
         }
 
-        // ⬆️ ITAAAS ANG ANTAS — MEMBER → ADMIN (OWNER LANG ANG MAKAGAWING ADMIN)
         val promoteBtn = Button(requireContext()).apply {
             text = if (level == "MEMBER") "⬆️ ITAAAS" else "—"
             isEnabled = level == "MEMBER" && currentUserLevel == "OWNER"
@@ -203,7 +263,6 @@ class UserManagementFragment : Fragment() {
             layoutParams = LinearLayout.LayoutParams(0, 38, 1f).apply { setMargins(0, 0, 2, 0) }
         }
 
-        // ⬇️ BABAAN ANG ANTAS — ADMIN → MEMBER (OWNER LANG)
         val demoteBtn = Button(requireContext()).apply {
             text = if (level == "ADMIN") "⬇️ BABAAN" else "—"
             isEnabled = level == "ADMIN" && currentUserLevel == "OWNER"
@@ -214,10 +273,9 @@ class UserManagementFragment : Fragment() {
             layoutParams = LinearLayout.LayoutParams(0, 38, 1f).apply { setMargins(2, 0, 0, 0) }
         }
 
-        // 🚫 BAWAL / ✅ PAGANA — OWNER + ADMIN pwede
         val toggleBtn = Button(requireContext()).apply {
             text = if (active) "🚫 BAWAL" else "✅ PAGANA"
-            isEnabled = level != "OWNER" // Hindi pwedeng bawalan ang OWNER
+            isEnabled = level != "OWNER"
             textSize = 11f
             setBackgroundColor(if (isEnabled) (if (active) 0xFF8B0000.toInt() else 0xFF2E7D32.toInt()) else 0xFF2A2A3A.toInt())
             setTextColor(if (isEnabled) 0xFFFFFFFF.toInt() else 0xFF666666.toInt())
