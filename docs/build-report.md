@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-20 23:06 UTC
-🏷️ **Bersyon:** v1.0.263
+📅 **Petsa:** 2026-09-20 23:23 UTC
+🏷️ **Bersyon:** v1.0.264
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-20 23:06:50 UTC
-🏷️ BERSYON:    v1.0.263
+⏰ ORAS:       2026-09-20 23:23:52 UTC
+🏷️ BERSYON:    v1.0.264
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -50,11 +50,9 @@ Daemon will be stopped at the end of the build
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
-> Task :app:processReleaseManifestForPackage
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:processReleaseResources
-> Task :app:mergeExtDexRelease
 > Task :app:mergeReleaseArtProfile
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
@@ -65,21 +63,23 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseResources
+> Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
 
 > Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GithubManagerFragment.kt:336:18 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/GithubManagerFragment.kt:336:36 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:70:50 Unresolved reference: tv_keygen_user_level
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:71:53 Unresolved reference: spinner_key_type
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:72:45 Unresolved reference: et_member_name
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:73:52 Unresolved reference: spinner_expiry
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:74:50 Unresolved reference: btn_generate_key
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:75:50 Unresolved reference: btn_clear_all_keys
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:76:52 Unresolved reference: keys_container
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:77:50 Unresolved reference: keygen_progress
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/KeyGeneratorFragment.kt:78:47 Unresolved reference: keygen_status
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/StatisticsFragment.kt:315:21 Unresolved reference: addView
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:37:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoOwner()Ljava/lang/String;):
+    fun `<get-repoOwner>`(): String defined in com.martodosko.studio.AdminPanelActivity
+    fun getRepoOwner(): String defined in com.martodosko.studio.AdminPanelActivity
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:39:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoName()Ljava/lang/String;):
+    fun `<get-repoName>`(): String defined in com.martodosko.studio.AdminPanelActivity
+    fun getRepoName(): String defined in com.martodosko.studio.AdminPanelActivity
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:120:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoOwner()Ljava/lang/String;):
+    fun `<get-repoOwner>`(): String defined in com.martodosko.studio.AdminPanelActivity
+    fun getRepoOwner(): String defined in com.martodosko.studio.AdminPanelActivity
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:121:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoName()Ljava/lang/String;):
+    fun `<get-repoName>`(): String defined in com.martodosko.studio.AdminPanelActivity
+    fun getRepoName(): String defined in com.martodosko.studio.AdminPanelActivity
 
 FAILURE: Build failed with an exception.
 
@@ -94,7 +94,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 6s
+BUILD FAILED in 1m 13s
 32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
