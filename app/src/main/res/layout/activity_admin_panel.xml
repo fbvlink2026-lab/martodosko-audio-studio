@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_admin_panel.xml — ✅ FRAGMENT-BASED NA! PARANG CONTENTACTIVITY! -->
-<!-- VERSION: 2.0.0 — ✅ SCROLLVIEW → FRAGMENT CONTAINER! BAWAT BUTTON = HIWALAY NA FRAGMENT! -->
-<!-- UPDATED: 2026-09-21 — WALANG BINURA SA TOP BAR AT KANANG MENU! LAMAN LANG ANG NAGBAGO! -->
+<!-- FILE: activity_admin_panel.xml — ✅ KUMPLETO NA! MAY 🐙 GITHUB TOKEN BUTTON NA! -->
+<!-- VERSION: 2.1.0 — ✅ 6 BUTTONS NA! KEY / USERS / PRESETS / STATS / GITHUB TOKEN / LOGOUT! -->
+<!-- UPDATED: 2026-09-21 — WALANG BINURA — IDINAGDAG LANG ANG GITHUB TOKEN BUTTON! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -79,7 +79,7 @@
             android:gravity="center"
             android:layout_marginBottom="8dp"/>
 
-        <!-- ✅ FRAGMENT CONTAINER — DITO ILALAGAY ANG LAHAT NG SEKSYON! PARANG CONTENTACTIVITY! -->
+        <!-- ✅ FRAGMENT CONTAINER — DITO ILALAGAY ANG LAHAT NG SEKSYON! -->
         <FrameLayout
             android:id="@+id/admin_content_container"
             android:layout_width="match_parent"
@@ -95,7 +95,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"/>
 
-    <!-- ✅ KANANG ADMIN SIDEMENU — WALANG BINAGO! -->
+    <!-- ✅ KANANG ADMIN SIDEMENU — ✅ MAY GITHUB TOKEN BUTTON NA! -->
     <LinearLayout
         android:id="@+id/drawer_admin"
         android:layout_width="280dp"
@@ -140,7 +140,7 @@
             android:layout_height="1dp"
             android:background="#2E2E4A"/>
 
-        <!-- MGA BUTTON -->
+        <!-- 🔑 KEY GENERATOR -->
         <TextView
             android:id="@+id/btn_admin_keys"
             android:layout_width="match_parent"
@@ -152,6 +152,7 @@
             android:clickable="true"
             android:focusable="true"/>
 
+        <!-- 👤 USER MANAGEMENT -->
         <TextView
             android:id="@+id/btn_admin_users"
             android:layout_width="match_parent"
@@ -163,6 +164,7 @@
             android:clickable="true"
             android:focusable="true"/>
 
+        <!-- 📋 PRESET MODERATION -->
         <TextView
             android:id="@+id/btn_admin_presets"
             android:layout_width="match_parent"
@@ -174,6 +176,7 @@
             android:clickable="true"
             android:focusable="true"/>
 
+        <!-- 📊 ESTATISTIKA -->
         <TextView
             android:id="@+id/btn_admin_stats"
             android:layout_width="match_parent"
@@ -185,12 +188,25 @@
             android:clickable="true"
             android:focusable="true"/>
 
+        <!-- ✅ BAGONG BUTTON: 🐙 GITHUB TOKEN SETUP -->
+        <TextView
+            android:id="@+id/btn_admin_github_token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🐙 GITHUB TOKEN"
+            android:padding="16dp"
+            android:textColor="#40E0D0"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#2E2E4A"
             android:layout_marginVertical="8dp"/>
 
+        <!-- 🔐 LOGOUT -->
         <TextView
             android:id="@+id/btn_admin_logout"
             android:layout_width="match_parent"
