@@ -1,169 +1,256 @@
-// ==================================================
-// FILE: AdminPanelActivity.kt — ✅ KUMPLETO NA! MAY 📂 FILE EDITOR NA!
-// VERSION: 4.0.0 — ✅ 7 BUTTONS! KEY / GITHUB / FILE EDITOR / PRESETS / USERS / STATS / LOGOUT!
-// UPDATED: 2026-09-21 — IDINAGDAG: 📂 FILE EDITOR — Local ↔ GitHub + Source Code Editing!
-// ==================================================
-package com.martodosko.studio
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ================================================== -->
+<!-- FILE: activity_admin_panel.xml — ✅ KUMPLETO NA! MAY 📂 FILE EDITOR NA! -->
+<!-- VERSION: 3.0.0 — ✅ 7 BUTTONS NA! KEY / GITHUB / FILE EDITOR / PRESETS / USERS / STATS / LOGOUT! -->
+<!-- UPDATED: 2026-09-21 — IDINAGDAG: 📂 FILE EDITOR — Local ↔ GitHub + Source Code Editing! -->
+<!-- ================================================== -->
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#12121F">
 
-import android.content.Context
-import android.content.SharedPreferences
-import android.os.Bundle
-import android.view.View
-import android.widget.*
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentTransaction
+    <!-- ✅ PANGUNAHING LAMAN — TOP BAR + FRAGMENT CONTAINER! -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-class AdminPanelActivity : FragmentActivity() {
+        <!-- ✅ TOP BAR — WALANG BINAGO! -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#1E1E2F"
+            android:paddingHorizontal="16dp">
 
-    private lateinit var sideMenu: SideMenu
-    private lateinit var prefs: SharedPreferences
-    private lateinit var drawerLayout: DrawerLayout
+            <!-- ✅ HAMBURGER BUTTON -->
+            <ImageView
+                android:id="@+id/btn_hamburger"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_hamburger"
+                android:clickable="true"
+                android:focusable="true"/>
 
-    private var currentUserLevel: String = "GUEST"
-    private var isSessionActive: Boolean = false
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔐 ADMIN PANEL"
+                android:textColor="#40E0D0"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_admin_panel)
+            <!-- ⚙️ ADMIN MENU BUTTON -->
+            <TextView
+                android:id="@+id/btn_admin_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚙️"
+                android:textColor="#40E0D0"
+                android:textSize="22sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="8dp"/>
 
-        prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
-        drawerLayout = findViewById(R.id.drawer_layout)
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="v1.1.0"
+                android:textColor="#666666"
+                android:textSize="12sp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
 
-        isSessionActive = prefs.getBoolean("session_active", false)
-        currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
+        <!-- ✅ ACCESS LEVEL TITLE — NAKITA PALAGI SA TAAS! -->
+        <TextView
+            android:id="@+id/admin_access_level"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="❌ WALANG KAPANGYARIHAN"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="16dp"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
 
-        sideMenu = SideMenu.setup(
-            activity = this,
-            drawerLayoutId = R.id.drawer_layout,
-            btnOpenMenuId = R.id.btn_hamburger,
-            btnCloseMenuId = R.id.btn_close_menu,
-            tvVersionId = R.id.tv_version
-        )
+        <!-- ✅ FRAGMENT CONTAINER — DITO ILALAGAY ANG LAHAT NG SEKSYON! -->
+        <FrameLayout
+            android:id="@+id/admin_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#12121F"/>
 
-        checkAccessLevel()
-        setupAdminSideMenu()
+    </LinearLayout>
 
-        if (savedInstanceState == null) {
-            showFragment(AdminHomeFragment())
-        }
-    }
+    <!-- ✅ KALIWA — SIDE MENU — WALANG BINAGO! -->
+    <include
+        layout="@layout/side_menu"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"/>
 
-    // ==============================================
-    // ✅ KANANG SIDEMENU — 7 BUTTONS NA! KUMPLETO!
-    // ==============================================
-    private fun setupAdminSideMenu() {
-        findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
-            drawerLayout.openDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+    <!-- ✅ KANANG ADMIN SIDEMENU — ✅ KUMPLETO NA! LAHAT NG KAKAYAHAN! -->
+    <LinearLayout
+        android:id="@+id/drawer_admin"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:background="#1A1A2E">
 
-        findViewById<TextView>(R.id.btn_close_admin_menu)?.setOnClickListener {
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+        <!-- HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:background="#1E1E2F">
 
-        // 🔑 KEY GENERATOR — 👑 OWNER LANG
-        findViewById<TextView>(R.id.btn_admin_keys)?.setOnClickListener {
-            if (currentUserLevel == "OWNER") {
-                showFragment(KeyGeneratorFragment())
-            } else {
-                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
-            }
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⚙️ ADMIN CONTROLS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#40E0D0"/>
 
-        // 🐙 GITHUB TOKEN SETUP — 👑 OWNER LANG
-        findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
-            if (currentUserLevel == "OWNER") {
-                showFragment(GithubManagerFragment())
-            } else {
-                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makapag-setup ng GitHub Token!", Toast.LENGTH_SHORT).show()
-            }
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+            <!-- ✕ CLOSE BUTTON -->
+            <TextView
+                android:id="@+id/btn_close_admin_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✕"
+                android:textColor="#40E0D0"
+                android:textSize="20sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="4dp"/>
+        </LinearLayout>
 
-        // ✅ 📂 FILE EDITOR — 👑 OWNER + 🔐 ADMIN — Local ↔ GitHub + Source Code Editing
-        findViewById<TextView>(R.id.btn_admin_file_editor)?.setOnClickListener {
-            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
-                showFragment(FileEditorFragment())
-            } else {
-                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
-            }
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2E2E4A"/>
 
-        // 📋 PRESET MODERATION — 👑 OWNER + 🔐 ADMIN
-        findViewById<TextView>(R.id.btn_admin_presets)?.setOnClickListener {
-            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
-                showFragment(PresetModerationFragment())
-            } else {
-                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
-            }
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+        <!-- 👑 OWNER LANG — 🔑 KEY GENERATOR -->
+        <TextView
+            android:id="@+id/btn_admin_keys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔑 KEY GENERATOR"
+            android:padding="16dp"
+            android:textColor="#FFD700"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tag="OWNER"/>
 
-        // 👤 USER MANAGEMENT — 👑 OWNER + 🔐 ADMIN
-        findViewById<TextView>(R.id.btn_admin_users)?.setOnClickListener {
-            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
-                showFragment(UserManagementFragment())
-            } else {
-                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
-            }
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+        <!-- 👑 OWNER LANG — 🐙 GITHUB TOKEN SETUP -->
+        <TextView
+            android:id="@+id/btn_admin_github_token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🐙 GITHUB TOKEN"
+            android:padding="16dp"
+            android:textColor="#40E0D0"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tag="OWNER"/>
 
-        // 📊 ESTATISTIKA — Lahat ng naka-login
-        findViewById<TextView>(R.id.btn_admin_stats)?.setOnClickListener {
-            showFragment(StatisticsFragment())
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
+        <!-- 👑 OWNER + 🔐 ADMIN — 📂 FILE EDITOR: Local ↔ GitHub + Source Code Editing -->
+        <TextView
+            android:id="@+id/btn_admin_file_editor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📂 FILE EDITOR"
+            android:padding="16dp"
+            android:textColor="#00E676"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tag="ADMIN"
+            android:layout_marginTop="4dp"/>
 
-        // 🔐 LOGOUT — Lahat
-        findViewById<TextView>(R.id.btn_admin_logout)?.setOnClickListener {
-            prefs.edit()
-                .remove("user_level")
-                .remove("active_member_key")
-                .putBoolean("session_active", false)
-                .apply()
-            Toast.makeText(this@AdminPanelActivity, "✅ Naka-logout na.", Toast.LENGTH_SHORT).show()
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-            finish()
-        }
-    }
+        <!-- 👑 OWNER + 🔐 ADMIN — 📋 PRESET MODERATION -->
+        <TextView
+            android:id="@+id/btn_admin_presets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 PRESET MODERATION"
+            android:padding="16dp"
+            android:textColor="#BB86FC"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tag="ADMIN"/>
 
-    private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .replace(R.id.admin_content_container, fragment)
-            .commit()
-    }
+        <!-- 👑 OWNER + 🔐 ADMIN — 👤 USER MANAGEMENT -->
+        <TextView
+            android:id="@+id/btn_admin_users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👤 USER MANAGEMENT"
+            android:padding="16dp"
+            android:textColor="#03DAC6"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tag="ADMIN"/>
 
-    private fun checkAccessLevel() {
-        val accessTitle = findViewById<TextView>(R.id.admin_access_level)
+        <!-- 👑 OWNER + 🔐 ADMIN — 📊 ESTATISTIKA -->
+        <TextView
+            android:id="@+id/btn_admin_stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 ESTATISTIKA"
+            android:padding="16dp"
+            android:textColor="#FFD700"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:tag="ADMIN"/>
 
-        if (!isSessionActive) {
-            accessTitle.text = "❌ WALANG AKTIBONG SESSION"
-            accessTitle.setTextColor(0xFFFF5252.toInt())
-            Toast.makeText(this@AdminPanelActivity, "❌ Mag-log in muna.", Toast.LENGTH_LONG).show()
-            finish()
-            return
-        }
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2E2E4A"
+            android:layout_marginVertical="8dp"/>
 
-        when (currentUserLevel) {
-            "OWNER" -> {
-                accessTitle.text = "👑 OWNER — BUONG KAPANGYARIHAN"
-                accessTitle.setTextColor(0xFFFFD700.toInt())
-            }
-            "ADMIN" -> {
-                accessTitle.text = "🔐 ADMIN — LIMITADONG KAPANGYARIHAN"
-                accessTitle.setTextColor(0xFFFF9800.toInt())
-            }
-            else -> {
-                accessTitle.text = "❌ WALANG KAPANGYARIHAN"
-                accessTitle.setTextColor(0xFFFF5252.toInt())
-                Toast.makeText(this@AdminPanelActivity, "❌ Hindi sapat ang antas ng iyong Key.", Toast.LENGTH_LONG).show()
-                finish()
-            }
-        }
-    }
-}
+        <!-- LAHAT — 🔐 LOGOUT -->
+        <TextView
+            android:id="@+id/btn_admin_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔐 MAG-LOGOUT"
+            android:padding="16dp"
+            android:textColor="#FF5252"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Martodosko Audio Studio"
+            android:padding="16dp"
+            android:textColor="#666"
+            android:textSize="12sp"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>
