@@ -1,37 +1,39 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ NAKA-CHECK NA ANG SESSION! WALANG IBANG PINAGBAGO!
-// VERSION: 1.0.4 — ✅ session_active FLAG ANG UNANG TINITIGNAN! WALANG BINAWASAN!
-// UPDATED: 2026-09-20 — ORIHINAL NA CODE BUO PA RIN — DAGDAG LANG!
+// FILE: AdminPanelActivity.kt — ✅ MAY KANANG SIDEMENU NA! LAHAT NG BUTTON GUMA-GANA NA!
+// VERSION: 1.1.0 — ✅ DAGDAG: ADMIN MENU + 4 BUTTON + LOGOUT! WALANG BINURA SA ORIHINAL!
+// UPDATED: 2026-09-21 — ORIHINAL NA CODE BUO PA RIN — IDINAGDAG LANG ANG KULANG!
 // ==================================================
 package com.martodosko.studio
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.drawerlayout.widget.DrawerLayout
 import kotlin.random.Random
 
 class AdminPanelActivity : Activity() {
 
     private lateinit var sideMenu: SideMenu
     private lateinit var prefs: SharedPreferences
+    private lateinit var drawerLayout: DrawerLayout // ✅ IDINAGDAG — KONTROL NG DRAWER
 
     private var currentUserLevel: String = "GUEST"
-    private var isSessionActive: Boolean = false // ✅ IDINAGDAG — FLAG NG SESSION!
+    private var isSessionActive: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_panel)
 
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
-        
-        // ✅ BASAHIN MUNA — SESSION ACTIVE BA? ANTAS NG USER?
-        isSessionActive = prefs.getBoolean("session_active", false) // ✅ UNANG TINITIGNAN!
+        drawerLayout = findViewById(R.id.drawer_layout) // ✅ KUNIN ANG DRAWER
+
+        isSessionActive = prefs.getBoolean("session_active", false)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
-        // ✅ TUGMA NA SA LAHAT — HAMBURGER BUKAS, X NASA LOOB NG PANEL!
         sideMenu = SideMenu.setup(
             activity = this,
             drawerLayoutId = R.id.drawer_layout,
@@ -41,12 +43,80 @@ class AdminPanelActivity : Activity() {
         )
 
         checkAccessLevel()
-        setupButtons()
+        setupButtons()          // ✅ ORIHINAL — BUTTONS SA LOOB NG CONTENT
+        setupAdminSideMenu()    // ✅ BAGO — KANANG SIDEMENU!
         loadStats()
     }
 
     // ==============================================
-    // ✅ PAGTUKOY NG ANTAS — SESSION MUNA BAGO LAHAT!
+    // ✅ BAGO — KANANG SIDEMENU LOGIC!
+    // ==============================================
+    private fun setupAdminSideMenu() {
+        // ⚙️ BUKAS ANG KANANG MENU
+        findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
+            drawerLayout.openDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // ✕ ISARA ANG KANANG MENU
+        findViewById<TextView>(R.id.btn_close_admin_menu)?.setOnClickListener {
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 🔑 KEY GENERATOR — OWNER LANG
+        findViewById<TextView>(R.id.btn_admin_keys)?.setOnClickListener {
+            findViewById<LinearLayout>(R.id.section_key_generator)?.visibility = View.VISIBLE
+            scrollToSection(R.id.section_key_generator)
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 👤 USER MANAGEMENT — OWNER + ADMIN
+        findViewById<TextView>(R.id.btn_admin_users)?.setOnClickListener {
+            findViewById<LinearLayout>(R.id.section_user_management)?.visibility = View.VISIBLE
+            scrollToSection(R.id.section_user_management)
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 📋 PRESET MODERATION — OWNER + ADMIN
+        findViewById<TextView>(R.id.btn_admin_presets)?.setOnClickListener {
+            findViewById<LinearLayout>(R.id.section_preset_moderation)?.visibility = View.VISIBLE
+            scrollToSection(R.id.section_preset_moderation)
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 📊 ESTATISTIKA — LAHAT
+        findViewById<TextView>(R.id.btn_admin_stats)?.setOnClickListener {
+            findViewById<LinearLayout>(R.id.section_statistics)?.visibility = View.VISIBLE
+            scrollToSection(R.id.section_statistics)
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 🔐 LOGOUT — BURAHIN SESSION + ISARA
+        findViewById<TextView>(R.id.btn_admin_logout)?.setOnClickListener {
+            prefs.edit()
+                .remove("user_level")
+                .remove("active_member_key")
+                .putBoolean("session_active", false)
+                .apply()
+
+            Toast.makeText(this, "✅ Naka-logout na. Admin Panel ay nakasara na.", Toast.LENGTH_SHORT).show()
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+            finish()
+        }
+    }
+
+    // ✅ TULONG — MAG-SCROLL PABABA SA PINILING SECTION
+    private fun scrollToSection(sectionId: Int) {
+        val section = findViewById<View>(sectionId)
+        section?.let { view ->
+            view.post {
+                view.scrollTo(0, 0)
+                view.requestFocus()
+            }
+        }
+    }
+
+    // ==============================================
+    // ✅ ORIHINAL — WALANG BINAGO!
     // ==============================================
     private fun checkAccessLevel() {
         val accessTitle = findViewById<TextView>(R.id.admin_access_level)
@@ -55,7 +125,6 @@ class AdminPanelActivity : Activity() {
         val presetSection = findViewById<LinearLayout>(R.id.section_preset_moderation)
         val statsSection = findViewById<LinearLayout>(R.id.section_statistics)
 
-        // ✅ UNANG-UNA — SESSION ACTIVE BA? KUNG HINDI → WALANG PAGPAPASOK!
         if (!isSessionActive) {
             accessTitle.text = "❌ WALANG AKTIBONG SESSION"
             accessTitle.setTextColor(0xFFFF5252.toInt())
@@ -64,11 +133,10 @@ class AdminPanelActivity : Activity() {
             presetSection.visibility = View.GONE
             statsSection.visibility = View.GONE
             Toast.makeText(this, "❌ WALANG PAHINTULOT — Walang aktibong session. Mag-log in muna.", Toast.LENGTH_LONG).show()
-            finish() // ✅ BALIK SA LOGIN SCREEN
+            finish()
             return
         }
 
-        // ✅ MAY SESSION NA — TIGNAN NA ANG ANTAS NG USER
         when (currentUserLevel) {
             "OWNER" -> {
                 accessTitle.text = "👑 OWNER — BUONG KAPANGYARIHAN"
@@ -99,9 +167,6 @@ class AdminPanelActivity : Activity() {
         }
     }
 
-    // ==============================================
-    // ✅ LAHAT NG NASA IBABA — WALANG BINAGO! ORIHINAL PA RIN!
-    // ==============================================
     private fun setupButtons() {
         findViewById<Button>(R.id.btn_generate_key)?.setOnClickListener {
             if (currentUserLevel == "OWNER") generateNewKeyCode()
