@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ NAKA-EMBED NA ANG GITHUB TOKEN! ISANG BESES LANG MAG-DECRYPT!
-// VERSION: 5.0.0 — ✅ DECRYPT ONCE → IBABAHAGI SA LAHAT NG FRAGMENT VIA ARGUMENTS O GETTER!
-// UPDATED: 2026-09-21 — LAHAT NG ONLINE PROSESO — KUKUHA NA LANG DITO! HINDI NA UULIT-ULIT!
+// FILE: AdminPanelActivity.kt — ✅ MAY 🏠 HOME BUTTON NA! DECRYPT ONCE!
+// VERSION: 5.1.0 — ✅ IDINAGDAG: 🏠 HOME BUTTON SA PINAKA-ITAAS! BUMABALIK SA ADMIN HOME!
+// UPDATED: 2026-09-21 — WALANG IBANG BINAGO — HOME BUTTON LANG ANG IDINAGDAG!
 // ==================================================
 package com.martodosko.studio
 
@@ -122,7 +122,7 @@ class AdminPanelActivity : FragmentActivity() {
     fun isGithubReady(): Boolean = !decryptedGithubToken.isNullOrEmpty() && repoOwner.isNotEmpty() && repoName.isNotEmpty()
 
     // ==============================================
-    // ✅ KANANG SIDEMENU — 7 BUTTONS NA! KUMPLETO!
+    // ✅ KANANG SIDEMENU — 🏠 HOME UNA! 7 BUTTONS NA! KUMPLETO!
     // ==============================================
     private fun setupAdminSideMenu() {
         findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
@@ -130,6 +130,14 @@ class AdminPanelActivity : FragmentActivity() {
         }
 
         findViewById<TextView>(R.id.btn_close_admin_menu)?.setOnClickListener {
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // ==============================================
+        // 🏠 HOME — PINAKA-UNA! BUMABALIK SA REPORT BOARD!
+        // ==============================================
+        findViewById<TextView>(R.id.btn_admin_home)?.setOnClickListener {
+            showFragment(AdminHomeFragment())
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
