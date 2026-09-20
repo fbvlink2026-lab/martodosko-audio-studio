@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: GithubManagerFragment.kt — ✅ INA-ADAPTOR SA ADMIN PANEL! WALANG HIWALAY NA XML!
-// VERSION: 1.1.0 — ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML! TUGMA SA ADMIN PANEL IDs!
-// UPDATED: 2026-09-21 — ✅ LAHAT NG ID TUGMA SA NAKA-EMBED NA LAYOUT!
+// FILE: GithubManagerFragment.kt — ✅ REWORKED! WALANG XML! BINUBUO LAHAT SA KOTLIN!
+// VERSION: 2.0.0 — ✅ TOKEN ENCRYPT/DECRYPT • VERIFY • SAVE • CLEAR! WALANG FINDBYVIEWID!
+// UPDATED: 2026-09-21 — LAHAT NG UI BINUO SA onCreateView! WALANG XML KAILANGAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -11,6 +11,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,36 +53,206 @@ class GithubManagerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML — NAKA-EMBED NA SA ADMIN PANEL!
-        return null
-    }
+    ): View {
+        val root = ScrollView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(0xFF12121F.toInt())
+            setPadding(20, 20, 20, 30)
+        }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val mainContainer = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        // ✅ KUKUNIN ANG MGA VIEWS MULA SA ADMIN PANEL — TUGMA SA MGA ID!
-        initViews(requireActivity())
+        // ==============================================
+        // 🎨 HEADER
+        // ==============================================
+        mainContainer.addView(createHeader())
+
+        // ==============================================
+        // 📌 CURRENT STATUS
+        // ==============================================
+        tvCurrentToken = TextView(requireContext()).apply {
+            text = "⏰ Kinakarga..."
+            textSize = 13f
+            setTextColor(0xFF888888.toInt())
+            setBackgroundColor(0xFF1E1E2F.toInt())
+            setPadding(14, 12, 14, 12)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 16) }
+        }
+        mainContainer.addView(tvCurrentToken)
+
+        // ==============================================
+        // 🐙 GITHUB TOKEN INPUT
+        // ==============================================
+        mainContainer.addView(createLabel("🔐 GITHUB TOKEN"))
+        etToken = EditText(requireContext()).apply {
+            hint = "ghp_xxxxxxxxxxxx o github_pat_xxxxxxxxxxxx"
+            inputType = android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            setHintTextColor(0xFF666666.toInt())
+            setPadding(14, 14, 14, 14)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 16) }
+        }
+        mainContainer.addView(etToken)
+
+        // ==============================================
+        // 📦 REPOSITORY OWNER
+        // ==============================================
+        mainContainer.addView(createLabel("👤 REPOSITORY OWNER"))
+        etRepoOwner = EditText(requireContext()).apply {
+            hint = "hal: martodosko"
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            setHintTextColor(0xFF666666.toInt())
+            setPadding(14, 14, 14, 14)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 16) }
+        }
+        mainContainer.addView(etRepoOwner)
+
+        // ==============================================
+        // 📂 REPOSITORY NAME
+        // ==============================================
+        mainContainer.addView(createLabel("📂 REPOSITORY NAME"))
+        etRepoName = EditText(requireContext()).apply {
+            hint = "hal: martodosko-audio-studio"
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            setHintTextColor(0xFF666666.toInt())
+            setPadding(14, 14, 14, 14)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+        }
+        mainContainer.addView(etRepoName)
+
+        // ==============================================
+        // 🔘 BUTTONS — SAVE • VERIFY • CLEAR
+        // ==============================================
+        val btnRow = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 16) }
+        }
+
+        btnSave = createButton("💾 SAVE", 0xFF2E7D32.toInt())
+        btnVerify = createButton("🔍 VERIFY", 0xFF0288D1.toInt())
+        btnClear = createButton("🗑️ CLEAR", 0xFFB71C1C.toInt())
+
+        btnRow.addView(btnSave)
+        btnRow.addView(btnVerify)
+        btnRow.addView(btnClear)
+        mainContainer.addView(btnRow)
+
+        // ==============================================
+        // 📊 STATUS + PROGRESS
+        // ==============================================
+        tvStatus = TextView(requireContext()).apply {
+            text = "✅ Handa na — I-setup ang GitHub Token para makapag-connect"
+            textSize = 13f
+            setTextColor(0xFF4CAF50.toInt())
+            setPadding(4, 8, 4, 8)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 12) }
+        }
+        mainContainer.addView(tvStatus)
+
+        progressBar = ProgressBar(requireContext()).apply {
+            visibility = View.GONE
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+        mainContainer.addView(progressBar)
+
+        // ==============================================
+        // ✅ SETUP
+        // ==============================================
         loadSavedConfig()
         setupButtons()
+
+        root.addView(mainContainer)
+        return root
     }
 
-    private fun initViews(activity: android.app.Activity) {
-        etToken = activity.findViewById(R.id.et_github_token)
-        etRepoOwner = activity.findViewById(R.id.et_repo_owner)
-        etRepoName = activity.findViewById(R.id.et_repo_name)
-        btnSave = activity.findViewById(R.id.btn_save_token)
-        btnVerify = activity.findViewById(R.id.btn_verify_token)
-        btnClear = activity.findViewById(R.id.btn_clear_token)
-        tvStatus = activity.findViewById(R.id.github_status)
-        progressBar = activity.findViewById(R.id.github_progress)
-        tvCurrentToken = activity.findViewById(R.id.tv_current_token)
+    private fun createHeader(): View {
+        val card = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 28, 24, 28)
+            setBackgroundColor(0xFF1E1E2F.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+        }
+
+        val title = TextView(requireContext()).apply {
+            text = "🐙 GITHUB TOKEN SETUP"
+            textSize = 22f
+            setTextColor(0xFF40E0D0.toInt())
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        val subtitle = TextView(requireContext()).apply {
+            text = "I-encrypt at i-verify ang access sa GitHub Repository"
+            textSize = 12f
+            setTextColor(0xFF888888.toInt())
+            setPadding(0, 4, 0, 0)
+        }
+
+        card.addView(title)
+        card.addView(subtitle)
+        return card
+    }
+
+    private fun createLabel(text: String): TextView {
+        return TextView(requireContext()).apply {
+            this.text = text
+            textSize = 14f
+            setTextColor(0xFFCCCCCC.toInt())
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setPadding(4, 0, 0, 8)
+        }
+    }
+
+    private fun createButton(text: String, color: Int): Button {
+        return Button(requireContext()).apply {
+            this.text = text
+            textSize = 12f
+            setBackgroundColor(color)
+            setTextColor(0xFFFFFFFF.toInt())
+            layoutParams = LinearLayout.LayoutParams(0, 45, 1f).apply { setMargins(4, 0, 4, 0) }
+        }
     }
 
     private fun loadSavedConfig() {
-        val savedOwner = prefs.getString(REPO_OWNER_KEY, "")
-        val savedName = prefs.getString(REPO_NAME_KEY, "")
+        val savedOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
+        val savedName = prefs.getString(REPO_NAME_KEY, "") ?: ""
         val hasToken = prefs.getString(ENCRYPTED_TOKEN_KEY, null) != null
         val isVerified = prefs.getBoolean(TOKEN_VERIFIED, false)
 
