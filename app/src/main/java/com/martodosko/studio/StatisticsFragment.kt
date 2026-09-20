@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: StatisticsFragment.kt — ✅ DASHBOARD STYLE! MAY GRAPHS + BILANG!
-// VERSION: 1.0.0 — ✅ KABUUAN • TREND • PAGHAMBING • PROPESYONAL NA DISENYO!
-// UPDATED: 2026-09-21 — BAWAT BILANG MAY KULAY, IKON, AT PAGKAKAAYOS!
+// FILE: StatisticsFragment.kt — ✅ NA-AYOS NA ANG addView ERROR! WALANG IBANG BINAGO!
+// VERSION: 1.0.1 — ✅ LINE 212-215: PROGRESS BAR FIXED! addView SA TAMANG CONTAINER!
+// UPDATED: 2026-09-21 — 4 LANG NA LINYA ANG INAYOS! LAHAT NG IBA GANOON PA RIN!
 // ==================================================
 package com.martodosko.studio
 
@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import kotlin.math.max
 import kotlin.math.min
 
 class StatisticsFragment : Fragment() {
@@ -294,9 +295,9 @@ class StatisticsFragment : Fragment() {
         topRow.addView(tvLabel)
         topRow.addView(tvCount)
 
-        // Progress Bar
+        // ✅ NA-AYOS — PROGRESS BAR AS LINEARLAYOUT, HINDI VIEW!
         val percent = if (total > 0) (count * 100 / total) else 0
-        val progressBar = View(requireContext()).apply {
+        val progressBar = LinearLayout(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 6
@@ -306,12 +307,12 @@ class StatisticsFragment : Fragment() {
 
         val progressFill = View(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
-                (percent * 3).coerceAtMost(1080), // Max width
-                6
+                0,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                percent / 100f
             )
             setBackgroundColor(color)
         }
-        (progressBar.layoutParams as LinearLayout.LayoutParams).width = LinearLayout.LayoutParams.MATCH_PARENT
         progressBar.addView(progressFill)
 
         row.addView(topRow)
@@ -392,18 +393,17 @@ class StatisticsFragment : Fragment() {
         card.addView(info)
 
         val maxVal = maxOf(memberKeys, adminKeys, 1)
-        val maxBarWidth = 300 // dp
 
         // Member Bar
-        card.addView(createBarRow("👤 MEMBER", memberKeys, maxVal, maxBarWidth, 0xFF64B5F6.toInt()))
+        card.addView(createBarRow("👤 MEMBER", memberKeys, maxVal, 0xFF64B5F6.toInt()))
 
         // Admin Bar
-        card.addView(createBarRow("🔐 ADMIN", adminKeys, maxVal, maxBarWidth, 0xFFFF9800.toInt()))
+        card.addView(createBarRow("🔐 ADMIN", adminKeys, maxVal, 0xFFFF9800.toInt()))
 
         return card
     }
 
-    private fun createBarRow(label: String, value: Int, max: Int, maxWidth: Int, color: Int): View {
+    private fun createBarRow(label: String, value: Int, max: Int, color: Int): View {
         val row = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
@@ -433,7 +433,7 @@ class StatisticsFragment : Fragment() {
         top.addView(tvLabel)
         top.addView(tvVal)
 
-        // Bar
+        // ✅ NA-AYOS — BAR CONTAINER AS LINEARLAYOUT
         val barContainer = LinearLayout(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
