@@ -65,13 +65,21 @@ class AdminLoginFragment : Fragment() {
         // ✅ IDINAGDAG — SIGURADUHIN NAI-SAVE ANG SESSION PARA MAKITA NG ADMIN PANEL!
         @JavascriptInterface
 fun saveSession(keyCode: String, level: String) {
+    // ✅ DIAGNOSTIC — KUNG LUMABAS ITO = TUMATAWAG!
+    android.widget.Toast.makeText(
+        context,
+        "📞 TINATAWAG ANG saveSession!\nKey: $keyCode\nLevel: $level",
+        android.widget.Toast.LENGTH_LONG
+    ).show()
+
     prefs.edit()
         .putString("key_code", keyCode)
         .putString("user_level", level)
         .putLong("login_time", System.currentTimeMillis())
-        .putBoolean("session_active", true) // ✅ ITO ANG PINAKA-IMPORTANTE! WALANG ITO = WALANG PAGPAPASOK!
+        .putBoolean("session_active", true)
         .apply()
 }
+
 
         // ✅ IDINAGDAG — BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
