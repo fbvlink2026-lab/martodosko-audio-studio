@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ NAKA-CHECK NA ANG SESSION! WALANG IBANG PINAGBAGO!
-// VERSION: 1.0.4 — ✅ session_active FLAG ANG UNANG TINITIGNAN! WALANG BINAWASAN!
-// UPDATED: 2026-09-20 — ORIHINAL NA CODE BUO PA RIN — DAGDAG LANG!
+// FILE: AdminPanelActivity.kt — ✅ MAY DIAGNOSTIC TOAST! MALALAMAN NA ANG SANHI!
+// VERSION: 1.0.5 — ✅ IDINAGDAG: TOAST NA NAGPAPAKITA NG HALAGA NG SESSION! WALANG IBANG PINAGBAGO!
+// UPDATED: 2026-09-20 — ORIHINAL NA CODE BUO PA RIN — DIAGNOSTIC LANG ANG IDINAGDAG!
 // ==================================================
 package com.martodosko.studio
 
@@ -19,7 +19,7 @@ class AdminPanelActivity : Activity() {
     private lateinit var prefs: SharedPreferences
 
     private var currentUserLevel: String = "GUEST"
-    private var isSessionActive: Boolean = false // ✅ IDINAGDAG — FLAG NG SESSION!
+    private var isSessionActive: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +27,14 @@ class AdminPanelActivity : Activity() {
 
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
         
-        // ✅ BASAHIN MUNA — SESSION ACTIVE BA? ANTAS NG USER?
-        isSessionActive = prefs.getBoolean("session_active", false) // ✅ UNANG TINITIGNAN!
+        // ✅ BASAHIN ANG HALAGA
+        isSessionActive = prefs.getBoolean("session_active", false)
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
+        val keyCode = prefs.getString("key_code", "WALA")
 
-        // ✅ TUGMA NA SA LAHAT — HAMBURGER BUKAS, X NASA LOOB NG PANEL!
+        // ✅ DIAGNOSTIC — ITO ANG SASABIHIN KUNG ANO ANG HALAGA!
+        Toast.makeText(this, "🔍 DIAGNOSTIC:\nsession_active = $isSessionActive\nuser_level = $currentUserLevel\nkey_code = $keyCode", Toast.LENGTH_LONG).show()
+
         sideMenu = SideMenu.setup(
             activity = this,
             drawerLayoutId = R.id.drawer_layout,
@@ -45,9 +48,6 @@ class AdminPanelActivity : Activity() {
         loadStats()
     }
 
-    // ==============================================
-    // ✅ PAGTUKOY NG ANTAS — SESSION MUNA BAGO LAHAT!
-    // ==============================================
     private fun checkAccessLevel() {
         val accessTitle = findViewById<TextView>(R.id.admin_access_level)
         val keygenSection = findViewById<LinearLayout>(R.id.section_key_generator)
@@ -55,7 +55,6 @@ class AdminPanelActivity : Activity() {
         val presetSection = findViewById<LinearLayout>(R.id.section_preset_moderation)
         val statsSection = findViewById<LinearLayout>(R.id.section_statistics)
 
-        // ✅ UNANG-UNA — SESSION ACTIVE BA? KUNG HINDI → WALANG PAGPAPASOK!
         if (!isSessionActive) {
             accessTitle.text = "❌ WALANG AKTIBONG SESSION"
             accessTitle.setTextColor(0xFFFF5252.toInt())
@@ -64,11 +63,10 @@ class AdminPanelActivity : Activity() {
             presetSection.visibility = View.GONE
             statsSection.visibility = View.GONE
             Toast.makeText(this, "❌ WALANG PAHINTULOT — Walang aktibong session. Mag-log in muna.", Toast.LENGTH_LONG).show()
-            finish() // ✅ BALIK SA LOGIN SCREEN
+            finish()
             return
         }
 
-        // ✅ MAY SESSION NA — TIGNAN NA ANG ANTAS NG USER
         when (currentUserLevel) {
             "OWNER" -> {
                 accessTitle.text = "👑 OWNER — BUONG KAPANGYARIHAN"
@@ -99,9 +97,6 @@ class AdminPanelActivity : Activity() {
         }
     }
 
-    // ==============================================
-    // ✅ LAHAT NG NASA IBABA — WALANG BINAGO! ORIHINAL PA RIN!
-    // ==============================================
     private fun setupButtons() {
         findViewById<Button>(R.id.btn_generate_key)?.setOnClickListener {
             if (currentUserLevel == "OWNER") generateNewKeyCode()
