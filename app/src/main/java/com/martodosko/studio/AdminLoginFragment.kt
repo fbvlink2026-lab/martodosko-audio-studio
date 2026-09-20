@@ -64,14 +64,14 @@ class AdminLoginFragment : Fragment() {
 
         // ✅ IDINAGDAG — SIGURADUHIN NAI-SAVE ANG SESSION PARA MAKITA NG ADMIN PANEL!
         @JavascriptInterface
-        fun saveSession(keyCode: String, level: String) {
-            prefs.edit()
-                .putString("key_code", keyCode)
-                .putString("user_level", level) // ✅ OWNER / ADMIN / MEMBER
-                .putLong("login_time", System.currentTimeMillis())
-                .putBoolean("session_active", true) // ✅ FLAG — NAKA-ACTIVE BA ANG SESSION!
-                .apply()
-        }
+fun saveSession(keyCode: String, level: String) {
+    prefs.edit()
+        .putString("key_code", keyCode)
+        .putString("user_level", level)
+        .putLong("login_time", System.currentTimeMillis())
+        .putBoolean("session_active", true) // ✅ ITO ANG PINAKA-IMPORTANTE! WALANG ITO = WALANG PAGPAPASOK!
+        .apply()
+}
 
         // ✅ IDINAGDAG — BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
