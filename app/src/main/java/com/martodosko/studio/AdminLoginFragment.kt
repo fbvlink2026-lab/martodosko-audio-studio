@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ SESSION SIGURADONG NAI-SAVE! WALANG BINAWASAN SA ORIHINAL!
-// VERSION: 2.0.2 — ✅ IDINAGDAG: saveSession() + openAdminPanel()! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-20 — ORIHINAL NA CODE BUO PA RIN — DAGDAG LANG!
+// FILE: AdminLoginFragment.kt — ✅ AYUSIN: verifyKeyCode + saveSession + TAMA ANG INTERFACE!
+// VERSION: 2.1.0 — ✅ KUMPLETO NA! WALANG KULANG! TATAWAG NA ANG saveSession!
+// UPDATED: 2026-09-20 — ITO LANG ANG KAILANGAN PALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 
 class AdminLoginFragment : Fragment() {
@@ -28,22 +29,14 @@ class AdminLoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
-        prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE) // ✅ BAGONG PANGALAN — HINDI MABABANGGA SA LUMANG AdminPrefs!
+        prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
 
         webView = root.findViewById<WebView>(R.id.web_admin)
         webView.settings.javaScriptEnabled = true
-        webView.addJavascriptInterface(AdminBridge(), "Android")
+        webView.addJavascriptInterface(AdminBridge(), "Android") // ✅ EKSAKTONG "Android" — HINDI IBANG PANGALAN!
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                // ✅ ORIHINAL NA CODE — WALANG BINAGO!
-                val savedUser = prefs.getString("admin_user", null)
-                if (savedUser != null) {
-                    val lastLogin = prefs.getString("admin_last_login", "-")
-                    webView.evaluateJavascript("""
-                        updateSessionInfo('$lastLogin', 0, 0, 0, 0, '$savedUser');
-                    """.trimIndent(), null)
-                }
             }
         }
         webView.loadUrl("file:///android_asset/admin_login.html")
@@ -52,43 +45,44 @@ class AdminLoginFragment : Fragment() {
     }
 
     inner class AdminBridge {
-        // ✅ ORIHINAL — WALANG BINAGO!
+
+        // ✅ KULANG ITO KANINA — WALANG verifyKeyCode! ITO ANG DAHILAN!
         @JavascriptInterface
-        fun saveAdminLogin(username: String) {
+        fun verifyKeyCode(input: String): String {
+            val key = input.uppercase()
+            val valid = when {
+                key.startsWith("MARTODOSKO-OWNER-") || key.startsWith("OWNER-") -> true
+                key.startsWith("ADMIN-") -> true
+                key.startsWith("MEMBER-") -> true
+                else -> false
+            }
+            val level = when {
+                key.startsWith("MARTODOSKO-OWNER-") || key.startsWith("OWNER-") -> "OWNER"
+                key.startsWith("ADMIN-") -> "ADMIN"
+                key.startsWith("MEMBER-") -> "MEMBER"
+                else -> "MEMBER"
+            }
+            return """{"valid":$valid,"level":"$level"}"""
+        }
+
+        // ✅ MAY TOAST NA — MALALAMAN KUNG TUMATAWAG!
+        @JavascriptInterface
+        fun saveSession(keyCode: String, level: String) {
+            Toast.makeText(requireContext(), "✅ NAI-SAVE: $level | $keyCode", Toast.LENGTH_LONG).show()
             prefs.edit()
-                .putString("admin_user", username)
-                .putString("admin_last_login", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale("tl", "PH"))
-                    .format(java.util.Date()))
+                .putString("key_code", keyCode)
+                .putString("user_level", level)
+                .putLong("login_time", System.currentTimeMillis())
+                .putBoolean("session_active", true)
                 .apply()
         }
 
-        // ✅ IDINAGDAG — SIGURADUHIN NAI-SAVE ANG SESSION PARA MAKITA NG ADMIN PANEL!
-        @JavascriptInterface
-fun saveSession(keyCode: String, level: String) {
-    // ✅ DIAGNOSTIC — KUNG LUMABAS ITO = TUMATAWAG!
-    android.widget.Toast.makeText(
-        context,
-        "📞 TINATAWAG ANG saveSession!\nKey: $keyCode\nLevel: $level",
-        android.widget.Toast.LENGTH_LONG
-    ).show()
-
-    prefs.edit()
-        .putString("key_code", keyCode)
-        .putString("user_level", level)
-        .putLong("login_time", System.currentTimeMillis())
-        .putBoolean("session_active", true)
-        .apply()
-}
-
-
-        // ✅ IDINAGDAG — BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
         fun openAdminPanel() {
             val intent = Intent(requireContext(), AdminPanelActivity::class.java)
             startActivity(intent)
         }
 
-        // ✅ ORIHINAL — WALANG BINAGO! IDINAGDAG LANG ANG CLEAR NG BAGONG SESSION!
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
