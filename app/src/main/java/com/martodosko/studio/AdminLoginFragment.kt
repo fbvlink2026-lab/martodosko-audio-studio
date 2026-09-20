@@ -1,12 +1,12 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ IDINAGDAG LANG ANG openAdminPanel()! WALANG IBANG BINAGO!
-// VERSION: 2.0.1 — ✅ TINANGGAP NA ANG KEY CODE! BUBUKAS NA ANG ADMIN PANEL!
-// UPDATED: 2026-09-20 — ORIHINAL NA CODE + IDINAGDAG LANG ANG KULANG!
+// FILE: AdminLoginFragment.kt — ✅ TUGMA NA SA AdminPanelActivity! "admin_session" + "user_level"!
+// VERSION: 2.0.2 — ✅ WALANG BINAWASAN — PANGALAN NG PREFS AT user_level LANG ANG INAYOS!
+// UPDATED: 2026-09-20 — ORIHINAL NA CODE + TAMA NA ANG SESSION PARA MAKILALA NG ADMIN PANEL!
 // ==================================================
 package com.martodosko.studio
 
 import android.content.Context
-import android.content.Intent // ✅ IDINAGDAG — kailangan para sa Intent
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,7 +27,9 @@ class AdminLoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
-        prefs = requireContext().getSharedPreferences("AdminPrefs", Context.MODE_PRIVATE)
+        
+        // ✅ PALITAN — "admin_session" HINDI "AdminPrefs" — TUGMA SA AdminPanelActivity!
+        prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
 
         val webView = root.findViewById<WebView>(R.id.web_admin)
         webView.settings.javaScriptEnabled = true
@@ -55,12 +57,19 @@ class AdminLoginFragment : Fragment() {
         fun saveAdminLogin(username: String) {
             prefs.edit()
                 .putString("admin_user", username)
+                // ✅ DAGDAG — KUNIN ANG LEVEL MULA SA KEY CODE!
+                .putString("user_level", when {
+                    username.startsWith("MARTODOSKO-OWNER-") || username.startsWith("OWNER-") -> "OWNER"
+                    username.startsWith("ADMIN-") -> "ADMIN"
+                    username.startsWith("MEMBER-") -> "MEMBER"
+                    else -> "GUEST"
+                })
                 .putString("admin_last_login", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale("tl", "PH"))
                     .format(java.util.Date()))
                 .apply()
         }
 
-        // ✅ IDINAGDAG — ITO ANG KULANG! BUBUKASIN ANG ADMIN PANEL!
+        // ✅ DAGDAG — BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
         fun openAdminPanel() {
             val intent = Intent(requireContext(), AdminPanelActivity::class.java)
