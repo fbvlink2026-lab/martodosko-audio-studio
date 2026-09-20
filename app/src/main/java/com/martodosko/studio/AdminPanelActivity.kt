@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ KUMPLETO NA! MAY 🐙 GITHUB TOKEN BUTTON NA!
-// VERSION: 3.2.0 — ✅ 6 BUTTONS LAHAT GUMA-GANA! GITHUB TOKEN + ENCRYPTION!
-// UPDATED: 2026-09-21 — WALANG BINURA — IDINAGDAG LANG ANG GITHUB TOKEN HANDLER!
+// FILE: AdminPanelActivity.kt — ✅ KUMPLETO NA! MAY 📂 FILE EDITOR NA!
+// VERSION: 4.0.0 — ✅ 7 BUTTONS! KEY / GITHUB / FILE EDITOR / PRESETS / USERS / STATS / LOGOUT!
+// UPDATED: 2026-09-21 — IDINAGDAG: 📂 FILE EDITOR — Local ↔ GitHub + Source Code Editing!
 // ==================================================
 package com.martodosko.studio
 
@@ -51,7 +51,7 @@ class AdminPanelActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ KANANG SIDEMENU — 6 BUTTONS NA! KUMPLETO!
+    // ✅ KANANG SIDEMENU — 7 BUTTONS NA! KUMPLETO!
     // ==============================================
     private fun setupAdminSideMenu() {
         findViewById<TextView>(R.id.btn_admin_menu)?.setOnClickListener {
@@ -62,7 +62,7 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 🔑 KEY GENERATOR
+        // 🔑 KEY GENERATOR — 👑 OWNER LANG
         findViewById<TextView>(R.id.btn_admin_keys)?.setOnClickListener {
             if (currentUserLevel == "OWNER") {
                 showFragment(KeyGeneratorFragment())
@@ -72,17 +72,27 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 👤 USER MANAGEMENT
-        findViewById<TextView>(R.id.btn_admin_users)?.setOnClickListener {
+        // 🐙 GITHUB TOKEN SETUP — 👑 OWNER LANG
+        findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
+            if (currentUserLevel == "OWNER") {
+                showFragment(GithubManagerFragment())
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makapag-setup ng GitHub Token!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // ✅ 📂 FILE EDITOR — 👑 OWNER + 🔐 ADMIN — Local ↔ GitHub + Source Code Editing
+        findViewById<TextView>(R.id.btn_admin_file_editor)?.setOnClickListener {
             if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
-                showFragment(UserManagementFragment())
+                showFragment(FileEditorFragment())
             } else {
                 Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
             }
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 📋 PRESET MODERATION
+        // 📋 PRESET MODERATION — 👑 OWNER + 🔐 ADMIN
         findViewById<TextView>(R.id.btn_admin_presets)?.setOnClickListener {
             if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
                 showFragment(PresetModerationFragment())
@@ -92,23 +102,23 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // 📊 ESTATISTIKA
+        // 👤 USER MANAGEMENT — 👑 OWNER + 🔐 ADMIN
+        findViewById<TextView>(R.id.btn_admin_users)?.setOnClickListener {
+            if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
+                showFragment(UserManagementFragment())
+            } else {
+                Toast.makeText(this@AdminPanelActivity, "🔐 ADMIN o OWNER lang ang makakagamit nito!", Toast.LENGTH_SHORT).show()
+            }
+            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
+        }
+
+        // 📊 ESTATISTIKA — Lahat ng naka-login
         findViewById<TextView>(R.id.btn_admin_stats)?.setOnClickListener {
             showFragment(StatisticsFragment())
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
-        // ✅ 🐙 GITHUB TOKEN SETUP — BAGONG DAGDAG! KULANG ITO KANINA!
-        findViewById<TextView>(R.id.btn_admin_github_token)?.setOnClickListener {
-            if (currentUserLevel == "OWNER") {
-                showFragment(GithubManagerFragment()) // ✅ Kasama na ang Token + Encryption sa Fragment
-            } else {
-                Toast.makeText(this@AdminPanelActivity, "👑 OWNER lang ang makapag-setup ng GitHub Token!", Toast.LENGTH_SHORT).show()
-            }
-            drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
-        }
-
-        // 🔐 LOGOUT
+        // 🔐 LOGOUT — Lahat
         findViewById<TextView>(R.id.btn_admin_logout)?.setOnClickListener {
             prefs.edit()
                 .remove("user_level")
