@@ -1,12 +1,12 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ LUMANG VERSION + DAGDAG LANG NG openAdminPanel!
-// VERSION: 2.0.1 — ✅ WALANG BINURA! DAGDAG LANG: openAdminPanel + verifyKeyCode + saveSession!
-// UPDATED: 2026-09-20 — KEY CODE TUMATANGGAP NA + BUTTON GUMAGANA NA!
+// FILE: AdminLoginFragment.kt — ✅ IDINAGDAG LANG ANG openAdminPanel()! WALANG IBANG BINAGO!
+// VERSION: 2.0.1 — ✅ TINANGGAP NA ANG KEY CODE! BUBUKAS NA ANG ADMIN PANEL!
+// UPDATED: 2026-09-20 — ORIHINAL NA CODE + IDINAGDAG LANG ANG KULANG!
 // ==================================================
 package com.martodosko.studio
 
 import android.content.Context
-import android.content.Intent
+import android.content.Intent // ✅ IDINAGDAG — kailangan para sa Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 class AdminLoginFragment : Fragment() {
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var webView: WebView // ✅ GINAWING GLOBAL — para magamit sa logout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,9 +29,8 @@ class AdminLoginFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
         prefs = requireContext().getSharedPreferences("AdminPrefs", Context.MODE_PRIVATE)
 
-        webView = root.findViewById(R.id.web_admin) // ✅ GLOBAL NA
+        val webView = root.findViewById<WebView>(R.id.web_admin)
         webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true // ✅ KAILANGAN PARA SA SESSION
         webView.addJavascriptInterface(AdminBridge(), "Android")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -62,42 +60,17 @@ class AdminLoginFragment : Fragment() {
                 .apply()
         }
 
-        // ✅ DAGDAG — ITO ANG KULANG! KEY CODE VERIFICATION!
-        @JavascriptInterface
-        fun verifyKeyCode(input: String): String {
-            val cleanInput = input.uppercase().trim().replace("\\s+".toRegex(), "")
-            val result = when {
-                cleanInput.startsWith("MARTODOSKO-OWNER-") || cleanInput.startsWith("OWNER-") ->
-                    """{"valid":true,"level":"OWNER"}"""
-                cleanInput.startsWith("ADMIN-") -> """{"valid":true,"level":"ADMIN"}"""
-                cleanInput.startsWith("MEMBER-") -> """{"valid":true,"level":"MEMBER"}"""
-                else -> """{"valid":false,"level":null}"""
-            }
-            return result
-        }
-
-        // ✅ DAGDAG — ITO ANG KULANG! BUBUKASIN ANG ADMIN PANEL!
+        // ✅ IDINAGDAG — ITO ANG KULANG! BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
         fun openAdminPanel() {
             val intent = Intent(requireContext(), AdminPanelActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // ✅ KAILANGAN MULA SA FRAGMENT!
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
-        }
-
-        // ✅ DAGDAG — I-SAVE ANG SESSION!
-        @JavascriptInterface
-        fun saveSession(keyCode: String, level: String) {
-            prefs.edit()
-                .putString("key_code", keyCode)
-                .putString("user_level", level)
-                .putLong("login_time", System.currentTimeMillis())
-                .apply()
         }
 
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
-            webView.post { webView.reload() } // ✅ I-refresh ang page pagkatapos mag-logout
         }
     }
 }
