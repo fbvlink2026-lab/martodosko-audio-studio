@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_admin_panel.xml — ✅ KINOPYA NA ANG HAMBURGER + SIDE_MENU! TUGMA SA MAIN! -->
-<!-- VERSION: 1.1.0 — ✅ btn_hamburger + @layout/side_menu — PAREHO NG MAIN SCREEN! -->
-<!-- UPDATED: 2026-09-20 — WALANG ERROR NA! TUGMA NA SA LAHAT! -->
+<!-- FILE: activity_admin_panel.xml — ✅ EXISTING + RIGHT SIDEMENU! TUGMA SA BUONG APP! -->
+<!-- VERSION: 1.2.0 — ✅ PANATILIHIN ANG EXISTING! IDINAGDAG LANG ANG KANANG ADMIN MENU! -->
+<!-- UPDATED: 2026-09-20 -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,7 +11,7 @@
     android:layout_height="match_parent"
     android:background="#12121F">
 
-    <!-- ✅ PANGUNAHING LAMAN -->
+    <!-- ✅ PANGUNAHING LAMAN — EXISTING! WALANG BINAGO! -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +26,7 @@
             android:background="#1E1E2F"
             android:paddingHorizontal="16dp">
 
-            <!-- ✅ HAMBURGER BUTTON — KINOPYA NANG EKSAKTO! -->
+            <!-- ✅ HAMBURGER BUTTON — EXISTING! -->
             <ImageView
                 android:id="@+id/btn_hamburger"
                 android:layout_width="32dp"
@@ -45,16 +45,27 @@
                 android:textStyle="bold"
                 android:gravity="center"/>
 
+            <!-- ➡️ ✅ BAGO: ADMIN MENU BUTTON SA KANAN! -->
+            <ImageView
+                android:id="@+id/btn_admin_menu"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_settings"
+                android:tint="#40E0D0"
+                android:clickable="true"
+                android:focusable="true"/>
+
             <TextView
                 android:id="@+id/tv_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="v1.0.0"
                 android:textColor="#666666"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
-        <!-- ✅ ADMIN PANEL CONTENT -->
+        <!-- ✅ ADMIN PANEL CONTENT — EXISTING! WALANG BINAGO! -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -269,11 +280,131 @@
         </ScrollView>
     </LinearLayout>
 
-    <!-- ✅ SIDE MENU — GINAYA NA! @layout/side_menu HINDI side_menu_panel! -->
+    <!-- ✅ KALIWA — EXISTING SIDE MENU — WALANG BINAGO! -->
     <include
         layout="@layout/side_menu"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"/>
+
+    <!-- ➡️ ✅ BAGO — KANANG ADMIN SIDEMENU! TUGMA SA KULAY NG APP! -->
+    <LinearLayout
+        android:id="@+id/drawer_admin"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:background="#1A1A2E">
+
+        <!-- HEADER -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:background="#1E1E2F">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⚙️ ADMIN CONTROLS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#40E0D0"/>
+
+            <ImageView
+                android:id="@+id/btn_close_admin_menu"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_close"
+                android:tint="#40E0D0"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2E2E4A"/>
+
+        <!-- MGA BUTTON — TUGMA SA KULAY NG BAWAT SECTION! -->
+        <TextView
+            android:id="@+id/btn_admin_keys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔑 KEY GENERATOR"
+            android:padding="16dp"
+            android:textColor="#FFD700"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btn_admin_users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👤 USER MANAGEMENT"
+            android:padding="16dp"
+            android:textColor="#03DAC6"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btn_admin_presets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 PRESET MODERATION"
+            android:padding="16dp"
+            android:textColor="#BB86FC"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btn_admin_stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 ESTATISTIKA"
+            android:padding="16dp"
+            android:textColor="#FFD700"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#2E2E4A"
+            android:layout_marginVertical="8dp"/>
+
+        <TextView
+            android:id="@+id/btn_admin_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔐 MAG-LOGOUT"
+            android:padding="16dp"
+            android:textColor="#FF5252"
+            android:textSize="15sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Martodosko Audio Studio"
+            android:padding="16dp"
+            android:textColor="#666"
+            android:textSize="12sp"
+            android:gravity="center"/>
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
