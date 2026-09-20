@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ TUGMA NA SA SIDEMENU NG MAIN/MIXER!
-// VERSION: 1.0.3 — ✅ HAMBURGER BUKAS + X NASA LOOB NG PANEL! WALANG IBANG PINAGBAGO!
-// UPDATED: 2026-09-20 — PAREHO NA NG DESIGN SA LAHAT NG SCREEN! BUILD NA!
+// FILE: AdminPanelActivity.kt — ✅ NAKA-CHECK NA ANG SESSION! WALANG IBANG PINAGBAGO!
+// VERSION: 1.0.4 — ✅ session_active FLAG ANG UNANG TINITIGNAN! WALANG BINAWASAN!
+// UPDATED: 2026-09-20 — ORIHINAL NA CODE BUO PA RIN — DAGDAG LANG!
 // ==================================================
 package com.martodosko.studio
 
@@ -19,20 +19,24 @@ class AdminPanelActivity : Activity() {
     private lateinit var prefs: SharedPreferences
 
     private var currentUserLevel: String = "GUEST"
+    private var isSessionActive: Boolean = false // ✅ IDINAGDAG — FLAG NG SESSION!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_panel)
 
         prefs = getSharedPreferences("admin_session", Context.MODE_PRIVATE)
+        
+        // ✅ BASAHIN MUNA — SESSION ACTIVE BA? ANTAS NG USER?
+        isSessionActive = prefs.getBoolean("session_active", false) // ✅ UNANG TINITIGNAN!
         currentUserLevel = prefs.getString("user_level", "GUEST") ?: "GUEST"
 
         // ✅ TUGMA NA SA LAHAT — HAMBURGER BUKAS, X NASA LOOB NG PANEL!
         sideMenu = SideMenu.setup(
             activity = this,
             drawerLayoutId = R.id.drawer_layout,
-            btnOpenMenuId = R.id.btn_hamburger,   // 🍔 BUKAS — nasa Top Bar
-            btnCloseMenuId = R.id.btn_close_menu, // ❌ SARA — nasa loob ng side_menu_panel
+            btnOpenMenuId = R.id.btn_hamburger,
+            btnCloseMenuId = R.id.btn_close_menu,
             tvVersionId = R.id.tv_version
         )
 
@@ -42,7 +46,7 @@ class AdminPanelActivity : Activity() {
     }
 
     // ==============================================
-    // ✅ PAGTUKOY NG ANTAS — ANO ANG MAKIKITA NG USER?
+    // ✅ PAGTUKOY NG ANTAS — SESSION MUNA BAGO LAHAT!
     // ==============================================
     private fun checkAccessLevel() {
         val accessTitle = findViewById<TextView>(R.id.admin_access_level)
@@ -51,6 +55,20 @@ class AdminPanelActivity : Activity() {
         val presetSection = findViewById<LinearLayout>(R.id.section_preset_moderation)
         val statsSection = findViewById<LinearLayout>(R.id.section_statistics)
 
+        // ✅ UNANG-UNA — SESSION ACTIVE BA? KUNG HINDI → WALANG PAGPAPASOK!
+        if (!isSessionActive) {
+            accessTitle.text = "❌ WALANG AKTIBONG SESSION"
+            accessTitle.setTextColor(0xFFFF5252.toInt())
+            keygenSection.visibility = View.GONE
+            userSection.visibility = View.GONE
+            presetSection.visibility = View.GONE
+            statsSection.visibility = View.GONE
+            Toast.makeText(this, "❌ WALANG PAHINTULOT — Walang aktibong session. Mag-log in muna.", Toast.LENGTH_LONG).show()
+            finish() // ✅ BALIK SA LOGIN SCREEN
+            return
+        }
+
+        // ✅ MAY SESSION NA — TIGNAN NA ANG ANTAS NG USER
         when (currentUserLevel) {
             "OWNER" -> {
                 accessTitle.text = "👑 OWNER — BUONG KAPANGYARIHAN"
@@ -75,13 +93,14 @@ class AdminPanelActivity : Activity() {
                 userSection.visibility = View.GONE
                 presetSection.visibility = View.GONE
                 statsSection.visibility = View.GONE
-                Toast.makeText(this, "Wala kang pahintulot na buksan ang Admin Panel.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "❌ WALANG PAHINTULOT — Hindi sapat ang antas ng iyong Key.", Toast.LENGTH_LONG).show()
+                finish()
             }
         }
     }
 
     // ==============================================
-    // ✅ PAG-SETUP NG MGA BUTTON
+    // ✅ LAHAT NG NASA IBABA — WALANG BINAGO! ORIHINAL PA RIN!
     // ==============================================
     private fun setupButtons() {
         findViewById<Button>(R.id.btn_generate_key)?.setOnClickListener {
@@ -108,9 +127,6 @@ class AdminPanelActivity : Activity() {
         }
     }
 
-    // ==============================================
-    // ✅ KEY CODE GENERATOR — 👑 OWNER LANG!
-    // ==============================================
     private fun generateNewKeyCode() {
         val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         val newKey = StringBuilder()
@@ -137,27 +153,18 @@ class AdminPanelActivity : Activity() {
         keyList.text = if (keys.isEmpty()) "Wala pang nalikhang Key Code." else keys.joinToString("\n✅ ")
     }
 
-    // ==============================================
-    // ✅ USER MANAGEMENT — ADMIN + OWNER
-    // ==============================================
     private fun loadUserList() {
         val userList = findViewById<TextView>(R.id.tv_user_list)
         val users = prefs.getStringSet("registered_members", emptySet()) ?: emptySet()
         userList.text = if (users.isEmpty()) "Wala pang rehistradong miyembro." else users.joinToString("\n👤 ")
     }
 
-    // ==============================================
-    // ✅ PRESET MODERATION — ADMIN + OWNER
-    // ==============================================
     private fun loadPresetList() {
         val presetList = findViewById<TextView>(R.id.tv_preset_list)
         val pending = prefs.getStringSet("pending_presets", emptySet()) ?: emptySet()
         presetList.text = if (pending.isEmpty()) "Walang nakabinbing preset na kailangang suriin." else pending.joinToString("\n📋 ")
     }
 
-    // ==============================================
-    // ✅ ESTATISTIKA — LAHAT NG MAY KARAPATAN
-    // ==============================================
     private fun loadStats() {
         val totalKeys = prefs.getStringSet("member_keys", emptySet())?.size ?: 0
         val totalMembers = prefs.getStringSet("registered_members", emptySet())?.size ?: 0
