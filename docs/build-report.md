@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-20 21:42 UTC
-🏷️ **Bersyon:** v1.0.259
+📅 **Petsa:** 2026-09-20 21:52 UTC
+🏷️ **Bersyon:** v1.0.260
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-20 21:42:11 UTC
-🏷️ BERSYON:    v1.0.259
+⏰ ORAS:       2026-09-20 21:52:22 UTC
+🏷️ BERSYON:    v1.0.260
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -35,24 +35,45 @@ Daemon will be stopped at the end of the build
 > Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
-
+> Task :app:packageReleaseResources
 > Task :app:mergeReleaseResources FAILED
-ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.kt: Resource and asset merger: The file name must end with .xml
 
-FAILURE: Build failed with an exception.
+> Task :app:parseReleaseLocalResources FAILED
+[Fatal Error] fragment_github_manager.xml:159:40: The entity name must immediately follow the '&' in the entity reference.
 
+FAILURE: Build completed with 2 failures.
+
+1: Task failed with an exception.
+-----------
 * What went wrong:
 Execution failed for task ':app:mergeReleaseResources'.
-> /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.kt: Error: The file name must end with .xml
+> A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
+   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[159,40]
+     Message: The entity name must immediately follow the '&' in the entity reference.). Check logs for more details.
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
 > Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
+==============================================================================
 
-BUILD FAILED in 20s
-7 actionable tasks: 6 executed, 1 up-to-date
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:parseReleaseLocalResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.ParseLibraryResourcesTask$ParseResourcesRunnable
+   > Failed to parse XML file '/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/intermediates/packaged_res/release/layout/fragment_github_manager.xml'
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 24s
+9 actionable tasks: 8 executed, 1 up-to-date
 
 ==================================================
 
