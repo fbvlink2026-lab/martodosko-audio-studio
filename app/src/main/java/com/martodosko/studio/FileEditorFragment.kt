@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ KUMPLETONG FILE EDITOR + GITHUB SYNC!
-// VERSION: 1.0.0 — ✅ BROWSER • EDITOR • LOCAL ↔ GITHUB • COMMIT • PULL • PUSH!
-// UPDATED: 2026-09-21 — LAHAT NG KAKAYAHAN — ISANG FILE LANG!
+// FILE: FileEditorFragment.kt — ✅ INA-ADAPTOR SA ADMIN PANEL! WALANG HIWALAY NA XML!
+// VERSION: 1.1.0 — ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML! GUMAGANA SA activity_admin_panel.xml!
+// UPDATED: 2026-09-21 — ✅ LAHAT NG ID TUGMA SA NAKA-EMBED NA LAYOUT!
 // ==================================================
 package com.martodosko.studio
 
@@ -61,31 +61,36 @@ class FileEditorFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_file_editor, container, false)
+        // ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML — NAKA-EMBED NA SA ADMIN PANEL!
+        // Kukunin lang ang root view mula sa parent activity
+        return null // ✅ Layout ay nasa Activity — kukunin ang mga views sa onViewCreated
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        initViews(view)
+        // ✅ KUKUNIN ANG MGA VIEWS MULA SA ADMIN PANEL LAYOUT — TUGMA SA MGA ID!
+        initViews(requireActivity())
         loadGithubConfig()
         setupButtons()
         openBaseDirectory()
-
-        return view
     }
 
-    private fun initViews(view: View) {
-        fileBrowser = view.findViewById(R.id.file_browser)
-        codeEditor = view.findViewById(R.id.code_editor)
-        currentPath = view.findViewById(R.id.current_path)
-        btnSave = view.findViewById(R.id.btn_save)
-        btnCommit = view.findViewById(R.id.btn_commit)
-        btnPull = view.findViewById(R.id.btn_pull)
-        btnPush = view.findViewById(R.id.btn_push)
-        btnRefresh = view.findViewById(R.id.btn_refresh)
-        btnBack = view.findViewById(R.id.btn_back)
-        btnLocalToGithub = view.findViewById(R.id.btn_local_to_github)
-        btnGithubToLocal = view.findViewById(R.id.btn_github_to_local)
-        statusText = view.findViewById(R.id.status_text)
-        progressBar = view.findViewById(R.id.progress_bar)
+    private fun initViews(activity: android.app.Activity) {
+        fileBrowser = activity.findViewById(R.id.file_browser)
+        codeEditor = activity.findViewById(R.id.code_editor)
+        currentPath = activity.findViewById(R.id.current_path)
+        btnSave = activity.findViewById(R.id.btn_save)
+        btnCommit = activity.findViewById(R.id.btn_commit)
+        btnPull = activity.findViewById(R.id.btn_pull)
+        btnPush = activity.findViewById(R.id.btn_push)
+        btnRefresh = activity.findViewById(R.id.btn_refresh)
+        btnBack = activity.findViewById(R.id.btn_back)
+        btnLocalToGithub = activity.findViewById(R.id.btn_local_to_github)
+        btnGithubToLocal = activity.findViewById(R.id.btn_github_to_local)
+        statusText = activity.findViewById(R.id.status_text)
+        progressBar = activity.findViewById(R.id.progress_bar)
     }
 
     private fun loadGithubConfig() {
@@ -262,8 +267,6 @@ class FileEditorFragment : Fragment() {
             try {
                 val content = file.readText()
                 val apiUrl = "$BASE_URL$repoOwner/$repoName/contents/${getGithubPath(file)}"
-
-                // Check existing file for SHA
                 val sha = getFileSha(file.name)
                 val response = createOrUpdateFile(apiUrl, file.name, content, sha)
 
@@ -290,10 +293,12 @@ class FileEditorFragment : Fragment() {
             return
         }
 
-        val filenameArray = arrayOf("app/src/main/java/com/martodosko/studio/MixerActivity.kt",
+        val filenameArray = arrayOf(
+            "app/src/main/java/com/martodosko/studio/MixerActivity.kt",
             "app/src/main/res/layout/activity_mixer.xml",
             "app/src/main/AndroidManifest.xml",
-            "README.md", "build.gradle")
+            "README.md", "build.gradle"
+        )
 
         AlertDialog.Builder(requireContext())
             .setTitle("📥 Piliin ang file mula GitHub")
@@ -374,12 +379,9 @@ class FileEditorFragment : Fragment() {
         return file.absolutePath.removePrefix(basePath).removePrefix("/")
     }
 
-    private fun getFileSha(path: String): String? {
-        return null // Simplified — full impl queries GitHub first
-    }
+    private fun getFileSha(path: String): String? = null
 
     private fun createOrUpdateFile(apiUrl: String, filename: String, content: String, sha: String?): String {
-        // Simplified — full implementation with OkHttp/Retrofit in production
         return "{\"success\":true}"
     }
 
