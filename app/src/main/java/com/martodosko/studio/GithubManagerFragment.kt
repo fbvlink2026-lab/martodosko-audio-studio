@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: GithubManagerFragment.kt — ✅ REWORKED! WALANG XML! BINUBUO LAHAT SA KOTLIN!
-// VERSION: 2.0.0 — ✅ TOKEN ENCRYPT/DECRYPT • VERIFY • SAVE • CLEAR! WALANG FINDBYVIEWID!
-// UPDATED: 2026-09-21 — LAHAT NG UI BINUO SA onCreateView! WALANG XML KAILANGAN!
+// FILE: GithubManagerFragment.kt — ✅ NA-AYOS NA! NULL SAFETY FIXED!
+// VERSION: 2.0.1 — ✅ Line 336: ?: "" ADDED! WALANG IBANG BINAGO!
+// UPDATED: 2026-09-21 — 2 LINYA LANG ANG PINALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -326,8 +326,9 @@ class GithubManagerFragment : Fragment() {
     // ==============================================
     private fun verifyToken() {
         val encryptedToken = prefs.getString(ENCRYPTED_TOKEN_KEY, null)
-        val owner = prefs.getString(REPO_OWNER_KEY, "")
-        val repo = prefs.getString(REPO_NAME_KEY, "")
+        // ✅ NA-AYOS — ?: "" PARA IWAS NULL ERROR
+        val owner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
+        val repo = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
         if (encryptedToken == null) {
             showStatus("❌ Walang naka-save na Token! I-save muna.", false)
