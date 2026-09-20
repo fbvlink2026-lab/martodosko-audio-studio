@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ INAYOS ANG DALAWANG SANHI! KEY CODE TATANGGAPIN NA! BUBUKAS NA!
-// VERSION: 2.1.1 — ✅ TINANGGAL ANG PUWANG SA KEY CODE + MAY FLAG NA SA INTENT!
-// UPDATED: 2026-09-20 — ORIHINAL NA STRUCTURE — DALAWANG LINYA LANG ANG INAYOS!
+// FILE: AdminLoginFragment.kt — ✅ NAILAGAY NA ANG openAdminPanel()! BUBUKAS NA!
+// VERSION: 2.1.0 — ✅ IDINAGDAG: openAdminPanel() + verifyKeyCode() + saveSession()! WALANG BINURA!
+// UPDATED: 2026-09-20 — KASAMA NA ANG LAHAT NG KAILANGANG BRIDGE!
 // ==================================================
 package com.martodosko.studio
 
@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment
 class AdminLoginFragment : Fragment() {
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var webView: WebView
+    private lateinit var webView: WebView // ✅ GINAWING GLOBAL — para magamit sa logout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,13 +30,14 @@ class AdminLoginFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
         prefs = requireContext().getSharedPreferences("AdminPrefs", Context.MODE_PRIVATE)
 
-        webView = root.findViewById(R.id.web_admin)
+        webView = root.findViewById<WebView>(R.id.web_admin) // ✅ GLOBAL NA
         webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
+        webView.settings.domStorageEnabled = true // ✅ IDINAGDAG — para sa session
         webView.addJavascriptInterface(AdminBridge(), "Android")
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                // ✅ Kung may naka-save na login — i-load agad
                 val savedUser = prefs.getString("admin_user", null)
                 if (savedUser != null) {
                     val lastLogin = prefs.getString("admin_last_login", "-")
@@ -47,6 +48,7 @@ class AdminLoginFragment : Fragment() {
             }
         }
         webView.loadUrl("file:///android_asset/admin_login.html")
+
         return root
     }
 
@@ -60,30 +62,28 @@ class AdminLoginFragment : Fragment() {
                 .apply()
         }
 
-        // ✅ INAYOS — MAY FLAG NA! SIGURADONG BUBUKAS NA!
+        // ✅ IDINAGDAG — ITO ANG KULANG! BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
         fun openAdminPanel() {
             val intent = Intent(requireContext(), AdminPanelActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // ✅ ITO ANG KULANG!
             startActivity(intent)
         }
 
-        // ✅ INAYOS — TINANGGAL ANG LAHAT NG PUWANG! TUMATANGGAP NA ANG KEY CODE!
+        // ✅ IDINAGDAG — KEY CODE VERIFICATION — tugma sa HTML!
         @JavascriptInterface
         fun verifyKeyCode(input: String): String {
-            // ✅ TANGGALIN ANG LAHAT NG PUWANG — KAHIT SA LOOB NG KEY CODE!
-            val cleanInput = input.uppercase().trim().replace("\\s+".toRegex(), "")
-            
+            val trimmed = input.uppercase().trim()
             val result = when {
-                cleanInput.startsWith("MARTODOSKO-OWNER-") || cleanInput.startsWith("OWNER-") ->
+                trimmed.startsWith("MARTODOSKO-OWNER-") || trimmed.startsWith("OWNER-") ->
                     """{"valid":true,"level":"OWNER"}"""
-                cleanInput.startsWith("ADMIN-") -> """{"valid":true,"level":"ADMIN"}"""
-                cleanInput.startsWith("MEMBER-") -> """{"valid":true,"level":"MEMBER"}"""
+                trimmed.startsWith("ADMIN-") -> """{"valid":true,"level":"ADMIN"}"""
+                trimmed.startsWith("MEMBER-") -> """{"valid":true,"level":"MEMBER"}"""
                 else -> """{"valid":false,"level":null}"""
             }
             return result
         }
 
+        // ✅ IDINAGDAG — I-SAVE ANG SESSION — tugma sa HTML!
         @JavascriptInterface
         fun saveSession(keyCode: String, level: String) {
             prefs.edit()
@@ -96,6 +96,7 @@ class AdminLoginFragment : Fragment() {
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
+            // ✅ I-refresh ang page pagkatapos mag-logout
             webView.post { webView.reload() }
         }
     }
