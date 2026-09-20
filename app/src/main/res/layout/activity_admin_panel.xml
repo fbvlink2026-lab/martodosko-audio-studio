@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_admin_panel.xml — ✅ KUMPLETO NA! MAY 📂 FILE EDITOR NA! -->
-<!-- VERSION: 3.0.0 — ✅ 7 BUTTONS NA! KEY / GITHUB / FILE EDITOR / PRESETS / USERS / STATS / LOGOUT! -->
-<!-- UPDATED: 2026-09-21 — IDINAGDAG: 📂 FILE EDITOR — Local ↔ GitHub + Source Code Editing! -->
+<!-- FILE: activity_admin_panel.xml — ✅ LAHAT NASA ISANG FILE! WALANG HIWALAY NA XML! -->
+<!-- VERSION: 3.1.0 — ✅ TINANGGAL ANG KAILANGAN SA fragment_github_manager.xml! LAHAT FRAGMENT = KOTLIN-ONLY! -->
+<!-- UPDATED: 2026-09-21 — ✅ WALANG & NA ERROR — LAHAT NG TEKSTO NASA KOTLIN! -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- ✅ TOP BAR — WALANG BINAGO! -->
+        <!-- ✅ TOP BAR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -67,7 +67,7 @@
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
 
-        <!-- ✅ ACCESS LEVEL TITLE — NAKITA PALAGI SA TAAS! -->
+        <!-- ✅ ACCESS LEVEL TITLE -->
         <TextView
             android:id="@+id/admin_access_level"
             android:layout_width="match_parent"
@@ -79,7 +79,7 @@
             android:gravity="center"
             android:layout_marginBottom="8dp"/>
 
-        <!-- ✅ FRAGMENT CONTAINER — DITO ILALAGAY ANG LAHAT NG SEKSYON! -->
+        <!-- ✅ FRAGMENT CONTAINER — DITO ILALAGAY ANG LAHAT NG FRAGMENT! LAHAT UI GINAGAWA SA KOTLIN! -->
         <FrameLayout
             android:id="@+id/admin_content_container"
             android:layout_width="match_parent"
@@ -88,14 +88,14 @@
 
     </LinearLayout>
 
-    <!-- ✅ KALIWA — SIDE MENU — WALANG BINAGO! -->
+    <!-- ✅ KALIWA — SIDE MENU -->
     <include
         layout="@layout/side_menu"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"/>
 
-    <!-- ✅ KANANG ADMIN SIDEMENU — ✅ KUMPLETO NA! LAHAT NG KAKAYAHAN! -->
+    <!-- ✅ KANANG ADMIN SIDEMENU — 8 BUTTONS! KUMPLETO! -->
     <LinearLayout
         android:id="@+id/drawer_admin"
         android:layout_width="280dp"
@@ -139,22 +139,22 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#2E2E4A"/>
-        <!-- 🏠 HOME BUTTON — PINAKA-UNA! BUMABALIK SA REPORT BOARD! -->
-<TextView
-    android:id="@+id/btn_admin_home"
-    android:layout_width="match_parent"
-    android:layout_height="52dp"
-    android:text="🏠  HOME"
-    android:textSize="15sp"
-    android:textStyle="bold"
-    android:textColor="#FFD700"
-    android:gravity="center_vertical"
-    android:paddingStart="20dp"
-    android:layout_marginBottom="4dp"
-    android:background="#252538"/>
 
+        <!-- 🏠 HOME BUTTON -->
+        <TextView
+            android:id="@+id/btn_admin_home"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="🏠  HOME"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#FFD700"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:layout_marginBottom="4dp"
+            android:background="#252538"/>
 
-        <!-- 👑 OWNER LANG — 🔑 KEY GENERATOR -->
+        <!-- 🔑 KEY GENERATOR -->
         <TextView
             android:id="@+id/btn_admin_keys"
             android:layout_width="match_parent"
@@ -164,10 +164,9 @@
             android:textColor="#FFD700"
             android:textSize="15sp"
             android:clickable="true"
-            android:focusable="true"
-            android:tag="OWNER"/>
+            android:focusable="true"/>
 
-        <!-- 👑 OWNER LANG — 🐙 GITHUB TOKEN SETUP -->
+        <!-- 🐙 GITHUB TOKEN -->
         <TextView
             android:id="@+id/btn_admin_github_token"
             android:layout_width="match_parent"
@@ -177,10 +176,9 @@
             android:textColor="#40E0D0"
             android:textSize="15sp"
             android:clickable="true"
-            android:focusable="true"
-            android:tag="OWNER"/>
+            android:focusable="true"/>
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 📂 FILE EDITOR: Local ↔ GitHub + Source Code Editing -->
+        <!-- 📂 FILE EDITOR -->
         <TextView
             android:id="@+id/btn_admin_file_editor"
             android:layout_width="match_parent"
@@ -191,10 +189,9 @@
             android:textSize="15sp"
             android:clickable="true"
             android:focusable="true"
-            android:tag="ADMIN"
             android:layout_marginTop="4dp"/>
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 📋 PRESET MODERATION -->
+        <!-- 📋 PRESET MODERATION -->
         <TextView
             android:id="@+id/btn_admin_presets"
             android:layout_width="match_parent"
@@ -204,10 +201,9 @@
             android:textColor="#BB86FC"
             android:textSize="15sp"
             android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"/>
+            android:focusable="true"/>
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 👤 USER MANAGEMENT -->
+        <!-- 👤 USER MANAGEMENT -->
         <TextView
             android:id="@+id/btn_admin_users"
             android:layout_width="match_parent"
@@ -217,10 +213,9 @@
             android:textColor="#03DAC6"
             android:textSize="15sp"
             android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"/>
+            android:focusable="true"/>
 
-        <!-- 👑 OWNER + 🔐 ADMIN — 📊 ESTATISTIKA -->
+        <!-- 📊 ESTATISTIKA -->
         <TextView
             android:id="@+id/btn_admin_stats"
             android:layout_width="match_parent"
@@ -230,8 +225,7 @@
             android:textColor="#FFD700"
             android:textSize="15sp"
             android:clickable="true"
-            android:focusable="true"
-            android:tag="ADMIN"/>
+            android:focusable="true"/>
 
         <View
             android:layout_width="match_parent"
@@ -239,7 +233,7 @@
             android:background="#2E2E4A"
             android:layout_marginVertical="8dp"/>
 
-        <!-- LAHAT — 🔐 LOGOUT -->
+        <!-- 🔐 LOGOUT -->
         <TextView
             android:id="@+id/btn_admin_logout"
             android:layout_width="match_parent"
