@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-20 23:32 UTC
-🏷️ **Bersyon:** v1.0.265
+📅 **Petsa:** 2026-09-20 23:44 UTC
+🏷️ **Bersyon:** v1.0.266
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-20 23:32:50 UTC
-🏷️ BERSYON:    v1.0.265
+⏰ ORAS:       2026-09-20 23:44:04 UTC
+🏷️ BERSYON:    v1.0.266
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -44,6 +44,7 @@ Daemon will be stopped at the end of the build
 > Task :app:processReleaseManifest
 > Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
@@ -51,9 +52,9 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:desugarReleaseFileDependencies
 > Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseResources
 > Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
-> Task :app:processReleaseManifestForPackage
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -63,9 +64,8 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseResources
-> Task :app:mergeExtDexRelease
 > Task :app:optimizeReleaseResources
+> Task :app:mergeExtDexRelease
 
 > Task :app:compileReleaseKotlin FAILED
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt:37:5 Platform declaration clash: The following declarations have the same JVM signature (getRepoOwner()Ljava/lang/String;):
@@ -94,7 +94,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 57s
+BUILD FAILED in 46s
 32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
