@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
-<!-- FILE: activity_admin_panel.xml — ✅ EXISTING + RIGHT SIDEMENU! TUGMA SA BUONG APP! -->
-<!-- VERSION: 1.2.0 — ✅ PANATILIHIN ANG EXISTING! IDINAGDAG LANG ANG KANANG ADMIN MENU! -->
+<!-- FILE: activity_admin_panel.xml — ✅ AYUSIN: WALANG MISSING DRAWABLE! EMOJI NA LANG! -->
+<!-- VERSION: 1.2.1 — ✅ ic_settings → ⚙️ TEXT | ic_close → ✕ TEXT! WALANG ERROR NA! -->
 <!-- UPDATED: 2026-09-20 -->
 <!-- ================================================== -->
 <androidx.drawerlayout.widget.DrawerLayout
@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- ✅ TOP BAR — KINOPYA MULA SA activity_main.xml! -->
+        <!-- ✅ TOP BAR -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -45,15 +45,17 @@
                 android:textStyle="bold"
                 android:gravity="center"/>
 
-            <!-- ➡️ ✅ BAGO: ADMIN MENU BUTTON SA KANAN! -->
-            <ImageView
+            <!-- ➡️ ✅ AYUSIN: ⚙️ TEXT NA LANG — WALANG KAILANGANG DRAWABLE! -->
+            <TextView
                 android:id="@+id/btn_admin_menu"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_settings"
-                android:tint="#40E0D0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚙️"
+                android:textColor="#40E0D0"
+                android:textSize="22sp"
                 android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="true"
+                android:paddingHorizontal="8dp"/>
 
             <TextView
                 android:id="@+id/tv_version"
@@ -287,7 +289,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"/>
 
-    <!-- ➡️ ✅ BAGO — KANANG ADMIN SIDEMENU! TUGMA SA KULAY NG APP! -->
+    <!-- ➡️ ✅ KANANG ADMIN SIDEMENU — AYUSIN: ✕ TEXT NA LANG ANG CLOSE BUTTON! -->
     <LinearLayout
         android:id="@+id/drawer_admin"
         android:layout_width="280dp"
@@ -314,14 +316,17 @@
                 android:textStyle="bold"
                 android:textColor="#40E0D0"/>
 
-            <ImageView
+            <!-- ✅ AYUSIN: ✕ TEXT NA LANG — WALANG KAILANGANG DRAWABLE! -->
+            <TextView
                 android:id="@+id/btn_close_admin_menu"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_close"
-                android:tint="#40E0D0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✕"
+                android:textColor="#40E0D0"
+                android:textSize="20sp"
                 android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="true"
+                android:padding="4dp"/>
         </LinearLayout>
 
         <View
