@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ MAY saveSession() NA! TUGMA SA HTML! MAY KAPANGYARIHAN NA!
-// VERSION: 2.0.4 — ✅ IDINAGDAG LANG ANG saveSession() — TINATAWAG NG HTML! WALANG IBANG BINAGO!
-// UPDATED: 2026-09-20 — ORIHINAL NA CODE + saveSession LANG ANG IDINAGDAG!
+// FILE: AdminLoginFragment.kt — ✅ TAMA NA ANG verifyKeyCode + saveSession! MAY KAPANGYARIHAN NA!
+// VERSION: 2.0.5 — ✅ TUGMA SA HTML! TAMA ANG JSON! NAI-SAVE ANG user_level!
+// UPDATED: 2026-09-20 — WALANG IBANG BINAGO!
 // ==================================================
 package com.martodosko.studio
 
@@ -27,25 +27,12 @@ class AdminLoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_admin_login, container, false)
-        
-        // ✅ PAREHO SA AdminPanelActivity — "admin_session"!
         prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
 
         val webView = root.findViewById<WebView>(R.id.web_admin)
         webView.settings.javaScriptEnabled = true
         webView.addJavascriptInterface(AdminBridge(), "Android")
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                val savedUser = prefs.getString("admin_user", null)
-                if (savedUser != null) {
-                    val lastLogin = prefs.getString("admin_last_login", "-")
-                    webView.evaluateJavascript("""
-                        updateSessionInfo('$lastLogin', 0, 0, 0, 0, '$savedUser');
-                    """.trimIndent(), null)
-                }
-            }
-        }
+        webView.webViewClient = object : WebViewClient() {}
         webView.loadUrl("file:///android_asset/admin_login.html")
 
         return root
@@ -53,7 +40,20 @@ class AdminLoginFragment : Fragment() {
 
     inner class AdminBridge {
 
-        // ✅ IDINAGDAG — ITO ANG TINATAWAG NG HTML! saveSession HINDI saveAdminLogin!
+        // ✅ TAMA ANG JSON FORMAT — KAILANGAN PARA MAPARSE NG HTML!
+        @JavascriptInterface
+        fun verifyKeyCode(input: String): String {
+            val cleanInput = input.uppercase().trim().replace("\\s+".toRegex(), "")
+            return when {
+                cleanInput.startsWith("MARTODOSKO-OWNER-") || cleanInput.startsWith("OWNER-") ->
+                    """{"valid":true,"level":"OWNER"}"""
+                cleanInput.startsWith("ADMIN-") -> """{"valid":true,"level":"ADMIN"}"""
+                cleanInput.startsWith("MEMBER-") -> """{"valid":true,"level":"MEMBER"}"""
+                else -> """{"valid":false,"level":null}"""
+            }
+        }
+
+        // ✅ TINATAWAG NG HTML PAGKATAPOS MAG-VERIFY — I-SAVE ANG USER_LEVEL!
         @JavascriptInterface
         fun saveSession(keyCode: String, level: String) {
             prefs.edit()
@@ -64,24 +64,6 @@ class AdminLoginFragment : Fragment() {
                 .apply()
         }
 
-        // ✅ ORIHINAL — NANDOON PA RIN!
-        @JavascriptInterface
-        fun saveAdminLogin(username: String) {
-            val level = when {
-                username.startsWith("MARTODOSKO-OWNER-") || username.startsWith("OWNER-") -> "OWNER"
-                username.startsWith("ADMIN-") -> "ADMIN"
-                username.startsWith("MEMBER-") -> "MEMBER"
-                else -> "GUEST"
-            }
-            prefs.edit()
-                .putString("admin_user", username)
-                .putString("user_level", level)
-                .putString("admin_last_login", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale("tl", "PH"))
-                    .format(java.util.Date()))
-                .apply()
-        }
-
-        // ✅ BUBUKASIN ANG ADMIN PANEL!
         @JavascriptInterface
         fun openAdminPanel() {
             val intent = Intent(requireContext(), AdminPanelActivity::class.java)
@@ -89,7 +71,6 @@ class AdminLoginFragment : Fragment() {
             startActivity(intent)
         }
 
-        // ✅ LOGOUT — ORIHINAL PA RIN!
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
