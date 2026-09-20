@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-20 21:52 UTC
-🏷️ **Bersyon:** v1.0.260
+📅 **Petsa:** 2026-09-20 22:16 UTC
+🏷️ **Bersyon:** v1.0.261
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-20 21:52:22 UTC
-🏷️ BERSYON:    v1.0.260
+⏰ ORAS:       2026-09-20 22:16:04 UTC
+🏷️ BERSYON:    v1.0.261
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -36,44 +36,59 @@ Daemon will be stopped at the end of the build
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
-> Task :app:mergeReleaseResources FAILED
+> Task :app:mergeReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:parseReleaseLocalResources
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:javaPreCompileRelease
+> Task :app:extractProguardFiles
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:desugarReleaseFileDependencies
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:mergeReleaseArtProfile
+> Task :app:processReleaseManifestForPackage
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:validateSigningRelease
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseResources FAILED
+> Task :app:mergeExtDexRelease
 
-> Task :app:parseReleaseLocalResources FAILED
-[Fatal Error] fragment_github_manager.xml:159:40: The entity name must immediately follow the '&' in the entity reference.
+FAILURE: Build failed with an exception.
 
-FAILURE: Build completed with 2 failures.
-
-1: Task failed with an exception.
------------
 * What went wrong:
-Execution failed for task ':app:mergeReleaseResources'.
-> A failure occurred while executing com.android.build.gradle.internal.res.ResourceCompilerRunnable
-   > Resource compilation failed (Failed to compile resource file: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.xml: . Cause: javax.xml.stream.XMLStreamException: ParseError at [row,col]:[159,40]
-     Message: The entity name must immediately follow the '&' in the entity reference.). Check logs for more details.
+Execution failed for task ':app:processReleaseResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+   > Android resource linking failed
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.xml:78: AAPT: error: attribute android:hintTextColor not found.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.xml:110: AAPT: error: attribute android:hintTextColor not found.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_github_manager.xml:133: AAPT: error: attribute android:hintTextColor not found.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/res/layout/fragment_key_generator.xml:79: AAPT: error: attribute android:hintTextColor not found.
+         
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
 > Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
-==============================================================================
 
-2: Task failed with an exception.
------------
-* What went wrong:
-Execution failed for task ':app:parseReleaseLocalResources'.
-> A failure occurred while executing com.android.build.gradle.internal.res.ParseLibraryResourcesTask$ParseResourcesRunnable
-   > Failed to parse XML file '/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/intermediates/packaged_res/release/layout/fragment_github_manager.xml'
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-==============================================================================
-
-BUILD FAILED in 24s
-9 actionable tasks: 8 executed, 1 up-to-date
+BUILD FAILED in 44s
+30 actionable tasks: 29 executed, 1 up-to-date
 
 ==================================================
 
