@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminHomeFragment.kt — ✅ REPORT BOARD VERSION! PROPESYONAL!
-// VERSION: 2.0.0 — ✅ STATUS PANEL • BUOD NG SISTEMA • QUICK BUTTONS • HINDI NA BAREN TEKSTO!
-// UPDATED: 2026-09-21 — ITO ANG UNANG MAKIKITA — MALINAW AT KOMPLETO AGAD!
+// FILE: AdminHomeFragment.kt — ✅ AYUS NA! TABLELAYOUT METHODS TAMA NA!
+// VERSION: 2.0.1 — ✅ NA-AYOS: isColumnShrinkable/isColumnStretchable + WALANG REASSIGNMENT!
+// UPDATED: 2026-09-21 — 2 LINYA LANG ANG PINALITAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -57,38 +57,16 @@ class AdminHomeFragment : Fragment() {
 
         calculateStats()
 
-        // ==============================================
-        // 🎛️ HEADER — ADMIN PANEL TITLE
-        // ==============================================
         mainContainer.addView(createHeader())
-
-        // ==============================================
-        // 🟢 SYSTEM STATUS — GITHUB + SESSION
-        // ==============================================
         mainContainer.addView(createSystemStatusPanel())
-
-        // ==============================================
-        // 📊 BUOD NG MGA MIYEMBRO / KEYS
-        // ==============================================
         mainContainer.addView(createStatsPanel())
-
-        // ==============================================
-        // ⚡ QUICK ACTION BUTTONS
-        // ==============================================
         mainContainer.addView(createQuickActions())
-
-        // ==============================================
-        // 📋 GABAY SA MENU
-        // ==============================================
         mainContainer.addView(createMenuGuide())
 
         root.addView(mainContainer)
         return root
     }
 
-    // ==============================================
-    // 📈 KUWENTAHIN ANG LAHAT NG DATA
-    // ==============================================
     private fun calculateStats() {
         val allKeys = prefsKeys.all.filterKeys { it.startsWith("key_") && it.endsWith("_name") }
         totalKeys = allKeys.size
@@ -107,9 +85,6 @@ class AdminHomeFragment : Fragment() {
         isGithubVerified = prefsGithub.getBoolean("token_verified", false)
     }
 
-    // ==============================================
-    // 🎨 HEADER
-    // ==============================================
     private fun createHeader(): View {
         val card = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -143,9 +118,6 @@ class AdminHomeFragment : Fragment() {
         return card
     }
 
-    // ==============================================
-    // 🟢 SYSTEM STATUS PANEL
-    // ==============================================
     private fun createSystemStatusPanel(): View {
         val card = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -167,7 +139,6 @@ class AdminHomeFragment : Fragment() {
 
         card.addView(header)
 
-        // GitHub Status
         card.addView(createStatusRow(
             "🐙 GitHub Koneksyon",
             if (isGithubSetup && isGithubVerified) "✅ NAKA-KONEKTA"
@@ -178,7 +149,6 @@ class AdminHomeFragment : Fragment() {
             else 0xFFFF5252.toInt()
         ))
 
-        // Session Status
         val userLevel = prefsSession.getString("user_level", "GUEST") ?: "GUEST"
         card.addView(createStatusRow(
             "🔐 Kasalukuyang Session",
@@ -217,9 +187,6 @@ class AdminHomeFragment : Fragment() {
         return row
     }
 
-    // ==============================================
-    // 📊 STATISTICS PANEL
-    // ==============================================
     private fun createStatsPanel(): View {
         val card = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -241,9 +208,10 @@ class AdminHomeFragment : Fragment() {
 
         card.addView(header)
 
+        // ✅ AYUS NA — TAMA ANG PAGTawag NG METHODS!
         val statsGrid = TableLayout(requireContext()).apply {
-            isColumnShrinkable = true
-            isColumnStretchable = true
+            setColumnShrinkable(0, true)
+            setColumnStretchable(0, true)
         }
 
         val row1 = TableRow(requireContext())
@@ -291,9 +259,6 @@ class AdminHomeFragment : Fragment() {
         return card
     }
 
-    // ==============================================
-    // ⚡ QUICK ACTIONS
-    // ==============================================
     private fun createQuickActions(): View {
         val card = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -325,7 +290,7 @@ class AdminHomeFragment : Fragment() {
 
     private fun createQuickButton(text: String, bgColor: Int): View {
         val btn = Button(requireContext()).apply {
-            text = text
+            this.text = text
             textSize = 13f
             setBackgroundColor(bgColor)
             setTextColor(0xFFFFFFFF.toInt())
@@ -341,9 +306,6 @@ class AdminHomeFragment : Fragment() {
         return btn
     }
 
-    // ==============================================
-    // 📋 MENU GUIDE
-    // ==============================================
     private fun createMenuGuide(): View {
         val card = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
