@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KeyGeneratorFragment.kt — ✅ KUMPLETONG KEY GENERATOR! MEMBER • ADMIN • REVOKE • EXPIRE!
-// VERSION: 1.0.0 — ✅ GUMAGAWA NG KEY • TINGNAN LAHAT • BAWAL ANG HINDI OWNER!
-// UPDATED: 2026-09-21 — 👑 OWNER LANG LANG LANG!
+// FILE: KeyGeneratorFragment.kt — ✅ INA-ADAPTOR SA ADMIN PANEL! WALANG HIWALAY NA XML!
+// VERSION: 1.1.0 — ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML! TUGMA SA ADMIN PANEL IDs!
+// UPDATED: 2026-09-21 — ✅ LAHAT NG ID TUGMA SA NAKA-EMBED NA LAYOUT! OWNER LANG PA RIN!
 // ==================================================
 package com.martodosko.studio
 
@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,28 +50,32 @@ class KeyGeneratorFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_key_generator, container, false)
+        // ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML — NAKA-EMBED NA SA ADMIN PANEL!
+        return null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
         prefsKeys = requireContext().getSharedPreferences("issued_keys", Context.MODE_PRIVATE)
 
-        initViews(view)
+        // ✅ KUKUNIN ANG MGA VIEWS MULA SA ADMIN PANEL — TUGMA SA MGA ID!
+        initViews(requireActivity())
         checkPermission()
         setupSpinners()
         loadIssuedKeys()
-
-        return view
     }
 
-    private fun initViews(view: View) {
-        tvUserLevel = view.findViewById(R.id.tv_keygen_user_level)
-        spinnerKeyType = view.findViewById(R.id.spinner_key_type)
-        etName = view.findViewById(R.id.et_member_name)
-        spinnerExpiry = view.findViewById(R.id.spinner_expiry)
-        btnGenerate = view.findViewById(R.id.btn_generate_key)
-        btnClearAll = view.findViewById(R.id.btn_clear_all_keys)
-        keysContainer = view.findViewById(R.id.keys_container)
-        progressBar = view.findViewById(R.id.keygen_progress)
-        tvStatus = view.findViewById(R.id.keygen_status)
+    private fun initViews(activity: android.app.Activity) {
+        tvUserLevel = activity.findViewById(R.id.tv_keygen_user_level)
+        spinnerKeyType = activity.findViewById(R.id.spinner_key_type)
+        etName = activity.findViewById(R.id.et_member_name)
+        spinnerExpiry = activity.findViewById(R.id.spinner_expiry)
+        btnGenerate = activity.findViewById(R.id.btn_generate_key)
+        btnClearAll = activity.findViewById(R.id.btn_clear_all_keys)
+        keysContainer = activity.findViewById(R.id.keys_container)
+        progressBar = activity.findViewById(R.id.keygen_progress)
+        tvStatus = activity.findViewById(R.id.keygen_status)
     }
 
     // ==============================================
@@ -118,15 +121,12 @@ class KeyGeneratorFragment : Fragment() {
         val prefix = if (keyTypePosition == 0) KEY_PREFIX_MEMBER else KEY_PREFIX_ADMIN
         val level = if (keyTypePosition == 0) "MEMBER" else "ADMIN"
 
-        // Generate unique key
         val randomPart = UUID.randomUUID().toString().take(8).uppercase()
         val newKey = "$prefix${randomPart}_${System.currentTimeMillis()}"
 
-        // Calculate expiry
         val expiresAt = calculateExpiry(expiryPosition)
         val created = System.currentTimeMillis()
 
-        // Save to SharedPreferences
         prefsKeys.edit()
             .putString("key_${newKey}_name", name)
             .putString("key_${newKey}_level", level)
@@ -135,10 +135,8 @@ class KeyGeneratorFragment : Fragment() {
             .putBoolean("key_${newKey}_active", true)
             .apply()
 
-        // Show result
         showKeyDialog(newKey, name, level, expiresAt)
 
-        // Refresh list
         etName.text.clear()
         loadIssuedKeys()
     }
@@ -146,12 +144,12 @@ class KeyGeneratorFragment : Fragment() {
     private fun calculateExpiry(position: Int): Long {
         val now = System.currentTimeMillis()
         return when (position) {
-            0 -> 0 // Walang expiry
-            1 -> now + (60 * 60 * 1000) // 1 Oras
-            2 -> now + (24 * 60 * 60 * 1000) // 1 Araw
-            3 -> now + (7 * 24 * 60 * 60 * 1000) // 1 Linggo
-            4 -> now + (30L * 24 * 60 * 60 * 1000) // 1 Buwan
-            5 -> now + (365L * 24 * 60 * 60 * 1000) // 1 Taon
+            0 -> 0
+            1 -> now + (60 * 60 * 1000)
+            2 -> now + (24 * 60 * 60 * 1000)
+            3 -> now + (7 * 24 * 60 * 60 * 1000)
+            4 -> now + (30L * 24 * 60 * 60 * 1000)
+            5 -> now + (365L * 24 * 60 * 60 * 1000)
             else -> 0
         }
     }
@@ -224,7 +222,6 @@ class KeyGeneratorFragment : Fragment() {
             ).apply { setMargins(0, 0, 0, 8) }
         }
 
-        // Top row: Name + Level + Status
         val topRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER_VERTICAL
@@ -259,7 +256,6 @@ class KeyGeneratorFragment : Fragment() {
         topRow.addView(levelTv)
         topRow.addView(statusTv)
 
-        // Dates
         val dateText = if (expires == 0L) {
             "📅 Binuo: ${dateFormat.format(Date(created))} • Walang Expiry"
         } else {
@@ -272,7 +268,6 @@ class KeyGeneratorFragment : Fragment() {
             setPadding(0, 6, 0, 0)
         }
 
-        // Key snippet
         val keyTv = TextView(requireContext()).apply {
             text = "🔑 $keyId"
             textSize = 10f
@@ -281,7 +276,6 @@ class KeyGeneratorFragment : Fragment() {
             setTextIsSelectable(true)
         }
 
-        // Buttons
         val btnRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 12, 0, 0)
