@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: KeyGeneratorFragment.kt — ✅ INA-ADAPTOR SA ADMIN PANEL! WALANG HIWALAY NA XML!
-// VERSION: 1.1.0 — ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML! TUGMA SA ADMIN PANEL IDs!
-// UPDATED: 2026-09-21 — ✅ LAHAT NG ID TUGMA SA NAKA-EMBED NA LAYOUT! OWNER LANG PA RIN!
+// FILE: KeyGeneratorFragment.kt — ✅ REWORKED! WALANG XML! BINUBUO LAHAT SA KOTLIN!
+// VERSION: 2.0.0 — ✅ OWNER-ONLY KEY GENERATOR! EXPIRE, REVOKE, DELETE! WALANG FINDBYVIEWID!
+// UPDATED: 2026-09-21 — LAHAT NG UI BINUO SA onCreateView! WALANG XML KAILANGAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -9,6 +9,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,33 +50,193 @@ class KeyGeneratorFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // ✅ HINDI NA NAG-INFLATE NG HIWALAY NA XML — NAKA-EMBED NA SA ADMIN PANEL!
-        return null
-    }
+    ): View {
+        val root = ScrollView(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(0xFF12121F.toInt())
+            setPadding(20, 20, 20, 30)
+        }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val mainContainer = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
         prefs = requireContext().getSharedPreferences("admin_session", Context.MODE_PRIVATE)
         prefsKeys = requireContext().getSharedPreferences("issued_keys", Context.MODE_PRIVATE)
 
-        // ✅ KUKUNIN ANG MGA VIEWS MULA SA ADMIN PANEL — TUGMA SA MGA ID!
-        initViews(requireActivity())
-        checkPermission()
+        // ==============================================
+        // 🎨 HEADER
+        // ==============================================
+        mainContainer.addView(createHeader())
+
+        // ==============================================
+        // 👑 CURRENT USER LEVEL
+        // ==============================================
+        tvUserLevel = TextView(requireContext()).apply {
+            text = "⏰ Kinakarga..."
+            textSize = 14f
+            setTextColor(0xFF888888.toInt())
+            setBackgroundColor(0xFF1E1E2F.toInt())
+            setPadding(14, 12, 14, 12)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+        }
+        mainContainer.addView(tvUserLevel)
+
+        // ==============================================
+        // 🔑 KEY TYPE
+        // ==============================================
+        mainContainer.addView(createLabel("🔑 URI NG KEY"))
+        spinnerKeyType = Spinner(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 16) }
+        }
+        mainContainer.addView(spinnerKeyType)
+
+        // ==============================================
+        // 👤 PANGALAN NG MIYEMBRO
+        // ==============================================
+        mainContainer.addView(createLabel("👤 PANGALAN NG MIYEMBRO"))
+        etName = EditText(requireContext()).apply {
+            hint = "Ilagay ang pangalan..."
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            setHintTextColor(0xFF666666.toInt())
+            setPadding(14, 14, 14, 14)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 16) }
+        }
+        mainContainer.addView(etName)
+
+        // ==============================================
+        // 📅 EXPIRY
+        // ==============================================
+        mainContainer.addView(createLabel("📅 MAG-E-EXPIRE"))
+        spinnerExpiry = Spinner(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+        }
+        mainContainer.addView(spinnerExpiry)
+
+        // ==============================================
+        // 🔘 BUTTONS — GENERATE • CLEAR ALL
+        // ==============================================
+        val btnRow = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+        }
+
+        btnGenerate = createButton("🔑 BUMUO NG KEY", 0xFF2E7D32.toInt())
+        btnClearAll = createButton("🗑️ BURAHIN LAHAT", 0xFFB71C1C.toInt())
+
+        btnRow.addView(btnGenerate)
+        btnRow.addView(btnClearAll)
+        mainContainer.addView(btnRow)
+
+        // ==============================================
+        // 📋 STATUS
+        // ==============================================
+        tvStatus = TextView(requireContext()).apply {
+            text = "📋 Handa na — I-check muna ang iyong antas..."
+            textSize = 13f
+            setTextColor(0xFF888888.toInt())
+            setPadding(4, 8, 4, 8)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 12) }
+        }
+        mainContainer.addView(tvStatus)
+
+        // ==============================================
+        // 📦 ISSUED KEYS CONTAINER
+        // ==============================================
+        keysContainer = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+        mainContainer.addView(keysContainer)
+
+        // ==============================================
+        // ✅ SETUP
+        // ==============================================
         setupSpinners()
+        checkPermission()
         loadIssuedKeys()
+
+        root.addView(mainContainer)
+        return root
     }
 
-    private fun initViews(activity: android.app.Activity) {
-        tvUserLevel = activity.findViewById(R.id.tv_keygen_user_level)
-        spinnerKeyType = activity.findViewById(R.id.spinner_key_type)
-        etName = activity.findViewById(R.id.et_member_name)
-        spinnerExpiry = activity.findViewById(R.id.spinner_expiry)
-        btnGenerate = activity.findViewById(R.id.btn_generate_key)
-        btnClearAll = activity.findViewById(R.id.btn_clear_all_keys)
-        keysContainer = activity.findViewById(R.id.keys_container)
-        progressBar = activity.findViewById(R.id.keygen_progress)
-        tvStatus = activity.findViewById(R.id.keygen_status)
+    private fun createHeader(): View {
+        val card = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 28, 24, 28)
+            setBackgroundColor(0xFF1E1E2F.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 20) }
+        }
+
+        val title = TextView(requireContext()).apply {
+            text = "🔑 KEY GENERATOR"
+            textSize = 22f
+            setTextColor(0xFF40E0D0.toInt())
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        val subtitle = TextView(requireContext()).apply {
+            text = "Bumuo ng access key para sa mga miyembro — OWNER lang ang pwede"
+            textSize = 12f
+            setTextColor(0xFF888888.toInt())
+            setPadding(0, 4, 0, 0)
+        }
+
+        card.addView(title)
+        card.addView(subtitle)
+        return card
+    }
+
+    private fun createLabel(text: String): TextView {
+        return TextView(requireContext()).apply {
+            this.text = text
+            textSize = 14f
+            setTextColor(0xFFCCCCCC.toInt())
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setPadding(4, 0, 0, 8)
+        }
+    }
+
+    private fun createButton(text: String, color: Int): Button {
+        return Button(requireContext()).apply {
+            this.text = text
+            textSize = 12f
+            setBackgroundColor(color)
+            setTextColor(0xFFFFFFFF.toInt())
+            layoutParams = LinearLayout.LayoutParams(0, 50, 1f).apply { setMargins(4, 0, 4, 0) }
+        }
     }
 
     // ==============================================
@@ -92,6 +253,7 @@ class KeyGeneratorFragment : Fragment() {
             return
         }
 
+        showStatus("✅ 👑 OWNER — Pwede kang bumuo ng key!", true)
         btnGenerate.setOnClickListener { generateNewKey() }
         btnClearAll.setOnClickListener { showClearAllDialog() }
     }
@@ -187,10 +349,12 @@ class KeyGeneratorFragment : Fragment() {
 
         if (allKeys.isEmpty()) {
             tvStatus.text = "📋 Wala pang naibigay na key."
+            tvStatus.setTextColor(0xFF888888.toInt())
             return
         }
 
         tvStatus.text = "📋 ${allKeys.size} key na naibigay:"
+        tvStatus.setTextColor(0xFF4CAF50.toInt())
 
         allKeys.keys.forEach { nameKey ->
             val keyId = nameKey.removeSuffix("_name").removePrefix("key_")
