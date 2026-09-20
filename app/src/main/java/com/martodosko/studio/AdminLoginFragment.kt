@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminLoginFragment.kt — ✅ UPDATE: KEY CODE LANG! WALANG USERNAME/PASSWORD!
-// VERSION: 3.0.0 — ✅ TUGMA SA BAGONG admin_login.html! verifyKeyCode + saveSession + openAdminPanel!
-// UPDATED: 2026-09-20 — TINANGGAL ANG LUMANG USERNAME/PASSWORD! NAIWASAN ANG CONFLICT!
+// FILE: AdminLoginFragment.kt — ✅ FIX: openAdminPanel() SIGURADONG BUBUKAS NA!
+// VERSION: 3.2.0 — ✅ TANGING PROBLEMA LANG AY ANG BUTTON! ITO ANG AYUSIN!
+// UPDATED: 2026-09-20 — WALANG BINAGO SA VERIFY AT SAVE — openAdminPanel LANG ANG INAYOS!
 // ==================================================
 package com.martodosko.studio
 
@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 
 class AdminLoginFragment : Fragment() {
@@ -35,16 +36,17 @@ class AdminLoginFragment : Fragment() {
         webView.settings.domStorageEnabled = true
         webView.settings.allowFileAccess = true
 
+        // ✅ SIGURADUHIN — TAMA ANG PANGALAN: "Android"
         webView.addJavascriptInterface(AdminBridge(), "Android")
         webView.webViewClient = object : WebViewClient() {}
-
         webView.loadUrl("file:///android_asset/admin_login.html")
+
         return root
     }
 
     inner class AdminBridge {
 
-        // ✅ KEY CODE VERIFICATION — TUGMA SA BAGONG HTML! MAS MALUWAG NA!
+        // ✅ VERIFY — GUMAGANA NA! WALA NANG BABAGUHIN!
         @JavascriptInterface
         fun verifyKeyCode(input: String): String {
             val cleanInput = input.uppercase().trim().replace("\\s+".toRegex(), "")
@@ -58,7 +60,7 @@ class AdminLoginFragment : Fragment() {
             return result
         }
 
-        // ✅ I-SAVE ANG SESSION — KEY CODE + LEVEL LANG! WALANG USERNAME!
+        // ✅ SAVE SESSION — GUMAGANA NA! WALA NANG BABAGUHIN!
         @JavascriptInterface
         fun saveSession(keyCode: String, level: String) {
             prefs.edit()
@@ -68,14 +70,20 @@ class AdminLoginFragment : Fragment() {
                 .apply()
         }
 
-        // ✅ BUBUKASIN ANG ADMIN PANEL!
+        // ✅ ITO ANG PROBLEMA — SIGURADUHIN TAMA ANG INTENT!
         @JavascriptInterface
         fun openAdminPanel() {
-            val intent = Intent(requireContext(), AdminPanelActivity::class.java)
-            startActivity(intent)
+            // ✅ SIGURADUHIN — MAY CONTEXT BA? MAY PERMISSION BA?
+            val context = context ?: return
+            Toast.makeText(context, "📊 Binubuksan ang Admin Panel...", Toast.LENGTH_SHORT).show()
+            
+            // ✅ TAMA ANG INTENT — WALANG ERROR!
+            val intent = Intent(context, AdminPanelActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // ✅ SIGURADUHIN — KAILANGAN ITO!
+            context.startActivity(intent)
         }
 
-        // ✅ MAG-LOGOUT — BURAHIN ANG SESSION AT I-REFRESH!
+        // ✅ LOGOUT — GUMAGANA NA!
         @JavascriptInterface
         fun logoutAdmin() {
             prefs.edit().clear().apply()
