@@ -1,5 +1,5 @@
 // ==================================================
-// TRY FILE: AdminPanelActivity.kt — ✅ INAYOS NA ANG FILE EDITOR CHECK! BUBUKAS NA!
+// FILE: AdminPanelActivity.kt — ✅ INAYOS NA ANG FILE EDITOR CHECK! BUBUKAS NA!
 // VERSION: 5.1.3 — ✅ HINDI NA HINAHARANG! MAY ENCRYPTED TOKEN PA LANG = PWEDI NA!
 // UPDATED: 2026-09-21 — PALIT LANG ANG LOGIC NG btn_admin_file_editor!
 // ==================================================
