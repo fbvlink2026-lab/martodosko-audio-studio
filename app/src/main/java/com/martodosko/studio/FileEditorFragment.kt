@@ -712,21 +712,22 @@ class FileEditorFragment : Fragment() {
     private fun jumpToLineAndHighlight(lineNumber: Int, lines: List<String>) {
         if (lineNumber !in 1..lines.size) return
 
-        // Kumuha ng posisyon ng simula at dulo ng linyang ito
+        // Kumuha ng tamang posisyon ng simula at dulo ng linyang ito
         var startPos = 0
-        var endPos = 0
-        for (i in 0 until lineNumber - 1) startPos += lines[i].length + 1
-        endPos = startPos + lines[lineNumber - 1].length
+        for (i in 0 until lineNumber - 1) {
+            startPos += lines[i].length + 1 // +1 para sa bagong linya
+        }
+        val endPos = startPos + lines[lineNumber - 1].length
 
-        // Lumipat sa linya + I-highlight ang buong linya
+        // I-highlight ang buong linya
         codeEditor.setSelection(startPos, endPos)
         codeEditor.requestFocus()
 
-        // I-scroll papunta sa posisyon
+        // I-scroll papunta sa tamang linya — WALANG getLineOffset
         codeEditor.post {
             val layout = codeEditor.layout
             if (layout != null) {
-                val lineTop = layout.getLineTop(codeEditor.getLineOffset(startPos))
+                val lineTop = layout.getLineTop(lineNumber - 1)
                 codeEditor.scrollTo(0, lineTop - 100)
             }
         }
