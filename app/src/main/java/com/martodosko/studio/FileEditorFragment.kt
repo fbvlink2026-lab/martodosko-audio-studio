@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ GINAYA ANG admin-edit.html! SIMPLE LANG!
-// VERSION: 3.0.0 — ✅ KOPYA NG TAMANG DALOY: PUMILI → BASAHIN → I-EDIT → I-SAVE/PUSH!
-// UPDATED: 2026-09-22 — WALANG KUMplikADO — GUMAGANA AGAD!
+// FILE: FileEditorFragment.kt — ✅ AYOS ANG BUTTONS + DYNAMIC FILE LIST!
+// VERSION: 3.1.0 — ✅ HINDI NA TINATAGO ANG TEKSTO + KUKUHA NG LAHAT NG FILE SA app/
+// UPDATED: 2026-09-22 — DROPDOWN MAY LAMAN LAHAT NG SUBFOLDER!
 // ==================================================
 package com.martodosko.studio
 
@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import kotlinx.coroutines.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
@@ -27,6 +28,7 @@ import android.util.Base64
 class FileEditorFragment : Fragment() {
 
     private lateinit var prefs: SharedPreferences
+    private lateinit var folderSelect: Spinner
     private lateinit var fileSelect: Spinner
     private lateinit var codeEditor: EditText
     private lateinit var btnLoad: Button
@@ -39,9 +41,13 @@ class FileEditorFragment : Fragment() {
     private var githubToken: String? = null
     private var repoOwner = ""
     private var repoName = ""
+    private var currentFolderPath = "app/"
     private var selectedFilePath = ""
     private var currentSha: String? = null
     private var originalContent = ""
+    private val allFiles = mutableListOf<FileItem>()
+
+    data class FileItem(val path: String, val name: String, val type: String)
 
     companion object {
         const val PREFS_NAME = "github_prefs"
@@ -49,14 +55,6 @@ class FileEditorFragment : Fragment() {
         const val REPO_NAME_KEY = "repo_name"
         const val BASE_URL = "https://api.github.com/repos/"
         const val BRANCH = "main"
-
-        val DEFAULT_FILES = arrayOf(
-            "app/src/main/java/com/martodosko/studio/SideMenu.kt",
-            "app/src/main/res/layout/side_menu.xml",
-            "app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt",
-            "app/src/main/AndroidManifest.xml",
-            "README.md"
-        )
     }
 
     override fun onCreateView(
@@ -70,7 +68,7 @@ class FileEditorFragment : Fragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setBackgroundColor(0xFF12121F.toInt())
-            setPadding(20, 20, 20, 30)
+            setPadding(16, 16, 16, 30)
         }
 
         val main = LinearLayout(requireContext()).apply {
@@ -90,7 +88,7 @@ class FileEditorFragment : Fragment() {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 20) }
+            ).apply { setMargins(0, 0, 0, 16) }
 
             addView(TextView(requireContext()).apply {
                 text = "✏️ FILE EDITOR"
@@ -99,20 +97,45 @@ class FileEditorFragment : Fragment() {
                 setTypeface(null, android.graphics.Typeface.BOLD)
             })
             addView(TextView(requireContext()).apply {
-                text = "Pumili → I-load → I-edit → I-save"
+                text = "I-load → I-edit → I-save/Push"
                 textSize = 13f
                 setTextColor(0xFF888888.toInt())
-                setPadding(0, 6, 0, 0)
+                setPadding(0, 4, 0, 0)
             })
         })
 
-        // ===== PILIAN NG FILE =====
+        // ===== FOLDER SELECT =====
         main.addView(TextView(requireContext()).apply {
-            text = "📂 Piliin ang File:"
+            text = "📁 Piliin ang Folder:"
             textSize = 14f
             setTextColor(0xFFCCCCCC.toInt())
             setTypeface(null, android.graphics.Typeface.BOLD)
-            setPadding(4, 0, 0, 8)
+            setPadding(4, 0, 0, 6)
+        })
+
+        folderSelect = Spinner(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(0, 0, 0, 12) }
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, id: Long) {
+                    currentFolderPath = getItemAtPosition(pos).toString()
+                    loadFileListFromFolder()
+                }
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+            }
+        }
+        main.addView(folderSelect)
+
+        // ===== FILE SELECT =====
+        main.addView(TextView(requireContext()).apply {
+            text = "📄 Piliin ang File:"
+            textSize = 14f
+            setTextColor(0xFFCCCCCC.toInt())
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setPadding(4, 4, 0, 6)
         })
 
         fileSelect = Spinner(requireContext()).apply {
@@ -120,13 +143,6 @@ class FileEditorFragment : Fragment() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(0, 0, 0, 16) }
-            adapter = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_item,
-                DEFAULT_FILES
-            ).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            }
             setBackgroundColor(0xFF1A1A2E.toInt())
         }
         main.addView(fileSelect)
@@ -136,23 +152,18 @@ class FileEditorFragment : Fragment() {
             text = "📥 I-LOAD MULA SA GITHUB"
             setBackgroundColor(0xFF1976D2.toInt())
             setTextColor(0xFFFFFFFF.toInt())
+            textSize = 14f
+            minHeight = 56
+            setPadding(16, 12, 16, 12)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                52
+                LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(0, 0, 0, 12) }
             setOnClickListener { loadFromGithub() }
         }
         main.addView(btnLoad)
 
         // ===== EDITOR =====
-        main.addView(TextView(requireContext()).apply {
-            text = "✏️ Nilalaman ng File:"
-            textSize = 14f
-            setTextColor(0xFFCCCCCC.toInt())
-            setTypeface(null, android.graphics.Typeface.BOLD)
-            setPadding(4, 8, 0, 8)
-        })
-
         codeEditor = EditText(requireContext()).apply {
             setBackgroundColor(0xFF1A1A2E.toInt())
             setTextColor(0xFFE0E0E0.toInt())
@@ -168,7 +179,7 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(codeEditor)
 
-        // ===== ROW NG MGA BUTTON =====
+        // ===== BUTTON ROW — HINDI NA TINATAGO ANG TEKSTO =====
         val btnRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -178,25 +189,36 @@ class FileEditorFragment : Fragment() {
         }
 
         btnSaveLocal = Button(requireContext()).apply {
-            text = "💾 LOKAL"
+            text = "💾 I-SAVE LOKAL"
             setBackgroundColor(0xFF2E7D32.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            layoutParams = LinearLayout.LayoutParams(0, 50, 1f).apply { setMargins(4, 0, 4, 0) }
+            textSize = 13f
+            minHeight = 54
+            setPadding(12, 10, 12, 10)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { saveLocal() }
         }
+
         btnPushGithub = Button(requireContext()).apply {
-            text = "☁️ I-PUSH"
+            text = "☁️ I-PUSH SA GITHUB"
             setBackgroundColor(0xFF7B1FA2.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            layoutParams = LinearLayout.LayoutParams(0, 50, 1f).apply { setMargins(4, 0, 4, 0) }
+            textSize = 13f
+            minHeight = 54
+            setPadding(12, 10, 12, 10)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { pushToGithub() }
         }
+
         btnRefresh = Button(requireContext()).apply {
-            text = "🔄"
+            text = "🔄 I-REFRESH"
             setBackgroundColor(0xFF00BFA5.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            layoutParams = LinearLayout.LayoutParams(0, 50, 0.3f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { loadFromGithub() }
+            textSize = 13f
+            minHeight = 54
+            setPadding(12, 10, 12, 10)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { loadFileListFromFolder() }
         }
 
         btnRow.addView(btnSaveLocal)
@@ -206,7 +228,7 @@ class FileEditorFragment : Fragment() {
 
         // ===== STATUS =====
         statusText = TextView(requireContext()).apply {
-            text = "⏳ Handa na — Pumili ng file at pindutin \"I-LOAD\""
+            text = "⏳ Kinakarga ang listahan..."
             textSize = 13f
             setTextColor(0xFFFFA500.toInt())
             setPadding(0, 16, 0, 8)
@@ -222,9 +244,9 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(progressBar)
 
-        // ===== I-LOAD ANG CONFIG =====
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         loadConfig()
+        initFolderList()
 
         return root
     }
@@ -235,23 +257,122 @@ class FileEditorFragment : Fragment() {
         githubToken = GithubManagerFragment.getDecryptedToken(requireContext())
 
         if (githubToken.isNullOrEmpty() || repoOwner.isEmpty() || repoName.isEmpty()) {
-            showStatus("⚠️ Kulang ang GitHub Token o Repository — Lokal lang muna", false)
+            showStatus("⚠️ Kulang ang GitHub Token/Repo — Lokal lang muna", false)
         } else {
-            showStatus("✅ Konektado: $repoOwner/$repoName — Handa na!", true)
+            showStatus("✅ Konektado: $repoOwner/$repoName", true)
+        }
+    }
+
+    private fun initFolderList() {
+        val folders = listOf(
+            "app/",
+            "app/src/",
+            "app/src/main/",
+            "app/src/main/java/",
+            "app/src/main/java/com/martodosko/studio/",
+            "app/src/main/res/",
+            "app/src/main/res/layout/",
+            "app/src/main/assets/",
+            "docs/"
+        )
+        folderSelect.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            folders
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
     }
 
     // ==============================================
-    // ✅ 1. I-LOAD MULA SA GITHUB — KOPYA SA HTML!
+    // ✅ KUKUHA NG LAHAT NG FILE SA NAPILING FOLDER
+    // ==============================================
+    private fun loadFileListFromFolder() {
+        if (githubToken.isNullOrEmpty() || repoOwner.isEmpty() || repoName.isEmpty()) {
+            showStatus("⚠️ I-setup muna ang GitHub Token", false)
+            return
+        }
+
+        showLoading(true)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val url = URL("${BASE_URL}$repoOwner/$repoName/contents/$currentFolderPath")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.setRequestProperty("Authorization", "token $githubToken")
+                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+                val response = BufferedReader(InputStreamReader(conn.inputStream)).readText()
+                val jsonArray = JSONArray(response)
+
+                allFiles.clear()
+                for (i in 0 until jsonArray.length()) {
+                    val item = jsonArray.getJSONObject(i)
+                    val type = item.getString("type")
+                    val name = item.getString("name")
+                    val path = item.getString("path")
+
+                    if (type == "file") {
+                        allFiles.add(FileItem(path, getFileIcon(name) + " " + name, type))
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    val displayNames = allFiles.map { it.name }
+                    if (displayNames.isEmpty()) {
+                        fileSelect.adapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_spinner_item,
+                            listOf("— Walang file —")
+                        )
+                        showStatus("📭 Walang file sa napiling folder", false)
+                    } else {
+                        fileSelect.adapter = ArrayAdapter(
+                            requireContext(),
+                            android.R.layout.simple_spinner_item,
+                            displayNames
+                        ).apply {
+                            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        }
+                        showStatus("✅ ${allFiles.size} file nakita sa $currentFolderPath", true)
+                    }
+                    showLoading(false)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showLoading(false)
+                    showStatus("❌ Hindi mabasa ang listahan: ${e.message}", false)
+                }
+            }
+        }
+    }
+
+    private fun getFileIcon(name: String): String {
+        return when {
+            name.endsWith(".kt") -> "🔷"
+            name.endsWith(".xml") -> "🔶"
+            name.endsWith(".html") -> "🌐"
+            name.endsWith(".json") -> "📋"
+            name.endsWith(".md") -> "📝"
+            name.endsWith(".gradle") -> "⚙️"
+            name.endsWith(".css") -> "🎨"
+            name.endsWith(".js") -> "⚡"
+            else -> "📄"
+        }
+    }
+
+    // ==============================================
+    // ✅ I-LOAD ANG NAPILING FILE
     // ==============================================
     private fun loadFromGithub() {
-        selectedFilePath = fileSelect.selectedItem.toString()
-        if (selectedFilePath.isBlank()) {
+        val pos = fileSelect.selectedItemPosition
+        if (pos == AdapterView.INVALID_POSITION || pos >= allFiles.size) {
             showStatus("⚠️ Pumili muna ng file!", false)
             return
         }
+
+        selectedFilePath = allFiles[pos].path
         if (githubToken.isNullOrEmpty()) {
-            showStatus("⚠️ Kailangan ng GitHub Token — I-setup muna sa Admin Panel", false)
+            showStatus("⚠️ Kailangan ng GitHub Token!", false)
             return
         }
 
@@ -266,7 +387,7 @@ class FileEditorFragment : Fragment() {
                 val json = JSONObject(
                     BufferedReader(InputStreamReader(conn.inputStream)).readText()
                 )
-                currentSha = json.getString("sha") // ✅ I-SAVE ANG SHA!
+                currentSha = json.getString("sha")
                 originalContent = String(
                     Base64.decode(
                         json.getString("content").replace("\n", ""),
@@ -277,41 +398,41 @@ class FileEditorFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     codeEditor.setText(originalContent)
                     showLoading(false)
-                    showStatus("✅ Nai-load: $selectedFilePath — Handa nang i-edit!", true)
+                    showStatus("✅ Nai-load: $selectedFilePath", true)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     showLoading(false)
-                    showStatus("❌ Hindi mabasa: ${e.message}", false)
+                    showStatus("❌ Nabigo: ${e.message}", false)
                 }
             }
         }
     }
 
     // ==============================================
-    // ✅ 2. I-SAVE SA LOKAL — SIMPLE LANG
+    // ✅ I-SAVE SA LOKAL
     // ==============================================
     private fun saveLocal() {
         val content = codeEditor.text.toString()
-        if (content.isBlank()) {
-            showStatus("⚠️ Walang laman na ise-save!", false)
+        if (content.isBlank() || selectedFilePath.isBlank()) {
+            showStatus("⚠️ I-load muna ang file!", false)
             return
         }
         val file = File(requireContext().filesDir, selectedFilePath.substringAfterLast('/'))
         file.parentFile?.mkdirs()
         file.writeText(content)
         originalContent = content
-        showStatus("✅ Nai-save sa LOKAL: ${file.name}", true)
+        showStatus("✅ Nai-save lokal: ${file.name}", true)
         Toast.makeText(context, "✅ Nai-save!", Toast.LENGTH_SHORT).show()
     }
 
     // ==============================================
-    // ✅ 3. I-PUSH SA GITHUB — GINAYA ANG HTML NA PARAAN!
+    // ✅ I-PUSH SA GITHUB
     // ==============================================
     private fun pushToGithub() {
         val content = codeEditor.text.toString()
         if (content.isBlank() || selectedFilePath.isBlank()) {
-            showStatus("⚠️ I-load muna at i-edit ang file!", false)
+            showStatus("⚠️ I-load at i-edit muna ang file!", false)
             return
         }
         if (githubToken.isNullOrEmpty()) {
@@ -319,13 +440,12 @@ class FileEditorFragment : Fragment() {
             return
         }
 
-        // Kumuha ng Commit Message
         val input = EditText(requireContext()).apply {
-            hint = "Commit message (hal: Inayos ang istilo)"
+            hint = "Commit message"
         }
         AlertDialog.Builder(requireContext())
             .setTitle("📤 I-PUSH SA GITHUB")
-            .setMessage("I-upload ang pagbabago sa:\n$selectedFilePath")
+            .setMessage("Papalitan ang:\n$selectedFilePath")
             .setView(input)
             .setPositiveButton("I-PUSH") { _, _ ->
                 val msg = input.text.toString().trim().ifEmpty { "Na-update: $selectedFilePath" }
@@ -339,16 +459,14 @@ class FileEditorFragment : Fragment() {
         showLoading(true)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // ✅ NO_WRAP = WALANG BAGONG LINYA — ITO ANG TAMA!
                 val encoded = Base64.encodeToString(content.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
 
-                // ✅ BUILD REQUEST — GAYA SA HTML!
                 val body = JSONObject().apply {
                     put("message", message)
                     put("content", encoded)
                     put("branch", BRANCH)
                     if (!currentSha.isNullOrEmpty()) {
-                        put("sha", currentSha) // ✅ I-SAMA ANG SHA KUNG MERON!
+                        put("sha", currentSha)
                     }
                 }.toString()
 
@@ -369,7 +487,7 @@ class FileEditorFragment : Fragment() {
                     originalContent = content
                     withContext(Dispatchers.Main) {
                         showLoading(false)
-                        showStatus("☁️✅ MATAGUMPAY NA-UPLOAD SA GITHUB!", true)
+                        showStatus("☁️✅ MATAGUMPAY NA-UPLOAD!", true)
                     }
                 } else {
                     throw Exception("HTTP ${conn.responseCode}: ${conn.responseMessage}")
