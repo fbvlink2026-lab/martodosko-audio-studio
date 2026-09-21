@@ -1,13 +1,14 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ AYOS ANG BUTTONS + DYNAMIC FILE LIST!
-// VERSION: 3.1.0 — ✅ HINDI NA TINATAGO ANG TEKSTO + KUKUHA NG LAHAT NG FILE SA app/
-// UPDATED: 2026-09-22 — DROPDOWN MAY LAMAN LAHAT NG SUBFOLDER!
+// FILE: FileEditorFragment.kt — ✅ PUTI ANG TEKSTO SA DROPDOWN! MAKIKITA NA!
+// VERSION: 3.1.1 — ✅ HINDI NA ITIM — LUMINAW NA ANG LAHAT NG PILIAN!
+// UPDATED: 2026-09-22 — TAMA ANG KULAY NG TEKSTO SA SPINNER!
 // ==================================================
 package com.martodosko.studio
 
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -104,15 +105,16 @@ class FileEditorFragment : Fragment() {
             })
         })
 
-        // ===== FOLDER SELECT =====
+        // ===== FOLDER LABEL =====
         main.addView(TextView(requireContext()).apply {
             text = "📁 Piliin ang Folder:"
             textSize = 14f
-            setTextColor(0xFFCCCCCC.toInt())
+            setTextColor(0xFFFFFFFF.toInt()) // ✅ PUTI!
             setTypeface(null, android.graphics.Typeface.BOLD)
             setPadding(4, 0, 0, 6)
         })
 
+        // ===== FOLDER SPINNER — PUTI ANG TEKSTO =====
         folderSelect = Spinner(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -129,15 +131,16 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(folderSelect)
 
-        // ===== FILE SELECT =====
+        // ===== FILE LABEL =====
         main.addView(TextView(requireContext()).apply {
             text = "📄 Piliin ang File:"
             textSize = 14f
-            setTextColor(0xFFCCCCCC.toInt())
+            setTextColor(0xFFFFFFFF.toInt()) // ✅ PUTI!
             setTypeface(null, android.graphics.Typeface.BOLD)
             setPadding(4, 4, 0, 6)
         })
 
+        // ===== FILE SPINNER — PUTI ANG TEKSTO =====
         fileSelect = Spinner(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -166,8 +169,8 @@ class FileEditorFragment : Fragment() {
         // ===== EDITOR =====
         codeEditor = EditText(requireContext()).apply {
             setBackgroundColor(0xFF1A1A2E.toInt())
-            setTextColor(0xFFE0E0E0.toInt())
-            setHintTextColor(0xFF666666.toInt())
+            setTextColor(0xFFFFFFFF.toInt()) // ✅ PUTI ANG TEKSTO SA EDITOR
+            setHintTextColor(0xFF888888.toInt())
             textSize = 12f
             setPadding(14, 14, 14, 14)
             setHint("Pindutin ang \"I-LOAD\" para makita ang laman...")
@@ -179,7 +182,7 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(codeEditor)
 
-        // ===== BUTTON ROW — HINDI NA TINATAGO ANG TEKSTO =====
+        // ===== BUTTON ROW =====
         val btnRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -251,6 +254,31 @@ class FileEditorFragment : Fragment() {
         return root
     }
 
+    // ===== CUSTOM ADAPTER — PUTI ANG TEKSTO SA DROPDOWN =====
+    private fun createWhiteTextAdapter(items: List<String>): ArrayAdapter<String> {
+        return object : ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            items
+        ) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val v = super.getView(position, convertView, parent) as TextView
+                v.setTextColor(Color.WHITE) // ✅ PUTI SA NAKAPILING
+                v.textSize = 14f
+                v.setPadding(16, 12, 16, 12)
+                return v
+            }
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val v = super.getDropDownView(position, convertView, parent) as TextView
+                v.setTextColor(Color.WHITE) // ✅ PUTI SA LAHAT NG PILIAN
+                v.setBackgroundColor(0xFF1E1E2F.toInt())
+                v.textSize = 14f
+                v.setPadding(16, 14, 16, 14)
+                return v
+            }
+        }
+    }
+
     private fun loadConfig() {
         repoOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
@@ -275,13 +303,7 @@ class FileEditorFragment : Fragment() {
             "app/src/main/assets/",
             "docs/"
         )
-        folderSelect.adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            folders
-        ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
+        folderSelect.adapter = createWhiteTextAdapter(folders) // ✅ PUTI ANG TEKSTO!
     }
 
     // ==============================================
@@ -319,20 +341,10 @@ class FileEditorFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     val displayNames = allFiles.map { it.name }
                     if (displayNames.isEmpty()) {
-                        fileSelect.adapter = ArrayAdapter(
-                            requireContext(),
-                            android.R.layout.simple_spinner_item,
-                            listOf("— Walang file —")
-                        )
+                        fileSelect.adapter = createWhiteTextAdapter(listOf("— Walang file —"))
                         showStatus("📭 Walang file sa napiling folder", false)
                     } else {
-                        fileSelect.adapter = ArrayAdapter(
-                            requireContext(),
-                            android.R.layout.simple_spinner_item,
-                            displayNames
-                        ).apply {
-                            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        }
+                        fileSelect.adapter = createWhiteTextAdapter(displayNames) // ✅ PUTI ANG TEKSTO!
                         showStatus("✅ ${allFiles.size} file nakita sa $currentFolderPath", true)
                     }
                     showLoading(false)
@@ -442,6 +454,7 @@ class FileEditorFragment : Fragment() {
 
         val input = EditText(requireContext()).apply {
             hint = "Commit message"
+            setTextColor(Color.WHITE)
         }
         AlertDialog.Builder(requireContext())
             .setTitle("📤 I-PUSH SA GITHUB")
