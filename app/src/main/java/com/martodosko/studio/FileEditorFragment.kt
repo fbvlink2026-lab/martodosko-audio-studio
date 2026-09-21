@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ FULL-SCREEN PREVIEW + CLICK-TO-JUMP + CLEAR BUTTON!
-// VERSION: 4.0.0 — ✅ LAHAT NG HINILING MO!
-// UPDATED: 2026-09-22 — FULL SCREEN • CLICKABLE • FIXED BOTTOM • CLEAR BUTTON!
+// FILE: FileEditorFragment.kt — ✅ BUONG KODIGO! WALANG KULANG!
+// VERSION: 5.0.1 — ✅ ITINULOY ANG HULING BAHAGI • BUO NA!
+// UPDATED: 2026-09-22 — TAPOS NA!
 // ==================================================
 package com.martodosko.studio
 
@@ -13,6 +13,9 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -36,10 +39,11 @@ class FileEditorFragment : Fragment() {
     private lateinit var folderSelect: Spinner
     private lateinit var fileSelect: Spinner
     private lateinit var codeEditor: EditText
+    private lateinit var btnFullScreen: Button
     private lateinit var btnLoad: Button
     private lateinit var btnCopy: Button
     private lateinit var btnPaste: Button
-    private lateinit var btnClear: Button   // ✅ BAGONG CLEAR BUTTON
+    private lateinit var btnClear: Button
     private lateinit var btnPreview: Button
     private lateinit var btnSaveLocal: Button
     private lateinit var btnPushGithub: Button
@@ -57,9 +61,12 @@ class FileEditorFragment : Fragment() {
     private var currentSha: String? = null
     private var originalContent = ""
     private val allFiles = mutableListOf<FileItem>()
+    private var isFullScreen = false
+    private var lastSelectionPos = 0
 
     data class FileItem(val path: String, val name: String, val type: String)
     data class CodeIssue(val severity: String, val message: String, val line: Int)
+    data class PreviewElement(val label: String, val searchKey: String, val bgColor: Int, val type: String = "button")
 
     companion object {
         const val PREFS_NAME = "github_prefs"
@@ -83,48 +90,110 @@ class FileEditorFragment : Fragment() {
             )
         }
 
-        // ===== NAKAPIRMI SA ITAAS =====
-        val fixedHeader = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 8)
+        // ===== NAKAPIRMI SA ITAAS — KOPIYA/PASTE/BURA/PREVIEW + FULLSCREEN =====
+        val fixedTopBar = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(12, 12, 12, 8)
             setBackgroundColor(0xFF1A1A2E.toInt())
-            elevation = 4f
+            elevation = 8f
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
 
-        fixedHeader.addView(LinearLayout(requireContext()).apply {
+        btnFullScreen = Button(requireContext()).apply {
+            text = "⛶"
+            setBackgroundColor(0xFF252540.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 16f
+            minWidth = 56
+            minHeight = 52
+            setPadding(4, 4, 4, 4)
+            setOnClickListener { toggleFullScreenEditor() }
+        }
+        fixedTopBar.addView(btnFullScreen)
+
+        btnCopy = Button(requireContext()).apply {
+            text = "📋 KOPIYA"
+            setBackgroundColor(0xFF455A64.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 11f
+            minHeight = 52
+            setPadding(4, 4, 4, 4)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { copyCode() }
+        }
+        fixedTopBar.addView(btnCopy)
+
+        btnPaste = Button(requireContext()).apply {
+            text = "📌 PASTE"
+            setBackgroundColor(0xFF558B2F.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 11f
+            minHeight = 52
+            setPadding(4, 4, 4, 4)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { pasteCode() }
+        }
+        fixedTopBar.addView(btnPaste)
+
+        btnClear = Button(requireContext()).apply {
+            text = "🧹 BURA"
+            setBackgroundColor(0xFFC62828.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 11f
+            minHeight = 52
+            setPadding(4, 4, 4, 4)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { clearCode() }
+        }
+        fixedTopBar.addView(btnClear)
+
+        btnPreview = Button(requireContext()).apply {
+            text = "👁️ PREVIEW"
+            setBackgroundColor(0xFF00897B.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 11f
+            minHeight = 52
+            setPadding(4, 4, 4, 4)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { previewCode() }
+        }
+        fixedTopBar.addView(btnPreview)
+
+        root.addView(fixedTopBar)
+
+        // ===== HEADER: Folder + File + Load =====
+        val header = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(12, 8, 12, 16)
-            addView(TextView(requireContext()).apply {
-                text = "✏️ FILE EDITOR"
-                textSize = 22f
-                setTextColor(0xFF40E0D0.toInt())
-                setTypeface(null, Typeface.BOLD)
-            })
-            addView(TextView(requireContext()).apply {
-                text = "I-load → I-edit → I-save/Push"
-                textSize = 13f
-                setTextColor(0xFF888888.toInt())
-                setPadding(0, 4, 0, 0)
-            })
+            setPadding(16, 8, 16, 8)
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        header.addView(TextView(requireContext()).apply {
+            text = "✏️ FILE EDITOR"
+            textSize = 20f
+            setTextColor(0xFF40E0D0.toInt())
+            setTypeface(null, Typeface.BOLD)
         })
 
-        fixedHeader.addView(TextView(requireContext()).apply {
-            text = "📁 Piliin ang Folder:"
-            textSize = 14f
+        header.addView(TextView(requireContext()).apply {
+            text = "📁 Folder:"
+            textSize = 13f
             setTextColor(0xFFFFFFFF.toInt())
-            setTypeface(null, Typeface.BOLD)
-            setPadding(4, 4, 0, 6)
+            setPadding(0, 12, 0, 4)
         })
 
         folderSelect = Spinner(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 12) }
+            ).apply { setMargins(0, 0, 0, 8) }
             setBackgroundColor(0xFF252540.toInt())
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, id: Long) {
@@ -134,48 +203,42 @@ class FileEditorFragment : Fragment() {
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
-        fixedHeader.addView(folderSelect)
+        header.addView(folderSelect)
 
-        fixedHeader.addView(TextView(requireContext()).apply {
-            text = "📄 Piliin ang File:"
-            textSize = 14f
+        header.addView(TextView(requireContext()).apply {
+            text = "📄 File:"
+            textSize = 13f
             setTextColor(0xFFFFFFFF.toInt())
-            setTypeface(null, Typeface.BOLD)
-            setPadding(4, 4, 0, 6)
+            setPadding(0, 4, 0, 4)
         })
 
         fileSelect = Spinner(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 12) }
+            ).apply { setMargins(0, 0, 0, 8) }
             setBackgroundColor(0xFF252540.toInt())
         }
-        fixedHeader.addView(fileSelect)
+        header.addView(fileSelect)
 
         btnLoad = Button(requireContext()).apply {
             text = "📥 I-LOAD MULA SA GITHUB"
             setBackgroundColor(0xFF1976D2.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 14f
-            minHeight = 56
-            setPadding(16, 14, 16, 14)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 12) }
+            textSize = 13f
+            minHeight = 52
             setOnClickListener { loadFromGithub() }
         }
-        fixedHeader.addView(btnLoad)
+        header.addView(btnLoad)
 
-        root.addView(fixedHeader)
+        root.addView(header)
 
-        // ===== SCROLLABLE NA LAMAN — CODE BOX SA GITNA =====
+        // ===== CODE EDITOR AREA — MAY SYNTAX HIGHLIGHTING =====
         val scrollView = ScrollView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0,
-                1f  // ✅ Kukuha ng natitirang espasyo
+                1f
             )
             setPadding(16, 8, 16, 8)
             isFillViewport = true
@@ -191,7 +254,7 @@ class FileEditorFragment : Fragment() {
         scrollView.addView(main)
 
         main.addView(TextView(requireContext()).apply {
-            text = "✏️ Kodigo:"
+            text = "💻 Kodigo:"
             textSize = 14f
             setTextColor(0xFFFFFFFF.toInt())
             setTypeface(null, Typeface.BOLD)
@@ -199,13 +262,14 @@ class FileEditorFragment : Fragment() {
         })
 
         codeEditor = EditText(requireContext()).apply {
-            setBackgroundColor(0xFF1A1A2E.toInt())
+            setBackgroundColor(0xFF0F0F1A.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0xFF666666.toInt())
+            setHintTextColor(0xFF555577.toInt())
             textSize = 11f
             setPadding(14, 14, 14, 14)
             setHint("Pindutin ang \"I-LOAD\" para makita ang laman...")
-            minHeight = 300
+            minHeight = 400
+            setTypeface(Typeface.MONOSPACE)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -237,65 +301,6 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(errorPanel)
 
-        // ✅ UNANG HANAY: KOPIYA + PASTE + CLEAR + PREVIEW
-        val quickRow = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 12) }
-        }
-
-        btnCopy = Button(requireContext()).apply {
-            text = "📋 KOPIYA"
-            setBackgroundColor(0xFF455A64.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 12f
-            minHeight = 50
-            setPadding(4, 8, 4, 8)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { copyCode() }
-        }
-
-        btnPaste = Button(requireContext()).apply {
-            text = "📌 PASTE"
-            setBackgroundColor(0xFF558B2F.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 12f
-            minHeight = 50
-            setPadding(4, 8, 4, 8)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { pasteCode() }
-        }
-
-        btnClear = Button(requireContext()).apply {
-            text = "🧹 BURA"
-            setBackgroundColor(0xFFC62828.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 12f
-            minHeight = 50
-            setPadding(4, 8, 4, 8)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { clearCode() }
-        }
-
-        btnPreview = Button(requireContext()).apply {
-            text = "👁️ PREVIEW"
-            setBackgroundColor(0xFF00897B.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 12f
-            minHeight = 50
-            setPadding(4, 8, 4, 8)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { previewCode() }
-        }
-
-        quickRow.addView(btnCopy)
-        quickRow.addView(btnPaste)
-        quickRow.addView(btnClear)
-        quickRow.addView(btnPreview)
-        main.addView(quickRow)
-
         statusText = TextView(requireContext()).apply {
             text = "⏳ Kinakarga ang listahan..."
             textSize = 13f
@@ -315,7 +320,7 @@ class FileEditorFragment : Fragment() {
 
         root.addView(scrollView)
 
-        // ===== NAKAPIRMI SA IBABA — HINDI GUMAGALAW! =====
+        // ===== NAKAPIRMI SA IBABA =====
         val fixedBottom = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(16, 12, 16, 16)
@@ -333,7 +338,6 @@ class FileEditorFragment : Fragment() {
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 12f
             minHeight = 54
-            setPadding(4, 10, 4, 10)
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { saveLocal() }
         }
@@ -344,7 +348,6 @@ class FileEditorFragment : Fragment() {
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 12f
             minHeight = 54
-            setPadding(4, 10, 4, 10)
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { pushToGithub() }
         }
@@ -355,7 +358,6 @@ class FileEditorFragment : Fragment() {
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 12f
             minHeight = 54
-            setPadding(4, 10, 4, 10)
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { loadFileListFromFolder() }
         }
@@ -369,34 +371,145 @@ class FileEditorFragment : Fragment() {
         loadConfig()
         initFolderList()
 
-        codeEditor.addTextChangedListener(object : android.text.TextWatcher {
-            override fun afterTextChanged(s: android.text.Editable?) { checkForErrors(s.toString()) }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        codeEditor.addTextChangedListener(textWatcher)
 
         return root
     }
 
+    // ✅ FULL-SCREEN EDITOR — WALANG NAKAHARANG!
+    private fun toggleFullScreenEditor() {
+        isFullScreen = !isFullScreen
+        if (isFullScreen) showFullScreenEditorDialog()
+        else btnFullScreen.text = "⛶"
+    }
+
+    private fun showFullScreenEditorDialog() {
+        val fullScreenEditor = EditText(requireContext()).apply {
+            setBackgroundColor(0xFF0A0A15.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 12f
+            setPadding(20, 20, 20, 20)
+            setTypeface(Typeface.MONOSPACE)
+            setText(codeEditor.text)
+            setSelection(codeEditor.selectionStart)
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("⛶ BUONG EKRAN — I-edit ang Kodigo")
+            .setView(fullScreenEditor)
+            .setPositiveButton("✅ ILIPAT") { _, _ ->
+                codeEditor.setText(fullScreenEditor.text)
+                codeEditor.setSelection(fullScreenEditor.selectionStart)
+                isFullScreen = false
+                btnFullScreen.text = "⛶"
+                applySyntaxHighlighting()
+            }
+            .setNegativeButton("❌ KANSELAHIN") { _, _ ->
+                isFullScreen = false
+                btnFullScreen.text = "⛶"
+            }
+            .show()
+    }
+
+    // ✅ SYNTAX HIGHLIGHTING — MAY KULAY ANG KODIGO!
+    private val textWatcher = object : android.text.TextWatcher {
+        override fun afterTextChanged(s: android.text.Editable?) {
+            checkForErrors(s.toString())
+            if (!isFullScreen) applySyntaxHighlighting()
+        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+    }
+
+    private fun applySyntaxHighlighting() {
+        val selStart = codeEditor.selectionStart
+        val selEnd = codeEditor.selectionEnd
+        val colored = applyHighlighting(codeEditor.text.toString())
+        codeEditor.removeTextChangedListener(textWatcher)
+        codeEditor.setText(colored)
+        codeEditor.setSelection(selStart, selEnd)
+        codeEditor.addTextChangedListener(textWatcher)
+    }
+
+    private fun applyHighlighting(text: String): SpannableStringBuilder {
+        val ssb = SpannableStringBuilder(text)
+        when {
+            selectedFilePath.endsWith(".kt") -> highlightKotlin(ssb)
+            selectedFilePath.endsWith(".xml") -> highlightXml(ssb)
+            selectedFilePath.endsWith(".html") -> highlightXml(ssb)
+        }
+        return ssb
+    }
+
+    private fun highlightKotlin(ssb: SpannableStringBuilder) {
+        val text = ssb.toString()
+
+        // Keywords — Asul
+        listOf("package", "import", "class", "fun", "val", "var", "override",
+            "private", "public", "protected", "if", "else", "for", "while",
+            "return", "null", "true", "false", "this", "super", "object",
+            "interface", "companion", "lateinit", "suspend", "try", "catch",
+            "finally", "throw", "as", "is", "in", "when", "fun", "where").forEach { kw ->
+            Regex("\\b$kw\\b").findAll(text).forEach { m ->
+                ssb.setSpan(ForegroundColorSpan(0xFF61AFEF.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
+
+        // Strings — Pula
+        Regex("\"(\\\\.|[^\"\\\\])*\"").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFFE06C75.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+
+        // Comments — Berde
+        Regex("//.*$", RegexOption.MULTILINE).findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFF98C379.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+
+        // Anotasyon — Lila
+        Regex("@\\w+").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFFC678DD.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+
+        // Numbers — Kahel
+        Regex("\\b\\d+\\b").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFFD19A66.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+
+    private fun highlightXml(ssb: SpannableStringBuilder) {
+        val text = ssb.toString()
+        // Tags — Asul
+        Regex("</?[\\w-:]+").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFF61AFEF.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        // Attributes — Dilaw
+        Regex("\\b[\\w-]+\\s*=").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFFE5C07B.toInt()), m.range.first, m.range.last, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        // Values — Pula
+        Regex("\"[^\"]*\"").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFFE06C75.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        // Comments — Berde
+        Regex("<!--[\\s\\S]*?-->").findAll(text).forEach { m ->
+            ssb.setSpan(ForegroundColorSpan(0xFF98C379.toInt()), m.range.first, m.range.last + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+
     private fun createWhiteTextAdapter(items: List<String>): ArrayAdapter<String> {
-        return object : ArrayAdapter<String>(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            items
-        ) {
+        return object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, items) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val v = super.getView(position, convertView, parent) as TextView
-                v.setTextColor(Color.WHITE)
-                v.textSize = 14f
-                v.setPadding(16, 12, 16, 12)
+                v.setTextColor(Color.WHITE); v.textSize = 14f; v.setPadding(16, 12, 16, 12)
                 return v
             }
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val v = super.getDropDownView(position, convertView, parent) as TextView
-                v.setTextColor(Color.WHITE)
-                v.setBackgroundColor(0xFF252540.toInt())
-                v.textSize = 14f
-                v.setPadding(16, 14, 16, 14)
+                v.setTextColor(Color.WHITE); v.setBackgroundColor(0xFF252540.toInt()); v.textSize = 14f; v.setPadding(16, 14, 16, 14)
                 return v
             }
         }
@@ -405,8 +518,7 @@ class FileEditorFragment : Fragment() {
     private fun checkForErrors(code: String) {
         val issues = mutableListOf<CodeIssue>()
         val lines = code.lines()
-        val isKotlin = selectedFilePath.endsWith(".kt")
-        if (isKotlin) {
+        if (selectedFilePath.endsWith(".kt")) {
             if (!code.contains("package ")) issues.add(CodeIssue("warning", "Maaaring kulang ang package declaration", 1))
             lines.forEachIndexed { idx, line ->
                 val trimmed = line.trim()
@@ -415,92 +527,63 @@ class FileEditorFragment : Fragment() {
                 }
             }
         }
-        if (issues.isEmpty()) errorPanel.visibility = View.GONE
-        else {
-            errorPanel.visibility = View.VISIBLE
+        errorPanel.visibility = if (issues.isEmpty()) View.GONE else {
             errorText.text = issues.joinToString("\n") { "• Linya ${it.line}: ${it.message}" }
+            View.VISIBLE
         }
     }
 
     private fun copyCode() {
         val code = codeEditor.text.toString()
-        if (code.isBlank()) {
-            Toast.makeText(context, "⚠️ Walang kodigong kokopyahin!", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("Code", code))
+        if (code.isBlank()) { Toast.makeText(context, "⚠️ Walang kodigong kokopyahin!", Toast.LENGTH_SHORT).show(); return }
+        val cm = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        cm.setPrimaryClip(ClipData.newPlainText("Code", code))
         Toast.makeText(context, "✅ Nakopya sa clipboard!", Toast.LENGTH_SHORT).show()
     }
 
     private fun pasteCode() {
-        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = clipboard.primaryClip
+        val clip = (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip
         if (clip != null && clip.itemCount > 0) {
             val text = clip.getItemAt(0).text?.toString()
             if (!text.isNullOrBlank()) {
                 codeEditor.setText(text)
+                applySyntaxHighlighting()
                 Toast.makeText(context, "✅ Nakapaste sa editor!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "⚠️ Walang nakopyang teksto!", Toast.LENGTH_SHORT).show()
+                return
             }
-        } else {
-            Toast.makeText(context, "⚠️ Walang laman ang clipboard!", Toast.LENGTH_SHORT).show()
         }
+        Toast.makeText(context, "⚠️ Walang laman ang clipboard!", Toast.LENGTH_SHORT).show()
     }
 
-    // ✅ BAGONG CLEAR FUNCTION
     private fun clearCode() {
-        codeEditor.setText("")
-        originalContent = ""
-        errorPanel.visibility = View.GONE
+        codeEditor.setText(""); originalContent = ""; errorPanel.visibility = View.GONE
         Toast.makeText(context, "✅ Nabura na ang laman!", Toast.LENGTH_SHORT).show()
     }
 
     // ==============================================
-    // ✅ FULL-SCREEN PREVIEW + CLICK-TO-JUMP!
+    // ✅ FULL-SCREEN PREVIEW — BUONG GUI!
     // ==============================================
     private fun previewCode() {
         val code = codeEditor.text.toString()
-        if (code.isBlank()) {
-            Toast.makeText(context, "⚠️ Walang kodigong ipapakita!", Toast.LENGTH_SHORT).show()
-            return
-        }
+        if (code.isBlank()) { Toast.makeText(context, "⚠️ Walang kodigong ipapakita!", Toast.LENGTH_SHORT).show(); return }
 
         val previewView = when {
-            selectedFilePath.endsWith(".html") -> {
-                val webView = android.webkit.WebView(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    settings.javaScriptEnabled = true
-                    loadDataWithBaseURL(null, code, "text/html", "UTF-8", null)
-                }
-                webView
+            selectedFilePath.endsWith(".html") -> android.webkit.WebView(requireContext()).apply {
+                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                settings.javaScriptEnabled = true
+                loadDataWithBaseURL(null, code, "text/html", "UTF-8", null)
             }
-            selectedFilePath.endsWith(".kt") -> buildKotlinGuiPreview(code)
-            selectedFilePath.endsWith(".xml") -> buildXmlLayoutPreview(code)
-            else -> {
-                val scroll = ScrollView(requireContext()).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    setBackgroundColor(0xFF12121F.toInt())
-                    setPadding(20, 20, 20, 20)
-                    addView(TextView(requireContext()).apply {
-                        text = code
-                        setTextColor(0xFFCCCCCC.toInt())
-                        textSize = 11f
-                        typeface = Typeface.MONOSPACE
-                    })
-                }
-                scroll
+            selectedFilePath.endsWith(".kt") -> buildFullKotlinPreview(code)
+            selectedFilePath.endsWith(".xml") -> buildFullXmlPreview(code)
+            else -> ScrollView(requireContext()).apply {
+                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                setBackgroundColor(0xFF12121F.toInt()); setPadding(20, 20, 20, 20)
+                addView(TextView(requireContext()).apply {
+                    text = code; setTextColor(0xFFCCCCCC.toInt()); textSize = 11f; typeface = Typeface.MONOSPACE
+                })
             }
         }
 
-        // ✅ FULL-SCREEN DIALOG
         AlertDialog.Builder(requireContext())
             .setTitle("👁️ PREVIEW — $selectedFilePath")
             .setView(previewView)
@@ -508,199 +591,202 @@ class FileEditorFragment : Fragment() {
             .show()
     }
 
-    // ==============================================
-    // ✅ KOTLIN PREVIEW — CLICK BUTTON → JUMP TO CODE!
-    // ==============================================
-    private fun buildKotlinGuiPreview(code: String): View {
+    private fun buildFullKotlinPreview(code: String): View {
         val scroll = ScrollView(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            setBackgroundColor(0xFF12121F.toInt())
-            setPadding(8, 8, 8, 8)
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setBackgroundColor(0xFF12121F.toInt()); setPadding(0, 0, 0, 0)
         }
         val container = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
         scroll.addView(container)
 
         val className = Regex("class\\s+(\\w+)").find(code)?.groupValues?.get(1) ?: "UnknownScreen"
-        val isEditor = className.contains("Editor", ignoreCase = true)
-        val isLogin = className.contains("Login", ignoreCase = true)
-        val isAdmin = className.contains("Admin", ignoreCase = true)
+        val isEditor = className.contains("Editor", true)
+        val isLogin = className.contains("Login", true)
+        val isAdmin = className.contains("Admin", true)
         val lines = code.lines()
 
+        // Header
         container.addView(LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(0xFF1A1A2E.toInt())
-            setPadding(20, 16, 20, 16)
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 24, 16, 16)
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setOnClickListener { jumpToLine(1) }
             addView(TextView(requireContext()).apply {
                 text = when {
                     isAdmin -> "🔐 ADMIN PANEL"
                     isLogin -> "🔐 LOGIN"
                     isEditor -> "✏️ FILE EDITOR"
                     else -> "📱 $className"
-                }
-                textSize = 22f
-                setTextColor(0xFF40E0D0.toInt())
-                setTypeface(null, Typeface.BOLD)
-                setGravity(Gravity.CENTER)
+                }; textSize = 22f; setTextColor(0xFF40E0D0.toInt()); setTypeface(null, Typeface.BOLD); gravity = Gravity.CENTER
             })
             addView(TextView(requireContext()).apply {
-                text = "💡 Pindutin ang pindutan → tumalon sa kodigo"
-                textSize = 12f
-                setTextColor(0xFF666666.toInt())
-                setGravity(Gravity.CENTER)
-                setPadding(0, 4, 0, 0)
+                text = "💡 Pindutin ang kahit anong bahagi → tumalon sa kodigo"
+                textSize = 12f; setTextColor(0xFF666666.toInt()); gravity = Gravity.CENTER; setPadding(0, 4, 0, 0)
             })
         })
 
         when {
-            isEditor -> {
-                addClickablePreviewButton(container, "📥 I-LOAD MULA SA GITHUB", 0xFF1976D2.toInt(), lines)
-                addClickablePreviewButton(container, "📋 KOPIYA", 0xFF455A64.toInt(), lines)
-                addClickablePreviewButton(container, "📌 PASTE", 0xFF558B2F.toInt(), lines)
-                addClickablePreviewButton(container, "🧹 BURA", 0xFFC62828.toInt(), lines)
-                addClickablePreviewButton(container, "👁️ PREVIEW", 0xFF00897B.toInt(), lines)
-                addClickablePreviewButton(container, "💾 I-SAVE LOKAL", 0xFF2E7D32.toInt(), lines)
-                addClickablePreviewButton(container, "☁️ I-PUSH SA GITHUB", 0xFF7B1FA2.toInt(), lines)
-                addClickablePreviewButton(container, "🔄 I-REFRESH", 0xFF00BFA5.toInt(), lines)
-            }
-            isLogin -> {
-                addClickablePreviewButton(container, "🔐 MAG-LOGIN", 0xFF7B1FA2.toInt(), lines)
-            }
-            isAdmin -> {
-                listOf(
-                    "✏️ File Editor",
-                    "🔑 Key Code Generator",
-                    "👤 User Management",
-                    "📊 System Status",
-                    "☁️ GitHub Settings"
-                ).forEach { label ->
-                    val btn = Button(requireContext()).apply {
-                        text = label
-                        setBackgroundColor(0xFF1E1E2F.toInt())
-                        setTextColor(0xFFFFFFFF.toInt())
-                        textSize = 14f
-                        setPadding(20, 16, 20, 16)
-                        layoutParams = LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        ).apply { setMargins(16, 4, 16, 4) }
-                    }
-                    container.addView(btn)
-                }
-            }
+            isEditor -> buildEditorFullPreview(container, lines)
+            isLogin -> buildLoginFullPreview(container, lines)
+            isAdmin -> buildAdminFullPreview(container, lines)
         }
         return scroll
     }
 
-    // ✅ CLICKABLE BUTTON — HANAPIN ANG LINYA SA KODIGO!
-    private fun addClickablePreviewButton(
-        container: LinearLayout,
-        label: String,
-        bgColor: Int,
-        lines: List<String>
-    ) {
-        val btn = Button(requireContext()).apply {
-            text = label
-            setBackgroundColor(bgColor)
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 14f
-            minHeight = 52
-            setPadding(16, 12, 16, 12)
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(16, 6, 16, 6) }
+    private fun buildEditorFullPreview(container: LinearLayout, lines: List<String>) {
+        addClickablePreviewElement(container, PreviewElement("📁 Piliin ang Folder:", "folderSelect", 0xFF252540.toInt(), "label"), lines)
+        addClickablePreviewElement(container, PreviewElement("— Pumili ng folder —", "folderSelect", 0xFF1E1E2F.toInt(), "spinner"), lines)
+        addClickablePreviewElement(container, PreviewElement("📄 Piliin ang File:", "fileSelect", 0xFF252540.toInt(), "label"), lines)
+        addClickablePreviewElement(container, PreviewElement("— Walang file pa —", "fileSelect", 0xFF1E1E2F.toInt(), "spinner"), lines)
+        addClickablePreviewElement(container, PreviewElement("📥 I-LOAD MULA SA GITHUB", "btnLoad", 0xFF1976D2.toInt()), lines)
+        addClickablePreviewElement(container, PreviewElement("✏️ Kodigo:", "codeEditor", 0xFF1A1A2E.toInt(), "label"), lines)
+        addClickablePreviewElement(container, PreviewElement("Pindutin ang \"I-LOAD\" para makita ang laman...", "codeEditor", 0xFF0F0F1A.toInt(), "editor"), lines)
 
-            setOnClickListener {
-                val searchText = label.substringAfter(" ")
-                val lineNo = lines.indexOfFirst { it.contains(searchText, ignoreCase = true) || it.contains("btn", ignoreCase = true) && it.contains(searchText.take(4), ignoreCase = true) }
-                if (lineNo >= 0) {
-                    jumpToLine(lineNo + 1)
-                } else {
-                    Toast.makeText(context, "🔍 Nahanap: $label", Toast.LENGTH_SHORT).show()
-                }
-            }
+        val quickRow = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 4, 16, 4) }
         }
-        container.addView(btn)
+        addClickablePreviewBtnToRow(quickRow, "📋 KOPIYA", "btnCopy", 0xFF455A64.toInt(), lines)
+        addClickablePreviewBtnToRow(quickRow, "📌 PASTE", "btnPaste", 0xFF558B2F.toInt(), lines)
+        addClickablePreviewBtnToRow(quickRow, "🧹 BURA", "btnClear", 0xFFC62828.toInt(), lines)
+        addClickablePreviewBtnToRow(quickRow, "👁️ PREVIEW", "btnPreview", 0xFF00897B.toInt(), lines)
+        container.addView(quickRow)
+
+        addClickablePreviewElement(container, PreviewElement("⏳ Kinakarga ang listahan...", "statusText", 0xFF12121F.toInt(), "status"), lines)
+
+        val bottomRow = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 12, 16, 12)
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+        addClickablePreviewBtnToRow(bottomRow, "💾 LOKAL", "btnSaveLocal", 0xFF2E7D32.toInt(), lines)
+        addClickablePreviewBtnToRow(bottomRow, "☁️ PUSH", "btnPushGithub", 0xFF7B1FA2.toInt(), lines)
+        addClickablePreviewBtnToRow(bottomRow, "🔄 REFRESH", "btnRefresh", 0xFF00BFA5.toInt(), lines)
+        container.addView(bottomRow)
     }
 
-    // ✅ TUMALON SA TINUTUKOY NA LINYA SA EDITOR
+    private fun buildLoginFullPreview(container: LinearLayout, lines: List<String>) {
+        addClickablePreviewElement(container, PreviewElement("Ipasok ang Key Code:", "keyInput", 0xFF12121F.toInt(), "label"), lines)
+        addClickablePreviewElement(container, PreviewElement("_________________________", "keyInput", 0xFF1E1E2F.toInt(), "input"), lines)
+        addClickablePreviewElement(container, PreviewElement("🔐 MAG-LOGIN", "btnLogin", 0xFF7B1FA2.toInt()), lines)
+    }
+
+    private fun buildAdminFullPreview(container: LinearLayout, lines: List<String>) {
+        listOf("✏️ File Editor" to "fileEditor", "🔑 Key Code Generator" to "keyGen",
+            "👤 User Management" to "userMgmt", "📊 System Status" to "status",
+            "☁️ GitHub Settings" to "github").forEach { (label, key) ->
+            addClickablePreviewElement(container, PreviewElement(label, key, 0xFF1E1E2F.toInt()), lines)
+        }
+    }
+
+    private fun addClickablePreviewElement(container: LinearLayout, el: PreviewElement, lines: List<String>) {
+        val view = when (el.type) {
+            "spinner" -> TextView(requireContext()).apply {
+                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFAAAAAA.toInt())
+                textSize = 14f; setPadding(16, 14, 16, 14)
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 0, 16, 8) }
+                setOnClickListener { findAndJump(el.searchKey, lines) }
+            }
+            "editor" -> TextView(requireContext()).apply {
+                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF666666.toInt())
+                textSize = 11f; setPadding(16, 16, 16, 16); minHeight = 200
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 0, 16, 12) }
+                setOnClickListener { findAndJump(el.searchKey, lines) }
+            }
+            "input" -> TextView(requireContext()).apply {
+                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF888888.toInt())
+                textSize = 14f; setPadding(16, 16, 16, 16)
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 4, 16, 12) }
+                setOnClickListener { findAndJump(el.searchKey, lines) }
+            }
+            "status" -> TextView(requireContext()).apply {
+                text = el.label; setTextColor(0xFFFFA500.toInt()); textSize = 13f; setPadding(16, 8, 16, 8)
+                setOnClickListener { findAndJump(el.searchKey, lines) }
+            }
+            "label" -> TextView(requireContext()).apply {
+                text = el.label; setTextColor(0xFFFFFFFF.toInt()); setTypeface(null, Typeface.BOLD)
+                textSize = 14f; setPadding(16, 8, 16, 4)
+                setOnClickListener { findAndJump(el.searchKey, lines) }
+            }
+            else -> Button(requireContext()).apply {
+                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFFFFFFF.toInt())
+                textSize = 14f; minHeight = 52; setPadding(16, 12, 16, 12)
+                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 6, 16, 6) }
+                setOnClickListener { findAndJump(el.searchKey, lines) }
+            }
+        }
+        container.addView(view)
+    }
+
+    private fun addClickablePreviewBtnToRow(row: LinearLayout, label: String, key: String, color: Int, lines: List<String>) {
+        row.addView(Button(requireContext()).apply {
+            text = label; setBackgroundColor(color); setTextColor(0xFFFFFFFF.toInt()); textSize = 11f; minHeight = 50
+            setPadding(4, 8, 4, 8)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { findAndJump(key, lines) }
+        })
+    }
+
+    private fun findAndJump(searchKey: String, lines: List<String>) {
+        val lineNo = lines.indexOfFirst {
+            it.contains(searchKey, ignoreCase = true) ||
+            Regex("(val|var)\\s+${searchKey}\\b").containsMatchIn(it)
+        }
+        if (lineNo >= 0) jumpToLine(lineNo + 1)
+        else Toast.makeText(context, "🔍 Nahanap: $searchKey", Toast.LENGTH_SHORT).show()
+    }
+
     private fun jumpToLine(lineNumber: Int) {
-        val text = codeEditor.text.toString()
-        val lines = text.lines()
-        if (lineNumber > 0 && lineNumber <= lines.size) {
+        val lines = codeEditor.text.lines()
+        if (lineNumber in 1..lines.size) {
             var pos = 0
-            for (i in 0 until lineNumber - 1) pos += lines[i].length + 1
+            repeat(lineNumber - 1) { pos += lines[it].length + 1 }
             codeEditor.setSelection(pos)
             codeEditor.requestFocus()
             Toast.makeText(context, "📍 Linya $lineNumber", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun buildXmlLayoutPreview(code: String): View {
+    private fun buildFullXmlPreview(code: String): View {
         val scroll = ScrollView(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            setBackgroundColor(0xFF12121F.toInt())
-            setPadding(16, 16, 16, 16)
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            setBackgroundColor(0xFF12121F.toInt()); setPadding(16, 16, 16, 16)
         }
-        val container = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-        }
+        val container = LinearLayout(requireContext()).apply { orientation = LinearLayout.VERTICAL }
         scroll.addView(container)
 
         container.addView(TextView(requireContext()).apply {
-            text = "🔶 LAYOUT PREVIEW"
-            textSize = 18f
-            setTextColor(0xFFFFB74D.toInt())
-            setTypeface(null, Typeface.BOLD)
-            setPadding(0, 0, 0, 16)
+            text = "🔶 LAYOUT PREVIEW"; textSize = 18f; setTextColor(0xFFFFB74D.toInt())
+            setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 16)
         })
 
         val btnCount = Regex("<Button").findAll(code).count()
         val tvCount = Regex("<TextView").findAll(code).count()
         val etCount = Regex("<EditText").findAll(code).count()
+        val llCount = Regex("<LinearLayout").findAll(code).count()
+        val svCount = Regex("<ScrollView").findAll(code).count()
 
         container.addView(LinearLayout(requireContext()).apply {
-            setBackgroundColor(0xFF1A1A2E.toInt())
-            setPadding(20, 20, 20, 20)
+            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(20, 20, 20, 20)
             orientation = LinearLayout.VERTICAL
             addView(TextView(requireContext()).apply {
-                text = "📋 Mga Elemento:"
-                setTextColor(Color.WHITE)
-                setTypeface(null, Typeface.BOLD)
-                setPadding(0, 0, 0, 12)
+                text = "📋 Mga Elemento:"; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 12)
             })
-            addView(TextView(requireContext()).apply {
-                text = "• Pindutan: $btnCount"
-                setTextColor(0xFF64B5F6.toInt())
-                textSize = 13f
-            })
-            addView(TextView(requireContext()).apply {
-                text = "• Teksto: $tvCount"
-                setTextColor(0xFFCCCCCC.toInt())
-                textSize = 13f
-            })
-            addView(TextView(requireContext()).apply {
-                text = "• Kahon: $etCount"
-                setTextColor(0xFF81C784.toInt())
-                textSize = 13f
-            })
+            addView(TextView(requireContext()).apply { text = "• Linear Layout: $llCount"; setTextColor(0xFF64B5F6.toInt()); textSize = 13f })
+            addView(TextView(requireContext()).apply { text = "• Scroll View: $svCount"; setTextColor(0xFFBB86FC.toInt()); textSize = 13f })
+            addView(TextView(requireContext()).apply { text = "• Pindutan: $btnCount"; setTextColor(0xFF64B5F6.toInt()); textSize = 13f })
+            addView(TextView(requireContext()).apply { text = "• Teksto: $tvCount"; setTextColor(0xFFCCCCCC.toInt()); textSize = 13f })
+            addView(TextView(requireContext()).apply { text = "• Kahon/Pag-input: $etCount"; setTextColor(0xFF81C784.toInt()); textSize = 13f })
         })
+
+        container.addView(TextView(requireContext()).apply {
+            text = "\n💡 Pindutin kahit saan → tatalon sa kodigo"
+            textSize = 12f; setTextColor(0xFF888888.toInt()); gravity = Gravity.CENTER
+        })
+        container.setOnClickListener { jumpToLine(1) }
         return scroll
     }
 
@@ -716,18 +802,16 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun initFolderList() {
-        val folders = listOf(
+        folderSelect.adapter = createWhiteTextAdapter(listOf(
             "app/", "app/src/", "app/src/main/", "app/src/main/java/",
             "app/src/main/java/com/martodosko/studio/", "app/src/main/res/",
             "app/src/main/res/layout/", "app/src/main/assets/", "docs/"
-        )
-        folderSelect.adapter = createWhiteTextAdapter(folders)
+        ))
     }
 
     private fun loadFileListFromFolder() {
         if (githubToken.isNullOrEmpty() || repoOwner.isEmpty() || repoName.isEmpty()) {
-            showStatus("⚠️ I-setup muna ang GitHub Token", false)
-            return
+            showStatus("⚠️ I-setup muna ang GitHub Token", false); return
         }
         showLoading(true)
         CoroutineScope(Dispatchers.IO).launch {
@@ -736,10 +820,10 @@ class FileEditorFragment : Fragment() {
                 val conn = url.openConnection() as HttpURLConnection
                 conn.setRequestProperty("Authorization", "token $githubToken")
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
-                val jsonArray = JSONArray(BufferedReader(InputStreamReader(conn.inputStream)).readText())
+                val ja = JSONArray(BufferedReader(InputStreamReader(conn.inputStream)).readText())
                 allFiles.clear()
-                for (i in 0 until jsonArray.length()) {
-                    val item = jsonArray.getJSONObject(i)
+                for (i in 0 until ja.length()) {
+                    val item = ja.getJSONObject(i)
                     if (item.getString("type") == "file") {
                         val name = item.getString("name")
                         allFiles.add(FileItem(item.getString("path"), getFileIcon(name) + " " + name, "file"))
@@ -748,13 +832,11 @@ class FileEditorFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     val names = allFiles.map { it.name }
                     fileSelect.adapter = createWhiteTextAdapter(if (names.isEmpty()) listOf("— Walang file —") else names)
-                    showStatus("✅ ${allFiles.size} file nakita", true)
-                    showLoading(false)
+                    showStatus("✅ ${allFiles.size} file nakita", true); showLoading(false)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    showStatus("❌ ${e.message}", false)
-                    showLoading(false)
+                    showStatus("❌ ${e.message}", false); showLoading(false)
                 }
             }
         }
@@ -771,13 +853,11 @@ class FileEditorFragment : Fragment() {
     private fun loadFromGithub() {
         val pos = fileSelect.selectedItemPosition
         if (pos == AdapterView.INVALID_POSITION || pos >= allFiles.size) {
-            showStatus("⚠️ Pumili muna ng file!", false)
-            return
+            showStatus("⚠️ Pumili muna ng file!", false); return
         }
         selectedFilePath = allFiles[pos].path
         if (githubToken.isNullOrEmpty()) {
-            showStatus("⚠️ Kailangan ng GitHub Token!", false)
-            return
+            showStatus("⚠️ Kailangan ng GitHub Token!", false); return
         }
         showLoading(true)
         CoroutineScope(Dispatchers.IO).launch {
@@ -785,19 +865,19 @@ class FileEditorFragment : Fragment() {
                 val url = URL("${BASE_URL}$repoOwner/$repoName/contents/$selectedFilePath")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.setRequestProperty("Authorization", "token $githubToken")
-                val json = JSONObject(BufferedReader(InputStreamReader(conn.inputStream)).readText())
-                currentSha = json.getString("sha")
-                originalContent = String(Base64.decode(json.getString("content").replace("\n", ""), Base64.DEFAULT))
+                val jo = JSONObject(BufferedReader(InputStreamReader(conn.inputStream)).readText())
+                currentSha = jo.getString("sha")
+                originalContent = String(Base64.decode(jo.getString("content").replace("\n", ""), Base64.DEFAULT))
                 withContext(Dispatchers.Main) {
                     codeEditor.setText(originalContent)
                     showStatus("✅ Nai-load", true)
                     checkForErrors(originalContent)
+                    applySyntaxHighlighting()
                     showLoading(false)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    showStatus("❌ ${e.message}", false)
-                    showLoading(false)
+                    showStatus("❌ ${e.message}", false); showLoading(false)
                 }
             }
         }
@@ -806,8 +886,7 @@ class FileEditorFragment : Fragment() {
     private fun saveLocal() {
         val content = codeEditor.text.toString()
         if (content.isBlank() || selectedFilePath.isBlank()) {
-            showStatus("⚠️ I-load muna!", false)
-            return
+            showStatus("⚠️ I-load muna!", false); return
         }
         val file = File(requireContext().filesDir, selectedFilePath.substringAfterLast('/'))
         file.parentFile?.mkdirs()
@@ -820,16 +899,14 @@ class FileEditorFragment : Fragment() {
     private fun pushToGithub() {
         val content = codeEditor.text.toString()
         if (content.isBlank() || selectedFilePath.isBlank() || githubToken.isNullOrEmpty()) {
-            showStatus("⚠️ Kulang ang impormasyon", false)
-            return
+            showStatus("⚠️ Kulang ang impormasyon", false); return
         }
         val input = EditText(requireContext()).apply {
             hint = "Ilagay ang mensahe ng pagbabago..."
+            setBackgroundColor(0xFFFFFFFF.toInt())
             setTextColor(0xFF000000.toInt())
             setHintTextColor(0xFF888888.toInt())
-            setBackgroundColor(0xFFFFFFFF.toInt())
-            textSize = 14f
-            setPadding(24, 18, 24, 18)
+            textSize = 14f; setPadding(24, 18, 24, 18)
         }
         AlertDialog.Builder(requireContext())
             .setTitle("📤 I-PUSH SA GITHUB")
@@ -854,8 +931,7 @@ class FileEditorFragment : Fragment() {
                     if (!currentSha.isNullOrEmpty()) put("sha", currentSha)
                 }.toString()
                 val conn = URL("${BASE_URL}$repoOwner/$repoName/contents/$selectedFilePath").openConnection() as HttpURLConnection
-                conn.requestMethod = "PUT"
-                conn.doOutput = true
+                conn.requestMethod = "PUT"; conn.doOutput = true
                 conn.setRequestProperty("Authorization", "token $githubToken")
                 conn.setRequestProperty("Content-Type", "application/json")
                 OutputStreamWriter(conn.outputStream).use { it.write(body) }
@@ -864,14 +940,12 @@ class FileEditorFragment : Fragment() {
                         .optJSONObject("commit")?.optString("sha")
                     originalContent = content
                     withContext(Dispatchers.Main) {
-                        showStatus("☁️✅ MATAGUMPAY NA-UPLOAD!", true)
-                        showLoading(false)
+                        showStatus("☁️✅ MATAGUMPAY NA-UPLOAD!", true); showLoading(false)
                     }
                 } else throw Exception("HTTP ${conn.responseCode}")
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    showStatus("❌ ${e.message}", false)
-                    showLoading(false)
+                    showStatus("❌ ${e.message}", false); showLoading(false)
                 }
             }
         }
