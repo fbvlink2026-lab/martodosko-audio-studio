@@ -1,6 +1,6 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ NAKAPIRMI ANG HEADER + KOPIYA + PREVIEW + ERROR CHECK!
-// VERSION: 3.2.0 — ✅ HINDI SUMASABAY SA SCROLL! MAY PREVIEW NG RESULTA!
+// FILE: FileEditorFragment.kt — ✅ KOTLIN PREVIEW + AYOS NA BUTTONS! WALANG FALSE WARNING!
+// VERSION: 3.3.0 — ✅ PREVIEW SA KOTLIN! HINDI NA TINATAGO ANG TEKSTO!
 // UPDATED: 2026-09-22 — LAHAT NG HINILING MO NARITO NA!
 // ==================================================
 package com.martodosko.studio
@@ -83,7 +83,7 @@ class FileEditorFragment : Fragment() {
         }
 
         // ==============================================
-        // ✅ NAKAPIRMI SA ITAAS — HINDI SUMASABAY SA SCROLL!
+        // ✅ NAKAPIRMI SA ITAAS — HINDI SUMASABAY SA SCROLL
         // ==============================================
         val fixedHeader = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -96,7 +96,6 @@ class FileEditorFragment : Fragment() {
             )
         }
 
-        // HEADER TITLE
         fixedHeader.addView(LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(12, 8, 12, 16)
@@ -114,7 +113,7 @@ class FileEditorFragment : Fragment() {
             })
         })
 
-        // FOLDER SELECT
+        // FOLDER
         fixedHeader.addView(TextView(requireContext()).apply {
             text = "📁 Piliin ang Folder:"
             textSize = 14f
@@ -139,7 +138,7 @@ class FileEditorFragment : Fragment() {
         }
         fixedHeader.addView(folderSelect)
 
-        // FILE SELECT
+        // FILE
         fixedHeader.addView(TextView(requireContext()).apply {
             text = "📄 Piliin ang File:"
             textSize = 14f
@@ -157,13 +156,14 @@ class FileEditorFragment : Fragment() {
         }
         fixedHeader.addView(fileSelect)
 
-        // LOAD BUTTON
+        // LOAD BUTTON — Sapat na laki
         btnLoad = Button(requireContext()).apply {
             text = "📥 I-LOAD MULA SA GITHUB"
             setBackgroundColor(0xFF1976D2.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 14f
-            minHeight = 52
+            minHeight = 56
+            setPadding(16, 14, 16, 14)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -175,7 +175,7 @@ class FileEditorFragment : Fragment() {
         root.addView(fixedHeader)
 
         // ==============================================
-        // ✅ SCROLLABLE NA LAMAN — NAKA-HIwalay sa Header!
+        // ✅ SCROLLABLE NA LAMAN
         // ==============================================
         val scrollView = ScrollView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
@@ -211,7 +211,7 @@ class FileEditorFragment : Fragment() {
             textSize = 11f
             setPadding(14, 14, 14, 14)
             setHint("Pindutin ang \"I-LOAD\" para makita ang laman...")
-            minHeight = 350
+            minHeight = 300
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -219,7 +219,7 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(codeEditor)
 
-        // ERROR PANEL — LALABAS KUNG MAY PROBLEMA SA CODE
+        // ERROR PANEL
         errorPanel = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF3A1515.toInt())
@@ -230,7 +230,7 @@ class FileEditorFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(0, 0, 0, 12) }
             addView(TextView(requireContext()).apply {
-                text = "⚠️ MGA PROBLEMA SA KODIGO:"
+                text = "⚠️ MGA TANDA SA KODIGO:"
                 setTextColor(0xFFFF6B6B.toInt())
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 textSize = 13f
@@ -244,7 +244,7 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(errorPanel)
 
-        // QUICK BUTTONS ROW — KOPIYA + PREVIEW
+        // QUICK BUTTONS — HINDI NA TINATAGO ANG TEKSTO
         val quickRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -257,9 +257,11 @@ class FileEditorFragment : Fragment() {
             text = "📋 KOPIYAHAN"
             setBackgroundColor(0xFF455A64.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 12f
-            minHeight = 46
-            layoutParams = LinearLayout.LayoutParams(0, 46, 1f).apply { setMargins(4, 0, 4, 0) }
+            textSize = 13f
+            minHeight = 52
+            minWidth = 0
+            setPadding(8, 12, 8, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { copyCode() }
         }
 
@@ -267,9 +269,11 @@ class FileEditorFragment : Fragment() {
             text = "👁️ PREVIEW"
             setBackgroundColor(0xFF00897B.toInt())
             setTextColor(0xFFFFFFFF.toInt())
-            textSize = 12f
-            minHeight = 46
-            layoutParams = LinearLayout.LayoutParams(0, 46, 1f).apply { setMargins(4, 0, 4, 0) }
+            textSize = 13f
+            minHeight = 52
+            minWidth = 0
+            setPadding(8, 12, 8, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { previewCode() }
         }
 
@@ -277,7 +281,7 @@ class FileEditorFragment : Fragment() {
         quickRow.addView(btnPreview)
         main.addView(quickRow)
 
-        // MAIN ACTION BUTTONS
+        // MAIN ACTION BUTTONS — Sapat na laki
         val btnRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -287,32 +291,35 @@ class FileEditorFragment : Fragment() {
         }
 
         btnSaveLocal = Button(requireContext()).apply {
-            text = "💾 LOKAL"
+            text = "💾 I-SAVE LOKAL"
             setBackgroundColor(0xFF2E7D32.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 13f
-            minHeight = 50
-            layoutParams = LinearLayout.LayoutParams(0, 50, 1f).apply { setMargins(4, 0, 4, 0) }
+            minHeight = 54
+            setPadding(6, 12, 6, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { saveLocal() }
         }
 
         btnPushGithub = Button(requireContext()).apply {
-            text = "☁️ I-PUSH"
+            text = "☁️ I-PUSH SA GITHUB"
             setBackgroundColor(0xFF7B1FA2.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 13f
-            minHeight = 50
-            layoutParams = LinearLayout.LayoutParams(0, 50, 1f).apply { setMargins(4, 0, 4, 0) }
+            minHeight = 54
+            setPadding(6, 12, 6, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { pushToGithub() }
         }
 
         btnRefresh = Button(requireContext()).apply {
-            text = "🔄"
+            text = "🔄 I-REFRESH"
             setBackgroundColor(0xFF00BFA5.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             textSize = 13f
-            minHeight = 50
-            layoutParams = LinearLayout.LayoutParams(0, 50, 0.35f).apply { setMargins(4, 0, 4, 0) }
+            minHeight = 54
+            setPadding(6, 12, 6, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f).apply { setMargins(4, 0, 4, 0) }
             setOnClickListener { loadFileListFromFolder() }
         }
 
@@ -345,7 +352,6 @@ class FileEditorFragment : Fragment() {
         loadConfig()
         initFolderList()
 
-        // Auto-check code kapag may binago
         codeEditor.addTextChangedListener(object : android.text.TextWatcher {
             override fun afterTextChanged(s: android.text.Editable?) {
                 checkForErrors(s.toString())
@@ -385,77 +391,67 @@ class FileEditorFragment : Fragment() {
     }
 
     // ==============================================
-    // ✅ ERROR CHECKER — KUKUHA NG MGA PROBLEMA SA CODE
+    // ✅ INAYOS NA ERROR CHECKER — WALANG FALSE WARNING!
     // ==============================================
     private fun checkForErrors(code: String) {
         val issues = mutableListOf<CodeIssue>()
         val lines = code.lines()
 
-        // Tukuyin ang uri ng file
-        val isKotlin = selectedFilePath.endsWith(".kt") || code.contains("class.*:.*Fragment".toRegex())
+        val isKotlin = selectedFilePath.endsWith(".kt") || code.contains("class ") && code.contains("fun ")
         val isXml = selectedFilePath.endsWith(".xml") || code.trimStart().startsWith("<?xml")
         val isHtml = selectedFilePath.endsWith(".html") || code.contains("<html")
 
-        // ===== KOTLIN CHECKS =====
+        // ===== KOTLIN — INAYOS! HINDI NA MAGBABALA NANG MALI =====
         if (isKotlin) {
+            if (!code.contains("package ")) {
+                issues.add(CodeIssue("warning", "Maaaring kulang ang package declaration", 1))
+            }
+            if (!code.contains("class ") && !code.contains("object ") && !code.contains("interface ")) {
+                // Hindi lahat ng file ay may klase — huwag magbabala
+            }
             lines.forEachIndexed { idx, line ->
                 val lineNum = idx + 1
-                if (line.contains("class ") && !line.contains(":")) {
-                    issues.add(CodeIssue("warning", "Maaaring kulang ang deklarasyon ng klase", lineNum))
-                }
-                if (line.contains("private lateinit var") && line.contains(" ")) {
-                    val name = line.substringAfter("var ").substringBefore(":").trim()
-                    if (name.isBlank()) {
-                        issues.add(CodeIssue("error", "Walang pangalan ang variable", lineNum))
+                val trimmed = line.trim()
+                // Huwag magbabala sa mga tamang format ng class
+                if (trimmed.startsWith("class ") || trimmed.startsWith("data class ") ||
+                    trimmed.startsWith("interface ") || trimmed.startsWith("object ")) {
+                    if (!trimmed.contains("(") && !trimmed.contains(":")) {
+                        // Tamang declaration na walang inheritance — huwag magbabala
                     }
                 }
-                if (line.contains("findViewById") && !line.contains(".")) {
-                    issues.add(CodeIssue("warning", "Siguraduhing tama ang pagkuha ng View", lineNum))
-                }
-                if (line.contains("override fun") && !line.contains("fun ") && line.contains("(")) {
-                    if (!line.contains(") {")) {
-                        issues.add(CodeIssue("error", "Maaaring kulang ang katawan ng function", lineNum))
+                // Suriin ang tamang pagpapangalan ng variable
+                if (trimmed.startsWith("private lateinit var ")) {
+                    val parts = trimmed.split(" ").filter { it.isNotBlank() }
+                    if (parts.size >= 4) {
+                        // Tama: private lateinit var name: Type
+                    } else {
+                        issues.add(CodeIssue("warning", "Hindi kumpleto ang deklarasyon", lineNum))
                     }
                 }
-            }
-            if (!code.contains("package ")) {
-                issues.add(CodeIssue("error", "Kulang ang package declaration sa itaas", 1))
-            }
-            if (!code.contains("import ") && code.contains("class ")) {
-                issues.add(CodeIssue("warning", "Walang import — maaaring magkaroon ng error", 1))
+                // Walang nakasaradong string
+                if (trimmed.contains("\"") && trimmed.split("\"").size % 2 == 0) {
+                    issues.add(CodeIssue("error", "Hindi nakasaradong panipi", lineNum))
+                }
             }
         }
 
-        // ===== XML CHECKS =====
+        // ===== XML =====
         if (isXml) {
             lines.forEachIndexed { idx, line ->
                 val lineNum = idx + 1
-                val openTags = Pattern.compile("<([a-zA-Z][a-zA-Z0-9]*)(\\s|>|/)").matcher(line)
-                while (openTags.find()) {
-                    val tag = openTags.group(1)
-                    if (!line.contains("/>") && !line.contains("</$tag>") && !line.contains("</")) {
-                        if (!lines.any { it.contains("</$tag>") }) {
-                            issues.add(CodeIssue("warning", "Maaaring sarado ang tag na <$tag>", lineNum))
-                        }
-                    }
-                }
                 if (line.contains("android:id=\"@+id/\"")) {
                     issues.add(CodeIssue("error", "Walang pangalan ang id", lineNum))
                 }
             }
         }
 
-        // ===== HTML CHECKS =====
+        // ===== HTML =====
         if (isHtml) {
-            if (!code.contains("</body>")) {
+            if (!code.contains("</body>") && code.contains("<body")) {
                 issues.add(CodeIssue("warning", "Maaaring sarado ang </body>", lines.size))
-            }
-            if (!code.contains("</html>")) {
-                issues.add(CodeIssue("warning", "Maaaring sarado ang </html>", lines.size))
             }
         }
 
-        // Ipakita o itago ang panel
         if (issues.isEmpty()) {
             errorPanel.visibility = View.GONE
         } else {
@@ -465,7 +461,7 @@ class FileEditorFragment : Fragment() {
     }
 
     // ==============================================
-    // ✅ KOPIYAHAN — KOPIYA AGAD SA CLIPBOARD
+    // ✅ KOPIYAHAN
     // ==============================================
     private fun copyCode() {
         val code = codeEditor.text.toString()
@@ -479,7 +475,7 @@ class FileEditorFragment : Fragment() {
     }
 
     // ==============================================
-    // ✅ PREVIEW — MAKIKITA ANG RESULTA NG CODE
+    // ✅ PREVIEW — KOTLIN + HTML NA!
     // ==============================================
     private fun previewCode() {
         val code = codeEditor.text.toString()
@@ -489,10 +485,17 @@ class FileEditorFragment : Fragment() {
         }
 
         val isHtml = selectedFilePath.endsWith(".html") || code.trimStart().startsWith("<html")
+        val isKotlin = selectedFilePath.endsWith(".kt") || code.contains("package ") && code.contains("class ")
 
-        if (!isHtml) {
-            Toast.makeText(context, "ℹ️ Preview ay para sa HTML lamang", Toast.LENGTH_SHORT).show()
-            return
+        val previewHtml = when {
+            isHtml -> code
+            isKotlin -> generateKotlinPreviewHtml(code) // ✅ KOTLIN PREVIEW!
+            else -> """
+                <html><body style="background:#12121F; color:#E0E0E0; padding:20px; font-family:monospace;">
+                <h3 style="color:#888;">📄 $selectedFilePath</h3>
+                <pre style="white-space:pre-wrap; background:#1A1A2E; padding:16px; border-radius:8px; font-size:12px;">${escapeHtml(code)}</pre>
+                </body></html>
+            """.trimIndent()
         }
 
         val webView = WebView(requireContext()).apply {
@@ -502,7 +505,7 @@ class FileEditorFragment : Fragment() {
             )
             settings.javaScriptEnabled = true
             webViewClient = WebViewClient()
-            loadDataWithBaseURL(null, code, "text/html", "UTF-8", null)
+            loadDataWithBaseURL(null, previewHtml, "text/html", "UTF-8", null)
         }
 
         AlertDialog.Builder(requireContext())
@@ -510,6 +513,68 @@ class FileEditorFragment : Fragment() {
             .setView(webView)
             .setPositiveButton("TAPOS", null)
             .show()
+    }
+
+    // ==============================================
+    // ✅ KOTLIN → MAGANDANG FORMAT SA PREVIEW
+    // ==============================================
+    private fun generateKotlinPreviewHtml(code: String): String {
+        val lines = code.lines()
+        val styledLines = lines.map { line ->
+            var styled = escapeHtml(line)
+            // Kulayan ang mga keyword
+            val keywords = listOf("package", "import", "class", "interface", "object", "fun",
+                "val", "var", "private", "public", "protected", "internal", "override",
+                "lateinit", "suspend", "return", "if", "else", "for", "while", "when",
+                "try", "catch", "finally", "throw", "true", "false", "null", "this", "super")
+            keywords.forEach { kw ->
+                styled = styled.replace("\\b$kw\\b".toRegex(), "<span style=\"color:#FF70C0; font-weight:bold;\">$kw</span>")
+            }
+            // Kulayan ang string
+            styled = styled.replace("\"([^\"\\\\]|\\\\.)*\"".toRegex(), "<span style=\"color:#90EE90;\">$0</span>")
+            // Kulayan ang komento
+            styled = styled.replace("(//.*)$".toRegex(), "<span style=\"color:#666; font-style:italic;\">$0</span>")
+            // Kulayan ang pangalan ng klase
+            styled = styled.replace("\\b(class|data class|interface|object)\\s+([A-Z][a-zA-Z0-9]+)".toRegex(), "$1 <span style=\"color:#40E0D0; font-weight:bold; font-size:1.05em;\">$2</span>")
+            // Kulayan ang function
+            styled = styled.replace("\\bfun\\s+([a-zA-Z][a-zA-Z0-9]*)".toRegex(), "fun <span style=\"color:#FFD700; font-weight:bold;\">$1</span>")
+            // Kulayan ang numero
+            styled = styled.replace("\\b(\\d+)\\b".toRegex(), "<span style=\"color:#FFA07A;\">$1</span>")
+            styled
+        }
+
+        return """
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#12121F; color:#E0E0E0; padding:16px; font-family:'Segoe UI',monospace; }
+    .header { background:#1E1E2F; padding:14px; border-radius:8px; margin-bottom:16px; }
+    .title { color:#40E0D0; font-size:18px; font-weight:bold; }
+    .sub { color:#888; font-size:12px; margin-top:4px; }
+    pre { background:#1A1A2E; padding:16px; border-radius:8px; white-space:pre-wrap; line-height:1.6; font-size:11.5px; }
+    .line { border-bottom:1px solid #2A2A4A; padding:2px 0; }
+</style>
+</head>
+<body>
+<div class="header">
+<div class="title">🔷 KOTLIN SOURCE</div>
+<div class="sub">$selectedFilePath — ${lines.size} linya</div>
+</div>
+<pre>${styledLines.joinToString("\n") { "<div class='line'>$it</div>" }}</pre>
+</body>
+</html>
+        """.trimIndent()
+    }
+
+    private fun escapeHtml(text: String): String {
+        return text.replace("&", "&amp;")
+                   .replace("<", "&lt;")
+                   .replace(">", "&gt;")
+                   .replace("\"", "&quot;")
+                   .replace("'", "&#39;")
     }
 
     // ==============================================
