@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: GithubManagerFragment.kt — ✅ KUSANG MALALAGYAN! WALANG MANUAL EDIT!
-// VERSION: 3.1.0 — ✅ NAKA-HOLDER ANG DEFAULT TOKEN! KUSANG NALO-LOAD MULA SA BUILD CONFIG!
-// UPDATED: 2026-09-21 — WALANG KAILANGANG PALITAN! LAHAT AUTOMATIC!
+// FILE: GithubManagerFragment.kt — ✅ SARILI NANG GUMAGAWA NG PUSH/PULL/COMMIT!
+// VERSION: 3.3.0 — ✅ WALANG BUILD SCRIPT NA GINAGALAW! LOCAL + ONLINE INJECTION LANG!
+// UPDATED: 2026-09-22 — KUNG MAY TOKEN → KUSANG I-SE-SAVE SA LAHAT NG BAHAGI NG APP!
 // ==================================================
 package com.martodosko.studio
 
@@ -18,7 +18,9 @@ import androidx.fragment.app.Fragment
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.crypto.Cipher
@@ -33,6 +35,8 @@ class GithubManagerFragment : Fragment() {
     private lateinit var etRepoName: EditText
     private lateinit var btnSave: Button
     private lateinit var btnVerify: Button
+    private lateinit var btnPull: Button
+    private lateinit var btnPush: Button
     private lateinit var btnReset: Button
     private lateinit var tvStatus: TextView
     private lateinit var progressBar: ProgressBar
@@ -45,33 +49,17 @@ class GithubManagerFragment : Fragment() {
     private val TOKEN_VERIFIED = "token_verified"
 
     // ==============================================
-    // 🔑 APP GLOBAL KEY — NAKA-EMBED! APP LANG ANG ALAM!
+    // 🔑 PAREHONG KEY SA BUONG APP — WALANG GAGALAWIN!
     // ==============================================
     private val APP_GLOBAL_KEY = "MARTODOSKO-APP-KEY-2026-SECRET"
     private val APP_KEY_BYTES = APP_GLOBAL_KEY.toByteArray().copyOf(16)
 
     // ==============================================
-    // 📦 HOLDER — KUSANG MALALAGYAN NG BUILD SCRIPT / CI/CD!
-    // WAG BAGUHIN — AUTOMATICALLY REPLACED SA BUILD TIME!
+    // 📦 DEFAULT — HINDI NA KAILANGANG PALITAN SA BUILD!
+    // ITO ANG GAGAMITIN KUNG WALANG INILAGAY NA BAGO
     // ==============================================
-    private val DEFAULT_ENCRYPTED_TOKEN = "@@DEFAULT_ENCRYPTED_TOKEN@@"
-    private val DEFAULT_REPO_OWNER = "@@DEFAULT_REPO_OWNER@@"
-    private val DEFAULT_REPO_NAME = "@@DEFAULT_REPO_NAME@@"
-
-    // ==============================================
-    // ✅ TIGNAN KUNG HOLDER PA — KUNG HINDI PA PALITAN, GUMAMIT NG FALLBACK
-    // ==============================================
-    private fun getEffectiveOwner(): String {
-        return if (DEFAULT_REPO_OWNER.startsWith("@@")) "fbvlink2026-lab" else DEFAULT_REPO_OWNER
-    }
-
-    private fun getEffectiveName(): String {
-        return if (DEFAULT_REPO_NAME.startsWith("@@")) "martodosko-audio-studio" else DEFAULT_REPO_NAME
-    }
-
-    private fun hasValidToken(): Boolean {
-        return !DEFAULT_ENCRYPTED_TOKEN.startsWith("@@") && DEFAULT_ENCRYPTED_TOKEN.isNotEmpty()
-    }
+    private val DEFAULT_REPO_OWNER = "fbvlink2026-lab"
+    private val DEFAULT_REPO_NAME = "martodosko-audio-studio"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,14 +86,12 @@ class GithubManagerFragment : Fragment() {
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         // ==============================================
-        // ✅ AUTO-SETUP — KUNG WALANG NAKA-SAVE, I-LOAD ANG DEFAULT!
+        // ✅ AUTO-SETUP — KUNG WALANG NAKA-SAVE, ILAGAY ANG DEFAULT REPO
         // ==============================================
-        if (!prefs.contains(ENCRYPTED_TOKEN_KEY) && hasValidToken()) {
+        if (!prefs.contains(REPO_OWNER_KEY)) {
             prefs.edit()
-                .putString(ENCRYPTED_TOKEN_KEY, DEFAULT_ENCRYPTED_TOKEN)
-                .putString(REPO_OWNER_KEY, getEffectiveOwner())
-                .putString(REPO_NAME_KEY, getEffectiveName())
-                .putBoolean(TOKEN_VERIFIED, false)
+                .putString(REPO_OWNER_KEY, DEFAULT_REPO_OWNER)
+                .putString(REPO_NAME_KEY, DEFAULT_REPO_NAME)
                 .apply()
         }
 
@@ -113,26 +99,33 @@ class GithubManagerFragment : Fragment() {
         tvCurrentToken = createStatusBar()
         mainContainer.addView(tvCurrentToken)
 
-        mainContainer.addView(createLabel("🔐 GITHUB TOKEN (Opsyonal)"))
+        mainContainer.addView(createLabel("🔐 GITHUB TOKEN"))
         etToken = createTokenInput()
         mainContainer.addView(etToken)
 
         mainContainer.addView(createLabel("👤 REPOSITORY OWNER"))
-        etRepoOwner = createTextInput("hal: ${getEffectiveOwner()}")
+        etRepoOwner = createTextInput("hal: $DEFAULT_REPO_OWNER")
         mainContainer.addView(etRepoOwner)
 
         mainContainer.addView(createLabel("📂 REPOSITORY NAME"))
-        etRepoName = createTextInput("hal: ${getEffectiveName()}")
+        etRepoName = createTextInput("hal: $DEFAULT_REPO_NAME")
         mainContainer.addView(etRepoName)
 
-        val btnRow = createButtonRow()
+        val btnRow1 = createButtonRow()
         btnSave = createButton("💾 SAVE", 0xFF2E7D32.toInt())
         btnVerify = createButton("🔍 VERIFY", 0xFF0288D1.toInt())
         btnReset = createButton("🔄 RESET", 0xFFFF8C00.toInt())
-        btnRow.addView(btnSave)
-        btnRow.addView(btnVerify)
-        btnRow.addView(btnReset)
-        mainContainer.addView(btnRow)
+        btnRow1.addView(btnSave)
+        btnRow1.addView(btnVerify)
+        btnRow1.addView(btnReset)
+        mainContainer.addView(btnRow1)
+
+        val btnRow2 = createButtonRow()
+        btnPull = createButton("📥 PULL → Local", 0xFF1976D2.toInt())
+        btnPush = createButton("📤 PUSH → GitHub", 0xFF7B1FA2.toInt())
+        btnRow2.addView(btnPull)
+        btnRow2.addView(btnPush)
+        mainContainer.addView(btnRow2)
 
         tvStatus = createStatusText()
         mainContainer.addView(tvStatus)
@@ -147,7 +140,7 @@ class GithubManagerFragment : Fragment() {
     }
 
     // ==============================================
-    // 🔐 ENCRYPTION — APP GLOBAL KEY
+    // 🔐 PAREHONG ENCRYPTION SA BUONG APP
     // ==============================================
     private fun encryptData(plainText: String): String {
         val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
@@ -159,28 +152,30 @@ class GithubManagerFragment : Fragment() {
         return Base64.encodeToString(combined, Base64.DEFAULT)
     }
 
-    private fun decryptData(encryptedText: String): String {
-        val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
-        val combined = Base64.decode(encryptedText, Base64.DEFAULT)
-        val ivSize = 12
-        val iv = combined.copyOfRange(0, ivSize)
-        val data = combined.copyOfRange(ivSize, combined.size)
-
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
-        val decrypted = cipher.doFinal(data)
-        return String(decrypted, Charsets.UTF_8)
+    private fun decryptData(encryptedText: String): String? {
+        return try {
+            val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
+            val combined = Base64.decode(encryptedText, Base64.DEFAULT)
+            val iv = combined.copyOfRange(0, 12)
+            val data = combined.copyOfRange(12, combined.size)
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
+            String(cipher.doFinal(data), Charsets.UTF_8)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     // ==============================================
-    // ✅ GLOBAL — PWEDE TAWAGIN KAHIT SAAN!
+    // ✅ GLOBAL — KAYANG TAWAGIN NG FILE EDITOR KAHIT SAAN!
     // ==============================================
     companion object {
         private val APP_GLOBAL_KEY = "MARTODOSKO-APP-KEY-2026-SECRET"
         private val APP_KEY_BYTES = APP_GLOBAL_KEY.toByteArray().copyOf(16)
+        private const val PREFS_NAME = "github_prefs"
 
         fun getDecryptedToken(context: Context): String? {
-            val prefs = context.getSharedPreferences("github_prefs", Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val encrypted = prefs.getString("encrypted_github_token", null) ?: return null
             return try {
                 val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
@@ -196,7 +191,7 @@ class GithubManagerFragment : Fragment() {
         }
 
         fun getRepoInfo(context: Context): Pair<String, String> {
-            val prefs = context.getSharedPreferences("github_prefs", Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             val owner = prefs.getString("repo_owner", "") ?: ""
             val name = prefs.getString("repo_name", "") ?: ""
             return Pair(owner, name)
@@ -204,7 +199,7 @@ class GithubManagerFragment : Fragment() {
     }
 
     // ==============================================
-    // 🎨 UI FUNCTIONS
+    // 🎨 UI
     // ==============================================
     private fun createHeader(): View {
         val card = LinearLayout(requireContext()).apply {
@@ -217,13 +212,13 @@ class GithubManagerFragment : Fragment() {
             ).apply { setMargins(0, 0, 0, 20) }
         }
         card.addView(TextView(requireContext()).apply {
-            text = "🐙 GITHUB TOKEN SETUP"
-            textSize = 22f
+            text = "🐙 GITHUB MANAGER — SARILI NANG GUMAGAWA!"
+            textSize = 20f
             setTextColor(0xFF40E0D0.toInt())
             setTypeface(null, android.graphics.Typeface.BOLD)
         })
         card.addView(TextView(requireContext()).apply {
-            text = "Kusang naka-set — hindi na kailangang ilagay!"
+            text = "Ilagay ang token → SAVE → VERIFY → PULL/PUSH — Walang build script na kailangan!"
             textSize = 12f
             setTextColor(0xFF888888.toInt())
             setPadding(0, 4, 0, 0)
@@ -252,7 +247,7 @@ class GithubManagerFragment : Fragment() {
     }
 
     private fun createTokenInput(): EditText = EditText(requireContext()).apply {
-        hint = "I-type lang para palitan — opsyonal!"
+        hint = "ghp_xxxxxxxxxxxx o github_pat_..."
         inputType = android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
         setBackgroundColor(0xFF1A1A2E.toInt())
         setTextColor(0xFFFFFFFF.toInt())
@@ -281,21 +276,20 @@ class GithubManagerFragment : Fragment() {
         layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { setMargins(0, 0, 0, 16) }
+        ).apply { setMargins(0, 0, 0, 12) }
     }
 
     private fun createButton(text: String, color: Int): Button = Button(requireContext()).apply {
         this.text = text
-        textSize = 14f
+        textSize = 13f
         setTextColor(0xFFFFFFFF.toInt())
         setBackgroundColor(color)
         setPadding(8, 12, 8, 12)
-        setTypeface(null, android.graphics.Typeface.BOLD)
-        layoutParams = LinearLayout.LayoutParams(0, 56, 1f).apply { setMargins(6, 0, 6, 0) }
+        layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
     }
 
     private fun createStatusText(): TextView = TextView(requireContext()).apply {
-        text = "✅ Handa na — Kusang naka-set ang GitHub Token!"
+        text = "✅ Handa na — Ilagay ang GitHub Token sa itaas"
         textSize = 13f
         setTextColor(0xFF4CAF50.toInt())
         setPadding(4, 8, 4, 8)
@@ -330,7 +324,7 @@ class GithubManagerFragment : Fragment() {
             tvCurrentToken.setTextColor(if (isVerified) 0xFF4CAF50.toInt() else 0xFFFFA500.toInt())
             etToken.hint = "●●●●●●●● (I-type para palitan)"
         } else {
-            tvCurrentToken.text = "⚠️ Walang default token — I-setup muna"
+            tvCurrentToken.text = "⚠️ Walang token — Ilagay sa itaas → SAVE"
             tvCurrentToken.setTextColor(0xFFFFA500.toInt())
         }
     }
@@ -338,7 +332,9 @@ class GithubManagerFragment : Fragment() {
     private fun setupButtons() {
         btnSave.setOnClickListener { saveConfig() }
         btnVerify.setOnClickListener { verifyToken() }
-        btnReset.setOnClickListener { resetToDefault() }
+        btnPull.setOnClickListener { showPullMenu() }
+        btnPush.setOnClickListener { showPushMenu() }
+        btnReset.setOnClickListener { resetConfig() }
     }
 
     private fun saveConfig() {
@@ -363,7 +359,7 @@ class GithubManagerFragment : Fragment() {
                 .putString(REPO_NAME_KEY, repo)
                 .putBoolean(TOKEN_VERIFIED, false)
                 .apply()
-            showStatus("✅ Nai-save at naka-encrypt ang Token!", true)
+            showStatus("✅ Nai-save at naka-encrypt! Handa na ang PULL/PUSH!", true)
             etToken.text.clear()
         } else {
             prefs.edit()
@@ -381,14 +377,14 @@ class GithubManagerFragment : Fragment() {
         val repo = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
         if (encryptedToken == null) {
-            showStatus("❌ Walang naka-save na Token!", false)
+            showStatus("❌ Walang Token — I-save muna!", false)
             return
         }
 
         showLoading(true)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val token = decryptData(encryptedToken)
+                val token = decryptData(encryptedToken) ?: throw Exception("Hindi mabasa ang token")
                 val url = URL("https://api.github.com/repos/$owner/$repo")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.setRequestProperty("Authorization", "token $token")
@@ -396,54 +392,229 @@ class GithubManagerFragment : Fragment() {
                 conn.connectTimeout = 10000
                 conn.readTimeout = 10000
 
-                val responseCode = conn.responseCode
-                if (responseCode == 200) {
-                    val reader = BufferedReader(InputStreamReader(conn.inputStream))
-                    val json = JSONObject(reader.readText())
-                    val repoName = json.getString("full_name")
-                    val isPrivate = json.getBoolean("private")
+                if (conn.responseCode == 200) {
+                    val json = JSONObject(BufferedReader(InputStreamReader(conn.inputStream)).readText())
+                    prefs.edit().putBoolean(TOKEN_VERIFIED, true).apply()
                     withContext(Dispatchers.Main) {
-                        prefs.edit().putBoolean(TOKEN_VERIFIED, true).apply()
                         showLoading(false)
-                        showStatus("✅ VERIFIED!\n📦 $repoName\n🔒 Private: $isPrivate", true)
+                        showStatus("✅ VERIFIED — Handa na ang PULL/PUSH!", true)
                     }
                 } else {
-                    withContext(Dispatchers.Main) {
-                        showLoading(false)
-                        showStatus("❌ Error: Code $responseCode", false)
-                    }
+                    throw Exception("Code ${conn.responseCode}")
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     showLoading(false)
-                    showStatus("❌ Error: ${e.message}", false)
+                    showStatus("❌ Nabigo: ${e.message}", false)
                 }
             }
         }
     }
 
-    private fun resetToDefault() {
+    // ==============================================
+    // 📥 PULL — GitHub → Local
+    // ==============================================
+    private fun showPullMenu() {
+        val token = getValidToken() ?: return
+        val owner = prefs.getString(REPO_OWNER_KEY, "") ?: return
+        val repo = prefs.getString(REPO_NAME_KEY, "") ?: return
+
+        val paths = arrayOf(
+            "app/src/main/java/com/martodosko/studio/SideMenu.kt",
+            "app/src/main/res/layout/side_menu.xml",
+            "app/src/main/java/com/martodosko/studio/FileEditorFragment.kt",
+            "app/src/main/java/com/martodosko/studio/GithubManagerFragment.kt",
+            "app/src/main/AndroidManifest.xml",
+            "docs/index.html",
+            "assets/abiso.html",
+            "Iba pang file..."
+        )
+
         AlertDialog.Builder(requireContext())
-            .setTitle("🔄 I-reset sa Default?")
-            .setMessage("Ibabalik sa default na GitHub Token at Repository Details?")
-            .setPositiveButton("I-reset") { _, _ ->
-                if (hasValidToken()) {
-                    prefs.edit()
-                        .putString(ENCRYPTED_TOKEN_KEY, DEFAULT_ENCRYPTED_TOKEN)
-                        .putString(REPO_OWNER_KEY, getEffectiveOwner())
-                        .putString(REPO_NAME_KEY, getEffectiveName())
-                        .putBoolean(TOKEN_VERIFIED, false)
-                        .apply()
-                    etToken.text.clear()
-                    etRepoOwner.setText(getEffectiveOwner())
-                    etRepoName.setText(getEffectiveName())
-                    loadSavedConfig()
-                    showStatus("✅ Na-reset sa Default!", true)
+            .setTitle("📥 PULL — GitHub → Local")
+            .setItems(paths) { _, which ->
+                if (paths[which] == "Iba pang file...") {
+                    showCustomPathDialog("pull")
                 } else {
-                    showStatus("⚠️ Walang default token na naka-set!", false)
+                    pullFile(paths[which])
                 }
             }
+            .show()
+    }
+
+    private fun pullFile(path: String) {
+        val token = getValidToken() ?: return
+        val owner = prefs.getString(REPO_OWNER_KEY, "") ?: return
+        val repo = prefs.getString(REPO_NAME_KEY, "") ?: return
+
+        showLoading(true)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val url = URL("https://api.github.com/repos/$owner/$repo/contents/$path")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.setRequestProperty("Authorization", "token $token")
+                conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+
+                val json = JSONObject(BufferedReader(InputStreamReader(conn.inputStream)).readText())
+                val content = String(Base64.decode(json.getString("content").replace("\n",""), Base64.DEFAULT))
+                val localFile = File(requireContext().filesDir, "project/${path.substringAfterLast('/')}")
+                localFile.parentFile?.mkdirs()
+                localFile.writeText(content)
+
+                withContext(Dispatchers.Main) {
+                    showLoading(false)
+                    showStatus("✅ NA-DOWNLOAD: ${localFile.name}", true)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showLoading(false)
+                    showStatus("❌ Nabigo: ${e.message}", false)
+                }
+            }
+        }
+    }
+
+    // ==============================================
+    // 📤 PUSH — Local → GitHub
+    // ==============================================
+    private fun showPushMenu() {
+        val token = getValidToken() ?: return
+
+        val localDir = File(requireContext().filesDir, "project")
+        if (!localDir.exists() || localDir.listFiles().isNullOrEmpty()) {
+            showStatus("⚠️ Walang file sa Local — Pumunta sa File Editor at mag-save muna!", false)
+            return
+        }
+
+        val files = localDir.listFiles()?.map { it.name }?.toTypedArray() ?: emptyArray()
+        if (files.isEmpty()) {
+            showStatus("⚠️ Walang file — Mag-save muna sa File Editor!", false)
+            return
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("📤 PUSH — Local → GitHub")
+            .setItems(files) { _, which ->
+                showCommitMessageDialog(files[which])
+            }
+            .show()
+    }
+
+    private fun showCommitMessageDialog(fileName: String) {
+        val input = EditText(requireContext()).apply {
+            hint = "Commit message (hal: Inayos ang token)"
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle("📝 Commit Message")
+            .setView(input)
+            .setPositiveButton("PUSH") { _, _ ->
+                val msg = input.text.toString().trim()
+                pushFile(fileName, msg.ifEmpty { "Update: $fileName" })
+            }
             .setNegativeButton("Kanselahin", null)
+            .show()
+    }
+
+    private fun pushFile(fileName: String, message: String) {
+        val token = getValidToken() ?: return
+        val owner = prefs.getString(REPO_OWNER_KEY, "") ?: return
+        val repo = prefs.getString(REPO_NAME_KEY, "") ?: return
+        val localFile = File(requireContext().filesDir, "project/$fileName")
+        if (!localFile.exists()) {
+            showStatus("❌ Wala sa Local: $fileName", false)
+            return
+        }
+
+        showLoading(true)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val content = localFile.readText()
+                val encodedContent = Base64.encodeToString(content.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+
+                // Kunin ang SHA kung mayroon na
+                var sha: String? = null
+                try {
+                    val checkUrl = URL("https://api.github.com/repos/$owner/$repo/contents/$fileName")
+                    val checkConn = checkUrl.openConnection() as HttpURLConnection
+                    checkConn.setRequestProperty("Authorization", "token $token")
+                    sha = JSONObject(BufferedReader(InputStreamReader(checkConn.inputStream)).readText()).optString("sha", null)
+                } catch (_: Exception) {}
+
+                val url = URL("https://api.github.com/repos/$owner/$repo/contents/$fileName")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "PUT"
+                conn.doOutput = true
+                conn.setRequestProperty("Authorization", "token $token")
+                conn.setRequestProperty("Content-Type", "application/json")
+
+                val body = JSONObject().apply {
+                    put("message", message)
+                    put("content", encodedContent)
+                    if (!sha.isNullOrEmpty()) put("sha", sha)
+                }.toString()
+
+                OutputStreamWriter(conn.outputStream).use { it.write(body) }
+
+                if (conn.responseCode in 200..201) {
+                    withContext(Dispatchers.Main) {
+                        showLoading(false)
+                        showStatus("✅ NA-PUSH: $fileName", true)
+                    }
+                } else {
+                    throw Exception("Code ${conn.responseCode}")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showLoading(false)
+                    showStatus("❌ Nabigo: ${e.message}", false)
+                }
+            }
+        }
+    }
+
+    private fun showCustomPathDialog(action: String) {
+        val input = EditText(requireContext()).apply {
+            hint = "hal: app/src/main/File.kt"
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle("Ipasok ang path")
+            .setView(input)
+            .setPositiveButton("Tuloy") { _, _ ->
+                val path = input.text.toString().trim()
+                if (path.isNotEmpty()) {
+                    if (action == "pull") pullFile(path)
+                }
+            }
+            .show()
+    }
+
+    private fun getValidToken(): String? {
+        val encrypted = prefs.getString(ENCRYPTED_TOKEN_KEY, null)
+        if (encrypted == null) {
+            showStatus("❌ I-save muna ang Token!", false)
+            return null
+        }
+        val token = decryptData(encrypted)
+        if (token == null) {
+            showStatus("❌ Hindi mabasa ang Token — I-save uli!", false)
+            return null
+        }
+        return token
+    }
+
+    private fun resetConfig() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("🔄 I-reset?")
+            .setMessage("Burahin ang naka-save na Token at Repository?")
+            .setPositiveButton("Oo") { _, _ ->
+                prefs.edit().clear().apply()
+                etToken.text.clear()
+                etRepoOwner.setText(DEFAULT_REPO_OWNER)
+                etRepoName.setText(DEFAULT_REPO_NAME)
+                loadSavedConfig()
+                showStatus("✅ Na-reset — Ilagay uli ang Token", true)
+            }
+            .setNegativeButton("Hindi", null)
             .show()
     }
 
@@ -456,6 +627,8 @@ class GithubManagerFragment : Fragment() {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         btnSave.isEnabled = !show
         btnVerify.isEnabled = !show
+        btnPull.isEnabled = !show
+        btnPush.isEnabled = !show
         btnReset.isEnabled = !show
     }
 }
