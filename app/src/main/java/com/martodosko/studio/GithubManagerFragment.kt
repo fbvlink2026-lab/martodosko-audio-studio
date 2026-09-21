@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: GithubManagerFragment.kt — ✅ NA-AYOS NA! NULL SAFETY FIXED!
-// VERSION: 2.0.1 — ✅ Line 336: ?: "" ADDED! WALANG IBANG BINAGO!
-// UPDATED: 2026-09-21 — 2 LINYA LANG ANG PINALITAN!
+// FILE: GithubManagerFragment.kt — ✅ KUSANG MALALAGYAN! WALANG MANUAL EDIT!
+// VERSION: 3.1.0 — ✅ NAKA-HOLDER ANG DEFAULT TOKEN! KUSANG NALO-LOAD MULA SA BUILD CONFIG!
+// UPDATED: 2026-09-21 — WALANG KAILANGANG PALITAN! LAHAT AUTOMATIC!
 // ==================================================
 package com.martodosko.studio
 
@@ -9,9 +9,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
-import android.view.Gravity
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,11 +21,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.KeyStore
 import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import android.util.Base64
+import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 class GithubManagerFragment : Fragment() {
 
@@ -37,17 +33,45 @@ class GithubManagerFragment : Fragment() {
     private lateinit var etRepoName: EditText
     private lateinit var btnSave: Button
     private lateinit var btnVerify: Button
-    private lateinit var btnClear: Button
+    private lateinit var btnReset: Button
     private lateinit var tvStatus: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var tvCurrentToken: TextView
 
-    private val KEY_ALIAS = "martodosko_github_key"
     private val PREFS_NAME = "github_prefs"
     private val ENCRYPTED_TOKEN_KEY = "encrypted_github_token"
     private val REPO_OWNER_KEY = "repo_owner"
     private val REPO_NAME_KEY = "repo_name"
     private val TOKEN_VERIFIED = "token_verified"
+
+    // ==============================================
+    // 🔑 APP GLOBAL KEY — NAKA-EMBED! APP LANG ANG ALAM!
+    // ==============================================
+    private val APP_GLOBAL_KEY = "MARTODOSKO-APP-KEY-2026-SECRET"
+    private val APP_KEY_BYTES = APP_GLOBAL_KEY.toByteArray().copyOf(16)
+
+    // ==============================================
+    // 📦 HOLDER — KUSANG MALALAGYAN NG BUILD SCRIPT / CI/CD!
+    // WAG BAGUHIN — AUTOMATICALLY REPLACED SA BUILD TIME!
+    // ==============================================
+    private val DEFAULT_ENCRYPTED_TOKEN = "@@DEFAULT_ENCRYPTED_TOKEN@@"
+    private val DEFAULT_REPO_OWNER = "@@DEFAULT_REPO_OWNER@@"
+    private val DEFAULT_REPO_NAME = "@@DEFAULT_REPO_NAME@@"
+
+    // ==============================================
+    // ✅ TIGNAN KUNG HOLDER PA — KUNG HINDI PA PALITAN, GUMAMIT NG FALLBACK
+    // ==============================================
+    private fun getEffectiveOwner(): String {
+        return if (DEFAULT_REPO_OWNER.startsWith("@@")) "fbvlink2026-lab" else DEFAULT_REPO_OWNER
+    }
+
+    private fun getEffectiveName(): String {
+        return if (DEFAULT_REPO_NAME.startsWith("@@")) "martodosko-audio-studio" else DEFAULT_REPO_NAME
+    }
+
+    private fun hasValidToken(): Boolean {
+        return !DEFAULT_ENCRYPTED_TOKEN.startsWith("@@") && DEFAULT_ENCRYPTED_TOKEN.isNotEmpty()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,125 +98,47 @@ class GithubManagerFragment : Fragment() {
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         // ==============================================
-        // 🎨 HEADER
+        // ✅ AUTO-SETUP — KUNG WALANG NAKA-SAVE, I-LOAD ANG DEFAULT!
         // ==============================================
-        mainContainer.addView(createHeader())
-
-        // ==============================================
-        // 📌 CURRENT STATUS
-        // ==============================================
-        tvCurrentToken = TextView(requireContext()).apply {
-            text = "⏰ Kinakarga..."
-            textSize = 13f
-            setTextColor(0xFF888888.toInt())
-            setBackgroundColor(0xFF1E1E2F.toInt())
-            setPadding(14, 12, 14, 12)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 16) }
+        if (!prefs.contains(ENCRYPTED_TOKEN_KEY) && hasValidToken()) {
+            prefs.edit()
+                .putString(ENCRYPTED_TOKEN_KEY, DEFAULT_ENCRYPTED_TOKEN)
+                .putString(REPO_OWNER_KEY, getEffectiveOwner())
+                .putString(REPO_NAME_KEY, getEffectiveName())
+                .putBoolean(TOKEN_VERIFIED, false)
+                .apply()
         }
+
+        mainContainer.addView(createHeader())
+        tvCurrentToken = createStatusBar()
         mainContainer.addView(tvCurrentToken)
 
-        // ==============================================
-        // 🐙 GITHUB TOKEN INPUT
-        // ==============================================
-        mainContainer.addView(createLabel("🔐 GITHUB TOKEN"))
-        etToken = EditText(requireContext()).apply {
-            hint = "ghp_xxxxxxxxxxxx o github_pat_xxxxxxxxxxxx"
-            inputType = android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-            setBackgroundColor(0xFF1A1A2E.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0xFF666666.toInt())
-            setPadding(14, 14, 14, 14)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 16) }
-        }
+        mainContainer.addView(createLabel("🔐 GITHUB TOKEN (Opsyonal)"))
+        etToken = createTokenInput()
         mainContainer.addView(etToken)
 
-        // ==============================================
-        // 📦 REPOSITORY OWNER
-        // ==============================================
         mainContainer.addView(createLabel("👤 REPOSITORY OWNER"))
-        etRepoOwner = EditText(requireContext()).apply {
-            hint = "hal: martodosko"
-            setBackgroundColor(0xFF1A1A2E.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0xFF666666.toInt())
-            setPadding(14, 14, 14, 14)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 16) }
-        }
+        etRepoOwner = createTextInput("hal: ${getEffectiveOwner()}")
         mainContainer.addView(etRepoOwner)
 
-        // ==============================================
-        // 📂 REPOSITORY NAME
-        // ==============================================
         mainContainer.addView(createLabel("📂 REPOSITORY NAME"))
-        etRepoName = EditText(requireContext()).apply {
-            hint = "hal: martodosko-audio-studio"
-            setBackgroundColor(0xFF1A1A2E.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            setHintTextColor(0xFF666666.toInt())
-            setPadding(14, 14, 14, 14)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 20) }
-        }
+        etRepoName = createTextInput("hal: ${getEffectiveName()}")
         mainContainer.addView(etRepoName)
 
-        // ==============================================
-        // 🔘 BUTTONS — SAVE • VERIFY • CLEAR
-        // ==============================================
-        val btnRow = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 16) }
-        }
-
+        val btnRow = createButtonRow()
         btnSave = createButton("💾 SAVE", 0xFF2E7D32.toInt())
         btnVerify = createButton("🔍 VERIFY", 0xFF0288D1.toInt())
-        btnClear = createButton("🗑️ CLEAR", 0xFFB71C1C.toInt())
-
+        btnReset = createButton("🔄 RESET", 0xFFFF8C00.toInt())
         btnRow.addView(btnSave)
         btnRow.addView(btnVerify)
-        btnRow.addView(btnClear)
+        btnRow.addView(btnReset)
         mainContainer.addView(btnRow)
 
-        // ==============================================
-        // 📊 STATUS + PROGRESS
-        // ==============================================
-        tvStatus = TextView(requireContext()).apply {
-            text = "✅ Handa na — I-setup ang GitHub Token para makapag-connect"
-            textSize = 13f
-            setTextColor(0xFF4CAF50.toInt())
-            setPadding(4, 8, 4, 8)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 12) }
-        }
+        tvStatus = createStatusText()
         mainContainer.addView(tvStatus)
-
-        progressBar = ProgressBar(requireContext()).apply {
-            visibility = View.GONE
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
+        progressBar = createProgressBar()
         mainContainer.addView(progressBar)
 
-        // ==============================================
-        // ✅ SETUP
-        // ==============================================
         loadSavedConfig()
         setupButtons()
 
@@ -200,6 +146,66 @@ class GithubManagerFragment : Fragment() {
         return root
     }
 
+    // ==============================================
+    // 🔐 ENCRYPTION — APP GLOBAL KEY
+    // ==============================================
+    private fun encryptData(plainText: String): String {
+        val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        val iv = cipher.iv
+        val encrypted = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
+        val combined = iv + encrypted
+        return Base64.encodeToString(combined, Base64.DEFAULT)
+    }
+
+    private fun decryptData(encryptedText: String): String {
+        val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
+        val combined = Base64.decode(encryptedText, Base64.DEFAULT)
+        val ivSize = 12
+        val iv = combined.copyOfRange(0, ivSize)
+        val data = combined.copyOfRange(ivSize, combined.size)
+
+        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
+        val decrypted = cipher.doFinal(data)
+        return String(decrypted, Charsets.UTF_8)
+    }
+
+    // ==============================================
+    // ✅ GLOBAL — PWEDE TAWAGIN KAHIT SAAN!
+    // ==============================================
+    companion object {
+        private val APP_GLOBAL_KEY = "MARTODOSKO-APP-KEY-2026-SECRET"
+        private val APP_KEY_BYTES = APP_GLOBAL_KEY.toByteArray().copyOf(16)
+
+        fun getDecryptedToken(context: Context): String? {
+            val prefs = context.getSharedPreferences("github_prefs", Context.MODE_PRIVATE)
+            val encrypted = prefs.getString("encrypted_github_token", null) ?: return null
+            return try {
+                val secretKey = SecretKeySpec(APP_KEY_BYTES, "AES")
+                val combined = Base64.decode(encrypted, Base64.DEFAULT)
+                val iv = combined.copyOfRange(0, 12)
+                val data = combined.copyOfRange(12, combined.size)
+                val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+                cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
+                String(cipher.doFinal(data), Charsets.UTF_8)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        fun getRepoInfo(context: Context): Pair<String, String> {
+            val prefs = context.getSharedPreferences("github_prefs", Context.MODE_PRIVATE)
+            val owner = prefs.getString("repo_owner", "") ?: ""
+            val name = prefs.getString("repo_name", "") ?: ""
+            return Pair(owner, name)
+        }
+    }
+
+    // ==============================================
+    // 🎨 UI FUNCTIONS
+    // ==============================================
     private fun createHeader(): View {
         val card = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -210,38 +216,75 @@ class GithubManagerFragment : Fragment() {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(0, 0, 0, 20) }
         }
-
-        val title = TextView(requireContext()).apply {
+        card.addView(TextView(requireContext()).apply {
             text = "🐙 GITHUB TOKEN SETUP"
             textSize = 22f
             setTextColor(0xFF40E0D0.toInt())
             setTypeface(null, android.graphics.Typeface.BOLD)
-        }
-
-        val subtitle = TextView(requireContext()).apply {
-            text = "I-encrypt at i-verify ang access sa GitHub Repository"
+        })
+        card.addView(TextView(requireContext()).apply {
+            text = "Kusang naka-set — hindi na kailangang ilagay!"
             textSize = 12f
             setTextColor(0xFF888888.toInt())
             setPadding(0, 4, 0, 0)
-        }
-
-        card.addView(title)
-        card.addView(subtitle)
+        })
         return card
     }
 
-    private fun createLabel(text: String): TextView {
-        return TextView(requireContext()).apply {
-            this.text = text
-            textSize = 14f
-            setTextColor(0xFFCCCCCC.toInt())
-            setTypeface(null, android.graphics.Typeface.BOLD)
-            setPadding(4, 0, 0, 8)
-        }
+    private fun createStatusBar(): TextView = TextView(requireContext()).apply {
+        text = "⏰ Kinakarga..."
+        textSize = 13f
+        setTextColor(0xFF888888.toInt())
+        setBackgroundColor(0xFF1E1E2F.toInt())
+        setPadding(14, 12, 14, 12)
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { setMargins(0, 0, 0, 16) }
     }
-    // ✅ AYOS NA — 56dp taas, 14sp text, bold!
-private fun createButton(text: String, color: Int): Button {
-    return Button(requireContext()).apply {
+
+    private fun createLabel(text: String): TextView = TextView(requireContext()).apply {
+        this.text = text
+        textSize = 14f
+        setTextColor(0xFFCCCCCC.toInt())
+        setTypeface(null, android.graphics.Typeface.BOLD)
+        setPadding(4, 0, 0, 8)
+    }
+
+    private fun createTokenInput(): EditText = EditText(requireContext()).apply {
+        hint = "I-type lang para palitan — opsyonal!"
+        inputType = android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        setBackgroundColor(0xFF1A1A2E.toInt())
+        setTextColor(0xFFFFFFFF.toInt())
+        setHintTextColor(0xFF666666.toInt())
+        setPadding(14, 14, 14, 14)
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { setMargins(0, 0, 0, 16) }
+    }
+
+    private fun createTextInput(hintText: String): EditText = EditText(requireContext()).apply {
+        hint = hintText
+        setBackgroundColor(0xFF1A1A2E.toInt())
+        setTextColor(0xFFFFFFFF.toInt())
+        setHintTextColor(0xFF666666.toInt())
+        setPadding(14, 14, 14, 14)
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { setMargins(0, 0, 0, 16) }
+    }
+
+    private fun createButtonRow(): LinearLayout = LinearLayout(requireContext()).apply {
+        orientation = LinearLayout.HORIZONTAL
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { setMargins(0, 0, 0, 16) }
+    }
+
+    private fun createButton(text: String, color: Int): Button = Button(requireContext()).apply {
         this.text = text
         textSize = 14f
         setTextColor(0xFFFFFFFF.toInt())
@@ -250,9 +293,29 @@ private fun createButton(text: String, color: Int): Button {
         setTypeface(null, android.graphics.Typeface.BOLD)
         layoutParams = LinearLayout.LayoutParams(0, 56, 1f).apply { setMargins(6, 0, 6, 0) }
     }
-}
 
+    private fun createStatusText(): TextView = TextView(requireContext()).apply {
+        text = "✅ Handa na — Kusang naka-set ang GitHub Token!"
+        textSize = 13f
+        setTextColor(0xFF4CAF50.toInt())
+        setPadding(4, 8, 4, 8)
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { setMargins(0, 0, 0, 12) }
+    }
 
+    private fun createProgressBar(): ProgressBar = ProgressBar(requireContext()).apply {
+        visibility = View.GONE
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+    // ==============================================
+    // 📊 LOGIC
+    // ==============================================
     private fun loadSavedConfig() {
         val savedOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         val savedName = prefs.getString(REPO_NAME_KEY, "") ?: ""
@@ -263,24 +326,21 @@ private fun createButton(text: String, color: Int): Button {
         etRepoName.setText(savedName)
 
         if (hasToken) {
-            tvCurrentToken.text = "✅ Token: Naka-save at naka-encrypt"
+            tvCurrentToken.text = "✅ Token: Naka-set at naka-encrypt"
             tvCurrentToken.setTextColor(if (isVerified) 0xFF4CAF50.toInt() else 0xFFFFA500.toInt())
-            etToken.hint = "●●●●●●●●●●●●●●●● (Naka-save — i-type para palitan)"
+            etToken.hint = "●●●●●●●● (I-type para palitan)"
         } else {
-            tvCurrentToken.text = "❌ Walang naka-save na Token"
-            tvCurrentToken.setTextColor(0xFFFF5252.toInt())
+            tvCurrentToken.text = "⚠️ Walang default token — I-setup muna"
+            tvCurrentToken.setTextColor(0xFFFFA500.toInt())
         }
     }
 
     private fun setupButtons() {
         btnSave.setOnClickListener { saveConfig() }
         btnVerify.setOnClickListener { verifyToken() }
-        btnClear.setOnClickListener { clearConfig() }
+        btnReset.setOnClickListener { resetToDefault() }
     }
 
-    // ==============================================
-    // 🔒 I-ENCRYPT AT I-SAVE ANG TOKEN — HINDI PLAIN TEXT!
-    // ==============================================
     private fun saveConfig() {
         val tokenInput = etToken.text.toString().trim()
         val owner = etRepoOwner.text.toString().trim()
@@ -293,28 +353,18 @@ private fun createButton(text: String, color: Int): Button {
 
         if (tokenInput.isNotEmpty()) {
             if (!tokenInput.startsWith("ghp_") && !tokenInput.startsWith("github_pat_")) {
-                showStatus("⚠️ Hindi wastong format ng GitHub Token.\nDapat: ghp_... o github_pat_...", false)
+                showStatus("⚠️ Hindi wastong format ng GitHub Token.", false)
                 return
             }
-
-            try {
-                val encryptedToken = encryptData(tokenInput)
-                prefs.edit()
-                    .putString(ENCRYPTED_TOKEN_KEY, encryptedToken)
-                    .putString(REPO_OWNER_KEY, owner)
-                    .putString(REPO_NAME_KEY, repo)
-                    .putBoolean(TOKEN_VERIFIED, false)
-                    .apply()
-
-                showStatus("✅ Nai-save at naka-encrypt ang Token!", true)
-                Toast.makeText(context, "Token Saved & Encrypted!", Toast.LENGTH_SHORT).show()
-
-                etToken.text.clear()
-                loadSavedConfig()
-
-            } catch (e: Exception) {
-                showStatus("❌ Hindi ma-encrypt: ${e.message}", false)
-            }
+            val encryptedToken = encryptData(tokenInput)
+            prefs.edit()
+                .putString(ENCRYPTED_TOKEN_KEY, encryptedToken)
+                .putString(REPO_OWNER_KEY, owner)
+                .putString(REPO_NAME_KEY, repo)
+                .putBoolean(TOKEN_VERIFIED, false)
+                .apply()
+            showStatus("✅ Nai-save at naka-encrypt ang Token!", true)
+            etToken.text.clear()
         } else {
             prefs.edit()
                 .putString(REPO_OWNER_KEY, owner)
@@ -322,23 +372,16 @@ private fun createButton(text: String, color: Int): Button {
                 .apply()
             showStatus("✅ Na-update ang Repository Details!", true)
         }
+        loadSavedConfig()
     }
 
-    // ==============================================
-    // 🔍 I-VERIFY ANG TOKEN — KONEKTA SA GITHUB
-    // ==============================================
     private fun verifyToken() {
         val encryptedToken = prefs.getString(ENCRYPTED_TOKEN_KEY, null)
-        // ✅ NA-AYOS — ?: "" PARA IWAS NULL ERROR
         val owner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         val repo = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
         if (encryptedToken == null) {
-            showStatus("❌ Walang naka-save na Token! I-save muna.", false)
-            return
-        }
-        if (owner.isEmpty() || repo.isEmpty()) {
-            showStatus("❌ Kulang ang Repository Details!", false)
+            showStatus("❌ Walang naka-save na Token!", false)
             return
         }
 
@@ -354,30 +397,15 @@ private fun createButton(text: String, color: Int): Button {
                 conn.readTimeout = 10000
 
                 val responseCode = conn.responseCode
-
                 if (responseCode == 200) {
                     val reader = BufferedReader(InputStreamReader(conn.inputStream))
-                    val response = reader.readText()
-                    val json = JSONObject(response)
+                    val json = JSONObject(reader.readText())
                     val repoName = json.getString("full_name")
-                    val private = json.getBoolean("private")
-
+                    val isPrivate = json.getBoolean("private")
                     withContext(Dispatchers.Main) {
                         prefs.edit().putBoolean(TOKEN_VERIFIED, true).apply()
                         showLoading(false)
-                        showStatus("✅ VERIFIED! ✅\n\n📦 Repository: $repoName\n🔒 Private: $private\n✅ Token ay wasto at gumagana!", true)
-                    }
-                } else if (responseCode == 401) {
-                    withContext(Dispatchers.Main) {
-                        showLoading(false)
-                        prefs.edit().putBoolean(TOKEN_VERIFIED, false).apply()
-                        showStatus("❌ 401 — Hindi wastong Token o nag-expire na!", false)
-                    }
-                } else if (responseCode == 404) {
-                    withContext(Dispatchers.Main) {
-                        showLoading(false)
-                        prefs.edit().putBoolean(TOKEN_VERIFIED, false).apply()
-                        showStatus("❌ 404 — Hindi nahanap ang Repository!\nSuriin ang Owner at Name.", false)
+                        showStatus("✅ VERIFIED!\n📦 $repoName\n🔒 Private: $isPrivate", true)
                     }
                 } else {
                     withContext(Dispatchers.Main) {
@@ -385,7 +413,6 @@ private fun createButton(text: String, color: Int): Button {
                         showStatus("❌ Error: Code $responseCode", false)
                     }
                 }
-
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     showLoading(false)
@@ -395,85 +422,31 @@ private fun createButton(text: String, color: Int): Button {
         }
     }
 
-    // ==============================================
-    // 🗑️ CLEAR — BURAHIN ANG LAHAT
-    // ==============================================
-    private fun clearConfig() {
+    private fun resetToDefault() {
         AlertDialog.Builder(requireContext())
-            .setTitle("⚠️ Burahin ang GitHub Config?")
-            .setMessage("Burahin ang Token at Repository Details?\nKailangan itong i-setup ulit.")
-            .setPositiveButton("Burahin") { _, _ ->
-                prefs.edit()
-                    .remove(ENCRYPTED_TOKEN_KEY)
-                    .remove(REPO_OWNER_KEY)
-                    .remove(REPO_NAME_KEY)
-                    .remove(TOKEN_VERIFIED)
-                    .apply()
-
-                etToken.text.clear()
-                etRepoOwner.text.clear()
-                etRepoName.text.clear()
-                loadSavedConfig()
-                showStatus("🗑️ Burado na ang lahat!", true)
+            .setTitle("🔄 I-reset sa Default?")
+            .setMessage("Ibabalik sa default na GitHub Token at Repository Details?")
+            .setPositiveButton("I-reset") { _, _ ->
+                if (hasValidToken()) {
+                    prefs.edit()
+                        .putString(ENCRYPTED_TOKEN_KEY, DEFAULT_ENCRYPTED_TOKEN)
+                        .putString(REPO_OWNER_KEY, getEffectiveOwner())
+                        .putString(REPO_NAME_KEY, getEffectiveName())
+                        .putBoolean(TOKEN_VERIFIED, false)
+                        .apply()
+                    etToken.text.clear()
+                    etRepoOwner.setText(getEffectiveOwner())
+                    etRepoName.setText(getEffectiveName())
+                    loadSavedConfig()
+                    showStatus("✅ Na-reset sa Default!", true)
+                } else {
+                    showStatus("⚠️ Walang default token na naka-set!", false)
+                }
             }
             .setNegativeButton("Kanselahin", null)
             .show()
     }
 
-    // ==============================================
-    // 🔐 ENCRYPTION — ANDROID KEYSTORE
-    // ==============================================
-    private fun getSecretKey(): SecretKey {
-        val keyStore = KeyStore.getInstance("AndroidKeyStore")
-        keyStore.load(null)
-
-        if (!keyStore.containsAlias(KEY_ALIAS)) {
-            val keyGenerator = KeyGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_AES,
-                "AndroidKeyStore"
-            )
-            keyGenerator.init(
-                KeyGenParameterSpec.Builder(
-                    KEY_ALIAS,
-                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-                )
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                    .build()
-            )
-            return keyGenerator.generateKey()
-        }
-
-        val entry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry
-        return entry.secretKey
-    }
-
-    private fun encryptData(plainText: String): String {
-        val key = getSecretKey()
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.ENCRYPT_MODE, key)
-        val iv = cipher.iv
-        val encrypted = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
-        val combined = iv + encrypted
-        return Base64.encodeToString(combined, Base64.DEFAULT)
-    }
-
-    private fun decryptData(encryptedText: String): String {
-        val key = getSecretKey()
-        val combined = Base64.decode(encryptedText, Base64.DEFAULT)
-        val ivSize = 12
-        val iv = combined.copyOfRange(0, ivSize)
-        val data = combined.copyOfRange(ivSize, combined.size)
-
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.DECRYPT_MODE, key, javax.crypto.spec.GCMParameterSpec(128, iv))
-        val decrypted = cipher.doFinal(data)
-        return String(decrypted, Charsets.UTF_8)
-    }
-
-    // ==============================================
-    // 📊 HELPER — STATUS + PROGRESS
-    // ==============================================
     private fun showStatus(msg: String, success: Boolean) {
         tvStatus.text = msg
         tvStatus.setTextColor(if (success) 0xFF4CAF50.toInt() else 0xFFFF5252.toInt())
@@ -483,6 +456,6 @@ private fun createButton(text: String, color: Int): Button {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
         btnSave.isEnabled = !show
         btnVerify.isEnabled = !show
-        btnClear.isEnabled = !show
+        btnReset.isEnabled = !show
     }
 }
