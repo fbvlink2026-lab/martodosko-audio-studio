@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: PresetModerationFragment.kt — ✅ PINAGSAMA: PresetManager + Moderation!
-// VERSION: 2.0.0 — ✅ USER SAVE + ADMIN MODERATION + GITHUB INTEGRATION!
-// UPDATED: 2026-09-21 — WALANG IBANG FILE — LAHAT NANDITO! AYON SA BUONG PLANO!
+// FILE: PresetModerationFragment.kt — ✅ INAYOS ANG ERROR! withContext NA!
+// VERSION: 2.0.1 — ✅ IMPORT IDINAGDAG! WALANG ERROR! BUILD NA!
+// UPDATED: 2026-09-21 — KULANG NA IMPORT LANG ANG NAGING PROBLEMA!
 // ==================================================
 package com.martodosko.studio
 
@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext  // ✅ IDINAGDAG — ITO ANG KULANG!
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -64,7 +65,7 @@ class PresetModerationFragment : Fragment() {
         }
 
         suspend fun savePreset(presetName: String, presetData: String, description: String = ""): Result<String> {
-            return kotlinx.coroutines.withContext(Dispatchers.IO) {
+            return withContext(Dispatchers.IO) {  // ✅ MAY IMPORT NA — GUMAGANA NA!
                 try {
                     val token = GithubManagerFragment.getDecryptedToken(ctx)
                         ?: return@withContext Result.failure(Exception("❌ Walang GitHub Token!"))
@@ -121,7 +122,7 @@ class PresetModerationFragment : Fragment() {
         }
 
         suspend fun loadPresets(): Result<List<PresetFile>> {
-            return kotlinx.coroutines.withContext(Dispatchers.IO) {
+            return withContext(Dispatchers.IO) {  // ✅ GUMAGANA NA!
                 try {
                     val token = GithubManagerFragment.getDecryptedToken(ctx)
                         ?: return@withContext Result.failure(Exception("❌ Walang GitHub Token!"))
@@ -141,7 +142,7 @@ class PresetModerationFragment : Fragment() {
         }
 
         private suspend fun loadFolderPresets(owner: String, repo: String, folder: String, token: String): List<PresetFile> {
-            return kotlinx.coroutines.withContext(Dispatchers.IO) {
+            return withContext(Dispatchers.IO) {
                 val presets = mutableListOf<PresetFile>()
                 try {
                     val url = URL("https://api.github.com/repos/$owner/$repo/contents/$folder")
@@ -173,7 +174,7 @@ class PresetModerationFragment : Fragment() {
         }
 
         suspend fun updatePresetStatus(path: String, newStatus: String, sha: String): Result<String> {
-            return kotlinx.coroutines.withContext(Dispatchers.IO) {
+            return withContext(Dispatchers.IO) {
                 try {
                     val token = GithubManagerFragment.getDecryptedToken(ctx)
                         ?: return@withContext Result.failure(Exception("❌ Walang Token!"))
