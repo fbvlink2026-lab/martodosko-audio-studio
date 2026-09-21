@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: AdminPanelActivity.kt — ✅ FINAL NA! WALANG DOBLENG DECLARATION!
-// VERSION: 5.1.2 — ✅ PRIVATE ANG PROPERTY! GETTER LANG ANG PUBLIC! WALANG BANGGA!
-// UPDATED: 2026-09-21 — 2 LANG NA SALITA ANG DINAGDAG! LAHAT NG IBA GANOON PA RIN!
+// FILE: AdminPanelActivity.kt — ✅ INAYOS NA ANG FILE EDITOR CHECK! BUBUKAS NA!
+// VERSION: 5.1.3 — ✅ HINDI NA HINAHARANG! MAY ENCRYPTED TOKEN PA LANG = PWEDI NA!
+// UPDATED: 2026-09-21 — PALIT LANG ANG LOGIC NG btn_admin_file_editor!
 // ==================================================
 package com.martodosko.studio
 
@@ -34,7 +34,6 @@ class AdminPanelActivity : FragmentActivity() {
     // ==============================================
     var decryptedGithubToken: String? = null
         private set
-    // ✅ PRIVATE — WALANG AUTO-GENERATE NA GETTER! WALA NANG BANGGA!
     private var repoOwner: String = ""
         private set
     private var repoName: String = ""
@@ -106,7 +105,7 @@ class AdminPanelActivity : FragmentActivity() {
     }
 
     // ==============================================
-    // ✅ PUBLIC GETTERS — ITO LANG ANG TATAWAGIN NG FRAGMENT! WALANG BANGGA!
+    // ✅ PUBLIC GETTERS
     // ==============================================
     fun getGithubToken(): String? = decryptedGithubToken
     fun getRepoOwner(): String = repoOwner
@@ -145,12 +144,21 @@ class AdminPanelActivity : FragmentActivity() {
             drawerLayout.closeDrawer(findViewById<LinearLayout>(R.id.drawer_admin))
         }
 
+        // ==============================================
+        // ✅ INAYOS NA — FILE EDITOR BUTTON! BUBUKAS NA!
+        // ==============================================
         findViewById<TextView>(R.id.btn_admin_file_editor)?.setOnClickListener {
             if (currentUserLevel == "OWNER" || currentUserLevel == "ADMIN") {
-                if (!isGithubReady()) {
+                // ✅ HUWAG HINTAYIN ANG DECRYPT — MAY ENCRYPTED TOKEN + OWNER + REPO = PWEDI NA!
+                val hasEncryptedToken = githubPrefs.getString("encrypted_github_token", null) != null
+                val hasOwner = githubPrefs.getString("repo_owner", "")?.isNotEmpty() == true
+                val hasRepo = githubPrefs.getString("repo_name", "")?.isNotEmpty() == true
+
+                if (!hasEncryptedToken || !hasOwner || !hasRepo) {
                     Toast.makeText(this@AdminPanelActivity, "⚠️ I-setup muna ang GitHub Token bago gamitin ang File Editor!", Toast.LENGTH_LONG).show()
                     showFragment(GithubManagerFragment())
                 } else {
+                    // ✅ BUBUKAS NA! WALANG HARANG!
                     showFragment(FileEditorFragment())
                 }
             } else {
