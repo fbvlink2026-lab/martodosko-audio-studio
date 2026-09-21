@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ MAY PASTE BUTTON + MABASA NA ANG PUSH DIALOG!
-// VERSION: 3.5.1 — ✅ KOPIYA + PASTE + PREVIEW + MABASA NA ANG INPUT!
-// UPDATED: 2026-09-22 — LAHAT NG HINILING MO NARITO NA!
+// FILE: FileEditorFragment.kt — ✅ LAHAT NG BUTTON NAKAPIRMI! HINDI SUMASABAY!
+// VERSION: 4.1.0 — ✅ HEADER + MGA BUTTON NAKAPIRMI SA ITAAS! KODIGO LANG ANG GUMAGALAW!
+// UPDATED: 2026-09-22 — AYON SA HILING MO! WALA NANG SUMASABAY!
 // ==================================================
 package com.martodosko.studio
 
@@ -35,10 +35,10 @@ class FileEditorFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
     private lateinit var folderSelect: Spinner
     private lateinit var fileSelect: Spinner
-    private lateinit var codeEditor: EditText
+    lateinit var codeEditor: EditText
     private lateinit var btnLoad: Button
     private lateinit var btnCopy: Button
-    private lateinit var btnPaste: Button   // ✅ BAGONG PASTE BUTTON
+    private lateinit var btnPaste: Button
     private lateinit var btnPreview: Button
     private lateinit var btnSaveLocal: Button
     private lateinit var btnPushGithub: Button
@@ -52,9 +52,11 @@ class FileEditorFragment : Fragment() {
     private var repoOwner = ""
     private var repoName = ""
     private var currentFolderPath = "app/"
-    private var selectedFilePath = ""
+    var selectedFilePath = ""
+        private set
     private var currentSha: String? = null
-    private var originalContent = ""
+    var originalContent = ""
+        private set
     private val allFiles = mutableListOf<FileItem>()
 
     data class FileItem(val path: String, val name: String, val type: String)
@@ -82,7 +84,9 @@ class FileEditorFragment : Fragment() {
             )
         }
 
-        // ===== NAKAPIRMI SA ITAAS =====
+        // ==============================================
+        // ✅ FIXED HEADER — Folder + File + Load
+        // ==============================================
         val fixedHeader = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(16, 16, 16, 8)
@@ -169,14 +173,119 @@ class FileEditorFragment : Fragment() {
 
         root.addView(fixedHeader)
 
-        // ===== SCROLLABLE NA LAMAN =====
+        // ==============================================
+        // ✅ FIXED BUTTONS ROW 1 — KOPIYA / PASTE / PREVIEW
+        // ==============================================
+        val fixedButtonsRow1 = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(16, 8, 16, 8)
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        btnCopy = Button(requireContext()).apply {
+            text = "📋 KOPIYA"
+            setBackgroundColor(0xFF455A64.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 13f
+            minHeight = 52
+            setPadding(8, 12, 8, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { copyCode() }
+        }
+
+        btnPaste = Button(requireContext()).apply {
+            text = "📌 PASTE"
+            setBackgroundColor(0xFF558B2F.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 13f
+            minHeight = 52
+            setPadding(8, 12, 8, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { pasteCode() }
+        }
+
+        btnPreview = Button(requireContext()).apply {
+            text = "👁️ PREVIEW"
+            setBackgroundColor(0xFF00897B.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 13f
+            minHeight = 52
+            setPadding(8, 12, 8, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { previewCode() }
+        }
+
+        fixedButtonsRow1.addView(btnCopy)
+        fixedButtonsRow1.addView(btnPaste)
+        fixedButtonsRow1.addView(btnPreview)
+        root.addView(fixedButtonsRow1)
+
+        // ==============================================
+        // ✅ FIXED BUTTONS ROW 2 — SAVE / PUSH / REFRESH
+        // ==============================================
+        val fixedButtonsRow2 = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(16, 0, 16, 8)
+            setBackgroundColor(0xFF1A1A2E.toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        btnSaveLocal = Button(requireContext()).apply {
+            text = "💾 I-SAVE LOKAL"
+            setBackgroundColor(0xFF2E7D32.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 13f
+            minHeight = 54
+            setPadding(6, 12, 6, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { saveLocal() }
+        }
+
+        btnPushGithub = Button(requireContext()).apply {
+            text = "☁️ I-PUSH SA GITHUB"
+            setBackgroundColor(0xFF7B1FA2.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 13f
+            minHeight = 54
+            setPadding(6, 12, 6, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { pushToGithub() }
+        }
+
+        btnRefresh = Button(requireContext()).apply {
+            text = "🔄 I-REFRESH"
+            setBackgroundColor(0xFF00BFA5.toInt())
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 13f
+            minHeight = 54
+            setPadding(6, 12, 6, 12)
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f).apply { setMargins(4, 0, 4, 0) }
+            setOnClickListener { loadFileListFromFolder() }
+        }
+
+        fixedButtonsRow2.addView(btnSaveLocal)
+        fixedButtonsRow2.addView(btnPushGithub)
+        fixedButtonsRow2.addView(btnRefresh)
+        root.addView(fixedButtonsRow2)
+
+        // ==============================================
+        // ✅ SCROLLABLE NA LAMAN — KODIGO LANG ANG GUMAGALAW!
+        // ==============================================
         val scrollView = ScrollView(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0,
-                1f
+                1f  // ✅ Puno ang natitirang espasyo — kodigo lang ang naka-scroll
             )
-            setPadding(16, 0, 16, 30)
+            setPadding(16, 8, 16, 30)
+            isFillViewport = true
         }
 
         val main = LinearLayout(requireContext()).apply {
@@ -235,99 +344,6 @@ class FileEditorFragment : Fragment() {
         }
         main.addView(errorPanel)
 
-        // ✅ TATLONG BUTTON: KOPIYA + PASTE + PREVIEW
-        val quickRow = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply { setMargins(0, 0, 0, 12) }
-        }
-
-        btnCopy = Button(requireContext()).apply {
-            text = "📋 KOPIYA"
-            setBackgroundColor(0xFF455A64.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 13f
-            minHeight = 52
-            setPadding(8, 12, 8, 12)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { copyCode() }
-        }
-
-        btnPaste = Button(requireContext()).apply {
-            text = "📌 PASTE"
-            setBackgroundColor(0xFF558B2F.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 13f
-            minHeight = 52
-            setPadding(8, 12, 8, 12)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { pasteCode() }
-        }
-
-        btnPreview = Button(requireContext()).apply {
-            text = "👁️ PREVIEW"
-            setBackgroundColor(0xFF00897B.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 13f
-            minHeight = 52
-            setPadding(8, 12, 8, 12)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { previewCode() }
-        }
-
-        quickRow.addView(btnCopy)
-        quickRow.addView(btnPaste)
-        quickRow.addView(btnPreview)
-        main.addView(quickRow)
-
-        val btnRow = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        }
-
-        btnSaveLocal = Button(requireContext()).apply {
-            text = "💾 I-SAVE LOKAL"
-            setBackgroundColor(0xFF2E7D32.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 13f
-            minHeight = 54
-            setPadding(6, 12, 6, 12)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { saveLocal() }
-        }
-
-        btnPushGithub = Button(requireContext()).apply {
-            text = "☁️ I-PUSH SA GITHUB"
-            setBackgroundColor(0xFF7B1FA2.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 13f
-            minHeight = 54
-            setPadding(6, 12, 6, 12)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { pushToGithub() }
-        }
-
-        btnRefresh = Button(requireContext()).apply {
-            text = "🔄 I-REFRESH"
-            setBackgroundColor(0xFF00BFA5.toInt())
-            setTextColor(0xFFFFFFFF.toInt())
-            textSize = 13f
-            minHeight = 54
-            setPadding(6, 12, 6, 12)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { loadFileListFromFolder() }
-        }
-
-        btnRow.addView(btnSaveLocal)
-        btnRow.addView(btnPushGithub)
-        btnRow.addView(btnRefresh)
-        main.addView(btnRow)
-
         statusText = TextView(requireContext()).apply {
             text = "⏳ Kinakarga ang listahan..."
             textSize = 13f
@@ -360,6 +376,18 @@ class FileEditorFragment : Fragment() {
         return root
     }
 
+    fun scrollToLine(lineNumber: Int) {
+        val text = codeEditor.text.toString()
+        val lines = text.lines()
+        if (lineNumber < 1 || lineNumber > lines.size) return
+        var pos = 0
+        for (i in 0 until lineNumber - 1) {
+            pos += lines[i].length + 1
+        }
+        codeEditor.setSelection(pos)
+        codeEditor.requestFocus()
+    }
+
     private fun createWhiteTextAdapter(items: List<String>): ArrayAdapter<String> {
         return object : ArrayAdapter<String>(
             requireContext(),
@@ -388,18 +416,17 @@ class FileEditorFragment : Fragment() {
         val issues = mutableListOf<CodeIssue>()
         val lines = code.lines()
         val isKotlin = selectedFilePath.endsWith(".kt")
-        if (isKotlin) {
-            if (!code.contains("package ")) issues.add(CodeIssue("warning", "Maaaring kulang ang package declaration", 1))
-            lines.forEachIndexed { idx, line ->
-                val trimmed = line.trim()
-                if (trimmed.contains("\"") && trimmed.split("\"").size % 2 == 0) {
-                    issues.add(CodeIssue("error", "Hindi nakasaradong panipi", idx + 1))
-                }
+        if (isKotlin && !code.contains("package ")) {
+            issues.add(CodeIssue("warning", "Maaaring kulang ang package declaration", 1))
+        }
+        lines.forEachIndexed { idx, line ->
+            val trimmed = line.trim()
+            if (trimmed.contains("\"") && trimmed.split("\"").size % 2 == 0) {
+                issues.add(CodeIssue("error", "Hindi nakasaradong panipi", idx + 1))
             }
         }
-        if (issues.isEmpty()) errorPanel.visibility = View.GONE
-        else {
-            errorPanel.visibility = View.VISIBLE
+        errorPanel.visibility = if (issues.isEmpty()) View.GONE else View.VISIBLE
+        if (issues.isNotEmpty()) {
             errorText.text = issues.joinToString("\n") { "• Linya ${it.line}: ${it.message}" }
         }
     }
@@ -415,7 +442,6 @@ class FileEditorFragment : Fragment() {
         Toast.makeText(context, "✅ Nakopya sa clipboard!", Toast.LENGTH_SHORT).show()
     }
 
-    // ✅ BAGONG PASTE FUNCTION
     private fun pasteCode() {
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = clipboard.primaryClip
@@ -432,9 +458,6 @@ class FileEditorFragment : Fragment() {
         }
     }
 
-    // ==============================================
-    // ✅ TUNAY NA GUI PREVIEW
-    // ==============================================
     private fun previewCode() {
         val code = codeEditor.text.toString()
         if (code.isBlank()) {
@@ -444,7 +467,7 @@ class FileEditorFragment : Fragment() {
 
         val previewView = when {
             selectedFilePath.endsWith(".html") -> {
-                val webView = android.webkit.WebView(requireContext()).apply {
+                android.webkit.WebView(requireContext()).apply {
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
@@ -452,22 +475,18 @@ class FileEditorFragment : Fragment() {
                     settings.javaScriptEnabled = true
                     loadDataWithBaseURL(null, code, "text/html", "UTF-8", null)
                 }
-                webView
             }
             selectedFilePath.endsWith(".kt") -> buildKotlinGuiPreview(code)
             selectedFilePath.endsWith(".xml") -> buildXmlLayoutPreview(code)
-            else -> {
-                val scroll = ScrollView(requireContext()).apply {
-                    setBackgroundColor(0xFF12121F.toInt())
-                    setPadding(20, 20, 20, 20)
-                    addView(TextView(requireContext()).apply {
-                        text = code
-                        setTextColor(0xFFCCCCCC.toInt())
-                        textSize = 11f
-                        typeface = Typeface.MONOSPACE
-                    })
-                }
-                scroll
+            else -> ScrollView(requireContext()).apply {
+                setBackgroundColor(0xFF12121F.toInt())
+                setPadding(20, 20, 20, 20)
+                addView(TextView(requireContext()).apply {
+                    text = code
+                    setTextColor(0xFFCCCCCC.toInt())
+                    textSize = 11f
+                    typeface = Typeface.MONOSPACE
+                })
             }
         }
 
@@ -485,10 +504,15 @@ class FileEditorFragment : Fragment() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setBackgroundColor(0xFF12121F.toInt())
+            setPadding(0, 0, 0, 0)
         }
+
         val container = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 16)
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
         }
         scroll.addView(container)
 
@@ -500,7 +524,11 @@ class FileEditorFragment : Fragment() {
         container.addView(LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1A1A2E.toInt())
-            setPadding(20, 16, 20, 16)
+            setPadding(20, 24, 20, 24)
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
             addView(TextView(requireContext()).apply {
                 text = when {
                     isAdmin -> "🔐 ADMIN PANEL"
@@ -508,7 +536,7 @@ class FileEditorFragment : Fragment() {
                     isEditor -> "✏️ FILE EDITOR"
                     else -> "📱 $className"
                 }
-                textSize = 20f
+                textSize = 22f
                 setTextColor(0xFF40E0D0.toInt())
                 setTypeface(null, Typeface.BOLD)
                 setGravity(Gravity.CENTER)
@@ -517,55 +545,123 @@ class FileEditorFragment : Fragment() {
 
         when {
             isEditor -> {
-                container.addView(TextView(requireContext()).apply {
-                    text = "📁 Piliin ang Folder:"
-                    setTextColor(Color.WHITE); textSize = 14f; setPadding(4, 16, 4, 4); setTypeface(null, Typeface.BOLD)
-                })
-                container.addView(View(requireContext()).apply {
-                    setBackgroundColor(0xFF252540.toInt())
-                    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 48).apply { setMargins(16, 4, 16, 12) }
-                })
-                container.addView(Button(requireContext()).apply {
-                    text = "📥 I-LOAD MULA SA GITHUB"
-                    setBackgroundColor(0xFF1976D2.toInt()); setTextColor(Color.WHITE)
-                    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 0, 16, 12) }
-                })
-                val btnRow = LinearLayout(requireContext()).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(12, 0, 12, 0) }
-                }
-                btnRow.addView(Button(requireContext()).apply {
-                    text = "📋 KOPIYA"; setBackgroundColor(0xFF455A64.toInt()); setTextColor(Color.WHITE)
-                    layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
-                })
-                btnRow.addView(Button(requireContext()).apply {
-                    text = "📌 PASTE"; setBackgroundColor(0xFF558B2F.toInt()); setTextColor(Color.WHITE)
-                    layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
-                })
-                btnRow.addView(Button(requireContext()).apply {
-                    text = "👁️ PREVIEW"; setBackgroundColor(0xFF00897B.toInt()); setTextColor(Color.WHITE)
-                    layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
-                })
-                container.addView(btnRow)
-            }
-            isLogin -> {
                 container.addView(LinearLayout(requireContext()).apply {
-                    setPadding(24, 32, 24, 32); orientation = LinearLayout.VERTICAL
+                    setPadding(16, 16, 16, 16)
+                    orientation = LinearLayout.VERTICAL
+
                     addView(TextView(requireContext()).apply {
-                        text = "Ipasok ang Key Code:"; setTextColor(0xFFCCCCCC.toInt()); setPadding(0, 0, 0, 8)
+                        text = "📁 Piliin ang Folder:"
+                        setTextColor(Color.WHITE); textSize = 15f; setPadding(4, 0, 4, 6); setTypeface(null, Typeface.BOLD)
                     })
                     addView(View(requireContext()).apply {
                         setBackgroundColor(0xFF252540.toInt())
+                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 52).apply { setMargins(0, 0, 0, 16) }
+                    })
+
+                    addView(TextView(requireContext()).apply {
+                        text = "📄 Piliin ang File:"
+                        setTextColor(Color.WHITE); textSize = 15f; setPadding(4, 0, 4, 6); setTypeface(null, Typeface.BOLD)
+                    })
+                    addView(View(requireContext()).apply {
+                        setBackgroundColor(0xFF252540.toInt())
+                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 52).apply { setMargins(0, 0, 0, 16) }
+                    })
+
+                    addView(Button(requireContext()).apply {
+                        text = "📥 I-LOAD MULA SA GITHUB"
+                        setBackgroundColor(0xFF1976D2.toInt()); setTextColor(Color.WHITE)
+                        textSize = 15f; minHeight = 56
                         layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(0, 0, 0, 16) }
+                        setOnClickListener {
+                            val line = findLineNumber(code, "btnLoad")
+                            if (line > 0) scrollToLine(line)
+                        }
+                    })
+
+                    addView(TextView(requireContext()).apply {
+                        text = "✏️ Kodigo:"
+                        setTextColor(Color.WHITE); textSize = 15f; setPadding(4, 0, 4, 8); setTypeface(null, Typeface.BOLD)
+                    })
+                    addView(View(requireContext()).apply {
+                        setBackgroundColor(0xFF1A1A2E.toInt())
+                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200).apply { setMargins(0, 0, 0, 16) }
+                    })
+
+                    val quickRow = LinearLayout(requireContext()).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(0, 0, 0, 12) }
+                    }
+
+                    quickRow.addView(Button(requireContext()).apply {
+                        text = "📋 KOPIYA"
+                        setBackgroundColor(0xFF455A64.toInt()); setTextColor(Color.WHITE)
+                        textSize = 14f; minHeight = 52
+                        layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
+                        setOnClickListener {
+                            val line = findLineNumber(code, "btnCopy")
+                            if (line > 0) scrollToLine(line)
+                        }
+                    })
+
+                    quickRow.addView(Button(requireContext()).apply {
+                        text = "📌 PASTE"
+                        setBackgroundColor(0xFF558B2F.toInt()); setTextColor(Color.WHITE)
+                        textSize = 14f; minHeight = 52
+                        layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
+                        setOnClickListener {
+                            val line = findLineNumber(code, "btnPaste")
+                            if (line > 0) scrollToLine(line)
+                        }
+                    })
+
+                    quickRow.addView(Button(requireContext()).apply {
+                        text = "👁️ PREVIEW"
+                        setBackgroundColor(0xFF00897B.toInt()); setTextColor(Color.WHITE)
+                        textSize = 14f; minHeight = 52
+                        layoutParams = LinearLayout.LayoutParams(0, 52, 1f).apply { setMargins(4, 0, 4, 0) }
+                        setOnClickListener {
+                            val line = findLineNumber(code, "btnPreview")
+                            if (line > 0) scrollToLine(line)
+                        }
+                    })
+
+                    addView(quickRow)
+                })
+            }
+            isLogin -> {
+                container.addView(LinearLayout(requireContext()).apply {
+                    setPadding(32, 40, 32, 40)
+                    orientation = LinearLayout.VERTICAL
+                    addView(TextView(requireContext()).apply {
+                        text = "Ipasok ang Key Code:"
+                        setTextColor(0xFFCCCCCC.toInt()); textSize = 15f; setPadding(0, 0, 0, 12)
+                    })
+                    addView(View(requireContext()).apply {
+                        setBackgroundColor(0xFF252540.toInt())
+                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(0, 0, 0, 20) }
                     })
                     addView(Button(requireContext()).apply {
-                        text = "🔐 MAG-LOGIN"; setBackgroundColor(0xFF7B1FA2.toInt()); setTextColor(Color.WHITE)
-                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 54)
+                        text = "🔐 MAG-LOGIN"
+                        setBackgroundColor(0xFF7B1FA2.toInt()); setTextColor(Color.WHITE)
+                        textSize = 15f; minHeight = 56
+                        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56)
+                        setOnClickListener {
+                            val line = findLineNumber(code, "setOnClickListener")
+                            if (line > 0) scrollToLine(line)
+                        }
                     })
                 })
             }
         }
         return scroll
+    }
+
+    private fun findLineNumber(code: String, search: String): Int {
+        val lines = code.lines()
+        lines.forEachIndexed { index, line ->
+            if (line.contains(search)) return index + 1
+        }
+        return -1
     }
 
     private fun buildXmlLayoutPreview(code: String): View {
@@ -576,17 +672,17 @@ class FileEditorFragment : Fragment() {
         val container = LinearLayout(requireContext()).apply { orientation = LinearLayout.VERTICAL }
         scroll.addView(container)
         container.addView(TextView(requireContext()).apply {
-            text = "🔶 LAYOUT PREVIEW"; textSize = 18f; setTextColor(0xFFFFB74D.toInt())
-            setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 16)
+            text = "🔶 LAYOUT PREVIEW"; textSize = 20f; setTextColor(0xFFFFB74D.toInt())
+            setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 20)
         })
         val btnCount = Regex("<(Button|TextView|ImageView|EditText|LinearLayout)").findAll(code).count()
         container.addView(LinearLayout(requireContext()).apply {
-            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(20, 20, 20, 20); orientation = LinearLayout.VERTICAL
+            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(24, 24, 24, 24); orientation = LinearLayout.VERTICAL
             addView(TextView(requireContext()).apply {
-                text = "📋 Mga Elemento:"; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 12)
+                text = "📋 Mga Elemento:"; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 16)
             })
             addView(TextView(requireContext()).apply {
-                text = "• Kabuuan: ~$btnCount na elemento"; setTextColor(0xFFCCCCCC.toInt()); textSize = 13f
+                text = "• Kabuuan: ~$btnCount na elemento"; setTextColor(0xFFCCCCCC.toInt()); textSize = 14f
             })
         })
         return scroll
@@ -705,7 +801,6 @@ class FileEditorFragment : Fragment() {
         Toast.makeText(context, "✅ Nai-save!", Toast.LENGTH_SHORT).show()
     }
 
-    // ✅ INAYOS NA — MABASA NA ANG INPUT!
     private fun pushToGithub() {
         val content = codeEditor.text.toString()
         if (content.isBlank() || selectedFilePath.isBlank() || githubToken.isNullOrEmpty()) {
@@ -714,9 +809,9 @@ class FileEditorFragment : Fragment() {
         }
         val input = EditText(requireContext()).apply {
             hint = "Ilagay ang mensahe ng pagbabago..."
-            setTextColor(0xFF000000.toInt())       // ✅ ITIM — MABASA!
+            setTextColor(0xFF000000.toInt())
             setHintTextColor(0xFF888888.toInt())
-            setBackgroundColor(0xFFFFFFFF.toInt())  // ✅ PUTI ANG LIKOD
+            setBackgroundColor(0xFFFFFFFF.toInt())
             textSize = 14f
             setPadding(24, 18, 24, 18)
         }
