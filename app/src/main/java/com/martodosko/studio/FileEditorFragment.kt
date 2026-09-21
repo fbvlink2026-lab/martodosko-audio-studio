@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ TAMA NA ANG TOKEN CHECK! KUKUNIN AGAD MULA SA ACTIVITY!
-// VERSION: 2.0.3 — ✅ KUNG WALANG DECRYPTED TOKEN, KUKUNIN SA ENCRYPTED AT DEKRIPTOGRAFADO!
-// UPDATED: 2026-09-22 — SIGURADONG MAKUKUHA ANG TOKEN! WALANG BABALA!
+// FILE: FileEditorFragment.kt — ✅ PAREHONG KEY SA GITHUB MANAGER! TAMA NA ANG DECRYPTION!
+// VERSION: 2.1.0 — ✅ WALANG ANDROID KEYSTORE! PAREHONG APP GLOBAL KEY = TUGMA NA!
+// UPDATED: 2026-09-22 — KUKUNIN AGAD ANG TOKEN — WALANG BABALA!
 // ==================================================
 package com.martodosko.studio
 
@@ -26,7 +26,7 @@ import java.util.*
 import android.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
-import java.security.KeyStore
+import javax.crypto.spec.SecretKeySpec
 
 class FileEditorFragment : Fragment() {
 
@@ -52,13 +52,18 @@ class FileEditorFragment : Fragment() {
     private var repoName = ""
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
+    // ==============================================
+    // 🔑 PAREHONG KEY SA GITHUB MANAGER — HINDI NA BABAGUHIN!
+    // ==============================================
+    private val APP_GLOBAL_KEY = "MARTODOSKO-APP-KEY-2026-SECRET"
+    private val APP_KEY_BYTES = APP_GLOBAL_KEY.toByteArray().copyOf(16)
+
     companion object {
         const val PREFS_NAME = "github_prefs"
         const val ENCRYPTED_TOKEN_KEY = "encrypted_github_token"
         const val REPO_OWNER_KEY = "repo_owner"
         const val REPO_NAME_KEY = "repo_name"
         const val BASE_URL = "https://api.github.com/repos/"
-        private const val KEY_ALIAS = "martodosko_github_key"
     }
 
     override fun onCreateView(
@@ -251,22 +256,14 @@ class FileEditorFragment : Fragment() {
     }
 
     // ==============================================
-    // ✅ PINAGANDA ANG TOKEN CHECK — KUKUNIN SA LAHAT NG PARAAN!
+    // ✅ TAMA NA — GINAGAMIT ANG PAREHONG KEY SA GITHUB MANAGER!
     // ==============================================
     private fun loadGithubConfig() {
         repoOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
-        // ✅ PARAAN 1: Kunin direkta mula sa AdminPanelActivity
-        githubToken = (activity as? AdminPanelActivity)?.getGithubToken()
-
-        // ✅ PARAAN 2: Kung wala pa — kunin ang encrypted at i-decrypt dito mismo!
-        if (githubToken.isNullOrEmpty()) {
-            val encryptedToken = prefs.getString(ENCRYPTED_TOKEN_KEY, null)
-            if (!encryptedToken.isNullOrEmpty()) {
-                githubToken = tryDecrypt(encryptedToken)
-            }
-        }
+        // ✅ TAWAGIN ANG GLOBAL FUNCTION — PAREHONG PARAAN!
+        githubToken = GithubManagerFragment.getDecryptedToken(requireContext())
 
         when {
             githubToken.isNullOrEmpty() -> {
@@ -278,27 +275,6 @@ class FileEditorFragment : Fragment() {
             else -> {
                 showStatus("✅ Handa na — GitHub konektado: $repoOwner/$repoName", true)
             }
-        }
-    }
-
-    // ✅ Sariling decrypt function — hindi na umaasa sa activity!
-    private fun tryDecrypt(encryptedText: String): String? {
-        return try {
-            val keyStore = KeyStore.getInstance("AndroidKeyStore")
-            keyStore.load(null)
-            val entry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry
-            val secretKey = entry.secretKey
-
-            val combined = Base64.decode(encryptedText, Base64.DEFAULT)
-            val ivSize = 12
-            val iv = combined.copyOfRange(0, ivSize)
-            val data = combined.copyOfRange(ivSize, combined.size)
-
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
-            String(cipher.doFinal(data), Charsets.UTF_8)
-        } catch (e: Exception) {
-            null
         }
     }
 
