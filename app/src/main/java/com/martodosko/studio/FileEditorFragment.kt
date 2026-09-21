@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ REWORKED! WALANG XML! BINUBUO LAHAT SA KOTLIN!
-// VERSION: 2.0.0 — ✅ FILE BROWSER • CODE EDITOR • GITHUB INTEGRATION! WALANG FINDBYVIEWID!
-// UPDATED: 2026-09-21 — LAHAT NG UI BINUO SA onCreateView! WALANG XML KAILANGAN!
+// FILE: FileEditorFragment.kt — ✅ INAYOS ANG TOKEN CHECK! NAGDE-DECRYPT NA!
+// VERSION: 2.0.1 — ✅ GUMAGANA NA KAHIT ENCRYPTED ANG TOKEN! WALANG BABALA!
+// UPDATED: 2026-09-21 — GINAMIT ANG getDecryptedToken() — TUGMA SA ADMIN PANEL!
 // ==================================================
 package com.martodosko.studio
 
@@ -44,7 +44,7 @@ class FileEditorFragment : Fragment() {
 
     private var currentDir: File? = null
     private var selectedFile: File? = null
-    private var githubToken: String? = null
+    private var githubToken: String? = null  // ✅ DEKRIPTOGRAFADONG TOKEN
     private var repoOwner = ""
     private var repoName = ""
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -200,9 +200,9 @@ class FileEditorFragment : Fragment() {
         // 📊 STATUS + PROGRESS
         // ==============================================
         statusText = TextView(requireContext()).apply {
-            text = "✅ Handa na"
+            text = "⏳ Kinakarga ang GitHub config..."
             textSize = 13f
-            setTextColor(0xFF4CAF50.toInt())
+            setTextColor(0xFFFFA500.toInt())
             setPadding(0, 8, 0, 8)
         }
         mainContainer.addView(statusText)
@@ -217,9 +217,9 @@ class FileEditorFragment : Fragment() {
         mainContainer.addView(progressBar)
 
         // ==============================================
-        // ✅ SETUP
+        // ✅ SETUP — INAYOS ANG TOKEN CHECK!
         // ==============================================
-        loadGithubConfig()
+        loadGithubConfig()  // ✅ GUMAGANA NA — NAGDE-DECRYPT NA!
         setupButtons()
         openBaseDirectory()
 
@@ -267,13 +267,26 @@ class FileEditorFragment : Fragment() {
         }
     }
 
+    // ==============================================
+    // ✅ INAYOS NA — TAMA ANG TOKEN CHECK! GINAGAMIT ANG getDecryptedToken()!
+    // ==============================================
     private fun loadGithubConfig() {
-        githubToken = prefs.getString(ENCRYPTED_TOKEN_KEY, null)
         repoOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
-        if (githubToken.isNullOrEmpty() || repoOwner.isEmpty() || repoName.isEmpty()) {
-            showStatus("⚠️ GitHub Token/Repo hindi naka-setup — Local mode lang", false)
+        // ✅ ITO ANG PINAGKAKAIBA — HINDI DIREKTANG BINABASA ANG ENCRYPTED TOKEN!
+        githubToken = GithubManagerFragment.getDecryptedToken(requireContext())
+
+        when {
+            githubToken.isNullOrEmpty() -> {
+                showStatus("⚠️ GitHub Token hindi naka-setup — Local mode lang", false)
+            }
+            repoOwner.isEmpty() || repoName.isEmpty() -> {
+                showStatus("⚠️ Repository Owner/Name kulang — Local mode lang", false)
+            }
+            else -> {
+                showStatus("✅ Handa na — GitHub konektado: $repoOwner/$repoName", true)
+            }
         }
     }
 
