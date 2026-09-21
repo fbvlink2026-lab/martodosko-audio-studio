@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ PAREHONG KEY SA GITHUB MANAGER! TAMA NA ANG DECRYPTION!
-// VERSION: 2.1.0 — ✅ WALANG ANDROID KEYSTORE! PAREHONG APP GLOBAL KEY = TUGMA NA!
-// UPDATED: 2026-09-22 — KUKUNIN AGAD ANG TOKEN — WALANG BABALA!
+// FILE: FileEditorFragment.kt — ✅ TAMA NA ANG PUSH! GINAGAYA ANG HTML NA PARAAN!
+// VERSION: 2.2.0 — ✅ BASE64 NO_WRAP + SHA KUNG MAYROON! TUGMA SA GITHUB API!
+// UPDATED: 2026-09-22 — KUKUHA MUNA NG SHA → I-SAMA SA REQUEST! WALANG 409 ERROR!
 // ==================================================
 package com.martodosko.studio
 
@@ -19,6 +19,7 @@ import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -50,13 +51,8 @@ class FileEditorFragment : Fragment() {
     private var githubToken: String? = null
     private var repoOwner = ""
     private var repoName = ""
+    private var currentSha: String? = null // ✅ ITO ANG KULANG — SHA NG FILE!
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
-    // ==============================================
-    // 🔑 PAREHONG KEY SA GITHUB MANAGER — HINDI NA BABAGUHIN!
-    // ==============================================
-    private val APP_GLOBAL_KEY = "MARTODOSKO-APP-KEY-2026-SECRET"
-    private val APP_KEY_BYTES = APP_GLOBAL_KEY.toByteArray().copyOf(16)
 
     companion object {
         const val PREFS_NAME = "github_prefs"
@@ -64,6 +60,7 @@ class FileEditorFragment : Fragment() {
         const val REPO_OWNER_KEY = "repo_owner"
         const val REPO_NAME_KEY = "repo_name"
         const val BASE_URL = "https://api.github.com/repos/"
+        const val BRANCH = "main" // ✅ GAYA SA HTML!
     }
 
     override fun onCreateView(
@@ -214,7 +211,7 @@ class FileEditorFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        loadGithubConfig() // ✅ I-re-check tuwing babalik sa screen
+        loadGithubConfig()
     }
 
     private fun createHeader(): View {
@@ -255,14 +252,9 @@ class FileEditorFragment : Fragment() {
         }
     }
 
-    // ==============================================
-    // ✅ TAMA NA — GINAGAMIT ANG PAREHONG KEY SA GITHUB MANAGER!
-    // ==============================================
     private fun loadGithubConfig() {
         repoOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
-
-        // ✅ TAWAGIN ANG GLOBAL FUNCTION — PAREHONG PARAAN!
         githubToken = GithubManagerFragment.getDecryptedToken(requireContext())
 
         when {
@@ -299,6 +291,7 @@ class FileEditorFragment : Fragment() {
     private fun refreshFileList() {
         fileBrowser.removeAllViews()
         selectedFile = null
+        currentSha = null // ✅ Burahin ang SHA kapag nagpalit ng file
         codeEditor.visibility = View.GONE
         codeEditor.setText("")
 
@@ -368,6 +361,7 @@ class FileEditorFragment : Fragment() {
         selectedFile = file
         codeEditor.visibility = View.VISIBLE
         codeEditor.setText(file.readText())
+        currentSha = null // ✅ I-reset — kukuha muli kapag PULL
         showStatus("✅ Nabuksan: ${file.name}", true)
     }
 
@@ -378,7 +372,7 @@ class FileEditorFragment : Fragment() {
             return
         }
         file.writeText(codeEditor.text.toString())
-        showStatus("✅ Nai-save: ${file.name}", true)
+        showStatus("✅ Nai-save lokal: ${file.name}", true)
         Toast.makeText(context, "✅ Nai-save!", Toast.LENGTH_SHORT).show()
     }
 
@@ -392,13 +386,16 @@ class FileEditorFragment : Fragment() {
             .setPositiveButton("I-Commit") { _, _ ->
                 val msg = input.text.toString().trim()
                 if (msg.isNotEmpty()) {
-                    showStatus("✅ Commit message: $msg", true)
+                    showStatus("✅ Handa na — Pindutin ang PUSH", true)
                 }
             }
             .setNegativeButton("Kanselahin", null)
             .show()
     }
 
+    // ==============================================
+    // ✅ PULL — GitHub → Local + KUKUHA NG SHA!
+    // ==============================================
     private fun downloadGithubToLocal() {
         if (githubToken.isNullOrEmpty()) {
             Toast.makeText(context, "⚠️ I-setup muna ang GitHub Token!", Toast.LENGTH_SHORT).show()
@@ -430,38 +427,123 @@ class FileEditorFragment : Fragment() {
                 conn.setRequestProperty("Authorization", "token $githubToken")
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
 
-                val response = BufferedReader(InputStreamReader(conn.inputStream))
-                val json = JSONObject(response.readText())
-                val content = android.util.Base64.decode(
-                    json.getString("content").replace("\n", ""),
-                    android.util.Base64.DEFAULT
-                )
+                val json = JSONObject(BufferedReader(InputStreamReader(conn.inputStream)).readText())
+                currentSha = json.optString("sha", null) // ✅ I-SAVE ANG SHA! ITO ANG KULANG!
+                val content = String(Base64.decode(json.getString("content").replace("\n", ""), Base64.DEFAULT))
 
                 val localFile = File(currentDir, path.substringAfterLast('/'))
                 localFile.parentFile?.mkdirs()
-                localFile.writeBytes(content)
+                localFile.writeText(content)
 
                 withContext(Dispatchers.Main) {
                     showLoading(false)
                     refreshFileList()
-                    showStatus("✅ Na-download: ${localFile.name}", true)
+                    showStatus("✅ Na-download — SHA nakuha na! Handa na ang PUSH!", true)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     showLoading(false)
-                    showStatus("❌ Nabigo ang download: ${e.message}", false)
+                    showStatus("❌ Nabigo: ${e.message}", false)
                 }
             }
         }
     }
 
+    // ==============================================
+    // ✅ PUSH — Local → GitHub — GINAGAYA ANG HTML!
+    // ==============================================
     private fun uploadLocalToGithub() {
         val file = selectedFile
-        if (file == null || githubToken.isNullOrEmpty()) {
-            Toast.makeText(context, "⚠️ Pumili ng file at siguraduhing naka-setup ang GitHub!", Toast.LENGTH_SHORT).show()
+        val token = githubToken
+
+        if (file == null || token.isNullOrEmpty()) {
+            Toast.makeText(context, "⚠️ Pumili ng file at siguraduhing naka-setup ang Token!", Toast.LENGTH_SHORT).show()
             return
         }
-        showStatus("ℹ️ Ihanda ang upload sa GitHub...", true)
+
+        val commitMsg = arrayOfNulls<String>(1)
+        val input = EditText(requireContext()).apply {
+            hint = "Commit message"
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("📤 I-upload sa GitHub")
+            .setView(input)
+            .setPositiveButton("PUSH") { _, _ ->
+                commitMsg[0] = input.text.toString().trim().ifEmpty { "Na-update: ${file.name}" }
+                performPush(file, commitMsg[0]!!, token)
+            }
+            .setNegativeButton("Kanselahin", null)
+            .show()
+    }
+
+    private fun performPush(file: File, message: String, token: String) {
+        showLoading(true)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val content = file.readText()
+                val filePath = file.name
+
+                // ✅ GAYA SA HTML — NO_WRAP! WALANG BAGONG LINYA!
+                val encodedContent = Base64.encodeToString(
+                    content.toByteArray(Charsets.UTF_8),
+                    Base64.NO_WRAP
+                )
+
+                // ✅ Kunin ang SHA kung wala pa
+                if (currentSha == null) {
+                    try {
+                        val checkUrl = URL("${BASE_URL}$repoOwner/$repoName/contents/$filePath")
+                        val checkConn = checkUrl.openConnection() as HttpURLConnection
+                        checkConn.setRequestProperty("Authorization", "token $token")
+                        checkConn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+                        val checkJson = JSONObject(
+                            BufferedReader(InputStreamReader(checkConn.inputStream)).readText()
+                        )
+                        currentSha = checkJson.optString("sha", null)
+                    } catch (_: Exception) {
+                        // Bago ang file — walang SHA
+                    }
+                }
+
+                // ✅ BUILD BODY — GAYA SA HTML!
+                val body = JSONObject().apply {
+                    put("message", message)
+                    put("content", encodedContent)
+                    put("branch", BRANCH)
+                    if (!currentSha.isNullOrEmpty()) {
+                        put("sha", currentSha) // ✅ I-SAMA ANG SHA KUNG MAYROON!
+                    }
+                }.toString()
+
+                val url = URL("${BASE_URL}$repoOwner/$repoName/contents/$filePath")
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "PUT"
+                conn.doOutput = true
+                conn.setRequestProperty("Authorization", "token $token")
+                conn.setRequestProperty("Content-Type", "application/json")
+
+                OutputStreamWriter(conn.outputStream).use { it.write(body) }
+
+                if (conn.responseCode in 200..201) {
+                    val respJson = JSONObject(
+                        BufferedReader(InputStreamReader(conn.inputStream)).readText()
+                    )
+                    currentSha = respJson.optJSONObject("commit")?.optString("sha")
+                    withContext(Dispatchers.Main) {
+                        showLoading(false)
+                        showStatus("✅ NA-PUSH SA GITHUB! ✨", true)
+                    }
+                } else {
+                    throw Exception("HTTP ${conn.responseCode} — ${conn.responseMessage}")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showLoading(false)
+                    showStatus("❌ Nabigo: ${e.message}", false)
+                }
+            }
+        }
     }
 
     private fun pullFromGithub() {
@@ -479,5 +561,11 @@ class FileEditorFragment : Fragment() {
 
     private fun showLoading(show: Boolean) {
         progressBar.visibility = if (show) View.VISIBLE else View.GONE
+        btnSave.isEnabled = !show
+        btnCommit.isEnabled = !show
+        btnPull.isEnabled = !show
+        btnPush.isEnabled = !show
+        btnRefresh.isEnabled = !show
+        btnBack.isEnabled = !show
     }
 }
