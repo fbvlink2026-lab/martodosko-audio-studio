@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-09-21 00:10 UTC
-🏷️ **Bersyon:** v1.0.268
+📅 **Petsa:** 2026-09-21 02:22 UTC
+🏷️ **Bersyon:** v1.0.269
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-09-21 00:10:21 UTC
-🏷️ BERSYON:    v1.0.268
+⏰ ORAS:       2026-09-21 02:22:10 UTC
+🏷️ BERSYON:    v1.0.269
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.6M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.268.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -72,37 +67,25 @@ Daemon will be stopped at the end of the build
 > Task :app:writeReleaseSigningConfigVersions
 > Task :app:optimizeReleaseResources
 
-> Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/FileEditorFragment.kt:507:13 Variable 'file' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/FileEditorFragment.kt:533:28 Parameter 'path' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/FileEditorFragment.kt:535:36 Parameter 'apiUrl' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/FileEditorFragment.kt:535:52 Parameter 'filename' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/FileEditorFragment.kt:535:70 Parameter 'content' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/FileEditorFragment.kt:535:87 Parameter 'sha' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:216:13 'allowScanningByMediaScanner(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MainActivity.kt:265:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/MixerActivity.kt:91:19 'onBackPressed(): Unit' is deprecated. Deprecated in Java
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/SideMenu.kt:293:13 Parameter 'btnCloseMenuId' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:32:13 Lateinit is unnecessary: definitely initialized in constructors
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ToggleButtonView.kt:33:13 Lateinit is unnecessary: definitely initialized in constructors
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/PresetModerationFragment.kt:481:21 Unresolved reference: withContext
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/PresetModerationFragment.kt:497:21 Unresolved reference: withContext
 
-> Task :app:compileReleaseJavaWithJavac NO-SOURCE
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:dexBuilderRelease
-> Task :app:mergeReleaseGlobalSynthetics
-> Task :app:processReleaseJavaRes
-> Task :app:mergeReleaseJavaResource
-> Task :app:mergeDexRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:assembleRelease
+FAILURE: Build failed with an exception.
 
-BUILD SUCCESSFUL in 1m 8s
-44 actionable tasks: 43 executed, 1 up-to-date
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1m 5s
+32 actionable tasks: 31 executed, 1 up-to-date
 
 ==================================================
 
