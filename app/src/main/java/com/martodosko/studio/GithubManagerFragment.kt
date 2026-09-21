@@ -239,16 +239,19 @@ class GithubManagerFragment : Fragment() {
             setPadding(4, 0, 0, 8)
         }
     }
-
-    private fun createButton(text: String, color: Int): Button {
-        return Button(requireContext()).apply {
-            this.text = text
-            textSize = 12f
-            setBackgroundColor(color)
-            setTextColor(0xFFFFFFFF.toInt())
-            layoutParams = LinearLayout.LayoutParams(0, 45, 1f).apply { setMargins(4, 0, 4, 0) }
-        }
+    // ✅ AYOS NA — 56dp taas, 14sp text, bold!
+private fun createButton(text: String, color: Int): Button {
+    return Button(requireContext()).apply {
+        this.text = text
+        textSize = 14f
+        setTextColor(0xFFFFFFFF.toInt())
+        setBackgroundColor(color)
+        setPadding(8, 12, 8, 12)
+        setTypeface(null, android.graphics.Typeface.BOLD)
+        layoutParams = LinearLayout.LayoutParams(0, 56, 1f).apply { setMargins(6, 0, 6, 0) }
     }
+}
+
 
     private fun loadSavedConfig() {
         val savedOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
