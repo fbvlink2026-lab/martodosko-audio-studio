@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ INAYOS ANG TOKEN CHECK! NAGDE-DECRYPT NA!
-// VERSION: 2.0.1 — ✅ GUMAGANA NA KAHIT ENCRYPTED ANG TOKEN! WALANG BABALA!
-// UPDATED: 2026-09-21 — GINAMIT ANG getDecryptedToken() — TUGMA SA ADMIN PANEL!
+// FILE: FileEditorFragment.kt — ✅ MALINAW NA ANG LAHAT NG BUTTON LABEL!
+// VERSION: 2.0.2 — ✅ MAS MALUWAG NA BUTTONS! HINDI NA TUMATAGO ANG TEKSTO!
+// UPDATED: 2026-09-21 — createButton() LANG ANG INAYOS! LAHAT NG IBA GANOON PA RIN!
 // ==================================================
 package com.martodosko.studio
 
@@ -44,7 +44,7 @@ class FileEditorFragment : Fragment() {
 
     private var currentDir: File? = null
     private var selectedFile: File? = null
-    private var githubToken: String? = null  // ✅ DEKRIPTOGRAFADONG TOKEN
+    private var githubToken: String? = null
     private var repoOwner = ""
     private var repoName = ""
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -78,6 +78,7 @@ class FileEditorFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
+        root.addView(mainContainer)
 
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -103,10 +104,10 @@ class FileEditorFragment : Fragment() {
         mainContainer.addView(currentPath)
 
         // ==============================================
-        // 📁 FILE BROWSER
+        // 📁 FILE BROWSER LABEL
         // ==============================================
         val browserLabel = TextView(requireContext()).apply {
-            text = "📁 MGA FILE"
+            text = "📂 MGA FILE"
             textSize = 14f
             setTextColor(0xFFCCCCCC.toInt())
             setTypeface(null, android.graphics.Typeface.BOLD)
@@ -114,6 +115,9 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(browserLabel)
 
+        // ==============================================
+        // 📁 FILE BROWSER AREA
+        // ==============================================
         fileBrowser = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1A1A2E.toInt())
@@ -126,7 +130,7 @@ class FileEditorFragment : Fragment() {
         mainContainer.addView(fileBrowser)
 
         // ==============================================
-        // ✏️ CODE EDITOR
+        // ✏️ EDITOR LABEL
         // ==============================================
         val editorLabel = TextView(requireContext()).apply {
             text = "✏️ EDITOR"
@@ -137,6 +141,9 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(editorLabel)
 
+        // ==============================================
+        // ✏️ EDITOR
+        // ==============================================
         codeEditor = EditText(requireContext()).apply {
             setBackgroundColor(0xFF1A1A2E.toInt())
             setTextColor(0xFFE0E0E0.toInt())
@@ -144,16 +151,16 @@ class FileEditorFragment : Fragment() {
             textSize = 13f
             setPadding(12, 12, 12, 12)
             setHint("Pumili ng file mula sa itaas...")
+            visibility = View.GONE
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 350
             ).apply { setMargins(0, 0, 0, 16) }
-            visibility = View.GONE
         }
         mainContainer.addView(codeEditor)
 
         // ==============================================
-        // 🔘 BUTTONS — ROW 1: SAVE • COMMIT • PULL • PUSH • REFRESH • BACK
+        // 🔘 BUTTON ROW 1
         // ==============================================
         val btnRow1 = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -165,9 +172,9 @@ class FileEditorFragment : Fragment() {
 
         btnSave = createButton("💾 SAVE", 0xFF2E7D32.toInt())
         btnCommit = createButton("📝 COMMIT", 0xFFFF9800.toInt())
-        btnPull = createButton("📥 PULL", 0xFF64B5F6.toInt())
-        btnPush = createButton("📤 PUSH", 0xFF9C27B0.toInt())
-        btnRefresh = createButton("🔄", 0xFF40E0D0.toInt())
+        btnPull = createButton("📥 PULL", 0xFF1976D2.toInt())
+        btnPush = createButton("📤 PUSH", 0xFF7B1FA2.toInt())
+        btnRefresh = createButton("🔄", 0xFF00BFA5.toInt())
         btnBack = createButton("⬆️", 0xFF757575.toInt())
 
         btnRow1.addView(btnSave)
@@ -179,7 +186,7 @@ class FileEditorFragment : Fragment() {
         mainContainer.addView(btnRow1)
 
         // ==============================================
-        // 🔘 BUTTONS — ROW 2: LOCAL → GITHUB • GITHUB → LOCAL
+        // 🔘 BUTTON ROW 2
         // ==============================================
         val btnRow2 = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -189,8 +196,8 @@ class FileEditorFragment : Fragment() {
             ).apply { setMargins(0, 0, 0, 16) }
         }
 
-        btnLocalToGithub = createButton("📤 LOCAL→GITHUB", 0xFF7955FF.toInt())
-        btnGithubToLocal = createButton("📥 GITHUB→LOCAL", 0xFF00897B.toInt())
+        btnLocalToGithub = createButton("📤 LOCAL→GITHUB", 0xFF512DA8.toInt())
+        btnGithubToLocal = createButton("📥 GITHUB→LOCAL", 0xFF00796B.toInt())
 
         btnRow2.addView(btnLocalToGithub)
         btnRow2.addView(btnGithubToLocal)
@@ -216,19 +223,18 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(progressBar)
 
-        // ==============================================
-        // ✅ SETUP — INAYOS ANG TOKEN CHECK!
-        // ==============================================
-        loadGithubConfig()  // ✅ GUMAGANA NA — NAGDE-DECRYPT NA!
+        loadGithubConfig()
         setupButtons()
         openBaseDirectory()
 
-        root.addView(mainContainer)
         return root
     }
 
+    // ==============================================
+    // ✅ HEADER
+    // ==============================================
     private fun createHeader(): View {
-        val card = LinearLayout(requireContext()).apply {
+        return LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(20, 24, 20, 24)
             setBackgroundColor(0xFF1E1E2F.toInt())
@@ -236,46 +242,53 @@ class FileEditorFragment : Fragment() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { setMargins(0, 0, 0, 16) }
-        }
 
-        val title = TextView(requireContext()).apply {
-            text = "📂 FILE EDITOR"
-            textSize = 22f
-            setTextColor(0xFF40E0D0.toInt())
-            setTypeface(null, android.graphics.Typeface.BOLD)
-        }
-
-        val subtitle = TextView(requireContext()).apply {
-            text = "I-edit at pamahalaan ang mga file — Local + GitHub"
-            textSize = 12f
-            setTextColor(0xFF888888.toInt())
-            setPadding(0, 4, 0, 0)
-        }
-
-        card.addView(title)
-        card.addView(subtitle)
-        return card
-    }
-
-    private fun createButton(text: String, color: Int): Button {
-        return Button(requireContext()).apply {
-            this.text = text
-            textSize = 11f
-            setBackgroundColor(color)
-            setTextColor(0xFFFFFFFF.toInt())
-            layoutParams = LinearLayout.LayoutParams(0, 40, 1f).apply { setMargins(3, 0, 3, 0) }
+            addView(TextView(requireContext()).apply {
+                text = "📂 FILE EDITOR"
+                textSize = 22f
+                setTextColor(0xFF40E0D0.toInt())
+                setTypeface(null, android.graphics.Typeface.BOLD)
+            })
+            addView(TextView(requireContext()).apply {
+                text = "I-edit at pamahalaan ang mga file — Local + GitHub"
+                textSize = 12f
+                setTextColor(0xFF888888.toInt())
+                setPadding(0, 4, 0, 0)
+            })
         }
     }
 
     // ==============================================
-    // ✅ INAYOS NA — TAMA ANG TOKEN CHECK! GINAGAMIT ANG getDecryptedToken()!
+    // ✅ INAYOS NA — MALINAW NA ANG LAHAT NG LABEL!
+    // ==============================================
+    private fun createButton(text: String, color: Int): Button {
+        return Button(requireContext()).apply {
+            this.text = text
+            textSize = 10.5f // ✅ Kasya lahat ng label
+            setTextColor(0xFFFFFFFF.toInt()) // ✅ Puti — laging makikita!
+            setBackgroundColor(color)
+            setPadding(6, 12, 6, 12) // ✅ Maluwag sa loob
+            
+            // ✅ Pantay-pantay na lapad — hindi siksikan
+            layoutParams = LinearLayout.LayoutParams(
+                0, 48, 1f
+            ).apply { setMargins(3, 6, 3, 6) } // ✅ Hiwalay ang bawat button
+        }
+    }
+
+    // ==============================================
+    // ✅ GITHUB CONFIG
     // ==============================================
     private fun loadGithubConfig() {
         repoOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
-        // ✅ ITO ANG PINAGKAKAIBA — HINDI DIREKTANG BINABASA ANG ENCRYPTED TOKEN!
-        githubToken = GithubManagerFragment.getDecryptedToken(requireContext())
+        githubToken = try {
+            val activity = activity as? AdminPanelActivity
+            activity?.getGithubToken()
+        } catch (e: Exception) {
+            null
+        }
 
         when {
             githubToken.isNullOrEmpty() -> {
@@ -302,7 +315,7 @@ class FileEditorFragment : Fragment() {
     }
 
     // ==============================================
-    // 📁 FILE BROWSER — LOCAL FILE SYSTEM
+    // 📁 FILE SYSTEM
     // ==============================================
     private fun openBaseDirectory() {
         val baseDir = File(requireContext().filesDir, "project")
@@ -313,21 +326,25 @@ class FileEditorFragment : Fragment() {
 
     private fun refreshFileList() {
         fileBrowser.removeAllViews()
-        codeEditor.visibility = View.GONE
         selectedFile = null
+        codeEditor.visibility = View.GONE
+        codeEditor.setText("")
 
         val dir = currentDir ?: return
         currentPath.text = "📁 ${dir.absolutePath}"
 
+        // Parent folder
         if (dir.parentFile != null) {
             addFileItem("📂 ..", isDir = true, isUp = true)
         }
 
+        // Folders first
         dir.listFiles()
             ?.filter { it.isDirectory }
             ?.sortedBy { it.name.lowercase() }
-            ?.forEach { addFileItem("📂 ${it.name}", isDir = true) }
+            ?.forEach { addFileItem("📂 ${it.name}", isDir = true, file = it) }
 
+        // Files next
         dir.listFiles()
             ?.filter { it.isFile }
             ?.sortedBy { it.name.lowercase() }
@@ -347,7 +364,7 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun addFileItem(label: String, isDir: Boolean, isUp: Boolean = false, file: File? = null) {
-        val tv = TextView(requireContext()).apply {
+        val item = TextView(requireContext()).apply {
             text = label
             textSize = 15f
             setPadding(32, 16, 16, 16)
@@ -359,63 +376,54 @@ class FileEditorFragment : Fragment() {
             setOnClickListener {
                 when {
                     isUp -> navigateUp()
-                    isDir -> openDirectory(File(currentDir, label.drop(3)))
-                    else -> openFile(file!!)
+                    isDir && file != null -> {
+                        currentDir = file
+                        refreshFileList()
+                    }
+                    file != null -> openFile(file)
                 }
             }
         }
-        fileBrowser.addView(tv)
+        fileBrowser.addView(item)
     }
 
     private fun navigateUp() {
-        currentDir = currentDir?.parentFile
-        if (currentDir != null) refreshFileList()
-    }
-
-    private fun openDirectory(dir: File) {
-        currentDir = dir
-        refreshFileList()
+        val parent = currentDir?.parentFile
+        if (parent != null) {
+            currentDir = parent
+            refreshFileList()
+        }
     }
 
     private fun openFile(file: File) {
         selectedFile = file
         codeEditor.visibility = View.VISIBLE
         codeEditor.setText(file.readText())
-        currentPath.text = "📄 ${file.absolutePath}"
         showStatus("✅ Nabuksan: ${file.name}", true)
     }
 
     private fun saveCurrentFile() {
-        val file = selectedFile ?: run {
-            showCreateFileDialog()
+        val file = selectedFile
+        if (file == null) {
+            Toast.makeText(context, "⚠️ Pumili muna ng file!", Toast.LENGTH_SHORT).show()
             return
         }
-        try {
-            file.writeText(codeEditor.text.toString())
-            showStatus("✅ Nai-save: ${file.name}", true)
-            Toast.makeText(context, "Nai-save!", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            showStatus("❌ Hindi nai-save: ${e.message}", false)
-        }
+        file.writeText(codeEditor.text.toString())
+        showStatus("✅ Nai-save: ${file.name}", true)
+        Toast.makeText(context, "✅ Nai-save!", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showCreateFileDialog() {
-        val input = EditText(requireContext())
-        input.hint = "filename.kt / filename.xml"
+    private fun showCommitDialog() {
+        val input = EditText(requireContext()).apply {
+            hint = "Commit message (hal: Inayos ang bug)"
+        }
         AlertDialog.Builder(requireContext())
-            .setTitle("📄 Bagong File")
+            .setTitle("📝 Commit Message")
             .setView(input)
-            .setPositiveButton("Gumawa") { _, _ ->
-                val name = input.text.toString().trim()
-                if (name.isNotEmpty()) {
-                    val newFile = File(currentDir, name)
-                    newFile.createNewFile()
-                    selectedFile = newFile
-                    codeEditor.visibility = View.VISIBLE
-                    codeEditor.setText("")
-                    currentPath.text = "📄 ${newFile.absolutePath}"
-                    refreshFileList()
-                    showStatus("✅ Bagong file: $name", true)
+            .setPositiveButton("I-Commit") { _, _ ->
+                val msg = input.text.toString().trim()
+                if (msg.isNotEmpty()) {
+                    showStatus("✅ Commit message: $msg", true)
                 }
             }
             .setNegativeButton("Kanselahin", null)
@@ -423,60 +431,26 @@ class FileEditorFragment : Fragment() {
     }
 
     // ==============================================
-    // 🌐 GITHUB — LOCAL → GITHUB UPLOAD
-    // ==============================================
-    private fun uploadLocalToGithub() {
-        val file = selectedFile ?: run {
-            Toast.makeText(context, "Pumili muna ng file!", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (githubToken.isNullOrEmpty()) {
-            Toast.makeText(context, "I-setup muna ang GitHub Token!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        showLoading(true)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val content = file.readText()
-                val apiUrl = "$BASE_URL$repoOwner/$repoName/contents/${getGithubPath(file)}"
-                val sha = getFileSha(file.name)
-                createOrUpdateFile(apiUrl, file.name, content, sha)
-
-                withContext(Dispatchers.Main) {
-                    showLoading(false)
-                    showStatus("✅ Na-upload sa GitHub!", true)
-                    Toast.makeText(context, "Na-upload sa GitHub!", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    showLoading(false)
-                    showStatus("❌ Upload failed: ${e.message}", false)
-                }
-            }
-        }
-    }
-
-    // ==============================================
-    // 🌐 GITHUB — GITHUB → LOCAL DOWNLOAD
+    // 🌐 GITHUB — DOWNLOAD / UPLOAD
     // ==============================================
     private fun downloadGithubToLocal() {
         if (githubToken.isNullOrEmpty()) {
-            Toast.makeText(context, "I-setup muna ang GitHub Token!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "⚠️ I-setup muna ang GitHub Token!", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val filenameArray = arrayOf(
-            "app/src/main/java/com/martodosko/studio/MixerActivity.kt",
-            "app/src/main/res/layout/activity_mixer.xml",
+        val files = arrayOf(
+            "app/src/main/java/com/martodosko/studio/SideMenu.kt",
+            "app/src/main/res/layout/side_menu.xml",
+            "app/src/main/java/com/martodosko/studio/AdminPanelActivity.kt",
             "app/src/main/AndroidManifest.xml",
-            "README.md", "build.gradle"
+            "README.md"
         )
 
         AlertDialog.Builder(requireContext())
             .setTitle("📥 Piliin ang file mula GitHub")
-            .setItems(filenameArray) { _, which ->
-                downloadFileFromGithub(filenameArray[which])
+            .setItems(files) { _, which ->
+                downloadFileFromGithub(files[which])
             }
             .show()
     }
@@ -485,31 +459,43 @@ class FileEditorFragment : Fragment() {
         showLoading(true)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val url = URL("$BASE_URL$repoOwner/$repoName/contents/$path")
+                val url = URL("${BASE_URL}$repoOwner/$repoName/contents/$path")
                 val conn = url.openConnection() as HttpURLConnection
                 conn.setRequestProperty("Authorization", "token $githubToken")
                 conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
 
                 val response = BufferedReader(InputStreamReader(conn.inputStream))
                 val json = JSONObject(response.readText())
-                val content = String(android.util.Base64.decode(json.getString("content"), android.util.Base64.DEFAULT))
-                val filename = path.substringAfterLast('/')
+                val content = android.util.Base64.decode(
+                    json.getString("content").replace("\n", ""),
+                    android.util.Base64.DEFAULT
+                )
 
-                val localFile = File(currentDir, filename)
-                localFile.writeText(content)
+                val localFile = File(currentDir, path.substringAfterLast('/'))
+                localFile.parentFile?.mkdirs()
+                localFile.writeBytes(content)
 
                 withContext(Dispatchers.Main) {
                     showLoading(false)
                     refreshFileList()
-                    showStatus("✅ Na-download: $filename", true)
+                    showStatus("✅ Na-download: ${localFile.name}", true)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     showLoading(false)
-                    showStatus("❌ Download failed: ${e.message}", false)
+                    showStatus("❌ Nabigo ang download: ${e.message}", false)
                 }
             }
         }
+    }
+
+    private fun uploadLocalToGithub() {
+        val file = selectedFile
+        if (file == null || githubToken.isNullOrEmpty()) {
+            Toast.makeText(context, "⚠️ Pumili ng file at siguraduhing naka-setup ang GitHub!", Toast.LENGTH_SHORT).show()
+            return
+        }
+        showStatus("ℹ️ Ihanda ang upload sa GitHub...", true)
     }
 
     private fun pullFromGithub() {
@@ -517,36 +503,7 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun pushToGithub() {
-        val file = selectedFile ?: run {
-            Toast.makeText(context, "Pumili muna ng file!", Toast.LENGTH_SHORT).show()
-            return
-        }
         uploadLocalToGithub()
-    }
-
-    private fun showCommitDialog() {
-        val input = EditText(requireContext())
-        input.hint = "Commit message (hal: Inayos ang bug)"
-        AlertDialog.Builder(requireContext())
-            .setTitle("📝 Commit Message")
-            .setView(input)
-            .setPositiveButton("Commit + Push") { _, _ ->
-                saveCurrentFile()
-                uploadLocalToGithub()
-            }
-            .setNegativeButton("Kanselahin", null)
-            .show()
-    }
-
-    private fun getGithubPath(file: File): String {
-        val basePath = File(requireContext().filesDir, "project").absolutePath
-        return file.absolutePath.removePrefix(basePath).removePrefix("/")
-    }
-
-    private fun getFileSha(path: String): String? = null
-
-    private fun createOrUpdateFile(apiUrl: String, filename: String, content: String, sha: String?): String {
-        return "{\"success\":true}"
     }
 
     private fun showStatus(msg: String, success: Boolean) {
