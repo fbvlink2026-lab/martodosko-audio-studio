@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ MALINAW NA ANG LAHAT NG BUTTON LABEL!
-// VERSION: 2.0.2 — ✅ MAS MALUWAG NA BUTTONS! HINDI NA TUMATAGO ANG TEKSTO!
-// UPDATED: 2026-09-21 — createButton() LANG ANG INAYOS! LAHAT NG IBA GANOON PA RIN!
+// FILE: FileEditorFragment.kt — ✅ TAMA NA ANG TOKEN CHECK! KUKUNIN AGAD MULA SA ACTIVITY!
+// VERSION: 2.0.3 — ✅ KUNG WALANG DECRYPTED TOKEN, KUKUNIN SA ENCRYPTED AT DEKRIPTOGRAFADO!
+// UPDATED: 2026-09-22 — SIGURADONG MAKUKUHA ANG TOKEN! WALANG BABALA!
 // ==================================================
 package com.martodosko.studio
 
@@ -9,7 +9,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,10 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import android.util.Base64
+import javax.crypto.Cipher
+import javax.crypto.spec.GCMParameterSpec
+import java.security.KeyStore
 
 class FileEditorFragment : Fragment() {
 
@@ -55,6 +58,7 @@ class FileEditorFragment : Fragment() {
         const val REPO_OWNER_KEY = "repo_owner"
         const val REPO_NAME_KEY = "repo_name"
         const val BASE_URL = "https://api.github.com/repos/"
+        private const val KEY_ALIAS = "martodosko_github_key"
     }
 
     override fun onCreateView(
@@ -82,14 +86,8 @@ class FileEditorFragment : Fragment() {
 
         prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        // ==============================================
-        // 🎨 HEADER
-        // ==============================================
         mainContainer.addView(createHeader())
 
-        // ==============================================
-        // 📁 CURRENT PATH
-        // ==============================================
         currentPath = TextView(requireContext()).apply {
             text = "📁 Nagkakarga..."
             textSize = 13f
@@ -103,9 +101,6 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(currentPath)
 
-        // ==============================================
-        // 📁 FILE BROWSER LABEL
-        // ==============================================
         val browserLabel = TextView(requireContext()).apply {
             text = "📂 MGA FILE"
             textSize = 14f
@@ -115,9 +110,6 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(browserLabel)
 
-        // ==============================================
-        // 📁 FILE BROWSER AREA
-        // ==============================================
         fileBrowser = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1A1A2E.toInt())
@@ -129,9 +121,6 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(fileBrowser)
 
-        // ==============================================
-        // ✏️ EDITOR LABEL
-        // ==============================================
         val editorLabel = TextView(requireContext()).apply {
             text = "✏️ EDITOR"
             textSize = 14f
@@ -141,9 +130,6 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(editorLabel)
 
-        // ==============================================
-        // ✏️ EDITOR
-        // ==============================================
         codeEditor = EditText(requireContext()).apply {
             setBackgroundColor(0xFF1A1A2E.toInt())
             setTextColor(0xFFE0E0E0.toInt())
@@ -159,9 +145,6 @@ class FileEditorFragment : Fragment() {
         }
         mainContainer.addView(codeEditor)
 
-        // ==============================================
-        // 🔘 BUTTON ROW 1
-        // ==============================================
         val btnRow1 = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -185,9 +168,6 @@ class FileEditorFragment : Fragment() {
         btnRow1.addView(btnBack)
         mainContainer.addView(btnRow1)
 
-        // ==============================================
-        // 🔘 BUTTON ROW 2
-        // ==============================================
         val btnRow2 = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -203,9 +183,6 @@ class FileEditorFragment : Fragment() {
         btnRow2.addView(btnGithubToLocal)
         mainContainer.addView(btnRow2)
 
-        // ==============================================
-        // 📊 STATUS + PROGRESS
-        // ==============================================
         statusText = TextView(requireContext()).apply {
             text = "⏳ Kinakarga ang GitHub config..."
             textSize = 13f
@@ -230,9 +207,11 @@ class FileEditorFragment : Fragment() {
         return root
     }
 
-    // ==============================================
-    // ✅ HEADER
-    // ==============================================
+    override fun onResume() {
+        super.onResume()
+        loadGithubConfig() // ✅ I-re-check tuwing babalik sa screen
+    }
+
     private fun createHeader(): View {
         return LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
@@ -258,36 +237,35 @@ class FileEditorFragment : Fragment() {
         }
     }
 
-    // ==============================================
-    // ✅ INAYOS NA — MALINAW NA ANG LAHAT NG LABEL!
-    // ==============================================
     private fun createButton(text: String, color: Int): Button {
         return Button(requireContext()).apply {
             this.text = text
-            textSize = 10.5f // ✅ Kasya lahat ng label
-            setTextColor(0xFFFFFFFF.toInt()) // ✅ Puti — laging makikita!
+            textSize = 10.5f
+            setTextColor(0xFFFFFFFF.toInt())
             setBackgroundColor(color)
-            setPadding(6, 12, 6, 12) // ✅ Maluwag sa loob
-            
-            // ✅ Pantay-pantay na lapad — hindi siksikan
+            setPadding(6, 12, 6, 12)
             layoutParams = LinearLayout.LayoutParams(
                 0, 48, 1f
-            ).apply { setMargins(3, 6, 3, 6) } // ✅ Hiwalay ang bawat button
+            ).apply { setMargins(3, 6, 3, 6) }
         }
     }
 
     // ==============================================
-    // ✅ GITHUB CONFIG
+    // ✅ PINAGANDA ANG TOKEN CHECK — KUKUNIN SA LAHAT NG PARAAN!
     // ==============================================
     private fun loadGithubConfig() {
         repoOwner = prefs.getString(REPO_OWNER_KEY, "") ?: ""
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
 
-        githubToken = try {
-            val activity = activity as? AdminPanelActivity
-            activity?.getGithubToken()
-        } catch (e: Exception) {
-            null
+        // ✅ PARAAN 1: Kunin direkta mula sa AdminPanelActivity
+        githubToken = (activity as? AdminPanelActivity)?.getGithubToken()
+
+        // ✅ PARAAN 2: Kung wala pa — kunin ang encrypted at i-decrypt dito mismo!
+        if (githubToken.isNullOrEmpty()) {
+            val encryptedToken = prefs.getString(ENCRYPTED_TOKEN_KEY, null)
+            if (!encryptedToken.isNullOrEmpty()) {
+                githubToken = tryDecrypt(encryptedToken)
+            }
         }
 
         when {
@@ -303,6 +281,27 @@ class FileEditorFragment : Fragment() {
         }
     }
 
+    // ✅ Sariling decrypt function — hindi na umaasa sa activity!
+    private fun tryDecrypt(encryptedText: String): String? {
+        return try {
+            val keyStore = KeyStore.getInstance("AndroidKeyStore")
+            keyStore.load(null)
+            val entry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry
+            val secretKey = entry.secretKey
+
+            val combined = Base64.decode(encryptedText, Base64.DEFAULT)
+            val ivSize = 12
+            val iv = combined.copyOfRange(0, ivSize)
+            val data = combined.copyOfRange(ivSize, combined.size)
+
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
+            String(cipher.doFinal(data), Charsets.UTF_8)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun setupButtons() {
         btnSave.setOnClickListener { saveCurrentFile() }
         btnCommit.setOnClickListener { showCommitDialog() }
@@ -314,9 +313,6 @@ class FileEditorFragment : Fragment() {
         btnGithubToLocal.setOnClickListener { downloadGithubToLocal() }
     }
 
-    // ==============================================
-    // 📁 FILE SYSTEM
-    // ==============================================
     private fun openBaseDirectory() {
         val baseDir = File(requireContext().filesDir, "project")
         if (!baseDir.exists()) baseDir.mkdirs()
@@ -333,18 +329,15 @@ class FileEditorFragment : Fragment() {
         val dir = currentDir ?: return
         currentPath.text = "📁 ${dir.absolutePath}"
 
-        // Parent folder
         if (dir.parentFile != null) {
             addFileItem("📂 ..", isDir = true, isUp = true)
         }
 
-        // Folders first
         dir.listFiles()
             ?.filter { it.isDirectory }
             ?.sortedBy { it.name.lowercase() }
             ?.forEach { addFileItem("📂 ${it.name}", isDir = true, file = it) }
 
-        // Files next
         dir.listFiles()
             ?.filter { it.isFile }
             ?.sortedBy { it.name.lowercase() }
@@ -430,9 +423,6 @@ class FileEditorFragment : Fragment() {
             .show()
     }
 
-    // ==============================================
-    // 🌐 GITHUB — DOWNLOAD / UPLOAD
-    // ==============================================
     private fun downloadGithubToLocal() {
         if (githubToken.isNullOrEmpty()) {
             Toast.makeText(context, "⚠️ I-setup muna ang GitHub Token!", Toast.LENGTH_SHORT).show()
