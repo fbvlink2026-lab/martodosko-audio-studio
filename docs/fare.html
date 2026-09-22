@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Calculator v8.7 — by martodosko</title>
+    <title>Rate Calculator v8.8 — by martodosko</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -65,7 +65,7 @@
         .input-inline { display: inline-block; width: 30%; margin-right: 3%; }
         .route-item {
             background: white; border-radius: 16px; padding: 16px; margin-bottom: 10px;
-            display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.05); flex-wrap: wrap;
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.05); flex-wrap: wrap;
         }
         .route-num {
             width: 40px; height: 40px; border-radius: 50%; background: var(--p-light);
@@ -76,13 +76,18 @@
         .route-meta { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
         .route-actions { display: flex; gap: 6px; margin-top: 4px; }
         .icon-btn {
-            width: 36px; height: 36px; border-radius: 50%; border: none;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+            width: 40px; height: 40px; border-radius: 50%; border: none;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;
+            transition: all .2s;
         }
+        .icon-btn:hover { transform: scale(1.08); }
         .btn-go { background: #E8F5E9; color: var(--ok); }
+        .btn-go:hover { background: #C8E6C9; }
         .btn-edit { background: #FFF3E0; color: var(--s); }
+        .btn-edit:hover { background: #FFE0B2; }
         .btn-del { background: #FFEBEE; color: var(--danger); }
-        .btn-del-sm { width: 28px; height: 28px; font-size: 14px; }
+        .btn-del:hover { background: #FFCDD2; }
+        .btn-del-sm { width: 32px; height: 32px; font-size: 14px; }
         .res-row {
             display: flex; justify-content: space-between; padding: 10px 12px;
             border-radius: 10px; margin: 4px 0; font-size: 14px; flex-wrap: wrap; gap: 4px;
@@ -169,7 +174,7 @@
     <div id="menu-screen">
         <div class="header">
             <h1>🚗 RATE CALCULATOR</h1>
-            <p>Version 8.7 • Developed by martodosko</p>
+            <p>Version 8.8 • Developed by martodosko</p>
             <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • Tumpak na Ruta, Kita at Progreso</p>
         </div>
         <div class="btn-group">
@@ -220,12 +225,12 @@
             <button class="btn btn-out" style="margin-top:12px;width:100%;" onclick="clearAllTrips()">🗑️ Burahin Lahat ng Talaan</button>
         </div>
 
-        <h3 style="margin:18px 0 12px;color:#455A64;">📋 Mga Ruta</h3>
+        <h3 style="margin:18px 0 12px;color:#455A64;">📋 Mga Ruta <span style="font-size:13px;font-weight:normal;color:var(--muted);">— nakaimbak sa telepono</span></h3>
         <div id="route-list"></div>
     </div>
 
     <div id="calc-screen" class="hidden">
-        <button class="btn btn-out" onclick="goBack()" style="margin-bottom:16px;">← Bumalik</button>
+        <button class="btn btn-out" onclick="goBack()" style="margin-bottom:16px;">← Bumalik sa Listahan ng Ruta</button>
         <div class="card">
             <h3 id="calc-route-name" style="margin-bottom:4px;"></h3>
             <p id="calc-route-addr" style="font-size:13px;color:var(--p);margin-bottom:8px;line-height:1.4;"></p>
@@ -298,7 +303,6 @@
                 </select>
             </div>
             
-            <!-- ✅ BAGONG: Mga Patlang para sa Sariling Sasakyan -->
             <div id="custom-veh-fields" class="custom-fields">
                 <label>Pangalan ng Sasakyan</label>
                 <input type="text" id="custom-name" placeholder="Hal. Truck, E-Bike...">
@@ -354,7 +358,7 @@
 
     <div id="help-modal" class="modal-bg">
         <div class="modal modal-help">
-            <h3>📖 TULONG — Rate Calculator v8.7</h3>
+            <h3>📖 TULONG — Rate Calculator v8.8</h3>
             <div style="font-size:14px;line-height:1.8;margin-top:12px;">
                 <p><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
                 <p>• Ang piyesa at upa ay <strong>hindi</strong> ibinabawas nang buo sa isang biyahe lang!</p>
@@ -362,17 +366,17 @@
                 <p style="padding-left:12px;">Gastos/oras = (Piyesa + Upa) ÷ Oras ng Trabaho/Araw</p>
                 <p>• Gastos ng biyahe = Gastos/oras × Oras ng Biyahe + Gasolina</p>
                 
-                <p style="margin-top:16px;"><strong>🚗 SARILING SASAKYAN — Bago sa v8.7!</strong></p>
+                <p style="margin-top:16px;"><strong>📋 MGA RUTA — NAKAIMBAK NA!</strong></p>
+                <p>• Lahat ng ruta ay awtomatikong naiimbak sa iyong telepono</p>
+                <p>• Hindi mabubura kahit isara at buksan muli ang pahina</p>
+                <p>• Pindutin ang <strong>▶️ Gamitin</strong> sa tapat ng ruta para magkuwenta</p>
+                
+                <p style="margin-top:16px;"><strong>🚗 SARILING SASAKYAN</strong></p>
                 <p>• Piliin ang <strong>"🔧 Sariling Pagtatakda..."</strong> sa listahan</p>
                 <p>• Ilagay ang sariling konsumo, bilis, at kita/oras na inaasahan</p>
-                <p>• I-save — gagamitin ito sa lahat ng kuwenta</p>
                 
                 <p style="margin-top:16px;"><strong>📊 PROGRESO NG ARAW</strong></p>
-                <p>• Ang halaga ay nasa ilalim na ng bar — hindi magtatago</p>
                 <p>• Pula = mababa • Kahel = kalahati • Luntian = naabot na!</p>
-                
-                <p style="margin-top:16px;"><strong>🗑️ PAGBUBURA NG TALAAN</strong></p>
-                <p>• May pindutan sa bawat talaan — burahin isa-isa</p>
             </div>
             <div class="modal-btns">
                 <button class="btn btn-pri" onclick="closeHelp()">Naintindihan</button>
@@ -392,8 +396,6 @@ let RENT_PER_DAY = DEFAULT_RENT_PER_DAY;
 let WORK_HOURS_PER_DAY = DEFAULT_WORK_HOURS;
 let DEFAULT_VEHICLE = "motor";
 let DAILY_GOAL = 0.00;
-
-// ✅ Pinalawak — may kakayahang mag-imbak ng Custom Sasakyan
 let CUSTOM_VEHICLE = null;
 
 const VEHICLES = {
@@ -419,7 +421,9 @@ function toggleCustomFields() {
     }
 }
 
-let routes = [
+// ✅ NAKAIMBAK NA MGA RUTA — hindi mabubura
+let routes = [];
+const DEFAULT_ROUTES = [
     { id:1, name:"Lopez → Calauag", start:"Lopez, Quezon", end:"Calauag, Quezon", km:12.0 },
     { id:2, name:"Calauag Bayan → Sumilang BLISS", start:"Calauag, Quezon", end:"Sumilang, Calauag, Quezon", km:5.5 },
     { id:3, name:"Lopez → Gumaca", start:"Lopez, Quezon", end:"Gumaca, Quezon", km:18.0 },
@@ -437,8 +441,24 @@ let routePoly = null;
 let markerA = null;
 let markerB = null;
 
+// ✅ I-save at I-load ang mga ruta sa localStorage
+function saveRoutes() {
+    localStorage.setItem("savedRoutes", JSON.stringify(routes));
+}
+
+function loadRoutes() {
+    const saved = localStorage.getItem("savedRoutes");
+    if (saved) {
+        routes = JSON.parse(saved);
+    } else {
+        routes = [...DEFAULT_ROUTES];
+        saveRoutes();
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     loadSettings();
+    loadRoutes();
     loadTripRecords();
     document.getElementById("target-per-hour").addEventListener("input", updateTargetTotal);
     document.getElementById("work-hours").addEventListener("input", updateCostPerHour);
@@ -460,7 +480,6 @@ function loadSettings() {
     
     if (savedCustom) {
         CUSTOM_VEHICLE = JSON.parse(savedCustom);
-        // Ipakita sa patlang kung mayroon na
         document.getElementById("custom-name").value = CUSTOM_VEHICLE.name || "";
         document.getElementById("custom-kmperlit").value = CUSTOM_VEHICLE.kmPerL || "";
         document.getElementById("custom-speed").value = CUSTOM_VEHICLE.speedKmh || "";
@@ -515,7 +534,6 @@ function saveSettings() {
         alert("Ilagay ang tamang halaga!"); return;
     }
     
-    // ✅ I-save ang Custom Sasakyan kung iyon ang pinili
     if (veh === "custom") {
         const cName = document.getElementById("custom-name").value.trim() || "Aking Sasakyan";
         const cKmPerL = parseFloat(document.getElementById("custom-kmperlit").value);
@@ -795,6 +813,7 @@ function saveRoute() {
         routes.push({ id: Date.now(), name, start, end, km });
     }
 
+    saveRoutes(); // ✅ I-save sa telepono
     renderRouteList();
     closeModal();
 }
@@ -813,8 +832,9 @@ function editRoute(id) {
 }
 
 function deleteRoute(id) {
-    if (!confirm("Burahin ba ang rutang ito?")) return;
+    if (!confirm("Burahin ba ang rutang ito? Hindi na mababawi.")) return;
     routes = routes.filter(x => x.id !== id);
+    saveRoutes(); // ✅ I-update ang listahan
     renderRouteList();
 }
 
@@ -832,7 +852,7 @@ function renderRouteList() {
                 <div class="route-meta">${r.start} → ${r.end}<br>📏 ${r.km.toFixed(2)} km/daan</div>
             </div>
             <div class="route-actions">
-                <button class="icon-btn btn-go" onclick="useRoute(${r.id})" title="Gamitin">▶️</button>
+                <button class="icon-btn btn-go" onclick="useRoute(${r.id})" title="Gamitin at Kuwentahin">▶️</button>
                 <button class="icon-btn btn-edit" onclick="editRoute(${r.id})" title="Baguhin">✏️</button>
                 <button class="icon-btn btn-del" onclick="deleteRoute(${r.id})" title="Burahin">🗑️</button>
             </div>
