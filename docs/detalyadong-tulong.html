@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalyadong Paggamit — Habal-Habal Rate Calculator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+        :root {
+            --p: #1565C0; --p-light: #E3F2FD; --s: #FF6F00;
+            --ok: #43A047; --warn: #FFB300; --danger: #E53935;
+            --bg: #F5F7FA; --card: #FFFFFF; --txt: #263238; --muted: #78909C;
+        }
+        body { background: var(--bg); color: var(--txt); min-height: 100vh; padding: 16px; line-height: 1.7; }
+        .container { max-width: 480px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(90deg, #1565C0, #1976D2); color: white;
+            padding: 20px; border-radius: 20px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 4px; }
+        .header p { font-size: 13px; opacity: 0.85; }
+        .btn {
+            border: none; border-radius: 14px; padding: 12px 16px; font-size: 14px;
+            font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            transition: transform .1s; text-align: center; justify-content: center; text-decoration: none;
+        }
+        .btn:active { transform: scale(.97); }
+        .btn-blue { background: var(--p); color: white; width: 100%; margin-top: 8px; }
+        .btn-out { background: transparent; border: 1px solid #CCC; color: var(--txt); width: 100%; margin-bottom: 16px; }
+        .card {
+            background: var(--card); border-radius: 20px; padding: 20px;
+            margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        }
+        h2 { font-size: 17px; color: var(--p); margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--p-light); }
+        h3 { font-size: 15px; margin: 16px 0 8px; color: var(--s); }
+        p { margin-bottom: 10px; font-size: 14px; }
+        ul, ol { margin: 10px 0 14px 24px; font-size: 14px; }
+        li { margin-bottom: 8px; }
+        .step { background: var(--p-light); padding: 12px 14px; border-radius: 12px; margin: 10px 0; }
+        .step strong { color: var(--p); }
+        .note { font-size: 13px; color: var(--muted); background: #F5F5F5; padding: 10px; border-radius: 10px; margin: 8px 0; }
+        .tip { background: #E8F5E9; border-left: 4px solid var(--ok); padding: 12px; border-radius: 0 12px 12px 0; margin: 12px 0; }
+        .warn { background: #FFEBEE; border-left: 4px solid var(--danger); padding: 12px; border-radius: 0 12px 12px 0; margin: 12px 0; }
+        .check { color: var(--ok); font-weight: bold; }
+        .cross { color: var(--danger); font-weight: bold; }
+        .num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px; border-radius: 50%; background: var(--p); color: white;
+            font-weight: bold; margin-right: 8px; font-size: 13px;
+        }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #EEE; }
+        th { background: var(--p-light); color: var(--p); font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <a href="rate-calculator.html" class="btn btn-out">← Bumalik sa Pangunahing Pahina</a>
+
+    <div class="header">
+        <h1>📖 DETALYADONG GABAY SA PAGGAMIT</h1>
+        <p>Habal-Habal / Motor Rate Calculator — Version 10.0</p>
+        <p style="opacity:.85;margin-top:4px;">Developer: martodosko</p>
+    </div>
+
+    <div class="card">
+        <h2>📋 Talaan ng Nilalaman</h2>
+        <ol style="margin-left: 20px;">
+            <li><a href="#panimula">Ano ang ginagawa ng app na ito?</a></li>
+            <li><a href="#paghanda">Paano ihanda ang telepono?</a></li>
+            <li><a href="#gpsmode">📍 Paraan 1: Realtime GPS Tracking</a></li>
+            <li><a href="#routemode">🗺️ Paraan 2: Nakatabing Ruta / Mapa</a></li>
+            <li><a href="#kuwenta">🔢 Paano kinukuwenta ang kita/lugi?</a></li>
+            <li><a href="#pagtatakda">⚙️ Mga Pagtatakda — Isang beses lang gawin</a></li>
+            <li><a href="#talaan">📝 Talaan ng Biyahe at Progreso</a></li>
+            <li><a href="#halimbawa">📊 Halimbawa ng Tunay na Kuwenta</a></li>
+            <li><a href="#problema">❌ Karaniwang Problema at Solusyon</a></li>
+        </ol>
+    </div>
+
+    <div class="card" id="panimula">
+        <h2>1️⃣ Ano ang ginagawa ng app na ito?</h2>
+        <p>Tinutulungan ka nitong malaman kung <strong>kumita ka ba o nalugi</strong> sa bawat biyahe — hindi lang batay sa gasolina, kundi pati sa piyesa, upa, at oras na ginugol.</p>
+        
+        <p>May <strong>dalawang paraan</strong> ng pagsukat ng distansya:</p>
+        <ul>
+            <li><strong>📍 Realtime GPS</strong> — habang umaandar ka, sinusukat mismo ang nilakbay (katulad ng Shopee)</li>
+            <li><strong>🗺️ Nakatabing Ruta</strong> — ilagay ang simula at dulo, kukunin ang distansya sa mapa</li>
+        </ul>
+        
+        <div class="tip">
+            <strong>💡 Mahalagang Prinsipyo:</strong> Ang piyesa at upa ay <strong>hindi ibinabawas nang buo sa isang biyahe lang</strong> — hinahati ito sa kabuuang oras ng pagtatrabaho sa isang araw. Mas tumpak ito!
+        </div>
+    </div>
+
+    <div class="card" id="paghanda">
+        <h2>2️⃣ Paano Ihanda ang Telepono</h2>
+        
+        <h3>✅ Kailangan:</h3>
+        <ul>
+            <li>Android phone (gumagana sa karaniwang browser — Chrome, Firefox, etc.)</li>
+            <li>GPS/Lokasyon — naka-ON kapag gagamit ng Realtime GPS</li>
+            <li>Internet — sa unang pagbukas lang para makarga ang mapa; pagkatapos ay pwede nang walang internet</li>
+        </ul>
+
+        <h3>✅ Pagbukas ng App:</h3>
+        <div class="step">
+            <span class="num">1</span> Hanapin ang <code>rate-calculator.html</code> sa iyong telepono (sa folder na Downloads o Mga File)
+        </div>
+        <div class="step">
+            <span class="num">2</span> Pindutin ang file → piliin ang browser na bubuksan ito
+        </div>
+        <div class="step">
+            <span class="num">3</span> Lalabas ang pangunahing pahina — handa na!
+        </div>
+    </div>
+
+    <div class="card" id="gpsmode">
+        <h2>3️⃣ 📍 Paraan 1: Realtime GPS Tracking</h2>
+        <p><em>Gamitin ito kung bagong ruta, hindi nakalista, o gusto mong sukatin mismo ang nilakbay.</em></p>
+
+        <h3>✅ Hakbang-hakbang:</h3>
+        <div class="step"><span class="num">1</span> Sa unang pahina → pindutin ang <strong>📍 Realtime GPS</strong></div>
+        <div class="step"><span class="num">2</span> Kapag nagtanong ang browser: <strong>Payagan ang Lokasyon</strong> → Piliin ang ✅ Payagan</div>
+        <div class="step"><span class="num">3</span> I-ON ang GPS/Lokasyon sa itaas na panel ng telepono kung hindi pa nakabukas</div>
+        <div class="step"><span class="num">4</span> Pindutin ang <strong>▶️ SIMULAN ANG PAGSUSUKAT SA GPS</strong> — makikita na: <em>NAGSU-SUSUKAT...</em></div>
+        <div class="step"><span class="num">5</span> Umakyat sa sasakyan at umalis — makikita ang lila na guhit sa mapa na sumusunod sa iyo</div>
+        <div class="step"><span class="num">6</span> Pagdating sa pupuntahan → pindutin ang <strong>⏹️ ITIGIL ANG PAGSUSUKAT</strong></div>
+        <div class="step"><span class="num">7</span> Makikita ang kabuuang sinukat na km → pindutin ang <strong>✅ GAMITIN ANG SINUKAT NA DISTANSYA</strong></div>
+        <div class="step"><span class="num">8</span> Piliin: ➡️ 1-Way o 🔁 2-Way → Ilagay ang presyo ng gasolina at pamasahe → <strong>✅ KUWENTAHIN</strong></div>
+
+        <div class="tip">
+            <strong>💡 Tandaan:</strong>
+            <ul style="margin: 6px 0 6px 20px;">
+                <li>Mas tumpak kung nasa labas — mas malakas ang signal ng GPS</li>
+                <li>Hindi agad magbabago ang numero kapag hindi ka pa gumagalaw — normal ito</li>
+                <li>Kapag huminto ka nang matagal — hindi magdadagdag ng distansya</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card" id="routemode">
+        <h2>4️⃣ 🗺️ Paraan 2: Nakatabing Ruta / Mapa</h2>
+        <p><em>Gamitin ito sa mga nakasanayan at paulit-ulit na ruta — mas mabilis, hindi kailangan ng GPS.</em></p>
+
+        <h3>✅ Magdagdag ng Bagong Ruta:</h3>
+        <div class="step"><span class="num">1</span> Sa unang pahina → pindutin ang <strong>➕ Bagong Ruta</strong></div>
+        <div class="step"><span class="num">2</span> Ilagay ang Pangalan — hal. <em>Lopez → Calauag</em></div>
+        <div class="step"><span class="num">3</span> Ilagay ang Simula — hal. <em>Lopez, Quezon</em></div>
+        <div class="step"><span class="num">4</span> Ilagay ang Dulo — hal. <em>Calauag, Quezon</em></div>
+        <div class="step"><span class="num">5</span> Pindutin ang <strong>🗺️ Kumuha Tumpak na Ruta</strong> — kukunin ng app ang tamang distansya mula sa mapa</div>
+        <div class="step"><span class="num">6</span> Kung hindi makuha — ilagay nang mano-mano ang distansya sa km/isang daan</div>
+        <div class="step"><span class="num">7</span> Pindutin ang <strong>💾 I-save</strong> — lilitaw na sa listahan ng mga ruta!</div>
+
+        <h3>✅ Gamitin ang Nakatabing Ruta:</h3>
+        <div class="step"><span class="num">1</span> Sa listahan ng ruta → pindutin ang <strong>▶️</strong> sa tabi ng pangalan ng ruta</div>
+        <div class="step"><span class="num">2</span> Lalabas ang mapa at detalye ng ruta</div>
+        <div class="step"><span class="num">3</span> Piliin: ➡️ 1-Way o 🔁 2-Way</div>
+        <div class="step"><span class="num">4</span> Ilagay ang presyo ng gasolina at singil sa pamasahe</div>
+        <div class="step"><span class="num">5</span> Pindutin ang <strong>✅ KUWENTAHIN</strong></div>
+
+        <h3>✅ Mga pindutan sa bawat ruta:</h3>
+        <ul>
+            <li>▶️ — Buksan para kuwentyahin</li>
+            <li>➕ — Itala agad sa talaan (kung nakatakda na ang pamasahe)</li>
+            <li>✏️ — Baguhin ang detalye ng ruta</li>
+            <li>🗑️ — Burahin sa listahan</li>
+        </ul>
+    </div>
+
+    <div class="card" id="kuwenta">
+        <h2>5️⃣ 🔢 Paano Kinukuwenta ang Kita/Lugi</h2>
+        
+        <h3>Ang Pormula:</h3>
+        <div class="step">
+            <strong>Hakbang 1 — Gastos sa Oras:</strong><br>
+            Gastos/oras = (Piyesa/Araw + Upa/Araw) ÷ Kabuuang Oras ng Trabaho/Araw
+        </div>
+        <div class="step">
+            <strong>Hakbang 2 — Kabuuang Gastos sa Biyahe:</strong><br>
+            Kabuuang Gastos = Gastos sa Gasolina + (Gastos/oras × Oras ng Biyahe)
+        </div>
+        <div class="step">
+            <strong>Hakbang 3 — Malinis na Kita:</strong><br>
+            Malinis na Kita = Singil sa Pamasahe − Kabuuang Gastos
+        </div>
+
+        <h3>Halimbawa:</h3>
+        <table>
+            <tr><th>Halaga</th><th>Detalye</th></tr>
+            <tr><td>₱20.00</td><td>Piyesa/Araw</td></tr>
+            <tr><td>₱0.00</td><td>Upa/Araw</td></tr>
+            <tr><td>8 oras</td><td>Oras ng Trabaho/Araw</td></tr>
+            <tr><td colspan="2"><strong>Gastos/oras = ₱20 ÷ 8 = ₱2.50/oras</strong></td></tr>
+            <tr><td>24 km</td><td>Distansya (paikot)</td></tr>
+            <tr><td>20 km/L</td><td>Konsumo ng motor</td></tr>
+            <tr><td>₱92.00/L</td><td>Presyo ng gasolina</td></tr>
+            <tr><td colspan="2"><strong>Gasolina: 24 ÷ 20 = 1.2 L × ₱92 = ₱110.40</strong></td></tr>
+            <tr><td>0.69 oras</td><td>Oras ng biyahe</td></tr>
+            <tr><td colspan="2"><strong>Gastos sa oras: 0.69 × ₱2.50 = ₱1.73</strong></td></tr>
+            <tr style="font-weight:bold;"><td colspan="2">Kabuuang Gastos = ₱110.40 + ₱1.73 = ₱112.13</td></tr>
+            <tr><td>₱150.00</td><td>Singil sa pamasahe</td></tr>
+            <tr style="font-weight:bold; background:#E8F5E9;"><td colspan="2">Malinis na Kita = ₱150.00 − ₱112.13 = <span class="check">₱37.87 ✅ KUMITA</span></td></tr>
+        </table>
+
+        <div class="warn">
+            <strong>❌ Kapag NEGATIBO ang numero = LUGI!</strong><br>
+            Ibig sabihin: mas malaki ang gastos kaysa sa kinita — kailangang taasan ang singil o bawasan ang gastos.
+        </div>
+    </div>
+
+    <div class="card" id="pagtatakda">
+        <h2>6️⃣ ⚙️ Mga Pagtatakda — Isang Beses Lang Gawin</h2>
+        <p>Pindutin ang <strong>⚙️ Pagtatakda</strong> sa unang pahina:</p>
+
+        <ul>
+            <li><strong>🚗 Uri ng Sasakyan</strong> — Piliin ang motor, trisikel, jeepney, kotse, o sariling pagtatakda ng konsumo</li>
+            <li><strong>₱ Piyesa/Araw</strong> — Karaniwang ₱20.00, baguhin kung mas mataas ang gastos sa langis, piyesa</li>
+            <li><strong>🏷️ Upa/Boundary/Araw</strong> — Kung umuupa ka ng sasakyan, ilagay dito ang halaga bawat araw</li>
+            <li><strong>⛽ Presyo ng Gasolina</strong> — Ang presyo bawat litro sa inyong lugar</li>
+            <li><strong>⏰ Oras ng Trabaho/Araw</strong> — Ilang oras ka karaniwang bumabyahe mula simula hanggang pagtatapos</li>
+        </ul>
+
+        <div class="tip">
+            <strong>💡 Sariling Sasakyan:</strong> Kung walang upa, ilagay ang <strong>₱0.00</strong> sa Upa — kukuwentahin lang ang piyesa.
+        </div>
+    </div>
+
+    <div class="card" id="talaan">
+        <h2>7️⃣ 📝 Talaan ng Biyahe at Progreso</h2>
+        
+        <h3>✅ Pagtatala:</h3>
+        <p>Pagkatapos kuwentyahin ang biyahe → pindutin ang <strong>📝 Itala ang Biyaheng Ito</strong> — isasama ito sa kabuuan ng araw.</p>
+
+        <h3>✅ Progreso ng Araw:</h3>
+        <ul>
+            <li>Nakikita kung ilang porsyento na ang naabot sa iyong layunin sa kita</li>
+            <li>Bar na <span style="color:var(--danger);">pula</span> — kulang pa</li>
+            <li>Bar na <span style="color:var(--s);">kahel</span> — kalahati na o higit pa</li>
+            <li>Bar na <span style="color:var(--ok);">berde</span> — naabot na ang layunin! 🎉</li>
+        </ul>
+
+        <h3>✅ Kabuuan:</h3>
+        <p>Sa ibaba makikita ang kabuuang kinita, kabuuang gastos, at kabuuang singil mula sa simula ng araw.</p>
+        <p>Pindutin ang <strong>🗑️ Burahin Lahat ng Talaan</strong> sa simula ng bagong araw.</p>
+    </div>
+
+    <div class="card" id="halimbawa">
+        <h2>8️⃣ 📊 Halimbawa ng Tunay na Kuwenta</h2>
+        
+        <p><strong>Biyahe:</strong> Lopez → Calauag → Paikot<br>
+        <strong>Distansya:</strong> 24 km (12 km × 2)<br>
+        <strong>Presyo ng gasolina:</strong> ₱92.00/L<br>
+        <strong>Singil:</strong> ₱150.00</p>
+
+        <table>
+            <tr><th>Detalye</th><th>Halaga</th></tr>
+            <tr><td>Gasolina: 24 km ÷ 20 km/L = 1.2 L</td><td>₱110.40</td></tr>
+            <tr><td>Piyesa/oras: ₱20 ÷ 8 oras = ₱2.50/oras × 0.69 oras</td><td>₱1.73</td></tr>
+            <tr style="font-weight:bold;"><td>Kabuuang Gastos</td><td>₱112.13</td></tr>
+            <tr><td>Singil sa pamasahe</td><td>₱150.00</td></tr>
+            <tr style="font-weight:bold; color:var(--ok);"><td>✅ MALINIS NA KITA</td><td>₱37.87</td></tr>
+        </table>
+    </div>
+
+    <div class="card" id="problema">
+        <h2>9️⃣ ❌ Karaniwang Problema at Solusyon</h2>
+        
+        <table>
+            <tr><th>Problema</th><th>Solusyon</th></tr>
+            <tr>
+                <td>Hindi gumagana ang GPS</td>
+                <td>I-ON ang Lokasyon sa itaas na panel. Kapag nagtanong ang browser — piliin ang Payagan. Lumabas sa labas kung mahina ang signal.</td>
+            </tr>
+            <tr>
+                <td>Hindi makuha ang ruta sa mapa</td>
+                <td>Suriin ang pagkakasulat ng pangalan ng lugar. O ilagay nang mano-mano ang distansya kung alam mo na ito.</td>
+            </tr>
+            <tr>
+                <td>Masyadong maliit ang distansya</td>
+                <td>Maglakad nang kaunti — hindi magbibilang kung hindi lumampas sa 1 metro ang paggalaw.</td>
+            </tr>
+            <tr>
+                <td>Nawala ang mga nakatabing ruta</td>
+                <td>Huwag i-clear ang data ng browser — nakatago ito sa loob ng browser. Gumamit palagi ng parehong browser.</td>
+            </tr>
+            <tr>
+                <td>Negatibo ang kita — lugi</td>
+                <td>Taasan ang singil sa pamasahe. Suriin kung tama ang konsumo ng gasolina at presyo bawat litro.</td>
+            </tr>
+        </table>
+    </div>
+
+    <a href="rate-calculator.html" class="btn btn-blue">← Bumalik sa Pangunahing Pahina</a>
+
+</div>
+</body>
+</html>
