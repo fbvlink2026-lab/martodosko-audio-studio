@@ -129,16 +129,26 @@
             background: linear-gradient(90deg, #1565C0, #1976D2); color: white; 
             padding: 16px; border-radius: 14px; margin-top: 12px;
         }
+        /* ✅ INAYOS NA PROGRESS BAR — HINDI NA MAGTATAGO ANG TEKSTO */
         .progress-container { margin: 12px 0; }
-        .progress-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
-        .progress-bar-bg { height: 24px; background: #ECEFF1; border-radius: 12px; overflow: hidden; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; font-weight: 500; }
+        .progress-bar-bg { 
+            height: 20px; background: #ECEFF1; border-radius: 10px; overflow: hidden;
+            border: 1px solid #ddd;
+        }
         .progress-bar-fill {
-            height: 100%; border-radius: 12px; transition: width 0.4s ease;
-            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white;
+            height: 100%; border-radius: 10px; transition: width 0.4s ease;
+            /* Wala nang teksto sa loob — nasa labas na */
         }
         .progress-complete { background: linear-gradient(90deg, #2E7D32, #4CAF50); }
         .progress-orange { background: linear-gradient(90deg, #FF9800, #FFB74D); }
         .progress-red { background: linear-gradient(90deg, #E53935, #EF5350); }
+        .progress-numbers {
+            display: flex; justify-content: space-between; 
+            margin-top: 8px; font-size: 14px;
+        }
+        .progress-numbers .earned { color: var(--ok); font-weight: bold; }
+        .progress-numbers .remaining { color: var(--p); font-weight: bold; }
         .trip-record { 
             border-left: 3px solid var(--ok); padding: 10px; margin: 8px 0; 
             background: white; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
@@ -158,13 +168,13 @@
     <div id="menu-screen">
         <div class="header">
             <h1>🚗 RATE CALCULATOR</h1>
-            <p>Version 8.6.0 • Developed by martodosko</p>
+            <p>Version 8.6.1 • Developed by martodosko</p>
             <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • Tumpak na Ruta, Kita at Progreso</p>
         </div>
         <div class="btn-group">
             <button class="btn btn-pri" onclick="openAddModal()">➕ Bagong Ruta</button>
             <button class="btn btn-sec" onclick="openSettings()">⚙️ Pagtatakda</button>
-            <button class="btn btn btn-help" onclick="showHelp()">📖 Tulong</button>
+            <button class="btn btn-help" onclick="showHelp()">📖 Tulong</button>
         </div>
         <div class="card" style="background:var(--p-light);margin-bottom:16px;">
             <h3 style="color:var(--p);margin-bottom:8px;">📌 Kasalukuyang Pagtatakda</h3>
@@ -180,29 +190,30 @@
             Ang piyesa at upa ay hinahati sa <em>bawat oras</em> ng pagtatrabaho — hindi ibinabawas ang buong halaga sa isang biyahe lang!
         </div>
 
+        <!-- ✅ INAYOS NA PROGRESO NG ARAW -->
         <div class="card card-alt" id="progress-card" style="margin-bottom:16px;display:none;">
             <h3 style="color:#E65100;margin-bottom:10px;">📈 PROGRESO NG ARAW</h3>
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span>Nakita na</span>
-                    <span id="progress-percent">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div id="progress-bar" class="progress-bar-fill progress-red" style="width:0%;">
-                        <span id="progress-text">₱0.00 / ₱0.00</span>
-                    </div>
+            
+            <div class="progress-label">
+                <span>Nakita na</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            
+            <div class="progress-bar-bg">
+                <div id="progress-bar" class="progress-bar-fill progress-red" style="width:0%;">
+                    <!-- Wala nang teksto sa loob -->
                 </div>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px;">
+            
+            <div class="progress-numbers">
                 <div>
-                    <strong>Nakita:</strong><br>
-                    <span style="color:var(--ok);font-weight:bold;font-size:15px;">₱<span id="progress-earned">0.00</span></span>
+                    Nakita: <span class="earned">₱<span id="progress-earned">0.00</span></span>
                 </div>
                 <div style="text-align:right;">
-                    <strong>Kulang pa:</strong><br>
-                    <span style="color:var(--p);font-weight:bold;font-size:15px;">₱<span id="progress-remaining">0.00</span></span>
+                    Kulang pa: <span class="remaining">₱<span id="progress-remaining">0.00</span></span>
                 </div>
             </div>
+            
             <div id="progress-status" style="margin-top:10px;padding:10px;border-radius:10px;background:#E3F2FD;color:#1565C0;font-weight:600;">
                 ⏳ Magdagdag ng biyahe para makita ang progreso
             </div>
@@ -337,7 +348,7 @@
 
     <div id="help-modal" class="modal-bg">
         <div class="modal modal-help">
-            <h3>📖 TULONG — Rate Calculator v8.6</h3>
+            <h3>📖 TULONG — Rate Calculator v8.6.1</h3>
             <div style="font-size:14px;line-height:1.8;margin-top:12px;">
                 <p><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
                 <p>• Ang piyesa at upa ay <strong>hindi</strong> ibinabawas nang buo sa isang biyahe lang!</p>
@@ -345,15 +356,14 @@
                 <p style="padding-left:12px;">Gastos/oras = (Piyesa + Upa) ÷ Oras ng Trabaho/Araw</p>
                 <p>• Gastos ng biyahe = Gastos/oras × Oras ng Biyahe + Gasolina</p>
                 
-                <p style="margin-top:16px;"><strong>📊 PROGRESO NG ARAW</strong></p>
-                <p>• Nakikita mo agad kung ilang porsyento na ang naabot mo sa layunin</p>
+                <p style="margin-top:16px;"><strong>📊 PROGRESO NG ARAW — INAYOS NA!</strong></p>
+                <p>• Ang halaga ay <strong>hindi na magtatago</strong> — nasa ilalim na ng bar</p>
                 <p>• Pula = mababa • Kahel = kalahati • Luntian = naabot na!</p>
                 <p>• Bawat biyahe ay may tanda kung nakatulong sa pag-abot sa layunin</p>
-                <p>• Kapag binura ang biyahe → bababa ang progreso</p>
                 
                 <p style="margin-top:16px;"><strong>🗑️ PAGBUBURA NG TALAAN</strong></p>
                 <p>• May <strong>🗑️ pindutan</strong> sa bawat talaan — burahin isa-isa</p>
-                <p>• Awtomatikong <strong>babawasan ang kabuuang kita at progreso</strong> kapag binura ang isa</p>
+                <p>• Awtomatikong babawasan ang kabuuang kita at progreso</p>
             </div>
             <div class="modal-btns">
                 <button class="btn btn-pri" onclick="closeHelp()">Naintindihan</button>
@@ -481,6 +491,7 @@ function saveSettings() {
     closeSettings();
 }
 
+// ✅ INAYOS NA — Wala nang nagtatagong teksto
 function updateProgressBar() {
     const totalNet = tripRecords.reduce((sum, t) => sum + t.netIncome, 0);
     if (DAILY_GOAL <= 0 || tripRecords.length === 0) {
@@ -492,10 +503,10 @@ function updateProgressBar() {
     const percent = Math.min(100, Math.max(0, (totalNet / DAILY_GOAL) * 100));
     const remaining = Math.max(0, DAILY_GOAL - totalNet);
     
+    // ✅ Palaging nakikita — nasa labas na ng bar
     document.getElementById("progress-earned").textContent = totalNet.toFixed(2);
     document.getElementById("progress-remaining").textContent = remaining.toFixed(2);
     document.getElementById("progress-percent").textContent = percent.toFixed(1) + "%";
-    document.getElementById("progress-text").textContent = `₱${totalNet.toFixed(2)} / ₱${DAILY_GOAL.toFixed(2)}`;
     
     const bar = document.getElementById("progress-bar");
     bar.style.width = percent + "%";
