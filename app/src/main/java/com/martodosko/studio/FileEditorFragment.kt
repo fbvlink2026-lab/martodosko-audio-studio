@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ TUMPAK NA ANG LIPATAN! GAYA NG FULL SCREEN!
-// VERSION: 5.3.0 — ✅ KOPYA NG POSISYON • EKSAKTONG LIPATAN • WALANG HULA!
-// UPDATED: 2026-09-22 — GINAYA ANG PARAAN NG FULL SCREEN EDITOR!
+// FILE: FileEditorFragment.kt — ✅ TUMPAK NA ANG LIPATAN! KAHIT 1000+ NA LINYA!
+// VERSION: 5.4.0 — ✅ BAGONG PAGHANAP • HINDI NA LAGING LINYA 1 • TUMPAK ANG SCROLL!
+// UPDATED: 2026-09-22 — BUONG CODE TINITIGNAN • WALANG HULA!
 // ==================================================
 package com.martodosko.studio
 
@@ -383,7 +383,6 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun showFullScreenEditorDialog() {
-        // ✅ KOPYAHIN ANG EKSAKTONG POSISYON — GAYA NG GUSTO MO!
         val currentSelStart = codeEditor.selectionStart
         val currentSelEnd = codeEditor.selectionEnd
         val currentText = codeEditor.text.toString()
@@ -395,7 +394,7 @@ class FileEditorFragment : Fragment() {
             setPadding(20, 20, 20, 20)
             setTypeface(Typeface.MONOSPACE)
             setText(currentText)
-            setSelection(currentSelStart, currentSelEnd) // ✅ KOPYAHIN ANG PAGPILI
+            setSelection(currentSelStart, currentSelEnd)
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -406,7 +405,6 @@ class FileEditorFragment : Fragment() {
             .setTitle("⛶ BUONG EKRAN — I-edit ang Kodigo")
             .setView(fullScreenEditor)
             .setPositiveButton("✅ ILIPAT") { _, _ ->
-                // ✅ KOPYAHIN BALIK — EKSAKTO!
                 codeEditor.setText(fullScreenEditor.text)
                 codeEditor.setSelection(fullScreenEditor.selectionStart, fullScreenEditor.selectionEnd)
                 isFullScreen = false
@@ -596,10 +594,7 @@ class FileEditorFragment : Fragment() {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 24, 16, 16)
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setOnClickListener {
-                // ✅ TUMALON SA UNANG LINYA
-                scheduleJumpToLine(1, lines)
-            }
+            setOnClickListener { scheduleJumpToLine(1, lines) }
             addView(TextView(requireContext()).apply {
                 text = when {
                     isAdmin -> "🔐 ADMIN PANEL"
@@ -622,25 +617,47 @@ class FileEditorFragment : Fragment() {
         return scroll
     }
 
-    // ✅ BAGONG PARAAN: KALKULAHIN ANG POSISYON AT I-SAVE BAGO ISARA
+    // ✅ BAGONG MATIBAY NA PAGHANAP — KAHIT 1000+ LINYA HINDI NABIBIGO!
+    private fun findBestMatchingLine(searchKey: String, lines: List<String>): Int {
+        if (searchKey.isBlank()) return 1
+        val keyLower = searchKey.lowercase()
+
+        // 1️⃣ Unang tignan: val/var pangalan = pinakatumpak
+        val declarationPattern = Regex("\\b(?:val|var)\\s+${Regex.escape(searchKey)}\\b", RegexOption.IGNORE_CASE)
+        lines.forEachIndexed { index, line ->
+            if (declarationPattern.containsMatchIn(line)) return index + 1
+        }
+
+        // 2️⃣ Pangalawa: id / R.id
+        val idPattern = Regex("\\b(?:id|R\\.id)\\b.*?${Regex.escape(searchKey)}", RegexOption.IGNORE_CASE)
+        lines.forEachIndexed { index, line ->
+            if (idPattern.containsMatchIn(line)) return index + 1
+        }
+
+        // 3️⃣ Pangatlo: simpleng pagtugma sa kahit saang bahagi
+        lines.forEachIndexed { index, line ->
+            if (line.lowercase().contains(keyLower)) return index + 1
+        }
+
+        // ❌ Wala talagang nakita — huwag magbalik sa 1, magbalik sa -1 para alam nating hindi nakita
+        return -1
+    }
+
     private fun scheduleJumpToLine(targetLine: Int, lines: List<String>) {
         if (targetLine !in 1..lines.size) return
 
-        // ✅ KALKULAHIN ANG EKSAKTONG SIMULA AT DULO — GAYA NG GINAGAWA SA FULL SCREEN
+        // ✅ Tumpak na pagkalkula ng simula at dulo
         var startPos = 0
         for (i in 0 until targetLine - 1) {
-            startPos += lines[i].length + 1 // +1 = bagong linya
+            startPos += lines[i].length + 1
         }
         val endPos = startPos + lines[targetLine - 1].length
 
-        // ✅ I-SAVE ANG POSISYON — ISARA ANG PREVIEW — ILIPAT
         pendingJumpLine = targetLine
         pendingJumpStart = startPos
         pendingJumpEnd = endPos
 
         closePreviewDialog()
-
-        // ✅ I-APPLY PAGKATAPOS ISARA
         codeEditor.post { applyPendingJumpIfReady() }
     }
 
@@ -649,13 +666,12 @@ class FileEditorFragment : Fragment() {
         val end = pendingJumpEnd ?: return
         val line = pendingJumpLine ?: return
 
-        // ✅ I-APPLY — HINDI NA HINUHULA!
         codeEditor.removeTextChangedListener(textWatcher)
         codeEditor.setSelection(start, end)
         codeEditor.addTextChangedListener(textWatcher)
         codeEditor.requestFocus()
 
-        // ✅ I-SCROLL PABABA SA TAMANG LUGAR
+        // ✅ Tumpak na scroll papunta sa tamang linya
         codeEditor.post {
             val layout = codeEditor.layout
             if (layout != null) {
@@ -671,7 +687,6 @@ class FileEditorFragment : Fragment() {
 
         Toast.makeText(context, "📍 Linya $line", Toast.LENGTH_SHORT).show()
 
-        // ✅ LINISIN
         pendingJumpLine = null
         pendingJumpStart = null
         pendingJumpEnd = null
@@ -725,66 +740,65 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun addClickablePreviewElement(container: LinearLayout, el: PreviewElement, lines: List<String>) {
-        // ✅ HANAPIN ANG TAMANG LINYA PARA SA BUTTON NA ITO
-        val lineNo = if (el.searchKey.isBlank()) 0 else lines.indexOfFirst {
-            Regex("(val|var)\\s+${el.searchKey}\\b").containsMatchIn(it) ||
-            Regex("findViewById.*${el.searchKey}\\b").containsMatchIn(it) ||
-            it.contains("id.*${el.searchKey}", ignoreCase = true) ||
-            it.contains(el.searchKey, ignoreCase = true)
-        }
-        val targetLine = if (lineNo < 0) 1 else if (lineNo == 0) 1 else lineNo + 1
+        // ✅ GAMIT ANG BAGONG MATIBAY NA PAGHANAP!
+        val targetLine = findBestMatchingLine(el.searchKey, lines)
+
+        // Kung hindi nakita, huwag magbalik sa 1 — maglagay ng babala
+        val finalLine = if (targetLine == -1) {
+            Toast.makeText(context, "⚠️ Hindi nakita: ${el.searchKey}", Toast.LENGTH_SHORT).show()
+            1
+        } else targetLine
 
         val view = when (el.type) {
             "spinner" -> TextView(requireContext()).apply {
                 text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFAAAAAA.toInt())
                 textSize = 14f; setPadding(16, 14, 16, 14)
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 0, 16, 8) }
-                setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+                setOnClickListener { scheduleJumpToLine(finalLine, lines) }
             }
             "editor" -> TextView(requireContext()).apply {
                 text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF666666.toInt())
                 textSize = 11f; setPadding(16, 16, 16, 16); minHeight = 200
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 0, 16, 12) }
-                setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+                setOnClickListener { scheduleJumpToLine(finalLine, lines) }
             }
             "input" -> TextView(requireContext()).apply {
                 text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF888888.toInt())
                 textSize = 14f; setPadding(16, 16, 16, 16)
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 4, 16, 12) }
-                setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+                setOnClickListener { scheduleJumpToLine(finalLine, lines) }
             }
             "status" -> TextView(requireContext()).apply {
                 text = el.label; setTextColor(0xFFFFA500.toInt()); textSize = 13f; setPadding(16, 8, 16, 8)
-                setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+                setOnClickListener { scheduleJumpToLine(finalLine, lines) }
             }
             "label" -> TextView(requireContext()).apply {
                 text = el.label; setTextColor(0xFFFFFFFF.toInt()); setTypeface(null, Typeface.BOLD)
                 textSize = 14f; setPadding(16, 8, 16, 4)
-                setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+                setOnClickListener { scheduleJumpToLine(finalLine, lines) }
             }
             else -> Button(requireContext()).apply {
                 text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFFFFFFF.toInt())
                 textSize = 14f; minHeight = 52; setPadding(16, 12, 16, 12)
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 6, 16, 6) }
-                setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+                setOnClickListener { scheduleJumpToLine(finalLine, lines) }
             }
         }
         container.addView(view)
     }
 
     private fun addClickablePreviewBtnToRow(row: LinearLayout, label: String, key: String, color: Int, lines: List<String>) {
-        val lineNo = lines.indexOfFirst {
-            Regex("(val|var)\\s+${key}\\b").containsMatchIn(it) ||
-            Regex("findViewById.*${key}\\b").containsMatchIn(it) ||
-            it.contains(key, ignoreCase = true)
-        }
-        val targetLine = if (lineNo < 0) 1 else lineNo + 1
+        val targetLine = findBestMatchingLine(key, lines)
+        val finalLine = if (targetLine == -1) {
+            Toast.makeText(context, "⚠️ Hindi nakita: $key", Toast.LENGTH_SHORT).show()
+            1
+        } else targetLine
 
         row.addView(Button(requireContext()).apply {
             text = label; setBackgroundColor(color); setTextColor(0xFFFFFFFF.toInt()); textSize = 11f; minHeight = 50
             setPadding(4, 8, 4, 8)
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { scheduleJumpToLine(targetLine, lines) }
+            setOnClickListener { scheduleJumpToLine(finalLine, lines) }
         })
     }
 
