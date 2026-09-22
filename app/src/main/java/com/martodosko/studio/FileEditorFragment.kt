@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ INAYOS: SUMASARA NA PREVIEW + SCROLL + HIGHLIGHT!
-// VERSION: 5.2.0 — ✅ TUMATALON • SUMASARA • NAKA-HIGHLIGHT • GUMAGANA ANG SCROLL!
-// UPDATED: 2026-09-22 — WALANG BINAWASAN — INAYOS LANG ANG TATLONG PROBLEMA!
+// FILE: FileEditorFragment.kt — ✅ MAY LINE NUMBERING NA! TUMPAK ANG TALON!
+// VERSION: 6.0.0 — ✅ PREVIEW MAY NUMERO • TUMATALON SA TAMANG LINYA • NAKA-HIGHLIGHT!
+// UPDATED: 2026-09-22 — AYON SA MUNGKAHI: LINE NUMBER = TUMPAK NA SANGGUNIAN!
 // ==================================================
 package com.martodosko.studio
 
@@ -62,11 +62,11 @@ class FileEditorFragment : Fragment() {
     private var originalContent = ""
     private val allFiles = mutableListOf<FileItem>()
     private var isFullScreen = false
-    private var activePreviewDialog: AlertDialog? = null // ✅ I-save ang dialog para isara
+    private var activePreviewDialog: AlertDialog? = null
 
     data class FileItem(val path: String, val name: String, val type: String)
     data class CodeIssue(val severity: String, val message: String, val line: Int)
-    data class PreviewElement(val label: String, val searchKey: String, val bgColor: Int, val type: String = "button")
+    data class PreviewElement(val label: String, val targetLine: Int, val bgColor: Int, val type: String = "button")
 
     companion object {
         const val PREFS_NAME = "github_prefs"
@@ -90,7 +90,7 @@ class FileEditorFragment : Fragment() {
             )
         }
 
-        // ===== HEADER: Folder + File + Load =====
+        // ===== HEADER =====
         val header = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(16, 16, 16, 8)
@@ -161,7 +161,7 @@ class FileEditorFragment : Fragment() {
 
         // ===== CODE EDITOR AREA =====
         val scrollView = ScrollView(requireContext()).apply {
-            id = View.generateViewId() // ✅ Magbigay ng ID para sa pag-scroll
+            id = View.generateViewId()
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0,
@@ -248,7 +248,7 @@ class FileEditorFragment : Fragment() {
 
         root.addView(scrollView)
 
-        // ===== NAKAPIRMI SA IBABA — LAHAT NG BUTTON DITO! =====
+        // ===== BOTTOM BUTTONS =====
         val fixedBottom = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(8, 12, 8, 16)
@@ -547,13 +547,7 @@ class FileEditorFragment : Fragment() {
             }
             selectedFilePath.endsWith(".kt") -> buildFullKotlinPreview(code)
             selectedFilePath.endsWith(".xml") -> buildFullXmlPreview(code)
-            else -> ScrollView(requireContext()).apply {
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                setBackgroundColor(0xFF12121F.toInt()); setPadding(20, 20, 20, 20)
-                addView(TextView(requireContext()).apply {
-                    text = code; setTextColor(0xFFCCCCCC.toInt()); textSize = 11f; typeface = Typeface.MONOSPACE
-                })
-            }
+            else -> buildGenericPreviewWithNumbers(code)
         }
 
         activePreviewDialog = AlertDialog.Builder(requireContext())
@@ -564,201 +558,8 @@ class FileEditorFragment : Fragment() {
         activePreviewDialog?.show()
     }
 
-    private fun buildFullKotlinPreview(code: String): View {
-        val scroll = ScrollView(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            setBackgroundColor(0xFF12121F.toInt()); setPadding(0, 0, 0, 0)
-        }
-        val container = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
-        scroll.addView(container)
-
-        val className = Regex("class\\s+(\\w+)").find(code)?.groupValues?.get(1) ?: "UnknownScreen"
-        val isEditor = className.contains("Editor", true)
-        val isLogin = className.contains("Login", true)
-        val isAdmin = className.contains("Admin", true)
-        val lines = code.lines()
-
-        container.addView(LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 24, 16, 16)
-            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setOnClickListener { findAndJump("", lines) }
-            addView(TextView(requireContext()).apply {
-                text = when {
-                    isAdmin -> "🔐 ADMIN PANEL"
-                    isLogin -> "🔐 LOGIN"
-                    isEditor -> "✏️ FILE EDITOR"
-                    else -> "📱 $className"
-                }; textSize = 22f; setTextColor(0xFF40E0D0.toInt()); setTypeface(null, Typeface.BOLD); gravity = Gravity.CENTER
-            })
-            addView(TextView(requireContext()).apply {
-                text = "💡 Pindutin → tumalon at i-highlight sa kodigo"
-                textSize = 12f; setTextColor(0xFF666666.toInt()); gravity = Gravity.CENTER; setPadding(0, 4, 0, 0)
-            })
-        })
-
-        when {
-            isEditor -> buildEditorFullPreview(container, lines)
-            isLogin -> buildLoginFullPreview(container, lines)
-            isAdmin -> buildAdminFullPreview(container, lines)
-        }
-        return scroll
-    }
-
-    private fun buildEditorFullPreview(container: LinearLayout, lines: List<String>) {
-        addClickablePreviewElement(container, PreviewElement("📁 Piliin ang Folder:", "folderSelect", 0xFF252540.toInt(), "label"), lines)
-        addClickablePreviewElement(container, PreviewElement("— Pumili ng folder —", "folderSelect", 0xFF1E1E2F.toInt(), "spinner"), lines)
-        addClickablePreviewElement(container, PreviewElement("📄 Piliin ang File:", "fileSelect", 0xFF252540.toInt(), "label"), lines)
-        addClickablePreviewElement(container, PreviewElement("— Walang file pa —", "fileSelect", 0xFF1E1E2F.toInt(), "spinner"), lines)
-        addClickablePreviewElement(container, PreviewElement("📥 I-LOAD MULA SA GITHUB", "btnLoad", 0xFF1976D2.toInt()), lines)
-        addClickablePreviewElement(container, PreviewElement("✏️ Kodigo:", "codeEditor", 0xFF1A1A2E.toInt(), "label"), lines)
-        addClickablePreviewElement(container, PreviewElement("Pindutin ang \"I-LOAD\" para makita ang laman...", "codeEditor", 0xFF0F0F1A.toInt(), "editor"), lines)
-
-        val quickRow = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
-            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 4, 16, 4) }
-        }
-        addClickablePreviewBtnToRow(quickRow, "⛶", "btnFullScreen", 0xFF252540.toInt(), lines)
-        addClickablePreviewBtnToRow(quickRow, "📋", "btnCopy", 0xFF455A64.toInt(), lines)
-        addClickablePreviewBtnToRow(quickRow, "📌", "btnPaste", 0xFF558B2F.toInt(), lines)
-        addClickablePreviewBtnToRow(quickRow, "🧹", "btnClear", 0xFFC62828.toInt(), lines)
-        addClickablePreviewBtnToRow(quickRow, "👁️", "btnPreview", 0xFF00897B.toInt(), lines)
-        container.addView(quickRow)
-
-        addClickablePreviewElement(container, PreviewElement("⏳ Kinakarga ang listahan...", "statusText", 0xFF12121F.toInt(), "status"), lines)
-
-        val bottomRow = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 12, 16, 12)
-            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
-        addClickablePreviewBtnToRow(bottomRow, "💾", "btnSaveLocal", 0xFF2E7D32.toInt(), lines)
-        addClickablePreviewBtnToRow(bottomRow, "☁️", "btnPushGithub", 0xFF7B1FA2.toInt(), lines)
-        addClickablePreviewBtnToRow(bottomRow, "🔄", "btnRefresh", 0xFF00BFA5.toInt(), lines)
-        container.addView(bottomRow)
-    }
-
-    private fun buildLoginFullPreview(container: LinearLayout, lines: List<String>) {
-        addClickablePreviewElement(container, PreviewElement("Ipasok ang Key Code:", "keyInput", 0xFF12121F.toInt(), "label"), lines)
-        addClickablePreviewElement(container, PreviewElement("_________________________", "keyInput", 0xFF1E1E2F.toInt(), "input"), lines)
-        addClickablePreviewElement(container, PreviewElement("🔐 MAG-LOGIN", "btnLogin", 0xFF7B1FA2.toInt()), lines)
-    }
-
-    private fun buildAdminFullPreview(container: LinearLayout, lines: List<String>) {
-        listOf("✏️ File Editor" to "fileEditor", "🔑 Key Code Generator" to "keyGen",
-            "👤 User Management" to "userMgmt", "📊 System Status" to "status",
-            "☁️ GitHub Settings" to "github").forEach { (label, key) ->
-            addClickablePreviewElement(container, PreviewElement(label, key, 0xFF1E1E2F.toInt()), lines)
-        }
-    }
-
-    private fun addClickablePreviewElement(container: LinearLayout, el: PreviewElement, lines: List<String>) {
-        val view = when (el.type) {
-            "spinner" -> TextView(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFAAAAAA.toInt())
-                textSize = 14f; setPadding(16, 14, 16, 14)
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 0, 16, 8) }
-                setOnClickListener { findAndJump(el.searchKey, lines) }
-            }
-            "editor" -> TextView(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF666666.toInt())
-                textSize = 11f; setPadding(16, 16, 16, 16); minHeight = 200
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 0, 16, 12) }
-                setOnClickListener { findAndJump(el.searchKey, lines) }
-            }
-            "input" -> TextView(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF888888.toInt())
-                textSize = 14f; setPadding(16, 16, 16, 16)
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 4, 16, 12) }
-                setOnClickListener { findAndJump(el.searchKey, lines) }
-            }
-            "status" -> TextView(requireContext()).apply {
-                text = el.label; setTextColor(0xFFFFA500.toInt()); textSize = 13f; setPadding(16, 8, 16, 8)
-                setOnClickListener { findAndJump(el.searchKey, lines) }
-            }
-            "label" -> TextView(requireContext()).apply {
-                text = el.label; setTextColor(0xFFFFFFFF.toInt()); setTypeface(null, Typeface.BOLD)
-                textSize = 14f; setPadding(16, 8, 16, 4)
-                setOnClickListener { findAndJump(el.searchKey, lines) }
-            }
-            else -> Button(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFFFFFFF.toInt())
-                textSize = 14f; minHeight = 52; setPadding(16, 12, 16, 12)
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 6, 16, 6) }
-                setOnClickListener { findAndJump(el.searchKey, lines) }
-            }
-        }
-        container.addView(view)
-    }
-
-    private fun addClickablePreviewBtnToRow(row: LinearLayout, label: String, key: String, color: Int, lines: List<String>) {
-        row.addView(Button(requireContext()).apply {
-            text = label; setBackgroundColor(color); setTextColor(0xFFFFFFFF.toInt()); textSize = 11f; minHeight = 50
-            setPadding(4, 8, 4, 8)
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { findAndJump(key, lines) }
-        })
-    }
-
-    private fun findAndJump(searchKey: String, lines: List<String>) {
-        // ✅ ISARA MUNA ANG PREVIEW
-        closePreviewDialog()
-
-        // Maghanap ng linya
-        var lineNo = if (searchKey.isBlank()) 0 else lines.indexOfFirst {
-            Regex("(val|var)\\s+${searchKey}\\b").containsMatchIn(it) ||
-            Regex("findViewById.*${searchKey}\\b").containsMatchIn(it) ||
-            it.contains("id.*${searchKey}", ignoreCase = true) ||
-            it.contains(searchKey, ignoreCase = true)
-        }
-
-        if (lineNo < 0) {
-            Toast.makeText(context, "🔍 Hindi nahanap: $searchKey", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val targetLine = if (lineNo == 0) 1 else lineNo + 1
-        jumpToLineAndHighlight(targetLine, lines)
-    }
-
-    private fun jumpToLineAndHighlight(lineNumber: Int, lines: List<String>) {
-        if (lineNumber !in 1..lines.size) return
-
-        // ✅ TUMPAK NA PAGKUHA NG POSISYON
-        var startPos = 0
-        for (i in 0 until lineNumber - 1) {
-            startPos += lines[i].length + 1 // +1 = bagong linya
-        }
-        val endPos = startPos + lines[lineNumber - 1].length
-
-        // ✅ HIGHLIGHT — BUONG LINYA (hindi naaalis ng textWatcher)
-        codeEditor.removeTextChangedListener(textWatcher)
-        codeEditor.setSelection(startPos, endPos)
-        codeEditor.addTextChangedListener(textWatcher)
-        
-        codeEditor.requestFocus()
-
-        // ✅ GUMAGANA NA ANG PAG-SCROLL papunta sa tamang linya
-        codeEditor.post {
-            val layout = codeEditor.layout
-            if (layout != null) {
-                val lineTop = layout.getLineTop(lineNumber - 1)
-                val parentScroll = codeEditor.parent as? ScrollView
-                if (parentScroll != null) {
-                    parentScroll.smoothScrollTo(0, lineTop - 80)
-                } else {
-                    codeEditor.scrollTo(0, lineTop - 80)
-                }
-            }
-        }
-
-        Toast.makeText(context, "📍 Linya $lineNumber", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun buildFullXmlPreview(code: String): View {
+    // ✅ BAGONG BUILDER — MAY NUMERO NG LINYA!
+    private fun buildGenericPreviewWithNumbers(code: String): View {
         val scroll = ScrollView(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             setBackgroundColor(0xFF12121F.toInt()); setPadding(16, 16, 16, 16)
@@ -767,35 +568,94 @@ class FileEditorFragment : Fragment() {
         scroll.addView(container)
 
         container.addView(TextView(requireContext()).apply {
-            text = "🔶 LAYOUT PREVIEW"; textSize = 18f; setTextColor(0xFFFFB74D.toInt())
-            setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 16)
+            text = "📋 KODIGO — MAY NUMERO NG LINYA"; textSize = 16f
+            setTextColor(0xFF40E0D0.toInt()); setTypeface(null, Typeface.BOLD)
+            setPadding(0, 0, 0, 16)
         })
 
-        val btnCount = Regex("<Button").findAll(code).count()
-        val tvCount = Regex("<TextView").findAll(code).count()
-        val etCount = Regex("<EditText").findAll(code).count()
-        val llCount = Regex("<LinearLayout").findAll(code).count()
-        val svCount = Regex("<ScrollView").findAll(code).count()
-
-        container.addView(LinearLayout(requireContext()).apply {
-            setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(20, 20, 20, 20)
-            orientation = LinearLayout.VERTICAL
-            addView(TextView(requireContext()).apply {
-                text = "📋 Mga Elemento:"; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 12)
+        val lines = code.lines()
+        lines.forEachIndexed { index, line ->
+            val lineNum = index + 1
+            val row = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(8, 4, 8, 4)
+                setBackgroundColor(if (lineNum % 2 == 0) 0xFF1A1A2E.toInt() else 0xFF12121F.toInt())
+                setOnClickListener { jumpToLineAndHighlight(lineNum, lines) }
+            }
+            // Numero ng linya
+            row.addView(TextView(requireContext()).apply {
+                text = String.format("%4d", lineNum)
+                setTextColor(0xFF666688.toInt())
+                textSize = 11f
+                setPadding(8, 4, 12, 4)
+                setTypeface(Typeface.MONOSPACE)
+                minWidth = 80
             })
-            addView(TextView(requireContext()).apply { text = "• Linear Layout: $llCount"; setTextColor(0xFF64B5F6.toInt()); textSize = 13f })
-            addView(TextView(requireContext()).apply { text = "• Scroll View: $svCount"; setTextColor(0xFFBB86FC.toInt()); textSize = 13f })
-            addView(TextView(requireContext()).apply { text = "• Pindutan: $btnCount"; setTextColor(0xFF64B5F6.toInt()); textSize = 13f })
-            addView(TextView(requireContext()).apply { text = "• Teksto: $tvCount"; setTextColor(0xFFCCCCCC.toInt()); textSize = 13f })
-            addView(TextView(requireContext()).apply { text = "• Kahon/Pag-input: $etCount"; setTextColor(0xFF81C784.toInt()); textSize = 13f })
-        })
+            // Nilalaman ng linya
+            row.addView(TextView(requireContext()).apply {
+                text = if (line.isBlank()) " " else line
+                setTextColor(0xFFCCCCCC.toInt())
+                textSize = 11f
+                setPadding(4, 4, 4, 4)
+                setTypeface(Typeface.MONOSPACE)
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            })
+            container.addView(row)
+        }
 
         container.addView(TextView(requireContext()).apply {
-            text = "\n💡 Pindutin kahit saan → tumalon sa kodigo"
+            text = "\n💡 Pindutin ang kahit anong linya → tumalon at i-highlight"
             textSize = 12f; setTextColor(0xFF888888.toInt()); gravity = Gravity.CENTER
+            setPadding(0, 16, 0, 8)
         })
-        container.setOnClickListener { findAndJump("", code.lines()) }
+
         return scroll
+    }
+
+    private fun buildFullKotlinPreview(code: String): View {
+        // ✅ GAMITIN ANG GENERIC NA MAY NUMERO NG LINYA
+        return buildGenericPreviewWithNumbers(code)
+    }
+
+    private fun buildFullXmlPreview(code: String): View {
+        // ✅ GAMITIN ANG GENERIC NA MAY NUMERO NG LINYA
+        return buildGenericPreviewWithNumbers(code)
+    }
+
+    // ✅ TUMPAK NA PAGTALON — GAMIT ANG EKSAKTONG NUMERO NG LINYA
+    private fun jumpToLineAndHighlight(targetLine: Int, allLines: List<String>) {
+        // Isara muna ang preview
+        closePreviewDialog()
+
+        // Kalkulahin ang posisyon sa loob ng buong teksto
+        var charStart = 0
+        for (i in 0 until targetLine - 1) {
+            charStart = charStart + allLines[i].length + 1 // +1 = bagong linya
+        }
+        val charEnd = charStart + allLines[targetLine - 1].length
+
+        // I-highlight — alisin muna ang textWatcher para hindi mabura
+        codeEditor.removeTextChangedListener(textWatcher)
+        codeEditor.setSelection(charStart, charEnd)
+        codeEditor.addTextChangedListener(textWatcher)
+
+        codeEditor.requestFocus()
+
+        // I-scroll papunta sa tamang linya
+        codeEditor.post {
+            val layout = codeEditor.layout
+            if (layout != null) {
+                val lineTop = layout.getLineTop(targetLine - 1)
+                val parentScroll = codeEditor.parent as? ScrollView
+                if (parentScroll != null) {
+                    parentScroll.smoothScrollTo(0, lineTop - 100)
+                } else {
+                    codeEditor.scrollTo(0, lineTop - 100)
+                }
+            }
+        }
+
+        Toast.makeText(context, "📍 Linya $targetLine", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadConfig() {
