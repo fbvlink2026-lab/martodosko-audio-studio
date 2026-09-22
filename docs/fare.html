@@ -62,6 +62,7 @@
             border-radius: 12px; font-size: 16px; background: white;
         }
         input:focus, select:focus { outline: none; border-color: var(--p); }
+        .input-inline { display: inline-block; width: 30%; margin-right: 3%; }
         .route-item {
             background: white; border-radius: 16px; padding: 16px; margin-bottom: 10px;
             display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.05); flex-wrap: wrap;
@@ -158,6 +159,8 @@
         .tag-needed { background: #E3F2FD; color: #1565C0; }
         .tag-behind { background: #FFEBEE; color: #C62828; }
         .explanation { background: #E8F5E9; border-left: 4px solid var(--ok); padding: 12px; margin: 12px 0; border-radius: 0 12px 12px 0; font-size: 13px; line-height: 1.5; }
+        .custom-fields { background: #F5F5F5; border-radius: 12px; padding: 14px; margin-top: 10px; display: none; }
+        .custom-fields.active { display: block; }
     </style>
 </head>
 <body>
@@ -284,15 +287,31 @@
         <div class="modal">
             <h3>⚙️ PAGTATAKDA</h3>
             <div class="setting-row">
-                <div><strong>🚗 Sasakyan</strong><p class="note">Uri ng sasakyang ginagamit — binabago ang konsumo at bilis</p></div>
-                <select id="def-veh" style="max-width:180px;">
+                <div><strong>🚗 Sasakyan</strong><p class="note">Uri ng sasakyang ginagamit — piliin o gumawa ng sarili</p></div>
+                <select id="def-veh" style="max-width:180px;" onchange="toggleCustomFields()">
                     <option value="tricycle">🛺 Trisikel</option>
-                    <option value="motor">🏍️ Motor</option>
+                    <option value="motor" selected>🏍️ Motor</option>
                     <option value="jeepney">🚐 Jeepney</option>
                     <option value="car">🚗 Kotse</option>
                     <option value="van">🚐 Van</option>
+                    <option value="custom">🔧 Sariling Pagtatakda...</option>
                 </select>
             </div>
+            
+            <!-- ✅ BAGONG: Mga Patlang para sa Sariling Sasakyan -->
+            <div id="custom-veh-fields" class="custom-fields">
+                <label>Pangalan ng Sasakyan</label>
+                <input type="text" id="custom-name" placeholder="Hal. Truck, E-Bike...">
+                <label>Konsumo (km bawat Litro)</label>
+                <input type="number" id="custom-kmperlit" step="0.1" min="0.1" placeholder="Hal. 15.0">
+                <label>Bilis (km/oras — tantsa)</label>
+                <input type="number" id="custom-speed" step="1" min="1" placeholder="Hal. 30">
+                <label>Karaniwang Kita/oras — Mababa</label>
+                <input type="number" id="custom-reflow" step="1" min="1" placeholder="Hal. 100">
+                <label>Karaniwang Kita/oras — Mataas</label>
+                <input type="number" id="custom-refhigh" step="1" min="1" placeholder="Hal. 200">
+            </div>
+            
             <div class="setting-row">
                 <div><strong>₱ Piyesa/Pagkukumpuni Araw-araw</strong><p class="note">Gastos sa piyesa, langis, pagkukumpuni bawat araw</p></div>
                 <input type="number" id="maint-per-day" step="1" min="0" value="20" class="input-sm">
@@ -337,17 +356,23 @@
         <div class="modal modal-help">
             <h3>📖 TULONG — Rate Calculator v8.7</h3>
             <div style="font-size:14px;line-height:1.8;margin-top:12px;">
-                <p><strong>🚗 PAGPILI NG SASAKYAN</strong></p>
-                <p>• Pumili sa ⚙️ Pagtatakda — awtomatikong nagbabago ang:</p>
-                <p style="padding-left:12px;">⛽ Konsumo (km/L) • ⏱️ Bilis • 💰 Inaasahang Kita/Oras</p>
-                <p>• Nalalapat sa lahat ng susunod na kuwenta</p>
-                
-                <p style="margin-top:16px;"><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
+                <p><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
                 <p>• Ang piyesa at upa ay <strong>hindi</strong> ibinabawas nang buo sa isang biyahe lang!</p>
-                <p>• Hinahati ito sa <strong>bawat oras</strong> ng pagtatrabaho</p>
+                <p>• Hinahati ito sa <strong>bawat oras</strong> ng pagtatrabaho:</p>
+                <p style="padding-left:12px;">Gastos/oras = (Piyesa + Upa) ÷ Oras ng Trabaho/Araw</p>
+                <p>• Gastos ng biyahe = Gastos/oras × Oras ng Biyahe + Gasolina</p>
+                
+                <p style="margin-top:16px;"><strong>🚗 SARILING SASAKYAN — Bago sa v8.7!</strong></p>
+                <p>• Piliin ang <strong>"🔧 Sariling Pagtatakda..."</strong> sa listahan</p>
+                <p>• Ilagay ang sariling konsumo, bilis, at kita/oras na inaasahan</p>
+                <p>• I-save — gagamitin ito sa lahat ng kuwenta</p>
                 
                 <p style="margin-top:16px;"><strong>📊 PROGRESO NG ARAW</strong></p>
+                <p>• Ang halaga ay nasa ilalim na ng bar — hindi magtatago</p>
                 <p>• Pula = mababa • Kahel = kalahati • Luntian = naabot na!</p>
+                
+                <p style="margin-top:16px;"><strong>🗑️ PAGBUBURA NG TALAAN</strong></p>
+                <p>• May pindutan sa bawat talaan — burahin isa-isa</p>
             </div>
             <div class="modal-btns">
                 <button class="btn btn-pri" onclick="closeHelp()">Naintindihan</button>
@@ -368,6 +393,9 @@ let WORK_HOURS_PER_DAY = DEFAULT_WORK_HOURS;
 let DEFAULT_VEHICLE = "motor";
 let DAILY_GOAL = 0.00;
 
+// ✅ Pinalawak — may kakayahang mag-imbak ng Custom Sasakyan
+let CUSTOM_VEHICLE = null;
+
 const VEHICLES = {
     tricycle:   { name: "Trisikel",   kmPerL: 22.0, speedKmh: 25, refLow: 80,  refHigh: 150 },
     motor:      { name: "Motor",      kmPerL: 20.0, speedKmh: 35, refLow: 100, refHigh: 180 },
@@ -375,6 +403,21 @@ const VEHICLES = {
     car:        { name: "Kotse",      kmPerL: 12.0, speedKmh: 45, refLow: 180, refHigh: 300 },
     van:        { name: "Van",        kmPerL:  9.0, speedKmh: 40, refLow: 250, refHigh: 450 }
 };
+
+function getActiveVehicle() {
+    if (DEFAULT_VEHICLE === "custom" && CUSTOM_VEHICLE) return CUSTOM_VEHICLE;
+    return VEHICLES[DEFAULT_VEHICLE] || VEHICLES.motor;
+}
+
+function toggleCustomFields() {
+    const sel = document.getElementById("def-veh").value;
+    const fields = document.getElementById("custom-veh-fields");
+    if (sel === "custom") {
+        fields.classList.add("active");
+    } else {
+        fields.classList.remove("active");
+    }
+}
 
 let routes = [
     { id:1, name:"Lopez → Calauag", start:"Lopez, Quezon", end:"Calauag, Quezon", km:12.0 },
@@ -408,22 +451,34 @@ function loadSettings() {
     const savedMaint = localStorage.getItem("maintPerDay");
     const savedRent = localStorage.getItem("rentPerDay");
     const savedWorkHrs = localStorage.getItem("workHoursPerDay");
+    const savedCustom = localStorage.getItem("customVehicle");
     
     DEFAULT_VEHICLE = savedVeh || "motor";
     MAINTENANCE_PER_DAY = savedMaint !== null ? parseFloat(savedMaint) : DEFAULT_MAINTENANCE_PER_DAY;
     RENT_PER_DAY = savedRent !== null ? parseFloat(savedRent) : DEFAULT_RENT_PER_DAY;
     WORK_HOURS_PER_DAY = savedWorkHrs !== null ? parseFloat(savedWorkHrs) : DEFAULT_WORK_HOURS;
     
+    if (savedCustom) {
+        CUSTOM_VEHICLE = JSON.parse(savedCustom);
+        // Ipakita sa patlang kung mayroon na
+        document.getElementById("custom-name").value = CUSTOM_VEHICLE.name || "";
+        document.getElementById("custom-kmperlit").value = CUSTOM_VEHICLE.kmPerL || "";
+        document.getElementById("custom-speed").value = CUSTOM_VEHICLE.speedKmh || "";
+        document.getElementById("custom-reflow").value = CUSTOM_VEHICLE.refLow || "";
+        document.getElementById("custom-refhigh").value = CUSTOM_VEHICLE.refHigh || "";
+    }
+    
     updateSettingsDisplay();
 }
 
 function updateSettingsDisplay() {
-    const v = VEHICLES[DEFAULT_VEHICLE];
+    const v = getActiveVehicle();
     document.getElementById("show-vehicle").textContent = v.name;
     document.getElementById("show-maint").textContent = MAINTENANCE_PER_DAY.toFixed(2);
     document.getElementById("show-rent").textContent = RENT_PER_DAY.toFixed(2);
     document.getElementById("show-work-hours").textContent = WORK_HOURS_PER_DAY.toFixed(1);
     document.getElementById("def-veh").value = DEFAULT_VEHICLE;
+    toggleCustomFields();
     document.getElementById("maint-per-day").value = MAINTENANCE_PER_DAY;
     document.getElementById("rent-per-day").value = RENT_PER_DAY;
     document.getElementById("work-hours-setting").value = WORK_HOURS_PER_DAY;
@@ -458,6 +513,30 @@ function saveSettings() {
     
     if (isNaN(maintVal) || maintVal < 0 || isNaN(rentVal) || rentVal < 0 || isNaN(workHrsVal) || workHrsVal <= 0) {
         alert("Ilagay ang tamang halaga!"); return;
+    }
+    
+    // ✅ I-save ang Custom Sasakyan kung iyon ang pinili
+    if (veh === "custom") {
+        const cName = document.getElementById("custom-name").value.trim() || "Aking Sasakyan";
+        const cKmPerL = parseFloat(document.getElementById("custom-kmperlit").value);
+        const cSpeed = parseFloat(document.getElementById("custom-speed").value);
+        const cRefLow = parseFloat(document.getElementById("custom-reflow").value);
+        const cRefHigh = parseFloat(document.getElementById("custom-refhigh").value);
+        
+        if (isNaN(cKmPerL) || cKmPerL <= 0 || isNaN(cSpeed) || cSpeed <= 0 ||
+            isNaN(cRefLow) || cRefLow <= 0 || isNaN(cRefHigh) || cRefHigh < cRefLow) {
+            alert("Punan nang tama ang lahat ng patlang para sa sariling sasakyan!");
+            return;
+        }
+        
+        CUSTOM_VEHICLE = {
+            name: cName,
+            kmPerL: cKmPerL,
+            speedKmh: cSpeed,
+            refLow: cRefLow,
+            refHigh: cRefHigh
+        };
+        localStorage.setItem("customVehicle", JSON.stringify(CUSTOM_VEHICLE));
     }
     
     DEFAULT_VEHICLE = veh;
@@ -600,7 +679,8 @@ async function getRouteOSRM(startName, endName, vehKey) {
     const b = await geocode(endName);
     if (!a || !b) return null;
 
-    const profile = (vehKey === "tricycle" || vehKey === "motor") ? "bike" : "car";
+    const useVeh = getActiveVehicle();
+    const profile = (vehKey === "tricycle" || vehKey === "motor" || (CUSTOM_VEHICLE && useVeh.speedKmh <= 30)) ? "bike" : "car";
     const url = `https://router.project-osrm.org/route/v1/${profile}/${a.lon},${a.lat};${b.lon},${b.lat}?overview=full&geometries=geojson`;
 
     try {
@@ -651,176 +731,34 @@ function showMap(a, b, coords) {
         })
     }).addTo(map);
 
-    map.fitBounds([[a.lat,a.lon],[b.lat,b.lon]], { padding: [30,30] });
+    map.fitBounds(routePoly.getBounds(), { padding: [20, 20] });
 }
 
 async function fetchRoute() {
     const start = document.getElementById("m-start").value.trim();
     const end = document.getElementById("m-end").value.trim();
+    if (!start || !end) { alert("Ilagay ang Simula at Dulo!"); return; }
+
     const btn = document.getElementById("fetch-btn");
-    const resEl = document.getElementById("fetch-result");
-
-    if (!start || !end) { alert("Punan ang Simula at Dulo!"); return; }
-
+    const resultEl = document.getElementById("fetch-result");
+    btn.innerHTML = `<span class="spin"></span> Kinukuha...`;
     btn.disabled = true;
-    btn.innerHTML = `<span class="spin"></span> Kinuha...`;
-    resEl.style.display = "none";
+    resultEl.style.display = "none";
 
     const r = await getRouteOSRM(start, end, DEFAULT_VEHICLE);
     if (!r) {
-        alert("Hindi makuha ang ruta. Suriin ang pangalan o subukan muli.");
-        btn.disabled = false;
         btn.innerHTML = "🗺️ Kumuha Tumpak na Ruta";
+        btn.disabled = false;
+        alert("Hindi makuha ang ruta. Suriin ang pangalan ng lugar o subukan muli.");
         return;
     }
 
     document.getElementById("m-km").value = r.kmOneWay.toFixed(2);
-    resEl.innerHTML = `✅ Nakuha: ${r.kmOneWay.toFixed(2)} km/daan — tumpak sa kalsada`;
-    resEl.style.display = "block";
+    resultEl.textContent = `✅ Nakuha: ${r.kmOneWay.toFixed(2)} km (isang daan) • Tantsang oras: ${r.totalHours.toFixed(2)} oras`;
+    resultEl.style.display = "block";
 
-    btn.disabled = false;
     btn.innerHTML = "🗺️ Kumuha Tumpak na Ruta";
-}
-
-async function selectRoute(id) {
-    selectedRoute = routes.find(r => r.id === id);
-    const v = VEHICLES[DEFAULT_VEHICLE];
-
-    document.getElementById("calc-route-name").textContent = selectedRoute.name;
-    document.getElementById("calc-route-addr").textContent = `${selectedRoute.start} → ${selectedRoute.end}`;
-    document.getElementById("calc-vehicle").textContent = `${v.name} • ${v.kmPerL} km/L • ₱${v.refLow}–${v.refHigh}/oras`;
-    document.getElementById("ref-range").textContent = `₱${v.refLow}–${v.refHigh}/oras`;
-
-    distKm = null; totalHours = null;
-    document.getElementById("dist-stat").className = "stat stat-load";
-    document.getElementById("dist-stat").innerHTML = `<span class="spin"></span> Kinuha ang ruta...`;
-    document.getElementById("time-stat").className = "stat stat-info";
-    document.getElementById("time-stat").innerHTML = `<span class="spin"></span> Kinuha ang oras...`;
-    document.getElementById("results").classList.add("hidden");
-
-    const r = await getRouteOSRM(selectedRoute.start, selectedRoute.end, DEFAULT_VEHICLE);
-    
-    if (r) {
-        distKm = r.kmOneWay;
-        totalHours = r.totalHours;
-        document.getElementById("dist-stat").className = "stat stat-ok";
-        document.getElementById("dist-stat").innerHTML = `✅ ${distKm.toFixed(2)} km/daan — tumpak sa kalsada`;
-        document.getElementById("time-stat").className = "stat stat-ok";
-        document.getElementById("time-stat").innerHTML = `✅ ${totalHours.toFixed(1)} oras — paalis + pabalik + paghihintay`;
-        setTimeout(() => showMap(r.a, r.b, r.geometry), 100);
-    } else {
-        distKm = selectedRoute.km;
-        totalHours = (distKm * 2 / v.speedKmh) * 1.15;
-        document.getElementById("dist-stat").className = "stat stat-warn";
-        document.getElementById("dist-stat").innerHTML = `⚠️ ${distKm.toFixed(2)} km — nakalagay na halaga`;
-        document.getElementById("time-stat").className = "stat stat-warn";
-        document.getElementById("time-stat").innerHTML = `⚠️ ~${totalHours.toFixed(1)} oras — tantsa lamang`;
-    }
-
-    document.getElementById("use-km").textContent = distKm.toFixed(2);
-    const liters = (distKm * 2 / v.kmPerL);
-    document.getElementById("auto-liter").textContent = liters.toFixed(2);
-    document.getElementById("auto-hours").textContent = totalHours.toFixed(2);
-    updateCostPerHour();
-
-    document.getElementById("menu-screen").classList.add("hidden");
-    document.getElementById("calc-screen").classList.remove("hidden");
-}
-
-function doCalc() {
-    const gasPrice = parseFloat(document.getElementById("gas-price").value);
-    const workHrs = parseFloat(document.getElementById("work-hours").value);
-    const targetPerHr = parseFloat(document.getElementById("target-per-hour").value);
-    const fare = parseFloat(document.getElementById("fare").value);
-
-    if (!gasPrice || !workHrs || !totalHours || !targetPerHr || !fare) {
-        alert("Punan ang lahat ng halaga!"); return;
-    }
-
-    const v = VEHICLES[DEFAULT_VEHICLE];
-    const liters = (distKm * 2 / v.kmPerL);
-   
-    const gasCost = liters * gasPrice;
-    
-    const dailyFixedCost = MAINTENANCE_PER_DAY + RENT_PER_DAY;
-    const fixedCostPerHour = dailyFixedCost / workHrs;
-    const allocatedFixedCost = fixedCostPerHour * totalHours;
-    
-    const totalCost = gasCost + allocatedFixedCost;
-    
-    const targetTotal = targetPerHr * workHrs;
-    const netIncome = fare - totalCost;
-    const actualPerHr = netIncome / totalHours;
-
-    addTripRecord(selectedRoute.name, fare, totalCost, netIncome);
-
-    let statusText, statusClass;
-    if (netIncome < 0) {
-        statusText = "❌ LUGI — Kulang pa sa gastos!";
-        statusClass = "res-warn";
-    } else if (actualPerHr >= v.refHigh) {
-        statusText = "✅ HIGIT SA KARANIWAN — Napakaganda!";
-        statusClass = "res-hi";
-    } else if (actualPerHr >= (v.refLow + v.refHigh)/2) {
-        statusText = "✅ KARANIWAN — Nasa tamang antas";
-        statusClass = "res-ref";
-    } else if (actualPerHr >= v.refLow) {
-        statusText = "⚠️ BABA SA KARANIWAN — Maaaring itaas";
-        statusClass = "res-time";
-    } else {
-        statusText = "❌ KULANG — Mas mababa sa karaniwan";
-        statusClass = "res-warn";
-    }
-
-    const suggestedLow = gasCost + allocatedFixedCost + v.refLow * totalHours;
-    const suggestedHigh = gasCost + allocatedFixedCost + v.refHigh * totalHours;
-    const shouldCharge = gasCost + allocatedFixedCost + targetPerHr * totalHours;
-    const minFare = totalCost;
-
-    const runningTotal = tripRecords.reduce((sum, t) => sum + t.netIncome, 0);
-    const pctOfGoal = DAILY_GOAL > 0 ? ((runningTotal / DAILY_GOAL) * 100).toFixed(1) : 0;
-
-    document.getElementById("res-body").innerHTML = `
-        <div class="res-row res-norm"><span>🚗 Sasakyan</span><span>${v.name}</span></div>
-        <div class="res-row res-norm"><span>📏 Distansya</span><span>${distKm.toFixed(2)} km/daan</span></div>
-        <div class="res-row res-norm"><span>📏 Kabuuang (paikot)</span><span>${(distKm*2).toFixed(2)} km</span></div>
-        <div class="res-row res-time res-bold"><span>⏱️ Oras ng Biyahe</span><span>${totalHours.toFixed(1)} oras</span></div>
-        <div class="res-row res-norm"><span>⛽ Gasolina</span><span>${liters.toFixed(2)} L</span></div>
-        <div class="divider"></div>
-        <div class="res-row res-norm"><span>⛽ Gastos sa Gasolina</span><span>₱${gasCost.toFixed(2)}</span></div>
-        <div class="res-row res-norm" style="background:#F5F5F5;"><span>📊 Piyesa+Upa/Araw</span><span>₱${dailyFixedCost.toFixed(2)}</span></div>
-        <div class="res-row res-norm" style="background:#F5F5F5;"><span>⏰ Hinati sa</span><span>${workHrs.toFixed(1)} oras/araw</span></div>
-        <div class="res-row res-rent"><span>💰 Gastos/oras</span><span>₱${fixedCostPerHour.toFixed(2)}/oras</span></div>
-        <div class="res-row res-rent"><span>🏷️ Nakalaan sa biyahe</span><span>₱${allocatedFixedCost.toFixed(2)}</span></div>
-        <div class="divider-bold"></div>
-        <div class="res-row res-norm res-bold" style="background:#ECEFF1;"><span>💰 KABUUANG GASTOS NG BIYAHE</span><span>₱${totalCost.toFixed(2)}</span></div>
-        <div class="divider"></div>
-        <div class="res-row res-ref"><span>💰 Karaniwang Kita/Oras</span><span>₱${v.refLow}–${v.refHigh}/oras</span></div>
-        <div class="res-row res-norm"><span>🎯 Layunin/Oras</span><span>₱${targetPerHr.toFixed(2)}/oras</span></div>
-        <div class="res-row res-norm"><span>🎯 Layunin/Araw</span><span>₱${targetTotal.toFixed(2)}</span></div>
-        <div class="divider"></div>
-        <div class="res-row res-norm"><span>💵 Kabuuang Singil</span><span>₱${fare.toFixed(2)}</span></div>
-        <div class="res-row res-norm res-bold"><span>✅ Malinis na Kita</span><span style="font-size:18px;">₱${netIncome.toFixed(2)}</span></div>
-        <div class="res-row ${statusClass} res-bold"><span>⏱️ Kita/Oras</span><span>₱${actualPerHr.toFixed(2)}/oras</span></div>
-        <div class="res-row ${statusClass}"><span>📊 Kalagayan</span><span>${statusText}</span></div>
-        <div class="divider-bold"></div>
-        <div class="res-row ${parseFloat(pctOfGoal)>=100?'res-hi':'res-time'}">
-            <span>🏆 PROGRESO SA LAYUNIN NG ARAW</span>
-            <span>${pctOfGoal}% — ₱${runningTotal.toFixed(2)} / ₱${DAILY_GOAL.toFixed(2)}</span>
-        </div>
-        <div class="res-row res-hi"><span>💡 Inirerekomenda</span><span>₱${suggestedLow.toFixed(2)} – ₱${suggestedHigh.toFixed(2)}</span></div>
-        <div class="res-row res-hi"><span>🎯 Dapat Singilin</span><span>₱${shouldCharge.toFixed(2)}</span></div>
-        <div class="res-row res-warn"><span>❌ Huwag Bababa sa</span><span>₱${minFare.toFixed(2)}/biyahe</span></div>
-    `;
-    document.getElementById("results").classList.remove("hidden");
-}
-
-function goBack() {
-    document.getElementById("calc-screen").classList.add("hidden");
-    document.getElementById("menu-screen").classList.remove("hidden");
-    selectedRoute = null;
-    renderRouteList();
-    updateGrandTotalDisplay();
+    btn.disabled = false;
 }
 
 function openAddModal() {
@@ -830,19 +768,6 @@ function openAddModal() {
     document.getElementById("m-start").value = "";
     document.getElementById("m-end").value = "";
     document.getElementById("m-km").value = "";
-    document.getElementById("fetch-result").style.display = "none";
-    document.getElementById("add-modal").style.display = "flex";
-}
-
-function editRoute(id) {
-    const r = routes.find(x => x.id === id);
-    if (!r) return;
-    editingId = id;
-    document.getElementById("modal-title").textContent = "✏️ Baguhin ang Ruta";
-    document.getElementById("m-name").value = r.name;
-    document.getElementById("m-start").value = r.start;
-    document.getElementById("m-end").value = r.end;
-    document.getElementById("m-km").value = r.km.toFixed(2);
     document.getElementById("fetch-result").style.display = "none";
     document.getElementById("add-modal").style.display = "flex";
 }
@@ -865,28 +790,38 @@ function saveRoute() {
 
     if (editingId) {
         const idx = routes.findIndex(r => r.id === editingId);
-        if (idx !== -1) {
-            routes[idx] = { ...routes[idx], name, start, end, km };
-        }
+        if (idx !== -1) routes[idx] = { id: editingId, name, start, end, km };
     } else {
-        const newId = routes.length ? Math.max(...routes.map(r => r.id)) + 1 : 1;
-        routes.push({ id: newId, name, start, end, km });
+        routes.push({ id: Date.now(), name, start, end, km });
     }
 
-    closeModal();
     renderRouteList();
+    closeModal();
+}
+
+function editRoute(id) {
+    const r = routes.find(x => x.id === id);
+    if (!r) return;
+    editingId = id;
+    document.getElementById("modal-title").textContent = "✏️ Baguhin ang Ruta";
+    document.getElementById("m-name").value = r.name;
+    document.getElementById("m-start").value = r.start;
+    document.getElementById("m-end").value = r.end;
+    document.getElementById("m-km").value = r.km;
+    document.getElementById("fetch-result").style.display = "none";
+    document.getElementById("add-modal").style.display = "flex";
 }
 
 function deleteRoute(id) {
-    if (!confirm("Burahin ba talaga ang rutang ito?")) return;
-    routes = routes.filter(r => r.id !== id);
+    if (!confirm("Burahin ba ang rutang ito?")) return;
+    routes = routes.filter(x => x.id !== id);
     renderRouteList();
 }
 
 function renderRouteList() {
     const list = document.getElementById("route-list");
     if (!routes.length) {
-        list.innerHTML = `<p style="text-align:center;color:var(--muted);padding:20px;">Wala pang ruta. I-click ang ➕ Bagong Ruta para magsimula.</p>`;
+        list.innerHTML = "<p style='color:var(--muted);text-align:center;padding:20px;'>Wala pang nakalagay na ruta.</p>";
         return;
     }
     list.innerHTML = routes.map((r, i) => `
@@ -895,14 +830,61 @@ function renderRouteList() {
             <div class="route-info">
                 <div class="route-name">${r.name}</div>
                 <div class="route-meta">${r.start} → ${r.end}<br>📏 ${r.km.toFixed(2)} km/daan</div>
-                <div class="route-actions">
-                    <button class="icon-btn btn-go" onclick="selectRoute(${r.id})" title="Piliin">▶️</button>
-                    <button class="icon-btn btn-edit" onclick="editRoute(${r.id})" title="Baguhin">✏️</button>
-                    <button class="icon-btn btn-del" onclick="deleteRoute(${r.id})" title="Burahin">🗑️</button>
-                </div>
+            </div>
+            <div class="route-actions">
+                <button class="icon-btn btn-go" onclick="useRoute(${r.id})" title="Gamitin">▶️</button>
+                <button class="icon-btn btn-edit" onclick="editRoute(${r.id})" title="Baguhin">✏️</button>
+                <button class="icon-btn btn-del" onclick="deleteRoute(${r.id})" title="Burahin">🗑️</button>
             </div>
         </div>
     `).join("");
+}
+
+async function useRoute(id) {
+    selectedRoute = routes.find(r => r.id === id);
+    if (!selectedRoute) return;
+
+    document.getElementById("menu-screen").classList.add("hidden");
+    document.getElementById("calc-screen").classList.remove("hidden");
+    document.getElementById("results").classList.add("hidden");
+
+    document.getElementById("calc-route-name").textContent = selectedRoute.name;
+    document.getElementById("calc-route-addr").textContent = `${selectedRoute.start} → ${selectedRoute.end}`;
+    const v = getActiveVehicle();
+    document.getElementById("calc-vehicle").textContent = `🚗 ${v.name} • ${v.kmPerL} km/L • Bilis: ${v.speedKmh} km/oras`;
+
+    document.getElementById("use-km").textContent = selectedRoute.km.toFixed(2);
+    distKm = selectedRoute.km;
+
+    const r = await getRouteOSRM(selectedRoute.start, selectedRoute.end, DEFAULT_VEHICLE);
+    if (r) {
+        document.getElementById("dist-stat").innerHTML = `✅ 📏 Distansya: <strong>${r.kmOneWay.toFixed(2)} km/daan</strong> (tumpak sa daan)`;
+        document.getElementById("time-stat").innerHTML = `✅ ⏱️ Tantsang Oras: <strong>${r.totalHours.toFixed(2)} oras</strong> (paikot)`;
+        distKm = r.kmOneWay;
+        totalHours = r.totalHours;
+        showMap(r.a, r.b, r.geometry);
+    } else {
+        document.getElementById("dist-stat").innerHTML = `⚠️ 📏 Distansya: <strong>${selectedRoute.km.toFixed(2)} km/daan</strong> (nakalagay sa listahan)`;
+        totalHours = (distKm * 2) / v.speedKmh;
+        document.getElementById("time-stat").innerHTML = `⏱️ Tantsang Oras: <strong>${totalHours.toFixed(2)} oras</strong> (paikot)`;
+    }
+
+    const literRound = (distKm * 2) / v.kmPerL;
+    document.getElementById("auto-liter").textContent = literRound.toFixed(2);
+    document.getElementById("auto-hours").textContent = totalHours.toFixed(2);
+    document.getElementById("ref-range").textContent = `₱${v.refLow}–₱${v.refHigh}/oras`;
+
+    document.getElementById("gas-price").value = "";
+    document.getElementById("fare").value = "";
+    updateCostPerHour();
+}
+
+function goBack() {
+    document.getElementById("calc-screen").classList.add("hidden");
+    document.getElementById("menu-screen").classList.remove("hidden");
+    selectedRoute = null;
+    distKm = null;
+    totalHours = null;
 }
 
 function showHelp() {
@@ -911,7 +893,88 @@ function showHelp() {
 function closeHelp() {
     document.getElementById("help-modal").style.display = "none";
 }
+
+function doCalc() {
+    const gasPrice = parseFloat(document.getElementById("gas-price").value);
+    const fare = parseFloat(document.getElementById("fare").value);
+    const workHrs = parseFloat(document.getElementById("work-hours").value);
+
+    if (!distKm || isNaN(gasPrice) || gasPrice <= 0 || isNaN(fare) || fare < 0 || isNaN(workHrs) || workHrs <= 0) {
+        alert("Punan nang tama ang lahat ng halaga!");
+        return;
+    }
+
+    const v = getActiveVehicle();
+    const literRound = (distKm * 2) / v.kmPerL;
+    const costGas = literRound * gasPrice;
+    const costPerHr = (MAINTENANCE_PER_DAY + RENT_PER_DAY) / workHrs;
+    const costTime = costPerHr * totalHours;
+    const totalCost = costGas + costTime;
+    const netIncome = fare - totalCost;
+    const perHour = netIncome / totalHours;
+
+    const results = document.getElementById("results");
+    results.classList.remove("hidden");
+    const body = document.getElementById("res-body");
+
+    body.innerHTML = `
+        <div class="res-row res-time">
+            <span>📐 Distansya (paikot)</span>
+            <span class="res-bold">${(distKm * 2).toFixed(2)} km</span>
+        </div>
+        <div class="res-row res-norm">
+            <span>⛽ Konsumo sa Gasolina</span>
+            <span>${literRound.toFixed(2)} L × ₱${gasPrice.toFixed(2)}/L</span>
+        </div>
+        <div class="res-row res-norm">
+            <span>💰 Gastos sa Gasolina</span>
+            <span>₱${costGas.toFixed(2)}</span>
+        </div>
+        <div class="res-row res-rent">
+            <span>⏰ Gastos sa Oras (Piyesa+Upa)</span>
+            <span>₱${costTime.toFixed(2)} (${totalHours.toFixed(2)} oras × ₱${costPerHr.toFixed(2)}/oras)</span>
+        </div>
+        <div class="res-row res-bold" style="background:#F5F5F5;margin:8px 0;">
+            <span>💸 KABUUANG GASTOS</span>
+            <span>₱${totalCost.toFixed(2)}</span>
+        </div>
+        <div class="res-row ${netIncome >= 0 ? 'res-hi' : 'res-warn'}" style="margin-top:12px;">
+            <span>💵 Singil sa Pamasahe</span>
+            <span>₱${fare.toFixed(2)}</span>
+        </div>
+        <div class="res-row ${netIncome >= 0 ? 'res-hi' : 'res-warn'} res-bold" style="font-size:16px;padding:14px;border-radius:14px;">
+            <span>📌 MALINIS NA KITA</span>
+            <span>₱${netIncome.toFixed(2)}</span>
+        </div>
+        <div class="res-row res-ref">
+            <span>⚡ Kita Bawat Oras</span>
+            <span>₱${perHour.toFixed(2)}/oras</span>
+        </div>
+        <div class="divider-bold"></div>
+        <div class="res-row">
+            <span>✅ Katayuan</span>
+            <span style="font-weight:bold;color:${netIncome >= 0 ? 'var(--ok)' : 'var(--danger)'};">
+                ${netIncome >= 0 ? '✅ KUMITA — Hindi lugi!' : '❌ LUGI — Taasan ang singil!'}
+            </span>
+        </div>
+        <div class="explanation" style="margin-top:12px;">
+            <strong>Paano nakuwenta:</strong><br>
+            Kabuuang Gastos = Gasolina ₱${costGas.toFixed(2)} + Oras/Piyesa ₱${costTime.toFixed(2)} = ₱${totalCost.toFixed(2)}<br>
+            Malinis na Kita = Singil ₱${fare.toFixed(2)} − Kabuuang Gastos ₱${totalCost.toFixed(2)} = <strong>₱${netIncome.toFixed(2)}</strong>
+        </div>
+        <button class="btn btn-pri" style="width:100%;margin-top:16px;" onclick="recordThisTrip()">📝 Itala ang Biyaheng Ito</button>
+    `;
+
+    window._lastTrip = { routeName: selectedRoute.name, fare, totalCost, netIncome };
+}
+
+function recordThisTrip() {
+    if (!window._lastTrip) return;
+    addTripRecord(window._lastTrip.routeName, window._lastTrip.fare, window._lastTrip.totalCost, window._lastTrip.netIncome);
+    alert("✅ Naitala na! Makikita sa Buod ng mga Biyahe.");
+    goBack();
+}
+
 </script>
 </body>
 </html>
-
