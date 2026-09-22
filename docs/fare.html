@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Calculator v8.5 — by martodosko</title>
+    <title>Rate Calculator v8.6 — by martodosko</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -125,13 +125,40 @@
         }
         .setting-row > div { flex: 1; min-width: 200px; }
         .setting-row strong { display: block; }
-        .grand-total { background: linear-gradient(90deg, #1565C0, #1976D2); color: white; padding: 16px; border-radius: 14px; margin-top: 12px; }
+        .grand-total { 
+            background: linear-gradient(90deg, #1565C0, #1976D2); color: white; 
+            padding: 16px; border-radius: 14px; margin-top: 12px;
+        }
+        /* ✅ PROGRESS BAR — BAGONG IDINAGDAG */
+        .progress-container {
+            margin: 12px 0;
+        }
+        .progress-label {
+            display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;
+        }
+        .progress-bar-bg {
+            height: 24px; background: #ECEFF1; border-radius: 12px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; border-radius: 12px; transition: width 0.4s ease;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white;
+        }
+        .progress-green { background: linear-gradient(90deg, #43A047, #66BB6A); }
+        .progress-orange { background: linear-gradient(90deg, #FF9800, #FFB74D); }
+        .progress-red { background: linear-gradient(90deg, #E53935, #EF5350); }
+        .progress-complete { background: linear-gradient(90deg, #2E7D32, #4CAF50); }
         .trip-record { 
             border-left: 3px solid var(--ok); padding: 10px; margin: 8px 0; 
             background: white; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
         }
         .trip-record.negative { border-left-color: var(--danger); }
         .trip-info { flex: 1; min-width: 200px; }
+        .trip-progress-tag {
+            font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 6px;
+        }
+        .tag-earned { background: #E8F5E9; color: #2E7D32; }
+        .tag-needed { background: #E3F2FD; color: #1565C0; }
+        .tag-behind { background: #FFEBEE; color: #C62828; }
         .explanation { background: #E8F5E9; border-left: 4px solid var(--ok); padding: 12px; margin: 12px 0; border-radius: 0 12px 12px 0; font-size: 13px; line-height: 1.5; }
     </style>
 </head>
@@ -141,8 +168,8 @@
     <div id="menu-screen">
         <div class="header">
             <h1>🚗 RATE CALCULATOR</h1>
-            <p>Version 8.5.0 • Developed by martodosko</p>
-            <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • Tumpak na Ruta at Kita</p>
+            <p>Version 8.6.0 • Developed by martodosko</p>
+            <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • Tumpak na Ruta, Kita at Progreso</p>
         </div>
         <div class="btn-group">
             <button class="btn btn-pri" onclick="openAddModal()">➕ Bagong Ruta</button>
@@ -155,6 +182,7 @@
             <p style="font-size:14px;margin-top:4px;"><strong>Piyesa/Araw:</strong> ₱<span id="show-maint">20.00</span></p>
             <p style="font-size:14px;margin-top:4px;"><strong>Upa/Boundary/Araw:</strong> ₱<span id="show-rent">0.00</span></p>
             <p style="font-size:14px;margin-top:4px;"><strong>Inaasahang Oras ng Trabaho/Araw:</strong> <span id="show-work-hours">8.0</span> oras</p>
+            <p style="font-size:14px;margin-top:4px;"><strong>🎯 Layunin sa Kita/Araw:</strong> ₱<span id="show-daily-goal">0.00</span></p>
         </div>
 
         <div class="explanation">
@@ -162,11 +190,40 @@
             Ang piyesa at upa ay hinahati sa <em>bawat oras</em> ng pagtatrabaho — hindi ibinabawas ang buong halaga sa isang biyahe lang!
         </div>
 
+        <!-- ✅ PROGRESO NG ARAW — BAGONG IDINAGDAG -->
+        <div class="card card-alt" id="progress-card" style="margin-bottom:16px;display:none;">
+            <h3 style="color:#E65100;margin-bottom:10px;">📈 PROGRESO NG ARAW</h3>
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Nakita na</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="progress-bar" class="progress-bar-fill progress-red" style="width:0%;">
+                        <span id="progress-text">₱0.00 / ₱0.00</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:13px;">
+                <div>
+                    <strong>Nakita:</strong><br>
+                    <span style="color:var(--ok);font-weight:bold;font-size:15px;">₱<span id="progress-earned">0.00</span></span>
+                </div>
+                <div style="text-align:right;">
+                    <strong>Kulang pa:</strong><br>
+                    <span style="color:var(--p);font-weight:bold;font-size:15px;">₱<span id="progress-remaining">0.00</span></span>
+                </div>
+            </div>
+            <div id="progress-status" style="margin-top:10px;padding:10px;border-radius:10px;background:#E3F2FD;color:#1565C0;font-weight:600;">
+                ⏳ Magdagdag ng biyahe para makita ang progreso
+            </div>
+        </div>
+
         <div class="card card-alt" id="grand-total-card" style="margin-bottom:16px;display:none;">
-            <h3 style="color:#E65100;margin-bottom:10px;">📈 BUOD NG MGA BIYAHE</h3>
+            <h3 style="color:#E65100;margin-bottom:10px;">📋 BUOD NG MGA BIYAHE</h3>
             <div id="trip-sum-list"></div>
             <div class="grand-total">
-                <p style="font-size:13px;opacity:.9;">Kabuuang Kita ng Lahat ng Biyahe</p>
+                <p style="font-size:13px;opacity:.9;">Kabuuang Malinis na Kita</p>
                 <p style="font-size:22px;font-weight:bold;margin-top:4px;">₱<span id="grand-net">0.00</span></p>
                 <p style="font-size:12px;opacity:.8;margin-top:4px;">Kabuuang Gastos: ₱<span id="grand-cost">0.00</span> | Kabuuang Singil: ₱<span id="grand-fare">0.00</span></p>
             </div>
@@ -221,7 +278,7 @@
 
             <label>🎯 Layunin: Kita Bawat Oras (₱/oras)</label>
             <input type="number" id="target-per-hour" step="1" min="1" placeholder="Hal. 150">
-            <p class="note val-ok">Kabuuang Layunin: ₱<span id="target-total">0.00</span>/araw</p>
+            <p class="note val-ok">Kabuuang Layunin/Araw: ₱<span id="target-total">0.00</span></p>
 
             <label>💵 Singil sa Pamasahe (₱ — paikutin)</label>
             <input type="number" id="fare" step="0.01" placeholder="Hal. 300.00">
@@ -317,7 +374,7 @@
 
     <div id="help-modal" class="modal-bg">
         <div class="modal modal-help">
-            <h3>📖 TULONG — Rate Calculator v8.5</h3>
+            <h3>📖 TULONG — Rate Calculator v8.6</h3>
             <div style="font-size:14px;line-height:1.8;margin-top:12px;">
                 <p><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
                 <p>• Ang piyesa at upa ay <strong>hindi</strong> ibinabawas nang buo sa isang biyahe lang!</p>
@@ -325,16 +382,15 @@
                 <p style="padding-left:12px;">Gastos/oras = (Piyesa + Upa) ÷ Oras ng Trabaho/Araw</p>
                 <p>• Gastos ng biyahe = Gastos/oras × Oras ng Biyahe + Gasolina</p>
                 
-                <p style="margin-top:16px;"><strong>📊 HALIMBAWA:</strong></p>
-                <p>• Piyesa: ₱20 + Upa: ₱100 = ₱120/araw</p>
-                <p>• Trabaho: 8 oras → ₱15/oras</p>
-                <p>• Biyahe: 1 oras → ₱15 lang ang ibabawas, hindi ₱120!</p>
-                <p>• Kung 8 biyahe sa maghapon: ₱15 × 8 = ₱120 — sakto!</p>
+                <p style="margin-top:16px;"><strong>📊 PROGRESO NG ARAW — BAGONG TAMBAYAN</strong></p>
+                <p>• Nakikita mo agad kung ilang porsyento na ang naabot mo sa layunin</p>
+                <p>• Kulang pa = asul na bar • Kalahati = kahel • Naabot na = luntian</p>
+                <p>• Bawat biyahe ay may tanda kung nakatulong sa pag-abot sa layunin</p>
+                <p>• Kapag binura ang biyahe → bababa ang progreso</p>
                 
                 <p style="margin-top:16px;"><strong>🗑️ PAGBUBURA NG TALAAN</strong></p>
                 <p>• May <strong>🗑️ pindutan</strong> sa bawat talaan — burahin isa-isa</p>
-                <p>• Awtomatikong <strong>babawasan ang kabuuang kita</strong> kapag binura ang isa</p>
-                <p>• May hiwalay na pindutan para burahin ang lahat</p>
+                <p>• Awtomatikong <strong>babawasan ang kabuuang kita at progreso</strong> kapag binura ang isa</p>
             </div>
             <div class="modal-btns">
                 <button class="btn btn-pri" onclick="closeHelp()">Naintindihan</button>
@@ -356,6 +412,7 @@ let MAINTENANCE_PER_DAY = DEFAULT_MAINTENANCE_PER_DAY;
 let RENT_PER_DAY = DEFAULT_RENT_PER_DAY;
 let WORK_HOURS_PER_DAY = DEFAULT_WORK_HOURS;
 let DEFAULT_VEHICLE = "motor";
+let DAILY_GOAL = 0.00; // ✅ Bagong patlang
 
 const VEHICLES = {
     tricycle:   { name: "Trisikel",   kmPerL: 22.0, speedKmh: 25, refLow: 80,  refHigh: 150 },
@@ -436,6 +493,15 @@ function updateCostPerHour() {
     updateTargetTotal();
 }
 
+function updateTargetTotal() {
+    const perHr = parseFloat(document.getElementById("target-per-hour").value) || 0;
+    const workHrs = parseFloat(document.getElementById("work-hours").value) || WORK_HOURS_PER_DAY;
+    DAILY_GOAL = perHr * workHrs; // ✅ I-save ang layunin
+    document.getElementById("target-total").textContent = DAILY_GOAL.toFixed(2);
+    document.getElementById("show-daily-goal").textContent = DAILY_GOAL.toFixed(2);
+    updateProgressBar(); // ✅ I-refresh ang progreso
+}
+
 function openSettings() {
     updateSettingsDisplay();
     document.getElementById("settings-modal").style.display = "flex";
@@ -471,14 +537,52 @@ function saveSettings() {
     closeSettings();
 }
 
-function updateTargetTotal() {
-    const perHr = parseFloat(document.getElementById("target-per-hour").value) || 0;
-    const workHrs = parseFloat(document.getElementById("work-hours").value) || WORK_HOURS_PER_DAY;
-    document.getElementById("target-total").textContent = (perHr * workHrs).toFixed(2);
+// ═══════════════════════════════════════════════
+// ✅ PROGRESO NG ARAW — BAGONG TAMBAYAN
+// ═══════════════════════════════════════════════
+function updateProgressBar() {
+    const totalNet = tripRecords.reduce((sum, t) => sum + t.netIncome, 0);
+    
+    if (DAILY_GOAL <= 0 || tripRecords.length === 0) {
+        document.getElementById("progress-card").style.display = "none";
+        return;
+    }
+    
+    document.getElementById("progress-card").style.display = "block";
+    
+    const percent = Math.min(100, Math.max(0, (totalNet / DAILY_GOAL) * 100));
+    const remaining = Math.max(0, DAILY_GOAL - totalNet);
+    
+    document.getElementById("progress-earned").textContent = totalNet.toFixed(2);
+    document.getElementById("progress-remaining").textContent = remaining.toFixed(2);
+    document.getElementById("progress-percent").textContent = percent.toFixed(1) + "%";
+    document.getElementById("progress-text").textContent = `₱${totalNet.toFixed(2)} / ₱${DAILY_GOAL.toFixed(2)}`;
+    
+    const bar = document.getElementById("progress-bar");
+    bar.style.width = percent + "%";
+    
+    // ✅ Kulay ayon sa porsyento
+    bar.className = "progress-bar-fill";
+    if (percent >= 100) {
+        bar.classList.add("progress-complete");
+        document.getElementById("progress-status").style.background = "#E8F5E9";
+        document.getElementById("progress-status").style.color = "#2E7D32";
+        document.getElementById("progress-status").innerHTML = "🎉 NAAABOT NA ANG LAYUNIN SA KITA!";
+    } else if (percent >= 50) {
+        bar.classList.add("progress-orange");
+        document.getElementById("progress-status").style.background = "#FFF3E0";
+        document.getElementById("progress-status").style.color = "#E65100";
+        document.getElementById("progress-status").innerHTML = `⏳ Kalahati na — kulang pa ng ₱${remaining.toFixed(2)}`;
+    } else {
+        bar.classList.add("progress-red");
+        document.getElementById("progress-status").style.background = "#FFEBEE";
+        document.getElementById("progress-status").style.color = "#C62828";
+        document.getElementById("progress-status").innerHTML = `📉 Nagsisimula pa — kulang pa ng ₱${remaining.toFixed(2)}`;
+    }
 }
 
 // ═══════════════════════════════════════════════
-// TALAAN NG BIYAHE / GRAND TOTAL — MAY BURANG ISA-ISA ✅
+// TALAAN NG BIYAHE / KABUUAN
 // ═══════════════════════════════════════════════
 function loadTripRecords() {
     const saved = localStorage.getItem("tripRecords");
@@ -491,7 +595,7 @@ function saveTripRecords() {
 
 function addTripRecord(routeName, fare, totalCost, netIncome) {
     tripRecords.unshift({
-        id: Date.now(), // natatanging ID para sa bawat talaan
+        id: Date.now(),
         time: new Date().toLocaleString("tl-PH"),
         routeName,
         fare,
@@ -502,9 +606,8 @@ function addTripRecord(routeName, fare, totalCost, netIncome) {
     updateGrandTotalDisplay();
 }
 
-// ✅ BAGONG TANGGALIN NG ISA-ISA
 function deleteSingleTrip(id) {
-    if (!confirm("Burahin ba talaga ang talaang ito? Mababawasan ang kabuuang kita.")) return;
+    if (!confirm("Burahin ba talaga ang talaang ito? Mababawasan ang kabuuang kita at progreso.")) return;
     tripRecords = tripRecords.filter(t => t.id !== id);
     saveTripRecords();
     updateGrandTotalDisplay();
@@ -513,6 +616,7 @@ function deleteSingleTrip(id) {
 function updateGrandTotalDisplay() {
     if (tripRecords.length === 0) {
         document.getElementById("grand-total-card").style.display = "none";
+        updateProgressBar();
         return;
     }
     document.getElementById("grand-total-card").style.display = "block";
@@ -528,11 +632,26 @@ function updateGrandTotalDisplay() {
     document.getElementById("grand-cost").textContent = totalCost.toFixed(2);
     document.getElementById("grand-net").textContent = totalNet.toFixed(2);
     
+    // ✅ Ipakita ang tanda ng progreso sa bawat biyahe
     const list = document.getElementById("trip-sum-list");
-    list.innerHTML = tripRecords.map(t => `
+    list.innerHTML = tripRecords.map(t => {
+        let progressTag = "";
+        if (DAILY_GOAL > 0) {
+            const runningTotal = tripRecords.slice(0, tripRecords.indexOf(t) + 1)
+                .reduce((sum, x) => sum + x.netIncome, 0);
+            const pct = (runningTotal / DAILY_GOAL) * 100;
+            if (t.netIncome < 0) {
+                progressTag = `<span class="trip-progress-tag tag-behind">➖ Nakabawas</span>`;
+            } else if (pct >= 100) {
+                progressTag = `<span class="trip-progress-tag tag-earned">✅ Nasa Layunin!</span>`;
+            } else {
+                progressTag = `<span class="trip-progress-tag tag-needed">+${((t.netIncome/DAILY_GOAL)*100).toFixed(1)}%</span>`;
+            }
+        }
+        return `
         <div class="trip-record ${t.netIncome < 0 ? 'negative' : ''}">
             <div class="trip-info">
-                <p style="font-size:13px;"><strong>${t.routeName}</strong></p>
+                <p style="font-size:13px;"><strong>${t.routeName}</strong>${progressTag}</p>
                 <p style="font-size:11px;color:var(--muted);">${t.time}</p>
                 <p style="font-size:12px;">
                     Singil: ₱${t.fare.toFixed(2)} • Gastos: ₱${t.totalCost.toFixed(2)} • Kita: 
@@ -541,7 +660,9 @@ function updateGrandTotalDisplay() {
             </div>
             <button class="icon-btn btn-del btn-del-sm" onclick="deleteSingleTrip(${t.id})" title="Burahin">🗑️</button>
         </div>
-    `).join("");
+    `}).join("");
+    
+    updateProgressBar(); // ✅ I-refresh ang bar sa bawat pagbabago
 }
 
 function clearAllTrips() {
@@ -657,9 +778,9 @@ async function fetchRoute() {
     btn.innerHTML = "🗺️ Kumuha Tumpak na Ruta";
 }
 
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 // PAGPILI NG RUTA
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 async function selectRoute(id) {
     selectedRoute = routes.find(r => r.id === id);
     const v = VEHICLES[DEFAULT_VEHICLE];
@@ -705,9 +826,9 @@ async function selectRoute(id) {
     document.getElementById("calc-screen").classList.remove("hidden");
 }
 
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 // KUWENTAHIN — TAMA NA ANG PAGKUWENTA
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 function doCalc() {
     const gasPrice = parseFloat(document.getElementById("gas-price").value);
     const workHrs = parseFloat(document.getElementById("work-hours").value);
@@ -759,6 +880,10 @@ function doCalc() {
     const shouldCharge = gasCost + allocatedFixedCost + targetPerHr * totalHours;
     const minFare = totalCost;
 
+    // ✅ Ipakita ang progreso matapos itala
+    const runningTotal = tripRecords.reduce((sum, t) => sum + t.netIncome, 0);
+    const pctOfGoal = DAILY_GOAL > 0 ? ((runningTotal / DAILY_GOAL) * 100).toFixed(1) : 0;
+
     document.getElementById("res-body").innerHTML = `
         <div class="res-row res-norm"><span>🚗 Sasakyan</span><span>${v.name}</span></div>
         <div class="res-row res-norm"><span>📏 Distansya</span><span>${distKm.toFixed(2)} km/daan</span></div>
@@ -783,6 +908,10 @@ function doCalc() {
         <div class="res-row ${statusClass} res-bold"><span>⏱️ Kita/Oras</span><span>₱${actualPerHr.toFixed(2)}/oras</span></div>
         <div class="res-row ${statusClass}"><span>📊 Kalagayan</span><span>${statusText}</span></div>
         <div class="divider-bold"></div>
+        <div class="res-row ${parseFloat(pctOfGoal)>=100?'res-hi':'res-time'}">
+            <span>🏆 PROGRESO SA LAYUNIN NG ARAW</span>
+            <span>${pctOfGoal}% — ₱${runningTotal.toFixed(2)} / ₱${DAILY_GOAL.toFixed(2)}</span>
+        </div>
         <div class="res-row res-hi"><span>💡 Inirerekomenda</span><span>₱${suggestedLow.toFixed(2)} – ₱${suggestedHigh.toFixed(2)}</span></div>
         <div class="res-row res-hi"><span>🎯 Dapat Singilin</span><span>₱${shouldCharge.toFixed(2)}</span></div>
         <div class="res-row res-warn"><span>❌ Huwag Bababa sa</span><span>₱${minFare.toFixed(2)}/biyahe</span></div>
@@ -790,42 +919,9 @@ function doCalc() {
     document.getElementById("results").classList.remove("hidden");
 }
 
-// ═══════════════════════════════════════════════
-// LISTAHAN NG RUTA
-// ═══════════════════════════════════════════════
-function renderRouteList() {
-    const list = document.getElementById("route-list");
-    list.innerHTML = "";
-    const v = VEHICLES[DEFAULT_VEHICLE];
-    const costPerHr = (MAINTENANCE_PER_DAY + RENT_PER_DAY) / WORK_HOURS_PER_DAY;
-    
-    routes.forEach(r => {
-        const liters = (r.km * 2 / v.kmPerL).toFixed(2);
-        const estHrs = ((r.km * 2) / v.speedKmh * 1.15).toFixed(1);
-        const estFixedAlloc = (costPerHr * parseFloat(estHrs)).toFixed(2);
-        list.innerHTML += `
-            <div class="route-item">
-                <div class="route-num">${r.id}</div>
-                <div class="route-info">
-                    <div class="route-name">${r.name}</div>
-                    <div class="route-meta">
-                        ${r.km.toFixed(2)} km/daan • ~${estHrs} oras • ⛽${liters}L<br>
-                        💰 Nakalaang gastos: ~₱${estFixedAlloc}
-                    </div>
-                </div>
-                <div class="route-actions">
-                    <button class="icon-btn btn-go" onclick="selectRoute(${r.id})" title="Piliin">→</button>
-                    <button class="icon-btn btn-edit" onclick="editRoute(${r.id})" title="Baguhin">✏️</button>
-                    <button class="icon-btn btn-del" onclick="deleteRoute(${r.id})" title="Burahin">🗑️</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 // PAGBALIK SA MENU
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 function goBack() {
     document.getElementById("calc-screen").classList.add("hidden");
     document.getElementById("menu-screen").classList.remove("hidden");
@@ -834,9 +930,9 @@ function goBack() {
     updateGrandTotalDisplay();
 }
 
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 // PAMAMAHALA SA RUTA — DAGDAG, BAGUHIN, BURAHIN
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 function openAddModal() {
     editingId = null;
     document.getElementById("modal-title").textContent = "➕ Bagong Ruta";
@@ -897,9 +993,9 @@ function deleteRoute(id) {
     renderRouteList();
 }
 
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 // TULONG
-// ═══════════════════════════════════════════════
+//═══════════════════════════════════════════════
 function showHelp() {
     document.getElementById("help-modal").style.display = "flex";
 }
