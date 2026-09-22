@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Calculator v8.8 — by martodosko</title>
+    <title>Rate Calculator v9.0 — by martodosko</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -33,6 +33,7 @@
         .btn-help { background: var(--danger); color: white; border: none; }
         .btn-blue { background: var(--p); color: white; width: 100%; margin-top: 8px; }
         .btn-out { background: transparent; border: 1px solid #CCC; color: var(--txt); }
+        .btn-sm { padding: 8px 12px; font-size: 13px; }
         .btn-group { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
         .btn-group .btn { flex: 1; min-width: 100px; }
         .card {
@@ -64,30 +65,27 @@
         input:focus, select:focus { outline: none; border-color: var(--p); }
         .input-inline { display: inline-block; width: 30%; margin-right: 3%; }
         .route-item {
-            background: white; border-radius: 16px; padding: 16px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.05); flex-wrap: wrap;
+            background: white; border-radius: 16px; padding: 14px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,.05); flex-wrap: wrap;
         }
         .route-num {
-            width: 40px; height: 40px; border-radius: 50%; background: var(--p-light);
+            width: 36px; height: 36px; border-radius: 50%; background: var(--p-light);
             color: var(--p); font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .route-info { flex: 1; min-width: 180px; }
-        .route-name { font-weight: 600; font-size: 15px; word-break: break-word; }
-        .route-meta { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
-        .route-actions { display: flex; gap: 6px; margin-top: 4px; }
+        .route-info { flex: 1; min-width: 160px; }
+        .route-name { font-weight: 600; font-size: 14px; word-break: break-word; }
+        .route-meta { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+        .route-actions { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
         .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; border: none;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px;
-            transition: all .2s;
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+            transition: transform .1s;
         }
-        .icon-btn:hover { transform: scale(1.08); }
+        .icon-btn:active { transform: scale(.92); }
         .btn-go { background: #E8F5E9; color: var(--ok); }
-        .btn-go:hover { background: #C8E6C9; }
+        .btn-add { background: #E3F2FD; color: var(--p); }
         .btn-edit { background: #FFF3E0; color: var(--s); }
-        .btn-edit:hover { background: #FFE0B2; }
         .btn-del { background: #FFEBEE; color: var(--danger); }
-        .btn-del:hover { background: #FFCDD2; }
-        .btn-del-sm { width: 32px; height: 32px; font-size: 14px; }
         .res-row {
             display: flex; justify-content: space-between; padding: 10px 12px;
             border-radius: 10px; margin: 4px 0; font-size: 14px; flex-wrap: wrap; gap: 4px;
@@ -166,6 +164,11 @@
         .explanation { background: #E8F5E9; border-left: 4px solid var(--ok); padding: 12px; margin: 12px 0; border-radius: 0 12px 12px 0; font-size: 13px; line-height: 1.5; }
         .custom-fields { background: #F5F5F5; border-radius: 12px; padding: 14px; margin-top: 10px; display: none; }
         .custom-fields.active { display: block; }
+        .trip-type-selector { display: flex; gap: 10px; margin: 10px 0; }
+        .trip-type-btn { flex: 1; padding: 10px; border: 2px solid #DDD; background: white; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all .2s; }
+        .trip-type-btn.active { border-color: var(--p); background: var(--p-light); color: var(--p); }
+        .trip-type-btn.one.active { border-color: var(--s); background: #FFF3E0; color: var(--s); }
+        .saved-note { font-size: 11px; color: var(--ok); margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -174,8 +177,8 @@
     <div id="menu-screen">
         <div class="header">
             <h1>🚗 RATE CALCULATOR</h1>
-            <p>Version 8.8 • Developed by martodosko</p>
-            <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • Tumpak na Ruta, Kita at Progreso</p>
+            <p>Version 9.0 • Developed by martodosko</p>
+            <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • 1-Way at 2-Way Biyahe</p>
         </div>
         <div class="btn-group">
             <button class="btn btn-pri" onclick="openAddModal()">➕ Bagong Ruta</button>
@@ -187,13 +190,15 @@
             <p style="font-size:14px;"><strong>Sasakyan:</strong> <span id="show-vehicle">—</span></p>
             <p style="font-size:14px;margin-top:4px;"><strong>Piyesa/Araw:</strong> ₱<span id="show-maint">20.00</span></p>
             <p style="font-size:14px;margin-top:4px;"><strong>Upa/Boundary/Araw:</strong> ₱<span id="show-rent">0.00</span></p>
+            <p style="font-size:14px;margin-top:4px;"><strong>Gasolina:</strong> ₱<span id="show-gas-global">—</span>/L</p>
             <p style="font-size:14px;margin-top:4px;"><strong>Inaasahang Oras ng Trabaho/Araw:</strong> <span id="show-work-hours">8.0</span> oras</p>
             <p style="font-size:14px;margin-top:4px;"><strong>🎯 Layunin sa Kita/Araw:</strong> ₱<span id="show-daily-goal">0.00</span></p>
         </div>
 
         <div class="explanation">
             <strong>✅ Paano kinukuwenta nang tama:</strong><br>
-            Ang piyesa at upa ay hinahati sa <em>bawat oras</em> ng pagtatrabaho — hindi ibinabawas ang buong halaga sa isang biyahe lang!
+            Ang piyesa at upa ay hinahati sa <em>bawat oras</em> ng pagtatrabaho — hindi ibinabawas ang buong halaga sa isang biyahe lang!<br>
+            <strong>🔑 May pagpipilian na 1-Way o 2-Way!</strong> Piliin bago kuwentyahin.
         </div>
 
         <div class="card card-alt" id="progress-card" style="margin-bottom:16px;display:none;">
@@ -225,17 +230,23 @@
             <button class="btn btn-out" style="margin-top:12px;width:100%;" onclick="clearAllTrips()">🗑️ Burahin Lahat ng Talaan</button>
         </div>
 
-        <h3 style="margin:18px 0 12px;color:#455A64;">📋 Mga Ruta <span style="font-size:13px;font-weight:normal;color:var(--muted);">— nakaimbak sa telepono</span></h3>
+        <h3 style="margin:18px 0 12px;color:#455A64;">📋 Mga Ruta</h3>
         <div id="route-list"></div>
     </div>
 
     <div id="calc-screen" class="hidden">
-        <button class="btn btn-out" onclick="goBack()" style="margin-bottom:16px;">← Bumalik sa Listahan ng Ruta</button>
+        <button class="btn btn-out" onclick="goBack()" style="margin-bottom:16px;">← Bumalik</button>
         <div class="card">
             <h3 id="calc-route-name" style="margin-bottom:4px;"></h3>
             <p id="calc-route-addr" style="font-size:13px;color:var(--p);margin-bottom:8px;line-height:1.4;"></p>
-            <p id="calc-vehicle" style="font-size:12px;color:var(--s);margin-bottom:12px;"></p>
+            <p id="calc-vehicle" style="font-size:12px;color:var(--s);margin-bottom:8px;"></p>
             
+            <!-- ✅ Piliin ang Uri ng Biyahe -->
+            <div class="trip-type-selector">
+                <button class="trip-type-btn one" id="btn-oneway" onclick="setTripType('one')">➡️ 1-Way</button>
+                <button class="trip-type-btn active" id="btn-roundtrip" onclick="setTripType('round')">🔁 2-Way / Paikot</button>
+            </div>
+
             <div id="map-container"><div id="map"></div></div>
             <p class="map-note">🗺️ Pinagmulan: OpenStreetMap + OSRM • Tumpak na ruta sa kalsada</p>
 
@@ -247,10 +258,10 @@
             </div>
 
             <p style="font-weight:bold;color:var(--p);margin:12px 0;">
-                📏 Gagamitin: <span id="use-km" class="val-ok">0.00</span> km/daan
+                📏 Gagamitin: <span id="use-km" class="val-ok">0.00</span> km <span id="km-label">/daan</span>
             </p>
             <p style="font-weight:600;color:var(--ok);margin:4px 0 8px;">
-                ⛽ Konsumo: <span id="auto-liter" class="val-ok">0.00</span> L/paikot
+                ⛽ Konsumo: <span id="auto-liter" class="val-ok">0.00</span> L <span id="liter-label">/paikot</span>
             </p>
             <p style="font-weight:600;color:#7B1FA2;margin:4px 0 8px;">
                 ⏱️ Oras ng Biyahe: <span id="auto-hours" class="val-ref">0.00</span> oras
@@ -266,6 +277,7 @@
 
             <label>💰 Presyo ng Gasolina (₱/L)</label>
             <input type="number" id="gas-price" step="0.01" placeholder="Hal. 92.00">
+            <p id="gas-saved-note" class="saved-note hidden">✅ Nakatakda — nakaalala ang halagang ito</p>
 
             <label>⏰ Inaasahang Oras ng Trabaho/Araw</label>
             <input type="number" id="work-hours" step="0.5" min="1" value="8" placeholder="Hal. 8 oras">
@@ -275,11 +287,12 @@
             <input type="number" id="target-per-hour" step="1" min="1" placeholder="Hal. 150">
             <p class="note val-ok">Kabuuang Layunin/Araw: ₱<span id="target-total">0.00</span></p>
 
-            <label>💵 Singil sa Pamasahe (₱ — paikutin)</label>
-            <input type="number" id="fare" step="0.01" placeholder="Hal. 300.00">
+            <label>💵 Singil sa Pamasahe (₱)</label>
+            <input type="number" id="fare" step="0.01" placeholder="Ilagay ang halaga">
+            <p id="fare-saved-note" class="saved-note hidden">✅ Nakatakda — nakaalala ang huling ginamit</p>
 
             <button class="btn btn-blue" onclick="doCalc()" style="height:52px;font-size:16px;margin-top:16px;">
-                ✅ KUWENTAHIN AT I-TALA
+                ✅ KUWENTAHIN
             </button>
         </div>
         <div id="results" class="card hidden">
@@ -325,6 +338,10 @@
                 <input type="number" id="rent-per-day" step="1" min="0" value="0" class="input-sm">
             </div>
             <div class="setting-row">
+                <div><strong>⛽ Presyo ng Gasolina (₱/L)</strong><p class="note">Ginagamit sa lahat ng kuwenta</p></div>
+                <input type="number" id="gas-price-global" step="0.01" min="1" class="input-sm">
+            </div>
+            <div class="setting-row">
                 <div><strong>⏰ Inaasahang Oras ng Trabaho/Araw</strong><p class="note">Ilang oras ka bumabyahe sa isang araw?</p></div>
                 <input type="number" id="work-hours-setting" step="0.5" min="1" value="8" class="input-sm">
             </div>
@@ -347,7 +364,7 @@
             <button class="btn btn-blue" id="fetch-btn" onclick="fetchRoute()">🗺️ Kumuha Tumpak na Ruta</button>
             <p class="note" style="color:var(--ok);">✅ Sinusunod ang daan — kasama ang lahat ng kurbada</p>
             <p id="fetch-result" class="note" style="color:var(--ok);display:none;"></p>
-            <label>Distansya (km/daan)</label>
+            <label>Distansya (km/isang daan)</label>
             <input type="number" id="m-km" step="0.01" placeholder="Kukunin sa mapa...">
             <div class="modal-btns">
                 <button class="btn btn-out" onclick="closeModal()">Isara</button>
@@ -358,25 +375,27 @@
 
     <div id="help-modal" class="modal-bg">
         <div class="modal modal-help">
-            <h3>📖 TULONG — Rate Calculator v8.8</h3>
+            <h3>📖 TULONG — Rate Calculator v9.0</h3>
             <div style="font-size:14px;line-height:1.8;margin-top:12px;">
-                <p><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
+                <p><strong>🔑 1-WAY AT 2-WAY BIYAHE</strong></p>
+                <p>• Piliin kung <strong>1-Way</strong> o <strong>2-Way/Paikot</strong> bago kuwentyahin</p>
+                <p>• 1-Way = Distansya × 1 lang • 2-Way = Distansya × 2</p>
+                <p>• Nakatandaan ang huling piniling uri ng biyahe</p>
+                
+                <p style="margin-top:16px;"><strong>💾 NAKAALALA ANG MGA HALAGA</strong></p>
+                <p>• Presyo ng gasolina, singil sa pamasahe, at uri ng biyahe ay hindi nawawala</p>
+                <p>• Kapag lumipat ng ruta, nandoon pa rin ang iyong mga inilagay</p>
+                
+                <p style="margin-top:16px;"><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
                 <p>• Ang piyesa at upa ay <strong>hindi</strong> ibinabawas nang buo sa isang biyahe lang!</p>
                 <p>• Hinahati ito sa <strong>bawat oras</strong> ng pagtatrabaho:</p>
                 <p style="padding-left:12px;">Gastos/oras = (Piyesa + Upa) ÷ Oras ng Trabaho/Araw</p>
-                <p>• Gastos ng biyahe = Gastos/oras × Oras ng Biyahe + Gasolina</p>
                 
-                <p style="margin-top:16px;"><strong>📋 MGA RUTA — NAKAIMBAK NA!</strong></p>
-                <p>• Lahat ng ruta ay awtomatikong naiimbak sa iyong telepono</p>
-                <p>• Hindi mabubura kahit isara at buksan muli ang pahina</p>
-                <p>• Pindutin ang <strong>▶️ Gamitin</strong> sa tapat ng ruta para magkuwenta</p>
-                
-                <p style="margin-top:16px;"><strong>🚗 SARILING SASAKYAN</strong></p>
-                <p>• Piliin ang <strong>"🔧 Sariling Pagtatakda..."</strong> sa listahan</p>
-                <p>• Ilagay ang sariling konsumo, bilis, at kita/oras na inaasahan</p>
-                
-                <p style="margin-top:16px;"><strong>📊 PROGRESO NG ARAW</strong></p>
-                <p>• Pula = mababa • Kahel = kalahati • Luntian = naabot na!</p>
+                <p style="margin-top:16px;"><strong>🟢 4 NA PINDUTAN SA BAWAT RUTA</strong></p>
+                <p>▶️ Gamitin — buksan ang kuwenta</p>
+                <p>➕ Itala — direktang ilagay sa talaan nang hindi binubuksan ang kuwenta</p>
+                <p>✏️ Baguhin — palitan ang pangalan, simula, dulo, o distansya</p>
+                <p>🗑️ Burahin — alisin sa listahan</p>
             </div>
             <div class="modal-btns">
                 <button class="btn btn-pri" onclick="closeHelp()">Naintindihan</button>
@@ -396,6 +415,10 @@ let RENT_PER_DAY = DEFAULT_RENT_PER_DAY;
 let WORK_HOURS_PER_DAY = DEFAULT_WORK_HOURS;
 let DEFAULT_VEHICLE = "motor";
 let DAILY_GOAL = 0.00;
+let GAS_PRICE_GLOBAL = null;
+let LAST_FARE = {};
+let LAST_TRIP_TYPE = "round";
+
 let CUSTOM_VEHICLE = null;
 
 const VEHICLES = {
@@ -421,9 +444,7 @@ function toggleCustomFields() {
     }
 }
 
-// ✅ NAKAIMBAK NA MGA RUTA — hindi mabubura
-let routes = [];
-const DEFAULT_ROUTES = [
+let routes = [
     { id:1, name:"Lopez → Calauag", start:"Lopez, Quezon", end:"Calauag, Quezon", km:12.0 },
     { id:2, name:"Calauag Bayan → Sumilang BLISS", start:"Calauag, Quezon", end:"Sumilang, Calauag, Quezon", km:5.5 },
     { id:3, name:"Lopez → Gumaca", start:"Lopez, Quezon", end:"Gumaca, Quezon", km:18.0 },
@@ -441,30 +462,66 @@ let routePoly = null;
 let markerA = null;
 let markerB = null;
 
-// ✅ I-save at I-load ang mga ruta sa localStorage
-function saveRoutes() {
-    localStorage.setItem("savedRoutes", JSON.stringify(routes));
-}
-
-function loadRoutes() {
-    const saved = localStorage.getItem("savedRoutes");
-    if (saved) {
-        routes = JSON.parse(saved);
-    } else {
-        routes = [...DEFAULT_ROUTES];
-        saveRoutes();
-    }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     loadSettings();
-    loadRoutes();
     loadTripRecords();
+    loadSavedTripData();
     document.getElementById("target-per-hour").addEventListener("input", updateTargetTotal);
     document.getElementById("work-hours").addEventListener("input", updateCostPerHour);
+    document.getElementById("gas-price").addEventListener("input", saveGasPriceToMemory);
     renderRouteList();
     updateGrandTotalDisplay();
 });
+
+function loadSavedTripData() {
+    const savedType = localStorage.getItem("lastTripType");
+    if (savedType) LAST_TRIP_TYPE = savedType;
+    
+    const savedFares = localStorage.getItem("lastFareByRoute");
+    if (savedFares) LAST_FARE = JSON.parse(savedFares);
+    
+    const savedGas = localStorage.getItem("lastGasPrice");
+    if (savedGas) {
+        GAS_PRICE_GLOBAL = parseFloat(savedGas);
+    }
+}
+
+function saveGasPriceToMemory() {
+    const val = parseFloat(document.getElementById("gas-price").value);
+    if (!isNaN(val) && val > 0) {
+        GAS_PRICE_GLOBAL = val;
+        localStorage.setItem("lastGasPrice", val);
+        document.getElementById("gas-saved-note").classList.remove("hidden");
+    }
+}
+
+function setTripType(type) {
+    LAST_TRIP_TYPE = type;
+    localStorage.setItem("lastTripType", type);
+    
+    document.getElementById("btn-oneway").classList.toggle("active", type === "one");
+    document.getElementById("btn-roundtrip").classList.toggle("active", type === "round");
+    
+    updateDistanceLabels();
+    if (distKm) recalcConsumption();
+}
+
+function updateDistanceLabels() {
+    const isOneWay = LAST_TRIP_TYPE === "one";
+    document.getElementById("km-label").textContent = isOneWay ? "/daan (1-Way)" : "/daan × 2";
+    document.getElementById("liter-label").textContent = isOneWay ? "/daan" : "/paikot";
+}
+
+function recalcConsumption() {
+    const v = getActiveVehicle();
+    const kmUsed = LAST_TRIP_TYPE === "one" ? distKm : distKm * 2;
+    const liter = kmUsed / v.kmPerL;
+    const hrs = kmUsed / v.speedKmh;
+    
+    document.getElementById("auto-liter").textContent = liter.toFixed(2);
+    document.getElementById("auto-hours").textContent = hrs.toFixed(2);
+    totalHours = hrs;
+}
 
 function loadSettings() {
     const savedVeh = localStorage.getItem("defVehicle");
@@ -472,11 +529,13 @@ function loadSettings() {
     const savedRent = localStorage.getItem("rentPerDay");
     const savedWorkHrs = localStorage.getItem("workHoursPerDay");
     const savedCustom = localStorage.getItem("customVehicle");
+    const savedGasGlobal = localStorage.getItem("gasPriceGlobal");
     
     DEFAULT_VEHICLE = savedVeh || "motor";
     MAINTENANCE_PER_DAY = savedMaint !== null ? parseFloat(savedMaint) : DEFAULT_MAINTENANCE_PER_DAY;
     RENT_PER_DAY = savedRent !== null ? parseFloat(savedRent) : DEFAULT_RENT_PER_DAY;
     WORK_HOURS_PER_DAY = savedWorkHrs !== null ? parseFloat(savedWorkHrs) : DEFAULT_WORK_HOURS;
+    if (savedGasGlobal) GAS_PRICE_GLOBAL = parseFloat(savedGasGlobal);
     
     if (savedCustom) {
         CUSTOM_VEHICLE = JSON.parse(savedCustom);
@@ -495,12 +554,14 @@ function updateSettingsDisplay() {
     document.getElementById("show-vehicle").textContent = v.name;
     document.getElementById("show-maint").textContent = MAINTENANCE_PER_DAY.toFixed(2);
     document.getElementById("show-rent").textContent = RENT_PER_DAY.toFixed(2);
+    document.getElementById("show-gas-global").textContent = GAS_PRICE_GLOBAL ? GAS_PRICE_GLOBAL.toFixed(2) : "—";
     document.getElementById("show-work-hours").textContent = WORK_HOURS_PER_DAY.toFixed(1);
     document.getElementById("def-veh").value = DEFAULT_VEHICLE;
     toggleCustomFields();
     document.getElementById("maint-per-day").value = MAINTENANCE_PER_DAY;
     document.getElementById("rent-per-day").value = RENT_PER_DAY;
     document.getElementById("work-hours-setting").value = WORK_HOURS_PER_DAY;
+    document.getElementById("gas-price-global").value = GAS_PRICE_GLOBAL || "";
     document.getElementById("work-hours").value = WORK_HOURS_PER_DAY;
     updateCostPerHour();
 }
@@ -529,6 +590,7 @@ function saveSettings() {
     const maintVal = parseFloat(document.getElementById("maint-per-day").value);
     const rentVal = parseFloat(document.getElementById("rent-per-day").value);
     const workHrsVal = parseFloat(document.getElementById("work-hours-setting").value);
+    const gasVal = parseFloat(document.getElementById("gas-price-global").value);
     
     if (isNaN(maintVal) || maintVal < 0 || isNaN(rentVal) || rentVal < 0 || isNaN(workHrsVal) || workHrsVal <= 0) {
         alert("Ilagay ang tamang halaga!"); return;
@@ -547,13 +609,7 @@ function saveSettings() {
             return;
         }
         
-        CUSTOM_VEHICLE = {
-            name: cName,
-            kmPerL: cKmPerL,
-            speedKmh: cSpeed,
-            refLow: cRefLow,
-            refHigh: cRefHigh
-        };
+        CUSTOM_VEHICLE = { name: cName, kmPerL: cKmPerL, speedKmh: cSpeed, refLow: cRefLow, refHigh: cRefHigh };
         localStorage.setItem("customVehicle", JSON.stringify(CUSTOM_VEHICLE));
     }
     
@@ -561,6 +617,11 @@ function saveSettings() {
     MAINTENANCE_PER_DAY = maintVal;
     RENT_PER_DAY = rentVal;
     WORK_HOURS_PER_DAY = workHrsVal;
+    if (!isNaN(gasVal) && gasVal > 0) {
+        GAS_PRICE_GLOBAL = gasVal;
+        localStorage.setItem("gasPriceGlobal", gasVal);
+        localStorage.setItem("lastGasPrice", gasVal);
+    }
     
     localStorage.setItem("defVehicle", veh);
     localStorage.setItem("maintPerDay", maintVal);
@@ -615,8 +676,16 @@ function loadTripRecords() {
 }
 function saveTripRecords() { localStorage.setItem("tripRecords", JSON.stringify(tripRecords)); }
 
-function addTripRecord(routeName, fare, totalCost, netIncome) {
-    tripRecords.unshift({ id: Date.now(), time: new Date().toLocaleString("tl-PH"), routeName, fare, totalCost, netIncome });
+function addTripRecord(routeName, fare, totalCost, netIncome, tripType = "round") {
+    tripRecords.unshift({ 
+        id: Date.now(), 
+        time: new Date().toLocaleString("tl-PH"), 
+        routeName, 
+        fare, 
+        totalCost, 
+        netIncome,
+        tripType
+    });
     saveTripRecords();
     updateGrandTotalDisplay();
 }
@@ -658,10 +727,11 @@ function updateGrandTotalDisplay() {
                 progressTag = `<span class="trip-progress-tag tag-needed">+${((t.netIncome/DAILY_GOAL)*100).toFixed(1)}%</span>`;
             }
         }
+        const typeLabel = t.tripType === "one" ? "➡️ 1-Way" : "🔁 2-Way";
         return `
         <div class="trip-record ${t.netIncome < 0 ? 'negative' : ''}">
             <div class="trip-info">
-                <p style="font-size:13px;"><strong>${t.routeName}</strong>${progressTag}</p>
+                <p style="font-size:13px;"><strong>${t.routeName}</strong> ${typeLabel} ${progressTag}</p>
                 <p style="font-size:11px;color:var(--muted);">${t.time}</p>
                 <p style="font-size:12px;">
                     Singil: ₱${t.fare.toFixed(2)} • Gastos: ₱${t.totalCost.toFixed(2)} • Kita: 
@@ -813,7 +883,6 @@ function saveRoute() {
         routes.push({ id: Date.now(), name, start, end, km });
     }
 
-    saveRoutes(); // ✅ I-save sa telepono
     renderRouteList();
     closeModal();
 }
@@ -832,10 +901,40 @@ function editRoute(id) {
 }
 
 function deleteRoute(id) {
-    if (!confirm("Burahin ba ang rutang ito? Hindi na mababawi.")) return;
+    if (!confirm("Burahin ba ang rutang ito?")) return;
     routes = routes.filter(x => x.id !== id);
-    saveRoutes(); // ✅ I-update ang listahan
     renderRouteList();
+}
+
+function recordDirectTrip(routeId) {
+    const r = routes.find(x => x.id === routeId);
+    if (!r) return;
+    
+    const gasPrice = GAS_PRICE_GLOBAL;
+    if (!gasPrice) {
+        alert("Ilagay muna ang Presyo ng Gasolina sa ⚙️ Pagtatakda!");
+        return;
+    }
+    
+    const fare = LAST_FARE[routeId] || 0;
+    if (!fare || fare <= 0) {
+        alert("Wala pang nakatakdang pamasahe para sa rutang ito. Gamitin muna ang ▶️ para kuwentyahin.");
+        return;
+    }
+    
+    const workHrs = WORK_HOURS_PER_DAY;
+    const v = getActiveVehicle();
+    const kmUsed = LAST_TRIP_TYPE === "one" ? r.km : r.km * 2;
+    const liter = kmUsed / v.kmPerL;
+    const costGas = liter * gasPrice;
+    const hrs = kmUsed / v.speedKmh;
+    const costPerHr = (MAINTENANCE_PER_DAY + RENT_PER_DAY) / workHrs;
+    const costTime = costPerHr * hrs;
+    const totalCost = costGas + costTime;
+    const netIncome = fare - totalCost;
+    
+    addTripRecord(r.name, fare, totalCost, netIncome, LAST_TRIP_TYPE);
+    alert(`✅ Naitala na!\nSingil: ₱${fare.toFixed(2)}\nKita: ₱${netIncome.toFixed(2)}`);
 }
 
 function renderRouteList() {
@@ -852,7 +951,8 @@ function renderRouteList() {
                 <div class="route-meta">${r.start} → ${r.end}<br>📏 ${r.km.toFixed(2)} km/daan</div>
             </div>
             <div class="route-actions">
-                <button class="icon-btn btn-go" onclick="useRoute(${r.id})" title="Gamitin at Kuwentahin">▶️</button>
+                <button class="icon-btn btn-go" onclick="useRoute(${r.id})" title="Buksan Kuwenta">▶️</button>
+                <button class="icon-btn btn-add" onclick="recordDirectTrip(${r.id})" title="Itala Agad">➕</button>
                 <button class="icon-btn btn-edit" onclick="editRoute(${r.id})" title="Baguhin">✏️</button>
                 <button class="icon-btn btn-del" onclick="deleteRoute(${r.id})" title="Burahin">🗑️</button>
             </div>
@@ -876,6 +976,26 @@ async function useRoute(id) {
     document.getElementById("use-km").textContent = selectedRoute.km.toFixed(2);
     distKm = selectedRoute.km;
 
+    if (GAS_PRICE_GLOBAL) {
+        document.getElementById("gas-price").value = GAS_PRICE_GLOBAL;
+        document.getElementById("gas-saved-note").classList.remove("hidden");
+    } else {
+        document.getElementById("gas-price").value = "";
+        document.getElementById("gas-saved-note").classList.add("hidden");
+    }
+
+    const savedFare = LAST_FARE[selectedRoute.id];
+    if (savedFare) {
+        document.getElementById("fare").value = savedFare;
+        document.getElementById("fare-saved-note").classList.remove("hidden");
+    } else {
+        document.getElementById("fare").value = "";
+        document.getElementById("fare-saved-note").classList.add("hidden");
+    }
+
+    updateDistanceLabels();
+    if (distKm) recalcConsumption();
+
     const r = await getRouteOSRM(selectedRoute.start, selectedRoute.end, DEFAULT_VEHICLE);
     if (r) {
         document.getElementById("dist-stat").innerHTML = `✅ 📏 Distansya: <strong>${r.kmOneWay.toFixed(2)} km/daan</strong> (tumpak sa daan)`;
@@ -883,19 +1003,15 @@ async function useRoute(id) {
         distKm = r.kmOneWay;
         totalHours = r.totalHours;
         showMap(r.a, r.b, r.geometry);
+        recalcConsumption();
     } else {
         document.getElementById("dist-stat").innerHTML = `⚠️ 📏 Distansya: <strong>${selectedRoute.km.toFixed(2)} km/daan</strong> (nakalagay sa listahan)`;
         totalHours = (distKm * 2) / v.speedKmh;
         document.getElementById("time-stat").innerHTML = `⏱️ Tantsang Oras: <strong>${totalHours.toFixed(2)} oras</strong> (paikot)`;
+        recalcConsumption();
     }
 
-    const literRound = (distKm * 2) / v.kmPerL;
-    document.getElementById("auto-liter").textContent = literRound.toFixed(2);
-    document.getElementById("auto-hours").textContent = totalHours.toFixed(2);
     document.getElementById("ref-range").textContent = `₱${v.refLow}–₱${v.refHigh}/oras`;
-
-    document.getElementById("gas-price").value = "";
-    document.getElementById("fare").value = "";
     updateCostPerHour();
 }
 
@@ -925,26 +1041,37 @@ function doCalc() {
     }
 
     const v = getActiveVehicle();
-    const literRound = (distKm * 2) / v.kmPerL;
-    const costGas = literRound * gasPrice;
+    const kmUsed = LAST_TRIP_TYPE === "one" ? distKm : distKm * 2;
+    const literUsed = kmUsed / v.kmPerL;
+    const costGas = literUsed * gasPrice;
     const costPerHr = (MAINTENANCE_PER_DAY + RENT_PER_DAY) / workHrs;
-    const costTime = costPerHr * totalHours;
+    const hrsUsed = kmUsed / v.speedKmh;
+    const costTime = costPerHr * hrsUsed;
     const totalCost = costGas + costTime;
     const netIncome = fare - totalCost;
-    const perHour = netIncome / totalHours;
+    const perHour = netIncome / hrsUsed;
+
+    if (selectedRoute) {
+        LAST_FARE[selectedRoute.id] = fare;
+        localStorage.setItem("lastFareByRoute", JSON.stringify(LAST_FARE));
+    }
+    GAS_PRICE_GLOBAL = gasPrice;
+    localStorage.setItem("lastGasPrice", gasPrice);
+    localStorage.setItem("gasPriceGlobal", gasPrice);
 
     const results = document.getElementById("results");
     results.classList.remove("hidden");
     const body = document.getElementById("res-body");
 
+    const typeText = LAST_TRIP_TYPE === "one" ? "1-Way" : "Paikot";
     body.innerHTML = `
         <div class="res-row res-time">
-            <span>📐 Distansya (paikot)</span>
-            <span class="res-bold">${(distKm * 2).toFixed(2)} km</span>
+            <span>📐 Distansya (${typeText})</span>
+            <span class="res-bold">${kmUsed.toFixed(2)} km</span>
         </div>
         <div class="res-row res-norm">
             <span>⛽ Konsumo sa Gasolina</span>
-            <span>${literRound.toFixed(2)} L × ₱${gasPrice.toFixed(2)}/L</span>
+            <span>${literUsed.toFixed(2)} L × ₱${gasPrice.toFixed(2)}/L</span>
         </div>
         <div class="res-row res-norm">
             <span>💰 Gastos sa Gasolina</span>
@@ -952,7 +1079,7 @@ function doCalc() {
         </div>
         <div class="res-row res-rent">
             <span>⏰ Gastos sa Oras (Piyesa+Upa)</span>
-            <span>₱${costTime.toFixed(2)} (${totalHours.toFixed(2)} oras × ₱${costPerHr.toFixed(2)}/oras)</span>
+            <span>₱${costTime.toFixed(2)} (${hrsUsed.toFixed(2)} oras × ₱${costPerHr.toFixed(2)}/oras)</span>
         </div>
         <div class="res-row res-bold" style="background:#F5F5F5;margin:8px 0;">
             <span>💸 KABUUANG GASTOS</span>
@@ -985,12 +1112,24 @@ function doCalc() {
         <button class="btn btn-pri" style="width:100%;margin-top:16px;" onclick="recordThisTrip()">📝 Itala ang Biyaheng Ito</button>
     `;
 
-    window._lastTrip = { routeName: selectedRoute.name, fare, totalCost, netIncome };
+    window._lastTrip = { 
+        routeName: selectedRoute.name, 
+        fare, 
+        totalCost, 
+        netIncome,
+        tripType: LAST_TRIP_TYPE
+    };
 }
 
 function recordThisTrip() {
     if (!window._lastTrip) return;
-    addTripRecord(window._lastTrip.routeName, window._lastTrip.fare, window._lastTrip.totalCost, window._lastTrip.netIncome);
+    addTripRecord(
+        window._lastTrip.routeName, 
+        window._lastTrip.fare, 
+        window._lastTrip.totalCost, 
+        window._lastTrip.netIncome,
+        window._lastTrip.tripType
+    );
     alert("✅ Naitala na! Makikita sa Buod ng mga Biyahe.");
     goBack();
 }
