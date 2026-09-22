@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ INILIPAT SA IBABA + TUMPAK NA TALON!
-// VERSION: 5.1.0 — ✅ LAHAT NG BUTTON SA IBABA • HIGHLIGHT SA TAMANG LINYA!
-// UPDATED: 2026-09-22 — TAPOS NA!
+// FILE: FileEditorFragment.kt — ✅ INAYOS: SUMASARA NA PREVIEW + SCROLL + HIGHLIGHT!
+// VERSION: 5.2.0 — ✅ TUMATALON • SUMASARA • NAKA-HIGHLIGHT • GUMAGANA ANG SCROLL!
+// UPDATED: 2026-09-22 — WALANG BINAWASAN — INAYOS LANG ANG TATLONG PROBLEMA!
 // ==================================================
 package com.martodosko.studio
 
@@ -62,6 +62,7 @@ class FileEditorFragment : Fragment() {
     private var originalContent = ""
     private val allFiles = mutableListOf<FileItem>()
     private var isFullScreen = false
+    private var activePreviewDialog: AlertDialog? = null // ✅ I-save ang dialog para isara
 
     data class FileItem(val path: String, val name: String, val type: String)
     data class CodeIssue(val severity: String, val message: String, val line: Int)
@@ -160,6 +161,7 @@ class FileEditorFragment : Fragment() {
 
         // ===== CODE EDITOR AREA =====
         val scrollView = ScrollView(requireContext()).apply {
+            id = View.generateViewId() // ✅ Magbigay ng ID para sa pag-scroll
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 0,
@@ -187,6 +189,7 @@ class FileEditorFragment : Fragment() {
         })
 
         codeEditor = EditText(requireContext()).apply {
+            id = View.generateViewId()
             setBackgroundColor(0xFF0F0F1A.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             setHintTextColor(0xFF555577.toInt())
@@ -362,6 +365,11 @@ class FileEditorFragment : Fragment() {
         codeEditor.addTextChangedListener(textWatcher)
 
         return root
+    }
+
+    private fun closePreviewDialog() {
+        activePreviewDialog?.dismiss()
+        activePreviewDialog = null
     }
 
     private fun toggleFullScreenEditor() {
@@ -548,11 +556,12 @@ class FileEditorFragment : Fragment() {
             }
         }
 
-        AlertDialog.Builder(requireContext())
+        activePreviewDialog = AlertDialog.Builder(requireContext())
             .setTitle("👁️ PREVIEW — $selectedFilePath")
             .setView(previewView)
             .setPositiveButton("TAPOS", null)
-            .show()
+            .create()
+        activePreviewDialog?.show()
     }
 
     private fun buildFullKotlinPreview(code: String): View {
@@ -576,7 +585,7 @@ class FileEditorFragment : Fragment() {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 24, 16, 16)
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setOnClickListener { jumpToLineAndHighlight(1, lines) }
+            setOnClickListener { findAndJump("", lines) }
             addView(TextView(requireContext()).apply {
                 text = when {
                     isAdmin -> "🔐 ADMIN PANEL"
@@ -695,40 +704,54 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun findAndJump(searchKey: String, lines: List<String>) {
-        // Mas tumpak na paghahanap — unahin ang eksaktong pangalan ng variable
-        var lineNo = lines.indexOfFirst {
+        // ✅ ISARA MUNA ANG PREVIEW
+        closePreviewDialog()
+
+        // Maghanap ng linya
+        var lineNo = if (searchKey.isBlank()) 0 else lines.indexOfFirst {
             Regex("(val|var)\\s+${searchKey}\\b").containsMatchIn(it) ||
             Regex("findViewById.*${searchKey}\\b").containsMatchIn(it) ||
             it.contains("id.*${searchKey}", ignoreCase = true) ||
             it.contains(searchKey, ignoreCase = true)
         }
+
         if (lineNo < 0) {
             Toast.makeText(context, "🔍 Hindi nahanap: $searchKey", Toast.LENGTH_SHORT).show()
             return
         }
-        jumpToLineAndHighlight(lineNo + 1, lines)
+
+        val targetLine = if (lineNo == 0) 1 else lineNo + 1
+        jumpToLineAndHighlight(targetLine, lines)
     }
 
     private fun jumpToLineAndHighlight(lineNumber: Int, lines: List<String>) {
         if (lineNumber !in 1..lines.size) return
 
-        // Kumuha ng tamang posisyon ng simula at dulo ng linyang ito
+        // ✅ TUMPAK NA PAGKUHA NG POSISYON
         var startPos = 0
         for (i in 0 until lineNumber - 1) {
-            startPos += lines[i].length + 1 // +1 para sa bagong linya
+            startPos += lines[i].length + 1 // +1 = bagong linya
         }
         val endPos = startPos + lines[lineNumber - 1].length
 
-        // I-highlight ang buong linya
+        // ✅ HIGHLIGHT — BUONG LINYA (hindi naaalis ng textWatcher)
+        codeEditor.removeTextChangedListener(textWatcher)
         codeEditor.setSelection(startPos, endPos)
+        codeEditor.addTextChangedListener(textWatcher)
+        
         codeEditor.requestFocus()
 
-        // I-scroll papunta sa tamang linya — WALANG getLineOffset
+        // ✅ GUMAGANA NA ANG PAG-SCROLL papunta sa tamang linya
         codeEditor.post {
             val layout = codeEditor.layout
             if (layout != null) {
                 val lineTop = layout.getLineTop(lineNumber - 1)
-                codeEditor.scrollTo(0, lineTop - 100)
+                val parentScroll = codeEditor.parent as? ScrollView
+                if (parentScroll != null) {
+                    parentScroll.smoothScrollTo(0, lineTop - 80)
+                } else {
+                    codeEditor.scrollTo(0, lineTop - 80)
+                }
             }
         }
 
@@ -771,7 +794,7 @@ class FileEditorFragment : Fragment() {
             text = "\n💡 Pindutin kahit saan → tumalon sa kodigo"
             textSize = 12f; setTextColor(0xFF888888.toInt()); gravity = Gravity.CENTER
         })
-        container.setOnClickListener { jumpToLineAndHighlight(1, code.lines()) }
+        container.setOnClickListener { findAndJump("", code.lines()) }
         return scroll
     }
 
@@ -939,7 +962,6 @@ class FileEditorFragment : Fragment() {
     private fun showStatus(msg: String, success: Boolean) {
         statusText.text = msg
         statusText.setTextColor(if (success) 0xFF4CAF50.toInt() else 0xFFFF5252.toInt())
-   
     }
 
     private fun showLoading(show: Boolean) {
