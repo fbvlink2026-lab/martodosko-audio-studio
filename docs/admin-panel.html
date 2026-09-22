@@ -1,6 +1,3 @@
-ituloy ang huling bahagi ng code mula sa huling linya.
-
-
 <!DOCTYPE html>
 <html lang="tl">
 <head>
@@ -226,9 +223,13 @@ ituloy ang huling bahagi ng code mula sa huling linya.
 </div>
 
 <!-- ===== MAIN SYSTEM ===== -->
-<div class="admin-container" id="adminSystem">
+
+    <button class="sidebar-toggle" id="sidebarToggleBtn">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <!-- Sidebar -->
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" id="adminSidebar">
+        <button class="sidebar-close" onclick="closeSidebar()">×</button>
         <div class="admin-brand">
             <h2>🏍️ Admin Panel v13</h2>
             <p>Transport Service<br>martodosko © 2026</p>
@@ -2169,6 +2170,52 @@ function reloadAllData() {
 // ========== AUTO-INIT ==========
 console.log('%c🏍️ Transport Admin Panel v13.0 — by martodosko', 'font-size:14px;font-weight:bold;color:#7C3AED;');
 console.log('%c© 2026 Lahat ng Karapatang Nakareserba', 'color:#6B7280;');
+
+// ========== SIDEBAR SWIPE & TOGGLE ==========
+let touchStartX = 0;
+let touchEndX = 0;
+
+function openSidebar() {
+    document.getElementById('adminSidebar').classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('visible');
+}
+function closeSidebar() {
+    document.getElementById('adminSidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('visible');
+}
+function toggleSidebar() {
+    const sidebar = document.getElementById('adminSidebar');
+    if (sidebar.classList.contains('open')) closeSidebar();
+    else openSidebar();
+}
+
+// Swipe detection
+document.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+document.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchEndX - touchStartX;
+    // Swipe Right → Open
+    if (diff > 50 && touchStartX < 30) openSidebar();
+    // Swipe Left → Close
+    if (diff < -50) closeSidebar();
+}, { passive: true });
+
+// Toggle button click
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('sidebarToggleBtn');
+    if (btn) btn.addEventListener('click', toggleSidebar);
+});
+
+// Auto-close sidebar when clicking nav items on mobile
+document.querySelectorAll('.admin-nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) closeSidebar();
+    });
+});
+
 </script>
 </body>
 </html>
