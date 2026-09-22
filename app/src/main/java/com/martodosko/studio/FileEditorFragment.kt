@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ MAY LINE NUMBERS NA! TUMPAK SA LAHAT NG 800+ LINYA!
-// VERSION: 5.5.0 — ✅ NUMERO SA KALIWA • TUMPAK NA PAGTALON • AWTO TINATANGGAL BAGO I-SAVE!
-// UPDATED: 2026-09-22 — HINDI NA HULA-HULA! BAWAT LINYA MAY NUMERO!
+// FILE: FileEditorFragment.kt — ✅ INAYOS: WALANG DOBLENG NUMERO! TUMPAK ANG PAGTALON!
+// VERSION: 5.6.0 — ✅ NUMERO SA GILID LANG • MALINIS ANG KODIGO • TUMPAK NA PAGTALON!
+// UPDATED: 2026-09-22 — TINANGGAL ANG NUMERO SA LOOB NG KODIGO!
 // ==================================================
 package com.martodosko.studio
 
@@ -14,11 +14,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
-import android.text.Spannable
-import android.text.SpannableStringBuilder
 import android.text.TextWatcher
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -43,8 +39,8 @@ class FileEditorFragment : Fragment() {
     private lateinit var folderSelect: Spinner
     private lateinit var fileSelect: Spinner
     private lateinit var codeContainer: LinearLayout
-    private lateinit var lineNumbers: TextView  // ✅ NUMERO NG LINYA — KALIWA
-    private lateinit var codeEditor: EditText    // ✅ KODIGO — KANAN
+    private lateinit var lineNumbers: TextView
+    private lateinit var codeEditor: EditText
     private lateinit var btnFullScreen: Button
     private lateinit var btnLoad: Button
     private lateinit var btnCopy: Button
@@ -66,7 +62,7 @@ class FileEditorFragment : Fragment() {
     private var selectedFilePath = ""
     private var currentSha: String? = null
     
-    // ✅ TUNAY NA KODIGO — WALANG NUMERO — ITO ANG I-SAVE SA GITHUB
+    // ✅ MALINIS NA KODIGO — WALANG NUMERO
     private var cleanOriginalCode = ""  
     
     private val allFiles = mutableListOf<FileItem>()
@@ -83,7 +79,8 @@ class FileEditorFragment : Fragment() {
         const val REPO_NAME_KEY = "repo_name"
         const val BASE_URL = "https://api.github.com/repos/"
         const val BRANCH = "main"
-        private val LINE_NUMBER_PATTERN = Pattern.compile("^(\\d+)\\|") // ✅ "123|" sa simula
+        // ✅ TANGGALIN ANG NUMERO SA SIMULA NG LINYA KUNG MAYROON
+        private val LINE_NUMBER_PATTERN = Pattern.compile("^\\d+\\|")
     }
 
     override fun onCreateView(
@@ -169,7 +166,7 @@ class FileEditorFragment : Fragment() {
 
         root.addView(header)
 
-        // ========== EDITOR AREA — MAY NUMERO SA KALIWA ==========
+        // ========== EDITOR AREA — NUMERO SA GILID LANG ==========
         val scrollView = ScrollView(requireContext()).apply {
             id = View.generateViewId()
             layoutParams = LinearLayout.LayoutParams(
@@ -198,7 +195,6 @@ class FileEditorFragment : Fragment() {
             setPadding(4, 4, 0, 8)
         })
 
-        // ✅ KODIGO + NUMERO NG LINYA — MAGKATABI
         codeContainer = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             setBackgroundColor(0xFF0F0F1A.toInt())
@@ -208,7 +204,7 @@ class FileEditorFragment : Fragment() {
             ).apply { setMargins(0, 0, 0, 12) }
         }
 
-        // ✅ KALIWA: MGA NUMERO NG LINYA
+        // ✅ KALIWA: MGA NUMERO NG LINYA — LANG DITO
         lineNumbers = TextView(requireContext()).apply {
             id = View.generateViewId()
             setBackgroundColor(0xFF151528.toInt())
@@ -225,7 +221,7 @@ class FileEditorFragment : Fragment() {
         }
         codeContainer.addView(lineNumbers)
 
-        // ✅ KANAN: ANG TUNAY NA KODIGO
+        // ✅ KANAN: MALINIS NA KODIGO — WALANG NUMERO
         codeEditor = EditText(requireContext()).apply {
             id = View.generateViewId()
             setBackgroundColor(0xFF0F0F1A.toInt())
@@ -236,7 +232,7 @@ class FileEditorFragment : Fragment() {
             setHint("Pindutin ang \"I-LOAD\" para makita ang laman...")
             minHeight = 400
             setTypeface(Typeface.MONOSPACE)
-            background = null // Alisin ang hangganan para magtugma sa numero
+            background = null
             layoutParams = LinearLayout.LayoutParams(
                 0,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -247,7 +243,6 @@ class FileEditorFragment : Fragment() {
 
         main.addView(codeContainer)
 
-        // ERROR PANEL
         errorPanel = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF3A1515.toInt())
@@ -406,13 +401,11 @@ class FileEditorFragment : Fragment() {
         loadConfig()
         initFolderList()
         
-        // ✅ BANTAYAN ANG PAGBABAGO → I-UPDATE ANG MGA NUMERO
         codeEditor.addTextChangedListener(codeWatcher)
 
         return root
     }
 
-    // ✅ AWTO: I-UPDATE ANG MGA NUMERO NG LINYA
     private val codeWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
             updateLineNumbers()
@@ -422,27 +415,16 @@ class FileEditorFragment : Fragment() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     }
 
-    // ✅ KUNIN ANG KODIGONG WALANG NUMERO — ITO ANG I-SAVE
+    // ✅ KUNIN ANG MALINIS NA KODIGO — TANGGALIN ANG NUMERO KUNG MAYROON
     private fun getCleanCode(): String {
         return codeEditor.text.toString()
             .lines()
             .joinToString("\n") { line ->
-                val m = LINE_NUMBER_PATTERN.matcher(line)
-                if (m.find()) line.substring(m.end()) else line
+                LINE_NUMBER_PATTERN.matcher(line).replaceFirst("")
             }
     }
 
-    // ✅ ILAGAY ANG NUMERO SA BAWAT LINYA
-    private fun applyLineNumbers(code: String): String {
-        val lines = code.lines()
-        val maxNumWidth = lines.size.toString().length
-        return lines.mapIndexed { index, line ->
-            val lineNum = "%${maxNumWidth}d".format(index + 1)
-            "$lineNum|$line"
-        }.joinToString("\n")
-    }
-
-    // ✅ I-UPDATE ANG LISTAHAN NG NUMERO SA KALIWA
+    // ✅ I-UPDATE ANG NUMERO SA GILID LANG
     private fun updateLineNumbers() {
         val lineCount = codeEditor.text.lines().size
         val maxNumWidth = lineCount.toString().length
@@ -462,8 +444,8 @@ class FileEditorFragment : Fragment() {
 
     private fun showFullScreenEditorDialog() {
         val cleanCode = getCleanCode()
-        val currentSelStart = calculateCleanSelectionStart()
-        val currentSelEnd = calculateCleanSelectionEnd()
+        val currentSelStart = codeEditor.selectionStart
+        val currentSelEnd = codeEditor.selectionEnd
 
         val fullScreenEditor = EditText(requireContext()).apply {
             setBackgroundColor(0xFF0A0A15.toInt())
@@ -471,7 +453,7 @@ class FileEditorFragment : Fragment() {
             textSize = 12f
             setPadding(20, 20, 20, 20)
             setTypeface(Typeface.MONOSPACE)
-            setText(cleanCode) // ✅ WALANG NUMERO SA FULL SCREEN
+            setText(cleanCode)
             setSelection(currentSelStart, currentSelEnd)
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -483,10 +465,8 @@ class FileEditorFragment : Fragment() {
             .setTitle("⛶ BUONG EKRAN — I-edit ang Kodigo")
             .setView(fullScreenEditor)
             .setPositiveButton("✅ ILIPAT") { _, _ ->
-                // ✅ BALIKAN MAY NUMERO NA
-                val withNumbers = applyLineNumbers(fullScreenEditor.text.toString())
                 codeEditor.removeTextChangedListener(codeWatcher)
-                codeEditor.setText(withNumbers)
+                codeEditor.setText(fullScreenEditor.text.toString())
                 cleanOriginalCode = fullScreenEditor.text.toString()
                 codeEditor.addTextChangedListener(codeWatcher)
                 updateLineNumbers()
@@ -496,42 +476,18 @@ class FileEditorFragment : Fragment() {
             .show()
     }
 
-    // ✅ TANTIYAHIN ANG POSISYON SA MALINIS NA KODIGO
-    private fun calculateCleanSelectionStart(): Int {
-        val allText = codeEditor.text.toString()
-        val selStart = codeEditor.selectionStart
-        val upToSel = allText.take(selStart)
-        val lines = upToSel.lines()
-        var removedChars = 0
-        lines.dropLast(1).forEach { line ->
-            removedChars += line.indexOf('|') + 1
-        }
-        return selStart - removedChars
-    }
-
-    private fun calculateCleanSelectionEnd(): Int {
-        val cleanLen = getCleanCode().length
-        val rawSel = codeEditor.selectionEnd
-        val allText = codeEditor.text.toString()
-        val upToSel = allText.take(rawSel)
-        val lines = upToSel.lines()
-        var removedChars = 0
-        lines.dropLast(1).forEach { line ->
-            removedChars += line.indexOf('|') + 1
-        }
-        return (rawSel - removedChars).coerceAtMost(cleanLen)
-    }
-
-    // ✅ TUMPAK NA PAGHANAP — GAMIT ANG TUNAY NA BUONG KODIGO
+    // ✅ TUMPAK NA PAGTALON — WALANG NAKAKABULONG NA NUMERO
     private fun findBestMatchingLine(searchKey: String, fullCode: String): Int {
         val lines = fullCode.lines()
         if (searchKey.isBlank()) return 1
         val keyLower = searchKey.lowercase()
 
-        // 1️⃣ val/var pangalan
-        val declPattern = Regex("\\b(?:val|var)\\s+${Regex.escape(searchKey)}\\b", RegexOption.IGNORE_CASE)
-        lines.forEachIndexed { idx, line ->
-            if (declPattern.containsMatchIn(line)) return idx + 1
+        // 1️⃣ val/var/class/fun
+        listOf("class", "fun", "val", "var").forEach { keyword ->
+            val pattern = Regex("\\b$keyword\\s+${Regex.escape(searchKey)}\\b", RegexOption.IGNORE_CASE)
+            lines.forEachIndexed { idx, line ->
+                if (pattern.containsMatchIn(line)) return idx + 1
+            }
         }
 
         // 2️⃣ id / R.id
@@ -545,37 +501,32 @@ class FileEditorFragment : Fragment() {
             if (line.lowercase().contains(keyLower)) return idx + 1
         }
 
-        return -1 // hindi nakita
+        return -1
     }
 
-    // ✅ TUMALON SA TINUTUKOY NA LINYA — TUMPAK KAHIT 800+
+    // ✅ TUMALON SA TINUTUKOY NA LINYA — TUMPAK
     private fun jumpToLine(lineNumber: Int) {
         if (lineNumber < 1) return
         
         val allLines = codeEditor.text.lines()
         if (lineNumber > allLines.size) return
 
-        // Kalkulahin ang posisyon sa teksto na may numero
         var pos = 0
         for (i in 0 until lineNumber - 1) {
-            pos += allLines[i].length + 1 // +1 = bagong linya
+            pos += allLines[i].length + 1
         }
         
         val lineLength = allLines[lineNumber - 1].length
         codeEditor.setSelection(pos, pos + lineLength)
         codeEditor.requestFocus()
 
-        // I-scroll papunta sa tamang lugar
         codeEditor.post {
             val layout = codeEditor.layout
             if (layout != null) {
                 val lineTop = layout.getLineTop(lineNumber - 1)
                 val parentScroll = codeEditor.parent as? ScrollView
-                if (parentScroll != null) {
-                    parentScroll.smoothScrollTo(0, lineTop - 80)
-                } else {
-                    codeEditor.scrollTo(0, lineTop - 80)
-                }
+                parentScroll?.smoothScrollTo(0, lineTop - 80)
+                    ?: codeEditor.scrollTo(0, lineTop - 80)
             }
         }
 
@@ -636,8 +587,8 @@ class FileEditorFragment : Fragment() {
             setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 24, 16, 16)
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setOnClickListener { 
-                jumpToLine(1) // ✅ TUMALON SA TUNAY NA LINYA 1
-                closePreviewDialog()
+                val targetLine = findBestMatchingLine(className, code)
+                if (targetLine > 0) { jumpToLine(targetLine); closePreviewDialog() }
             }
             addView(TextView(requireContext()).apply {
                 text = when {
@@ -662,13 +613,10 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun buildEditorFullPreview(container: LinearLayout, lines: List<String>, fullCode: String) {
-        addClickablePreviewElement(container, PreviewElement("📁 Piliin ang Folder:", "folderSelect", 0xFF252540.toInt(), "label"), lines, fullCode)
-        addClickablePreviewElement(container, PreviewElement("— Pumili ng folder —", "folderSelect", 0xFF1E1E2F.toInt(), "spinner"), lines, fullCode)
-        addClickablePreviewElement(container, PreviewElement("📄 Piliin ang File:", "fileSelect", 0xFF252540.toInt(), "label"), lines, fullCode)
-        addClickablePreviewElement(container, PreviewElement("— Walang file pa —", "fileSelect", 0xFF1E1E2F.toInt(), "spinner"), lines, fullCode)
+        addClickablePreviewElement(container, PreviewElement("📁 Folder:", "folderSelect", 0xFF252540.toInt(), "label"), lines, fullCode)
+        addClickablePreviewElement(container, PreviewElement("📄 File:", "fileSelect", 0xFF252540.toInt(), "label"), lines, fullCode)
         addClickablePreviewElement(container, PreviewElement("📥 I-LOAD MULA SA GITHUB", "btnLoad", 0xFF1976D2.toInt()), lines, fullCode)
-        addClickablePreviewElement(container, PreviewElement("✏️ Kodigo:", "codeEditor", 0xFF1A1A2E.toInt(), "label"), lines, fullCode)
-        addClickablePreviewElement(container, PreviewElement("Pindutin ang \"I-LOAD\" para makita ang laman...", "codeEditor", 0xFF0F0F1A.toInt(), "editor"), lines, fullCode)
+        addClickablePreviewElement(container, PreviewElement("💻 Kodigo:", "codeEditor", 0xFF1A1A2E.toInt(), "label"), lines, fullCode)
 
         val quickRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -680,8 +628,6 @@ class FileEditorFragment : Fragment() {
         addClickablePreviewBtnToRow(quickRow, "🧹", "btnClear", 0xFFC62828.toInt(), lines, fullCode)
         addClickablePreviewBtnToRow(quickRow, "👁️", "btnPreview", 0xFF00897B.toInt(), lines, fullCode)
         container.addView(quickRow)
-
-        addClickablePreviewElement(container, PreviewElement("⏳ Kinakarga ang listahan...", "statusText", 0xFF12121F.toInt(), "status"), lines, fullCode)
 
         val bottomRow = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -695,79 +641,37 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun buildLoginFullPreview(container: LinearLayout, lines: List<String>) {
-        val dummy = "" // walang special search
+        val dummy = ""
         addClickablePreviewElement(container, PreviewElement("Ipasok ang Key Code:", "keyInput", 0xFF12121F.toInt(), "label"), lines, dummy)
-        addClickablePreviewElement(container, PreviewElement("_________________________", "keyInput", 0xFF1E1E2F.toInt(), "input"), lines, dummy)
         addClickablePreviewElement(container, PreviewElement("🔐 MAG-LOGIN", "btnLogin", 0xFF7B1FA2.toInt()), lines, dummy)
     }
 
     private fun buildAdminFullPreview(container: LinearLayout, lines: List<String>) {
         val dummy = ""
-        listOf("✏️ File Editor" to "fileEditor", "🔑 Key Code Generator" to "keyGen",
-            "👤 User Management" to "userMgmt", "📊 System Status" to "status",
-            "☁️ GitHub Settings" to "github").forEach { (label, key) ->
+        listOf("File Editor" to "fileEditor", "Key Generator" to "keyGen",
+            "User Management" to "userMgmt", "GitHub Settings" to "github").forEach { (label, key) ->
             addClickablePreviewElement(container, PreviewElement(label, key, 0xFF1E1E2F.toInt()), lines, dummy)
         }
     }
 
     private fun addClickablePreviewElement(container: LinearLayout, el: PreviewElement, lines: List<String>, fullCode: String) {
         val targetLine = if (fullCode.isNotEmpty()) findBestMatchingLine(el.searchKey, fullCode) else -1
-        val finalLine = if (targetLine == -1) {
-            Toast.makeText(context, "⚠️ Hindi nakita: ${el.searchKey}", Toast.LENGTH_SHORT).show()
-            1
-        } else targetLine
 
-        val view = when (el.type) {
-            "spinner" -> TextView(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFAAAAAA.toInt())
-                textSize = 14f; setPadding(16, 14, 16, 14)
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 0, 16, 8) }
-                setOnClickListener { 
-                    jumpToLine(finalLine)
-                    closePreviewDialog()
-                }
-            }
-            "editor" -> TextView(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF666666.toInt())
-                textSize = 11f; setPadding(16, 16, 16, 16); minHeight = 200
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 0, 16, 12) }
-                setOnClickListener { 
-                    jumpToLine(finalLine)
-                    closePreviewDialog()
-                }
-            }
-            "input" -> TextView(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFF888888.toInt())
-                textSize = 14f; setPadding(16, 16, 16, 16)
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 56).apply { setMargins(16, 4, 16, 12) }
-                setOnClickListener { 
-                    jumpToLine(finalLine)
-                    closePreviewDialog()
-                }
-            }
-            "status" -> TextView(requireContext()).apply {
-                text = el.label; setTextColor(0xFFFFA500.toInt()); textSize = 13f; setPadding(16, 8, 16, 8)
-                setOnClickListener { 
-                    jumpToLine(finalLine)
-                    closePreviewDialog()
-                }
-            }
-            "label" -> TextView(requireContext()).apply {
-                text = el.label; setTextColor(0xFFFFFFFF.toInt()); setTypeface(null, Typeface.BOLD)
-                textSize = 14f; setPadding(16, 8, 16, 4)
-                setOnClickListener { 
-                    jumpToLine(finalLine)
-                    closePreviewDialog()
-                }
-            }
-            else -> Button(requireContext()).apply {
-                text = el.label; setBackgroundColor(el.bgColor); setTextColor(0xFFFFFFFF.toInt())
-                textSize = 14f; minHeight = 52; setPadding(16, 12, 16, 12)
-                layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(16, 6, 16, 6) }
-                setOnClickListener { 
-                    jumpToLine(finalLine)
-                    closePreviewDialog()
-                }
+        val view = Button(requireContext()).apply {
+            text = el.label
+            setBackgroundColor(el.bgColor)
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 14f
+            minHeight = 52
+            setPadding(16, 12, 16, 12)
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { setMargins(16, 6, 16, 6) }
+            setOnClickListener {
+                val finalLine = if (targetLine > 0) targetLine else 1
+                jumpToLine(finalLine)
+                closePreviewDialog()
             }
         }
         container.addView(view)
@@ -775,16 +679,17 @@ class FileEditorFragment : Fragment() {
 
     private fun addClickablePreviewBtnToRow(row: LinearLayout, label: String, key: String, color: Int, lines: List<String>, fullCode: String) {
         val targetLine = if (fullCode.isNotEmpty()) findBestMatchingLine(key, fullCode) else -1
-        val finalLine = if (targetLine == -1) {
-            Toast.makeText(context, "⚠️ Hindi nakita: $key", Toast.LENGTH_SHORT).show()
-            1
-        } else targetLine
 
         row.addView(Button(requireContext()).apply {
-            text = label; setBackgroundColor(color); setTextColor(0xFFFFFFFF.toInt()); textSize = 11f; minHeight = 50
+            text = label
+            setBackgroundColor(color)
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 11f
+            minHeight = 50
             setPadding(4, 8, 4, 8)
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { setMargins(4, 0, 4, 0) }
-            setOnClickListener { 
+            setOnClickListener {
+                val finalLine = if (targetLine > 0) targetLine else 1
                 jumpToLine(finalLine)
                 closePreviewDialog()
             }
@@ -808,8 +713,6 @@ class FileEditorFragment : Fragment() {
         val tvCount = Regex("<TextView").findAll(code).count()
         val etCount = Regex("<EditText").findAll(code).count()
         val llCount = Regex("<LinearLayout").findAll(code).count()
-        val svCount = Regex("<ScrollView").findAll(code).count()
-        val lines = code.lines()
 
         container.addView(LinearLayout(requireContext()).apply {
             setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(20, 20, 20, 20)
@@ -818,14 +721,13 @@ class FileEditorFragment : Fragment() {
                 text = "📋 Mga Elemento:"; setTextColor(Color.WHITE); setTypeface(null, Typeface.BOLD); setPadding(0, 0, 0, 12)
             })
             addView(TextView(requireContext()).apply { text = "• Linear Layout: $llCount"; setTextColor(0xFF64B5F6.toInt()); textSize = 13f })
-            addView(TextView(requireContext()).apply { text = "• Scroll View: $svCount"; setTextColor(0xFFBB86FC.toInt()); textSize = 13f })
             addView(TextView(requireContext()).apply { text = "• Pindutan: $btnCount"; setTextColor(0xFF64B5F6.toInt()); textSize = 13f })
             addView(TextView(requireContext()).apply { text = "• Teksto: $tvCount"; setTextColor(0xFFCCCCCC.toInt()); textSize = 13f })
-            addView(TextView(requireContext()).apply { text = "• Kahon/Pag-input: $etCount"; setTextColor(0xFF81C784.toInt()); textSize = 13f })
+            addView(TextView(requireContext()).apply { text = "• Pag-input: $etCount"; setTextColor(0xFF81C784.toInt()); textSize = 13f })
         })
 
         container.addView(TextView(requireContext()).apply {
-            text = "\n💡 Pindutin kahit saan → lumipat sa eksaktong linya"
+            text = "\n💡 Pindutin kahit saan → lumipat sa linya 1"
             textSize = 12f; setTextColor(0xFF888888.toInt()); gravity = Gravity.CENTER
         })
         container.setOnClickListener { 
@@ -840,7 +742,7 @@ class FileEditorFragment : Fragment() {
         repoName = prefs.getString(REPO_NAME_KEY, "") ?: ""
         githubToken = GithubManagerFragment.getDecryptedToken(requireContext())
         if (githubToken.isNullOrEmpty() || repoOwner.isEmpty() || repoName.isEmpty()) {
-            showStatus("⚠️ Kulang ang GitHub Token/Repo", false)
+            showStatus("⚠️ I-setup muna ang GitHub Token", false)
         } else {
             showStatus("✅ Konektado: $repoOwner/$repoName", true)
         }
@@ -915,10 +817,9 @@ class FileEditorFragment : Fragment() {
                 cleanOriginalCode = String(Base64.decode(jo.getString("content").replace("\n", ""), Base64.DEFAULT))
                 
                 withContext(Dispatchers.Main) {
-                    // ✅ ILAGAY ANG NUMERO SA BAWAT LINYA PARA MAKITA
-                    val withLineNumbers = applyLineNumbers(cleanOriginalCode)
+                    // ✅ MALINIS NA KODIGO LANG — WALANG NUMERO SA LOOB
                     codeEditor.removeTextChangedListener(codeWatcher)
-                    codeEditor.setText(withLineNumbers)
+                    codeEditor.setText(cleanOriginalCode)
                     codeEditor.addTextChangedListener(codeWatcher)
                     
                     updateLineNumbers()
@@ -968,9 +869,8 @@ class FileEditorFragment : Fragment() {
         if (clip != null && clip.itemCount > 0) {
             val text = clip.getItemAt(0).text?.toString()
             if (!text.isNullOrBlank()) {
-                val withNumbers = applyLineNumbers(text)
                 codeEditor.removeTextChangedListener(codeWatcher)
-                codeEditor.setText(withNumbers)
+                codeEditor.setText(text)
                 codeEditor.addTextChangedListener(codeWatcher)
                 cleanOriginalCode = text
                 updateLineNumbers()
@@ -1003,11 +903,7 @@ class FileEditorFragment : Fragment() {
     }
 
     private fun pushToGithub() {
-        val content = getCleanCode() //
-
-
-
-
+        val content = getCleanCode()
         if (content.isBlank() || selectedFilePath.isBlank() || githubToken.isNullOrEmpty()) {
             showStatus("⚠️ Kulang ang impormasyon", false)
             return
