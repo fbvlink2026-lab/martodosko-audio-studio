@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Calculator v8.4 — by martodosko</title>
+    <title>Rate Calculator v8.5 — by martodosko</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -81,6 +81,7 @@
         .btn-go { background: #E8F5E9; color: var(--ok); }
         .btn-edit { background: #FFF3E0; color: var(--s); }
         .btn-del { background: #FFEBEE; color: var(--danger); }
+        .btn-del-sm { width: 28px; height: 28px; font-size: 14px; }
         .res-row {
             display: flex; justify-content: space-between; padding: 10px 12px;
             border-radius: 10px; margin: 4px 0; font-size: 14px; flex-wrap: wrap; gap: 4px;
@@ -125,7 +126,12 @@
         .setting-row > div { flex: 1; min-width: 200px; }
         .setting-row strong { display: block; }
         .grand-total { background: linear-gradient(90deg, #1565C0, #1976D2); color: white; padding: 16px; border-radius: 14px; margin-top: 12px; }
-        .trip-record { border-left: 3px solid var(--ok); padding-left: 10px; margin: 8px 0; }
+        .trip-record { 
+            border-left: 3px solid var(--ok); padding: 10px; margin: 8px 0; 
+            background: white; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+        }
+        .trip-record.negative { border-left-color: var(--danger); }
+        .trip-info { flex: 1; min-width: 200px; }
         .explanation { background: #E8F5E9; border-left: 4px solid var(--ok); padding: 12px; margin: 12px 0; border-radius: 0 12px 12px 0; font-size: 13px; line-height: 1.5; }
     </style>
 </head>
@@ -135,7 +141,7 @@
     <div id="menu-screen">
         <div class="header">
             <h1>🚗 RATE CALCULATOR</h1>
-            <p>Version 8.4.0 • Developed by martodosko</p>
+            <p>Version 8.5.0 • Developed by martodosko</p>
             <p style="opacity:.85;margin-top:4px;">🗺️ Para sa Namamasada • Tumpak na Ruta at Kita</p>
         </div>
         <div class="btn-group">
@@ -311,7 +317,7 @@
 
     <div id="help-modal" class="modal-bg">
         <div class="modal modal-help">
-            <h3>📖 TULONG — Rate Calculator v8.4</h3>
+            <h3>📖 TULONG — Rate Calculator v8.5</h3>
             <div style="font-size:14px;line-height:1.8;margin-top:12px;">
                 <p><strong>🔑 TAMA NA PAGKUWENTA NG GASTOS</strong></p>
                 <p>• Ang piyesa at upa ay <strong>hindi</strong> ibinabawas nang buo sa isang biyahe lang!</p>
@@ -325,9 +331,10 @@
                 <p>• Biyahe: 1 oras → ₱15 lang ang ibabawas, hindi ₱120!</p>
                 <p>• Kung 8 biyahe sa maghapon: ₱15 × 8 = ₱120 — sakto!</p>
                 
-                <p style="margin-top:16px;"><strong>💰 KABUUANG GASTOS NG BIYAHE</strong></p>
-                <p>• = Gasolina + (Piyesa+Upa÷Oras ng Trabaho) × Oras ng Biyahe</p>
-                <p>• Kita = Singil − Kabuuang Gastos</p>
+                <p style="margin-top:16px;"><strong>🗑️ PAGBUBURA NG TALAAN</strong></p>
+                <p>• May <strong>🗑️ pindutan</strong> sa bawat talaan — burahin isa-isa</p>
+                <p>• Awtomatikong <strong>babawasan ang kabuuang kita</strong> kapag binura ang isa</p>
+                <p>• May hiwalay na pindutan para burahin ang lahat</p>
             </div>
             <div class="modal-btns">
                 <button class="btn btn-pri" onclick="closeHelp()">Naintindihan</button>
@@ -471,7 +478,7 @@ function updateTargetTotal() {
 }
 
 // ═══════════════════════════════════════════════
-// TALAAN NG BIYAHE / GRAND TOTAL
+// TALAAN NG BIYAHE / GRAND TOTAL — MAY BURANG ISA-ISA ✅
 // ═══════════════════════════════════════════════
 function loadTripRecords() {
     const saved = localStorage.getItem("tripRecords");
@@ -484,12 +491,21 @@ function saveTripRecords() {
 
 function addTripRecord(routeName, fare, totalCost, netIncome) {
     tripRecords.unshift({
+        id: Date.now(), // natatanging ID para sa bawat talaan
         time: new Date().toLocaleString("tl-PH"),
         routeName,
         fare,
         totalCost,
         netIncome
     });
+    saveTripRecords();
+    updateGrandTotalDisplay();
+}
+
+// ✅ BAGONG TANGGALIN NG ISA-ISA
+function deleteSingleTrip(id) {
+    if (!confirm("Burahin ba talaga ang talaang ito? Mababawasan ang kabuuang kita.")) return;
+    tripRecords = tripRecords.filter(t => t.id !== id);
     saveTripRecords();
     updateGrandTotalDisplay();
 }
@@ -513,17 +529,23 @@ function updateGrandTotalDisplay() {
     document.getElementById("grand-net").textContent = totalNet.toFixed(2);
     
     const list = document.getElementById("trip-sum-list");
-    list.innerHTML = tripRecords.slice(0, 5).map(t => `
-        <div class="trip-record">
-            <p style="font-size:13px;"><strong>${t.routeName}</strong></p>
-            <p style="font-size:11px;color:var(--muted);">${t.time}</p>
-            <p style="font-size:12px;">Singil: ₱${t.fare.toFixed(2)} • Gastos: ₱${t.totalCost.toFixed(2)} • Kita: <strong style="color:${t.netIncome >= 0 ? 'var(--ok)' : 'var(--danger)'}">₱${t.netIncome.toFixed(2)}</strong></p>
+    list.innerHTML = tripRecords.map(t => `
+        <div class="trip-record ${t.netIncome < 0 ? 'negative' : ''}">
+            <div class="trip-info">
+                <p style="font-size:13px;"><strong>${t.routeName}</strong></p>
+                <p style="font-size:11px;color:var(--muted);">${t.time}</p>
+                <p style="font-size:12px;">
+                    Singil: ₱${t.fare.toFixed(2)} • Gastos: ₱${t.totalCost.toFixed(2)} • Kita: 
+                    <strong style="color:${t.netIncome >= 0 ? 'var(--ok)' : 'var(--danger)'}">₱${t.netIncome.toFixed(2)}</strong>
+                </p>
+            </div>
+            <button class="icon-btn btn-del btn-del-sm" onclick="deleteSingleTrip(${t.id})" title="Burahin">🗑️</button>
         </div>
     `).join("");
 }
 
 function clearAllTrips() {
-    if (!confirm("Burahin ba talaga ang lahat ng talaan? Hindi na mababawi.")) return;
+    if (!confirm("Burahin ba talaga ang LAHAT ng talaan? Hindi na mababawi.")) return;
     tripRecords = [];
     saveTripRecords();
     updateGrandTotalDisplay();
@@ -684,7 +706,7 @@ async function selectRoute(id) {
 }
 
 // ═══════════════════════════════════════════════
-// KUWENTAHIN — NAAYOS NA!
+// KUWENTAHIN — TAMA NA ANG PAGKUWENTA
 // ═══════════════════════════════════════════════
 function doCalc() {
     const gasPrice = parseFloat(document.getElementById("gas-price").value);
@@ -802,7 +824,7 @@ function renderRouteList() {
 }
 
 // ═══════════════════════════════════════════════
-// IBA PANG GAWAIN
+// PAGBALIK SA MENU
 // ═══════════════════════════════════════════════
 function goBack() {
     document.getElementById("calc-screen").classList.add("hidden");
@@ -812,6 +834,9 @@ function goBack() {
     updateGrandTotalDisplay();
 }
 
+// ═══════════════════════════════════════════════
+// PAMAMAHALA SA RUTA — DAGDAG, BAGUHIN, BURAHIN
+// ═══════════════════════════════════════════════
 function openAddModal() {
     editingId = null;
     document.getElementById("modal-title").textContent = "➕ Bagong Ruta";
@@ -872,6 +897,9 @@ function deleteRoute(id) {
     renderRouteList();
 }
 
+// ═══════════════════════════════════════════════
+// TULONG
+// ═══════════════════════════════════════════════
 function showHelp() {
     document.getElementById("help-modal").style.display = "flex";
 }
