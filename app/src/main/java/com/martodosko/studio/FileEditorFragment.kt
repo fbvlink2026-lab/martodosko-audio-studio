@@ -1,7 +1,7 @@
 // ==================================================
-// FILE: FileEditorFragment.kt — ✅ TUMPAK NA LIPATAN + NUMERO SA GILID + TEXT WRAP!
-// VERSION: 5.4.0 — ✅ EKSAKTONG HIGHLIGHT • NUMERO SA KALIWA • AWTONG BALOT!
-// UPDATED: 2026-09-22 — TATLONG PROBLEMA AYOS NA!
+// FILE: FileEditorFragment.kt — ✅ TUMPAK NA TALON • HIGHLIGHT • SCROLL!
+// VERSION: 5.5.0 — ✅ TINUKOY AT INAYOS ANG LAHAT NG SULIRANIN!
+// UPDATED: 2026-09-23 — TUMPAK NA PAGTALON SA EKSAKTONG LINYA!
 // ==================================================
 package com.martodosko.studio
 
@@ -40,7 +40,7 @@ class FileEditorFragment : Fragment() {
     private lateinit var folderSelect: Spinner
     private lateinit var fileSelect: Spinner
     private lateinit var codeContainer: LinearLayout
-    private lateinit var lineNumbers: TextView   // ✅ NUMERO SA GILID
+    private lateinit var lineNumbers: TextView
     private lateinit var codeEditor: EditText
     private lateinit var btnFullScreen: Button
     private lateinit var btnLoad: Button
@@ -55,6 +55,7 @@ class FileEditorFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var errorPanel: LinearLayout
     private lateinit var errorText: TextView
+    private lateinit var scrollView: ScrollView
 
     private var githubToken: String? = null
     private var repoOwner = ""
@@ -67,14 +68,12 @@ class FileEditorFragment : Fragment() {
     private var isFullScreen = false
     private var activePreviewDialog: AlertDialog? = null
 
-    // ✅ EKSAKTONG POSISYON MULA SA PREVIEW
-    private var pendingJumpStart: Int? = null
-    private var pendingJumpEnd: Int? = null
-    private var pendingJumpLine: Int? = null
+    // ✅ PAGTALON — TUMPAK NA IMPORMASYON
+    private data class JumpTarget(val line: Int, val selStart: Int, val selEnd: Int)
+    private var pendingJump: JumpTarget? = null
 
     data class FileItem(val path: String, val name: String, val type: String)
     data class CodeIssue(val severity: String, val message: String, val line: Int)
-    data class PreviewElement(val label: String, val searchKey: String, val bgColor: Int, val type: String = "button")
 
     companion object {
         const val PREFS_NAME = "github_prefs"
@@ -168,8 +167,8 @@ class FileEditorFragment : Fragment() {
 
         root.addView(header)
 
-        // ========== EDITOR AREA — MAY NUMERO SA GILID ==========
-        val scrollView = ScrollView(requireContext()).apply {
+        // ========== SCROLL VIEW ==========
+        scrollView = ScrollView(requireContext()).apply {
             id = View.generateViewId()
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -197,7 +196,7 @@ class FileEditorFragment : Fragment() {
             setPadding(4, 4, 0, 8)
         })
 
-        // ✅ KODIGO + NUMERO SA KALIWA
+        // ✅ EDITOR CONTAINER
         codeContainer = LinearLayout(requireContext()).apply {
             orientation = LinearLayout.HORIZONTAL
             setBackgroundColor(0xFF0F0F1A.toInt())
@@ -207,9 +206,8 @@ class FileEditorFragment : Fragment() {
             ).apply { setMargins(0, 0, 0, 12) }
         }
 
-        // ✅ KALIWA: MGA NUMERO NG LINYA
+        // ✅ LINE NUMBERS — KALIWA
         lineNumbers = TextView(requireContext()).apply {
-            id = View.generateViewId()
             setBackgroundColor(0xFF151528.toInt())
             setTextColor(0xFF666688.toInt())
             textSize = 11f
@@ -224,9 +222,8 @@ class FileEditorFragment : Fragment() {
         }
         codeContainer.addView(lineNumbers)
 
-        // ✅ KANAN: KODIGO — MAY TEXT WRAP NA!
+        // ✅ CODE EDITOR — KANAN
         codeEditor = EditText(requireContext()).apply {
-            id = View.generateViewId()
             setBackgroundColor(0xFF0F0F1A.toInt())
             setTextColor(0xFFFFFFFF.toInt())
             setHintTextColor(0xFF555577.toInt())
@@ -236,12 +233,8 @@ class FileEditorFragment : Fragment() {
             minHeight = 400
             setTypeface(Typeface.MONOSPACE)
             background = null
-            setHorizontallyScrolling(false)  // ✅ TEXT WRAP — BUMABALOT ANG MAHABANG LINYA!
-            layoutParams = LinearLayout.LayoutParams(
-                0,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                1f
-            )
+            setHorizontallyScrolling(false)  // ✅ TEXT WRAP
+            layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         }
         codeContainer.addView(codeEditor)
 
@@ -411,22 +404,26 @@ class FileEditorFragment : Fragment() {
 
     private val textWatcher = object : android.text.TextWatcher {
         override fun afterTextChanged(s: android.text.Editable?) {
-            updateLineNumbers()  // ✅ AWTO I-UPDATE ANG NUMERO SA GILID
+            updateLineNumbers()
             checkForErrors(s.toString())
             if (!isFullScreen) applySyntaxHighlighting()
+            // ✅ KUNG MAY NAKA-ANTAY NA PAGTALON — I-APLAY AGAD
+            pendingJump?.let { jump ->
+                pendingJump = null
+                applyJump(jump)
+            }
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     }
 
-    // ✅ I-UPDATE ANG NUMERO SA GILID — HIWALAY SA KODIGO
     private fun updateLineNumbers() {
-        val lineCount = codeEditor.text.lines().size
-        val maxWidth = lineCount.toString().length
-        lineNumbers.text = (1..lineCount).joinToString("\n") { "%${maxWidth}d".format(it) }
+        val text = codeEditor.text.toString()
+        val lines = text.lines()
+        val maxWidth = lines.size.toString().length
+        lineNumbers.text = lines.indices.joinToString("\n") { "%${maxWidth}d".format(it + 1) }
     }
 
-    // ✅ KUNIN ANG MALINIS NA KODIGO — WALANG NUMERO KUNG MAYROON
     private fun getCleanCode(): String {
         return codeEditor.text.toString()
             .lines()
@@ -479,47 +476,57 @@ class FileEditorFragment : Fragment() {
             .show()
     }
 
-    // ✅ I-APLAY ANG PAGLIPAT — EKSAKTONG POSISYON + HIGHLIGHT
-    private fun applyPendingJump() {
-        val start = pendingJumpStart ?: return
-        val end = pendingJumpEnd ?: return
-        val line = pendingJumpLine ?: return
+    // ✅ KALKULAHIN ANG TUMPAK NA POSISYON — TINANGGAL ANG MALING PARAAN!
+    private fun getLineStartPosition(text: String, targetLine: Int): Int {
+        if (targetLine <= 1) return 0
+        var pos = 0
+        val lines = text.lines()
+        for (i in 0 until targetLine - 1) {
+            pos += lines[i].length + 1  // +1 = bagong linya — tama na ito!
+        }
+        return pos
+    }
 
+    // ✅ TUMPAK NA PAGTALON — HIGHLIGHT + SCROLL
+    private fun scheduleJumpToLine(targetLine: Int) {
+        val cleanText = getCleanCode()
+        val lines = cleanText.lines()
+        if (targetLine !in 1..lines.size) return
+
+        val start = getLineStartPosition(cleanText, targetLine)
+        val end = start + lines[targetLine - 1].length
+
+        val jump = JumpTarget(targetLine, start, end)
+
+        // ✅ I-APLAY AGAD O I-ANTAY
+        if (codeEditor.text.toString() == cleanText) {
+            applyJump(jump)
+        } else {
+            pendingJump = jump
+        }
+
+        closePreviewDialog()
+    }
+
+    // ✅ TUNAY NA PAGTALON — HIGHLIGHT + SCROLL
+    private fun applyJump(jump: JumpTarget) {
         codeEditor.removeTextChangedListener(textWatcher)
-        codeEditor.setSelection(start, end)  // ✅ NAKA-HIGHLIGHT ANG BUONG LINYA!
+        codeEditor.setSelection(jump.selStart, jump.selEnd)  // ✅ NAKA-HIGHLIGHT!
         codeEditor.addTextChangedListener(textWatcher)
         codeEditor.requestFocus()
 
-        // ✅ I-SCROLL SA TAMANG LUGAR
-        codeEditor.post {
-            val layout = codeEditor.layout
-            if (layout != null) {
-                val lineTop = layout.getLineTop(line - 1)
-                val parent = codeEditor.parent as? ScrollView
-                parent?.smoothScrollTo(0, lineTop - 80)
-                    ?: codeEditor.scrollTo(0, lineTop - 80)
-            }
+        // ✅ SCROLL — HIGIT SA ISANG PAGKAKATAON PARA SIGURADO
+        repeat(3) { attempt ->
+            codeEditor.postDelayed({
+                val layout = codeEditor.layout ?: return@postDelayed
+                val lineTop = layout.getLineTop(jump.line - 1)
+                // ✅ ITAAS NG KONTI PARA MAKITA ANG BUONG LINYA
+                val offset = if (attempt == 0) lineTop - 100 else lineTop - 80
+                scrollView.smoothScrollTo(0, offset.coerceAtLeast(0))
+            }, (100 * (attempt + 1)).toLong())
         }
 
-        Toast.makeText(context, "📍 Linya $line", Toast.LENGTH_SHORT).show()
-        pendingJumpStart = null; pendingJumpEnd = null; pendingJumpLine = null
-    }
-
-    // ✅ I-ISARA ANG PREVIEW → ILIPAT AGAD
-    private fun scheduleJump(targetLine: Int, lines: List<String>) {
-        if (targetLine !in 1..lines.size) return
-
-        // ✅ KALKULAHIN ANG EKSAKTONG SIMULA AT DULO
-        var start = 0
-        for (i in 0 until targetLine - 1) start += lines[i].length + 1
-        val end = start + lines[targetLine - 1].length
-
-        pendingJumpStart = start
-        pendingJumpEnd = end
-        pendingJumpLine = targetLine
-
-        closePreviewDialog()
-        codeEditor.post { applyPendingJump() }
+        Toast.makeText(context, "📍 Linya ${jump.line}", Toast.LENGTH_SHORT).show()
     }
 
     private fun applySyntaxHighlighting() {
@@ -528,6 +535,7 @@ class FileEditorFragment : Fragment() {
         val colored = highlightCode(getCleanCode())
         codeEditor.removeTextChangedListener(textWatcher)
         codeEditor.setText(colored)
+        // ✅ IBALIK ANG PAGPILI PAGKATAPOS NG HIGHLIGHT
         codeEditor.setSelection(selStart, selEnd)
         codeEditor.addTextChangedListener(textWatcher)
     }
@@ -698,7 +706,7 @@ class FileEditorFragment : Fragment() {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(0xFF1A1A2E.toInt()); setPadding(16, 24, 16, 16)
             layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setOnClickListener { scheduleJump(1, lines) }
+            setOnClickListener { scheduleJumpToLine(1) }
             addView(TextView(requireContext()).apply {
                 text = "📱 $className"; textSize = 22f; setTextColor(0xFF40E0D0.toInt())
                 setTypeface(null, Typeface.BOLD); gravity = Gravity.CENTER
@@ -710,18 +718,22 @@ class FileEditorFragment : Fragment() {
         })
 
         listOf(
-            "Folder" to "folderSelect", "File" to "fileSelect", "I-LOAD" to "btnLoad",
-            "Kodigo" to "codeEditor", "I-save" to "btnSaveLocal", "I-push" to "btnPushGithub"
+            "Folder" to "folderSelect",
+            "File" to "fileSelect",
+            "I-LOAD" to "btnLoad",
+            "Kodigo" to "codeEditor",
+            "I-save" to "btnSaveLocal",
+            "I-push" to "btnPushGithub"
         ).forEach { (label, key) ->
             val lineNo = lines.indexOfFirst { it.contains(key, ignoreCase = true) }
             val target = if (lineNo < 0) 1 else lineNo + 1
             container.addView(Button(requireContext()).apply {
-                text = "📍 $label"
+                text = "📍 $label → Linya $target"
                 setBackgroundColor(0xFF1E1E2F.toInt())
                 setTextColor(0xFFFFFFFF.toInt())
                 layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                     .apply { setMargins(16, 4, 16, 4) }
-                setOnClickListener { scheduleJump(target, lines) }
+                setOnClickListener { scheduleJumpToLine(target) }
             })
         }
         return scroll
@@ -762,7 +774,7 @@ class FileEditorFragment : Fragment() {
             text = "\n💡 Pindutin kahit saan → lumipat sa linya 1"
             textSize = 12f; setTextColor(0xFF888888.toInt()); gravity = Gravity.CENTER
         })
-        container.setOnClickListener { scheduleJump(1, lines) }
+        container.setOnClickListener { scheduleJumpToLine(1) }
         return scroll
     }
 
@@ -845,8 +857,8 @@ class FileEditorFragment : Fragment() {
                 currentSha = jo.getString("sha")
                 originalContent = String(Base64.decode(jo.getString("content").replace("\n", ""), Base64.DEFAULT))
                 withContext(Dispatchers.Main) {
-                    codeEditor.setText(originalContent)  // ✅ WALANG NUMERO SA LOOB
-                    updateLineNumbers()                    // ✅ NUMERO SA GILID LANG
+                    codeEditor.setText(originalContent)
+                    updateLineNumbers()
                     showStatus("✅ Nai-load — ${originalContent.lines().size} linya", true)
                     checkForErrors(originalContent)
                     applySyntaxHighlighting()
