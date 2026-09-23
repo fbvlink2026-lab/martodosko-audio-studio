@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚗 Habal-Habal Rate Calculator + Admin Panel v14.0 — martodosko</title>
-    <meta name="description" content="Portal + Buong Pamamahala — Kita/Lugi Calculator + Transport System">
+    <title>🏍️ Riders Dispatcher System — v14.0</title>
     <meta name="author" content="martodosko">
+    <meta name="description" content="Habal-Habal Portal + Admin Panel — Pinagsamang Sistema">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏍️</text></svg>">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -15,205 +15,79 @@
             --p: #1565C0; --p-light: #E3F2FD; --s: #FF6F00;
             --ok: #43A047; --warn: #FFB300; --danger: #E53935;
             --bg: #F5F7FA; --card: #FFFFFF; --txt: #263238; --muted: #78909C;
-            --sd-width: 280px;
             --admin-dark: #1E293B; --admin-accent: #7C3AED; --admin-accent-light: #F3E8FF;
             --rider-online: #22C55E; --rider-busy: #F59E0B; --rider-offline: #6B7280;
         }
         body { background: var(--bg); color: var(--txt); min-height: 100vh; }
 
-        /* ===== SIDE MENU ===== */
-        .sd-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 998;
-            opacity: 0; visibility: hidden; transition: all .3s;
+        /* ===== LOGIN ===== */
+        .login-wrapper {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 20px; background: linear-gradient(135deg, var(--admin-dark) 0%, #334155 100%);
         }
-        .sd-overlay.open { opacity: 1; visibility: visible; }
-        .sd-menu {
-            position: fixed; top: 0; left: 0; bottom: 0; width: var(--sd-width);
-            background: white; z-index: 999; transform: translateX(-100%);
-            transition: transform .3s; overflow-y: auto;
+        .login-card {
+            background: white; border-radius: 24px; padding: 32px; width: 100%; max-width: 420px;
+            box-shadow: 0 10px 40px rgba(0,0,0,.3);
         }
-        .sd-menu.open { transform: translateX(0); }
-        .sd-header {
-            background: linear-gradient(90deg, #1565C0, #1976D2); color: white;
-            padding: 24px 20px;
+        .login-header { text-align: center; margin-bottom: 24px; }
+        .login-header h1 { font-size: 22px; color: var(--admin-dark); margin-bottom: 4px; }
+        .login-input {
+            width: 100%; padding: 14px 16px; border: 2px solid #E2E8F0; border-radius: 12px;
+            font-size: 16px; margin: 8px 0 16px;
         }
-        .sd-header h2 { font-size: 18px; margin-bottom: 4px; }
-        .sd-header p { font-size: 12px; opacity: .85; }
-        .sd-list { padding: 16px; }
-        .sd-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px 14px;
-            border-radius: 12px; cursor: pointer; margin-bottom: 4px;
-            transition: background .2s;
+        .login-input:focus { outline: none; border-color: var(--admin-accent); }
+        .btn-login {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(90deg, var(--admin-accent), #8B5CF6); color: white;
+            font-size: 16px; font-weight: 600; cursor: pointer;
         }
-        .sd-item:hover, .sd-item.active { background: var(--p-light); }
-        .sd-item.locked { opacity: .5; cursor: not-allowed; }
-        .sd-item.locked::after { content: "🔒"; margin-left: auto; }
-        .sd-item.admin-only { border-left: 3px solid var(--admin-accent); margin-left: -4px; padding-left: 10px; }
-        .sd-divider { height: 1px; background: #EEE; margin: 12px 0; }
-        .sd-footer { padding: 16px; font-size: 11px; color: var(--muted); text-align: center; border-top: 1px solid #EEE; margin-top: 8px; }
-        .menu-toggle {
-            position: fixed; top: 12px; left: 12px; z-index: 100;
-            width: 42px; height: 42px; border-radius: 50%; border: none;
-            background: white; box-shadow: 0 2px 6px rgba(0,0,0,.15);
-            font-size: 20px; cursor: pointer;
-        }
+        .error-msg { color: var(--danger); margin-top: 12px; display: none; font-weight: 500; }
 
-        /* ===== PAGES ===== */
-        .page { padding: 16px; padding-top: 60px; max-width: 480px; margin: 0 auto; }
-        .page-wide { max-width: 1200px; padding-top: 20px; }
-        .header {
-            background: linear-gradient(90deg, #1565C0, #1976D2); color: white;
-            padding: 20px; border-radius: 20px; margin-bottom: 20px;
+        /* ===== LAYOUT ===== */
+        .admin-system { display: none; min-height: 100vh; position: relative; }
+        .sidebar-toggle {
+            position: fixed; top: 12px; left: 12px; z-index: 900;
+            background: var(--admin-accent); color: white; border: none;
+            border-radius: 8px; width: 40px; height: 40px; font-size: 20px; cursor: pointer;
+            display: none;
         }
-        .header h1 { font-size: 20px; margin-bottom: 4px; }
-        .copyright { font-size: 11px; opacity: .7; margin-top: 8px; }
-        .hidden { display: none !important; }
-        .unlockable { filter: blur(3px); pointer-events: none; opacity: 0.5; transition: all .3s; }
-        .unlockable.unlocked { filter: none; pointer-events: auto; opacity: 1; }
-        .role-badge {
-            display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
-            margin-left: 8px;
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 149;
+            display: none; opacity: 0; transition: opacity .25s;
         }
-        .role-portal { background: var(--p-light); color: var(--p); }
-        .role-admin { background: var(--admin-accent-light); color: var(--admin-accent); }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            border: none; border-radius: 14px; padding: 12px 10px; font-size: 14px;
-            font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
-            transition: transform .1s; text-align: center; justify-content: center;
+        .sidebar-overlay.visible { display: block; opacity: 1; }
+        .admin-sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0; width: 270px; background: var(--admin-dark);
+            color: white; padding: 16px 0; overflow-y: auto; z-index: 150;
+            transition: transform .25s ease;
         }
-        .btn:active { transform: scale(.97); }
-        .btn-pri { background: var(--ok); color: white; }
-        .btn-sec { background: var(--s); color: white; }
-        .btn-gps { background: #6A1B9A; color: white; }
-        .btn-help { background: var(--danger); color: white; }
-        .btn-blue { background: var(--p); color: white; width: 100%; margin-top: 8px; }
-        .btn-admin { background: var(--admin-accent); color: white; }
-        .btn-out { background: transparent; border: 1px solid #CCC; color: var(--txt); }
-        .btn-sm { padding: 8px 12px; font-size: 13px; }
-        .btn-xs { padding: 4px 8px; font-size: 11px; border-radius: 8px; }
-        .btn-group { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-        .btn-group .btn { flex: 1; min-width: 100px; }
-        .share-bar { display: flex; gap: 6px; margin: 12px 0; flex-wrap: wrap; }
-        .share-btn { flex: 1; min-width: 80px; font-size: 12px; padding: 8px; }
-        .fb { background: #1877F2; color: white; }
-        .msg { background: #0099FF; color: white; }
-        .wa { background: #25D366; color: white; }
-        .copy { background: #7B1FA2; color: white; }
-
-        .card {
-            background: white; border-radius: 20px; padding: 20px;
-            margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        .sidebar-close {
+            display: none; position: absolute; top: 10px; right: 12px;
+            background: transparent; color: white; border: none; font-size: 24px; cursor: pointer;
         }
-        .card-alt { background: #FFF8E1; border-left: 4px solid var(--s); }
-        .stat {
-            border-radius: 14px; padding: 14px; margin-bottom: 14px; display: flex;
-            align-items: flex-start; gap: 10px; font-size: 14px; flex-wrap: wrap;
+        @media (max-width: 768px) {
+            .sidebar-toggle { display: block; }
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-sidebar.open { transform: translateX(0); }
+            .sidebar-close { display: block; }
+            .admin-main { margin-left: 0 !important; padding: 16px; padding-top: 60px; }
         }
-        .stat-load { background: var(--p-light); color: var(--p); }
-        .stat-ok { background: #E8F5E9; color: var(--ok); }
-        .stat-warn { background: #FFF3E0; color: var(--s); }
-        .stat-info { background: #F5F5F5; color: var(--muted); }
-        .stat-gps { background: #F3E5F5; color: #6A1B9A; }
-        .stat-ref { background: #F3E5F5; color: #7B1FA2; }
-        .stat-rent { background: #EDE7F6; color: #512DA8; }
-        .locked-panel {
-            background: #F5F5F5; border: 2px dashed #CCC; border-radius: 16px;
-            padding: 24px; text-align: center; margin: 16px 0;
+        .admin-brand { padding: 0 20px 16px; border-bottom: 1px solid #334155; margin-bottom: 8px; }
+        .admin-brand h2 { font-size: 17px; display: flex; align-items: center; gap: 8px; }
+        .admin-brand p { font-size: 11px; color: #94A3B8; margin-top: 4px; }
+        .admin-nav-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+            cursor: pointer; transition: all .2s; border-left: 3px solid transparent;
+            font-size: 14px;
         }
-        .locked-panel.unlocked { border: none; background: transparent; padding: 0; }
-        .lock-icon { font-size: 32px; margin-bottom: 8px; }
-
-        label { display: block; font-size: 14px; font-weight: 600; color: #546E7A; margin: 14px 0 6px; }
-        input, select, textarea {
-            width: 100%; padding: 12px 14px; border: 1px solid #DDD;
-            border-radius: 12px; font-size: 16px; background: white;
+        .admin-nav-item:hover, .admin-nav-item.active { background: rgba(124, 58, 237, .15); border-left-color: var(--admin-accent); }
+        .badge-nav { margin-left: auto; font-size: 10px; padding: 2px 6px; border-radius: 10px; background: var(--s); color: white; font-weight: bold; }
+        .admin-nav-section {
+            font-size: 11px; color: #94A3B8; padding: 12px 20px 4px; text-transform: uppercase; letter-spacing: 1px;
         }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p); }
-        .input-sm { max-width: 140px; }
-        .form-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
-        .form-group { flex: 1; min-width: 200px; }
-
-        #map-container, #p-map-container {
-            height: 260px; border-radius: 14px; overflow: hidden;
-            margin: 12px 0; border: 2px solid var(--p-light);
-            position: relative;
-        }
-        #map, #p-map { height: 100%; width: 100%; }
-        .gps-indicator {
-            position: absolute; top: 10px; right: 10px; z-index: 400;
-            background: white; padding: 6px 10px; border-radius: 20px;
-            font-size: 12px; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,.15);
-        }
-        .gps-indicator.active { background: #E8F5E9; color: var(--ok); }
-        .gps-indicator.inactive { background: #F5F5F5; color: var(--muted); }
-        .map-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 4px; }
-
-        .route-item {
-            background: white; border-radius: 16px; padding: 14px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,.05); flex-wrap: wrap;
-        }
-        .route-num {
-            width: 36px; height: 36px; border-radius: 50%; background: var(--p-light);
-            color: var(--p); font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .route-info { flex: 1; min-width: 160px; }
-        .route-name { font-weight: 600; font-size: 14px; word-break: break-word; }
-        .route-meta { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-        .route-actions { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
-        .icon-btn {
-            width: 36px; height: 36px; border-radius: 50%; border: none;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
-            transition: transform .1s;
-        }
-        .icon-btn:active { transform: scale(.92); }
-        .btn-go { background: #E8F5E9; color: var(--ok); }
-        .btn-add { background: #E3F2FD; color: var(--p); }
-        .btn-gps-icon { background: #F3E5F5; color: #6A1B9A; }
-        .btn-edit { background: #FFF3E0; color: var(--s); }
-        .btn-del { background: #FFEBEE; color: var(--danger); }
-
-        .res-row {
-            display: flex; justify-content: space-between; padding: 10px 12px;
-            border-radius: 10px; margin: 4px 0; font-size: 14px; flex-wrap: wrap; gap: 4px;
-        }
-        .res-hi { background: #E8F5E9; color: #2E7D32; font-weight: 600; }
-        .res-warn { background: #FFEBEE; color: #C62828; font-weight: 600; }
-        .divider { height: 1px; background: #EEE; margin: 12px 0; }
-        .divider-bold { height: 2px; background: #DDD; margin: 16px 0; }
-
-        .modal-bg {
-            position: fixed; inset: 0; background: rgba(0,0,0,.5);
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px; z-index: 1000; display: none;
-        }
-        .modal {
-            background: white; border-radius: 20px; padding: 24px; width: 100%; max-width: 420px;
-            max-height: 90vh; overflow-y: auto;
-        }
-        .modal-wide { max-width: 700px; }
-        .modal h3 { margin-bottom: 16px; }
-        .modal-btns { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; flex-wrap: wrap; }
-
-        .spin {
-            display: inline-block; width: 18px; height: 18px; border: 2px solid currentColor;
-            border-top-color: transparent; border-radius: 50%; animation: spin .8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .note { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
-        .val-ok { color: var(--ok); font-weight: 600; }
-        .val-gps { color: #6A1B9A; font-weight: 600; }
-        .explanation { background: #E8F5E9; border-left: 4px solid var(--ok); padding: 12px; margin: 12px 0; border-radius: 0 12px 12px 0; font-size: 13px; line-height: 1.5; }
-        .trip-type-selector { display: flex; gap: 10px; margin: 10px 0; }
-        .trip-type-btn { flex: 1; padding: 10px; border: 2px solid #DDD; background: white; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all .2s; }
-        .trip-type-btn.active { border-color: var(--p); background: var(--p-light); color: var(--p); }
-        .trip-type-btn.one.active { border-color: var(--s); background: #FFF3E0; color: var(--s); }
-        .saved-note { font-size: 11px; color: var(--ok); margin-top: 4px; }
-        .export-btns { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
-        .export-btns .btn { flex: 1; min-width: 120px; font-size: 13px; }
-
-        /* ===== ADMIN PANEL ===== */
+        .admin-nav-item.danger { color: #FCA5A5; margin-top: 8px; }
+        .admin-nav-item.danger:hover { background: rgba(220, 38, 38, .15); border-left-color: var(--danger); }
+        .admin-main { margin-left: 270px; padding: 24px; background: var(--bg); min-height: 100vh; }
         .admin-topbar {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
             padding-bottom: 16px; border-bottom: 1px solid #E2E8F0; flex-wrap: wrap; gap: 12px;
@@ -224,6 +98,56 @@
             padding: 8px 16px; border: none; border-radius: 10px; background: #F1F5F9;
             color: var(--admin-dark); cursor: pointer; font-weight: 500;
         }
+
+        /* ===== COMMON ===== */
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .card {
+            background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+            padding-bottom: 12px; border-bottom: 1px solid #F1F5F9; flex-wrap: wrap; gap: 10px;
+        }
+        .card-title { font-size: 17px; font-weight: 600; color: var(--admin-dark); }
+        .btn {
+            border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+            font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            transition: all .15s;
+        }
+        .btn:active { transform: scale(.97); }
+        .btn-primary { background: var(--admin-accent); color: white; }
+        .btn-success { background: var(--ok); color: white; }
+        .btn-warning { background: var(--s); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid #CBD5E1; color: var(--txt); }
+        .btn-sm { padding: 6px 12px; font-size: 13px; }
+        .btn-xs { padding: 4px 8px; font-size: 11px; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+        th { background: #F8FAFC; font-weight: 600; color: #475569; }
+        tr:hover { background: #FAFBFC; }
+        .badge {
+            display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+        }
+        .badge-pending { background: #FEF3C7; color: #D97706; }
+        .badge-confirmed { background: #DBEAFE; color: #1D4ED8; }
+        .badge-assigned { background: #EDE9FE; color: #7C3AED; }
+        .badge-done { background: #D1FAE5; color: #059669; }
+        .badge-cancelled { background: #FEE2E2; color: #DC2626; }
+        .badge-success { background: #E8F5E9; color: var(--ok); }
+        .badge-danger { background: #FFEBEE; color: var(--danger); }
+        .form-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+        .form-group { flex: 1; min-width: 200px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin: 10px 0 4px; }
+        input, select, textarea {
+            width: 100%; padding: 10px 12px; border: 1px solid #CBD5E1; border-radius: 10px;
+            font-size: 14px; background: white;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--admin-accent); }
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
         .stat-card {
             background: white; border-radius: 14px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,.04);
@@ -233,1008 +157,1332 @@
         .stat-value.purple { color: var(--admin-accent); }
         .stat-value.green { color: var(--ok); }
         .stat-value.orange { color: var(--s); }
+        .stat-value.red { color: var(--danger); }
         .stat-value.blue { color: #3B82F6; }
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
-        th { background: #F8FAFC; font-weight: 600; color: #475569; }
-        tr:hover { background: #FAFBFC; }
-        .badge {
-            display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+        .modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;
+            padding: 20px; z-index: 200; display: none;
         }
-        .badge-success { background: #E8F5E9; color: var(--ok); }
-        .badge-danger { background: #FFEBEE; color: var(--danger); }
-        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
-        .finance-card {
-            padding: 16px; border-radius: 12px; background: linear-gradient(135deg, #F8FAFC, #F3E8FF);
-            margin-bottom: 12px;
+        .modal {
+            background: white; border-radius: 20px; padding: 24px; width: 100%; max-width: 560px;
+            max-height: 90vh; overflow-y: auto;
         }
-        .finance-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #DDD6FE; }
-        .finance-row:last-child { border-bottom: none; font-weight: bold; font-size: 16px; padding-top: 12px; }
+        .modal h3 { margin-bottom: 16px; color: var(--admin-dark); }
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; flex-wrap: wrap; }
         .alert {
             padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 14px;
         }
         .alert-success { background: #E8F5E9; color: #1B5E20; border-left: 4px solid var(--ok); }
         .alert-danger { background: #FFEBEE; color: #B71C1C; border-left: 4px solid var(--danger); }
         .alert-purple { background: var(--admin-accent-light); color: #5B21B6; border-left: 4px solid var(--admin-accent); }
-        .tabs { display: flex; gap: 4px; border-bottom: 1px solid #E2E8F0; margin-bottom: 16px; flex-wrap: wrap; }
-        .tab { padding: 10px 18px; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; font-size: 14px; }
-        .tab.active { border-bottom-color: var(--admin-accent); color: var(--admin-accent); font-weight: 600; }
-        .apanel { display: none; }
-        .apanel.active { display: block; }
+        .alert-warning { background: #FFF8E1; color: #F57F17; border-left: 4px solid var(--s); }
+        .hidden { display: none !important; }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+        .copyright { font-size: 11px; color: #94A3B8; margin-top: 20px; text-align: center; }
+        
+        /* ===== ORDER & CUSTOMER SPECIFIC ===== */
+        .order-card {
+            border: 1px solid #E5E7EB; border-radius: 12px; padding: 16px; margin-bottom: 12px;
+            border-left: 4px solid; transition: transform .15s;
+        }
+        .order-card:hover { transform: translateX(4px); }
+        .order-pending { border-left-color: var(--warn); }
+        .order-confirmed { border-left-color: #3B82F6; }
+        .order-assigned { border-left-color: var(--admin-accent); }
+        .order-done { border-left-color: var(--ok); }
+        .order-cancelled { border-left-color: var(--danger); }
+        .customer-card {
+            display: flex; align-items: center; gap: 14px; padding: 14px; background: #F8FAFC; border-radius: 12px; margin-bottom: 10px;
+            border: 1px solid transparent; transition: border .2s;
+        }
+        .customer-card:hover { border-color: var(--admin-accent); }
+        .customer-avatar {
+            width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;
+        }
+        .customer-info { flex: 1; }
+        .customer-name { font-weight: 600; font-size: 15px; }
+        .customer-details { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .finance-card {
+            padding: 16px; border-radius: 12px; background: linear-gradient(135deg, #F8FAFC, #F3E8FF);
+            margin-bottom: 12px;
+        }
+        .finance-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #DDD6FE; }
+        .finance-row:last-child { border-bottom: none; font-weight: bold; font-size: 16px; padding-top: 12px; }
+        .ticket-card {
+            border: 1px solid #E5E7EB; border-radius: 12px; padding: 14px; margin-bottom: 10px;
+        }
+        .ticket-status { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .ticket-open { background: #FEF3C7; color: #D97706; }
+        .ticket-processing { background: #DBEAFE; color: #1D4ED8; }
+        .ticket-closed { background: #E5E7EB; color: #4B5563; }
+        #map-container {
+            height: 260px; border-radius: 14px; overflow: hidden;
+            margin: 12px 0; border: 2px solid var(--p-light);
+            position: relative;
+        }
+        #map { height: 100%; width: 100%; }
+
+        /* ===== RATE CALCULATOR STYLES ===== */
+        .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .calc-result { padding: 16px; border-radius: 12px; margin-top: 12px; }
+        .result-profit { background: #E8F5E9; border-left: 4px solid var(--ok); color: #1B5E20; }
+        .result-loss { background: #FFEBEE; border-left: 4px solid var(--danger); color: #B71C1C; }
+        .route-option {
+            padding: 12px; border: 1px solid #E5E7EB; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all .15s;
+        }
+        .route-option:hover, .route-option.selected { border-color: var(--admin-accent); background: var(--admin-accent-light); }
+        .help-box { background: #F8FAFC; border-radius: 12px; padding: 16px; font-size: 13px; line-height: 1.7; }
+        .help-box h4 { margin: 12px 0 6px; color: var(--admin-dark); }
+        .text-success { color: var(--ok); font-weight: 600; }
+        .text-danger { color: var(--danger); font-weight: 600; }
+        .text-warning { color: var(--warn); font-weight: 600; }
     </style>
 </head>
 <body>
 
-<!-- ===== VIEW SELECTOR ===== -->
-<div id="viewSelector" class="page" style="display:block;">
-    <div class="header">
-        <h1>🚗 HABAL-HABAL RATE CALCULATOR + ADMIN SYSTEM</h1>
-        <p>Versyon 14.0 • Ginawa ni martodosko</p>
-        <p class="copyright">© 2026 martodosko — Lahat ng Karapatang Nakareserba</p>
-    </div>
-
-    <div class="card">
-        <h3 style="margin-bottom:16px;">🔍 Pumili ng Pananaw</h3>
-        <div class="btn-group" style="margin-bottom:20px;">
-            <button class="btn btn-pri" style="flex:1;padding:20px 10px;" onclick="openPortalView()">
-                🧑‍💻 PORTAL VIEW<br>
-                <small style="opacity:.8;">Kuwenta + Ruta — Susi lang ang kailangan</small>
-            </button>
-            <button class="btn btn-admin" style="flex:1;padding:20px 10px;" onclick="openAdminLogin()">
-                👑 ADMIN PANEL<br>
-                <small style="opacity:.8;">Buong Pamamahala — Susi ng Admin</small>
-            </button>
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-wrapper" id="loginScreen">
+    <div class="login-card">
+        <div class="login-header">
+            <div style="font-size:48px;margin-bottom:12px;">🏍️</div>
+            <h1>Riders Dispatcher System</h1>
+            <p>Portal + Admin Panel — v14.0</p>
+            <p style="font-size:12px;color:#94A3B8;margin-top:8px;">Ginawa ni martodosko © 2026</p>
         </div>
-        <p class="note">💡 Ang Portal View ay para sa pang-araw-araw na pagkuwenta. Ang Admin Panel ay para sa pamamahala sa lahat ng datos.</p>
+        <label>🔑 Admin Master Key</label>
+        <input type="password" id="adminPassInput" class="login-input" placeholder="Ilagay ang susi...">
+        <button class="btn-login" onclick="adminLogin()">🔑 MAG-LOGIN</button>
+        <div class="error-msg" id="loginError">❌ Maling susi — subukan muli</div>
+        <div style="margin-top:16px;text-align:center;font-size:11px;color:#94A3B8;">
+            Default: <strong>admin110</strong>
+        </div>
     </div>
 </div>
 
-<!-- ===== PORTAL VIEW ===== -->
-<div id="portalView" class="page hidden">
-    <button class="menu-toggle" onclick="togglePortalMenu()">☰</button>
-    <div class="sd-overlay" id="portalOverlay" onclick="togglePortalMenu()"></div>
-    <nav class="sd-menu" id="portalMenu">
-        <div class="sd-header">
-            <h2>🚗 Portal View</h2>
-            <p>Versyon 14.0</p>
-            <span class="role-badge role-portal" id="portalRoleBadge">—</span>
-            <p class="copyright">© 2026 martodosko</p>
-        </div>
-        <div class="sd-list">
-            <div class="sd-item active" onclick="portalGoHome(); closePortalMenu()">🏠 Unang Pahina</div>
-            <div class="sd-item" onclick="openGPSRoute(); closePortalMenu()">📍 Realtime GPS</div>
-            <div class="sd-item" onclick="portalOpenAddRoute(); closePortalMenu()">➕ Bagong Ruta</div>
-            <div class="sd-item" onclick="portalOpenSettings(); closePortalMenu()">⚙️ Pagtatakda</div>
-            <div class="sd-divider"></div>
-            <div class="sd-item" id="portalAdminGate" onclick="checkAdminAccess()">🔑 Admin Panel</div>
-            <div class="sd-divider"></div>
-            <div class="sd-item" onclick="showHelp(); closePortalMenu()">📖 Tulong</div>
-            <div class="sd-item" onclick="backToSelector()">🔁 Palitan ang Pananaw</div>
-        </div>
-        <div class="sd-footer">
-            Ginawa ni <strong>martodosko</strong><br>
-            Bersyon 14.0 — Setyembre 2026
-        </div>
-    </nav>
+<!-- ===== MAIN SYSTEM WRAPPER ===== -->
+<div class="admin-system" id="adminSystem">
+    <button class="sidebar-toggle" id="sidebarToggleBtn">☰</button>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-    <div id="portalHome">
-        <div class="header">
-            <h1>🚗 HABAL-HABAL RATE CALCULATOR</h1>
-            <p style="opacity:.85;margin-top:4px;">📍 Realtime GPS + Mapa • Kita/Lugi Calculator</p>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <button class="sidebar-close" onclick="closeSidebar()">×</button>
+        <div class="admin-brand">
+            <h2>🏍️ RDS v14.0</h2>
+            <p>Riders Dispatcher<br>martodosko © 2026</p>
         </div>
-
-        <div id="portalKeyGate" class="card locked-panel">
-            <div class="lock-icon">🔑</div>
-            <h3>Ilagay ang Iyong Susi</h3>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Kailangan ng susi para makita ang mga ruta at kuwenta</p>
-            <input type="password" id="portalKeyInput" placeholder="Ilagay ang susi dito..." style="margin-bottom:12px;">
-            <button class="btn btn-blue" onclick="verifyPortalKey()">✅ Ipasok</button>
-        </div>
-
-        <div id="portalUnlockedContent" class="hidden">
-            <div class="share-bar">
-                <button class="btn share-btn fb" onclick="shareFB()">Facebook</button>
-                <button class="btn share-btn wa" onclick="shareWA()">WhatsApp</button>
-                <button class="btn share-btn copy" onclick="copyLink()">Kopyahin Link</button>
+        
+        <nav>
+            <div class="admin-nav-section">PANGUNAHING BUOD</div>
+            <div class="admin-nav-item active" data-panel="dashboard" onclick="switchPanel('dashboard')">
+                📊 Buod
             </div>
-
-            <div class="btn-group">
-                <button class="btn btn-gps" onclick="openGPSRoute()">📍 Realtime GPS</button>
-                <button class="btn btn-pri" onclick="portalOpenAddRoute()">➕ Bagong Ruta</button>
-                <button class="btn btn-sec" onclick="portalOpenSettings()">⚙️ Pagtatakda</button>
-                <button class="btn btn-help" onclick="showHelp()">📖 Tulong</button>
-            </div>
-
-            <div class="card" style="background:var(--p-light);">
-                <h3 style="color:var(--p);margin-bottom:8px;">📌 Kasalukuyang Pagtatakda</h3>
-                <p style="font-size:14px;"><strong>Gasolina:</strong> ₱<span id="p-show-gas">92.00</span>/L</p>
-                <p style="font-size:14px;margin-top:4px;"><strong>Piyesa/Araw:</strong> ₱<span id="p-show-maint">20.00</span></p>
-                <p style="font-size:14px;margin-top:4px;"><strong>Upa/Araw:</strong> ₱<span id="p-show-rent">0.00</span></p>
-                <p style="font-size:14px;margin-top:4px;"><strong>Km/Litro:</strong> <span id="p-show-kmpl">20.0</span> km/L</p>
-            </div>
-
-            <div class="explanation">
-                <strong>✅ Paano kinukuwenta:</strong><br>
-                Gastos sa Gas = Distansya ÷ Km/Litro × Presyo ng Gas<br>
-                Gastos sa Piyesa = (Piyesa+Upa ÷ Oras ng Trabaho) × Oras ng Biyahe<br>
-                Kabuuang Gastos = Gas + Piyesa<br>
-                Kita = Pamasahe − Kabuuang Gastos
-            </div>
-
-            <h3 style="margin:18px 0 12px;color:#455A64;">📋 Mga Ruta</h3>
-            <div id="portalRouteList"></div>
-        </div>
-    </div>
-
-    <div id="portalCalc" class="hidden">
-        <button class="btn btn-out" onclick="portalBackHome()" style="margin-bottom:16px;">← Bumalik</button>
-        <div class="card">
-            <h3 id="p-calc-name" style="margin-bottom:4px;"></h3>
-            <p id="p-calc-desc" style="font-size:13px;color:var(--p);margin-bottom:12px;"></p>
             
-            <div class="trip-type-selector">
-                <button class="trip-type-btn one" id="p-btn-one" onclick="portalSetTripType('one')">➡️ 1-Way</button>
-                <button class="trip-type-btn active" id="p-btn-round" onclick="portalSetTripType('round')">🔁 2-Way</button>
+            <div class="admin-nav-section">PAGTANTIYA NG PAMASAHE</div>
+            <div class="admin-nav-item" data-panel="ratecalc" onclick="switchPanel('ratecalc')">
+                🧮 Rate Calculator
             </div>
-
-            <div id="p-map-container">
-                <div id="p-map"></div>
+            
+            <div class="admin-nav-section">MGA ORDER & BIYAHE</div>
+            <div class="admin-nav-item" data-panel="orders" onclick="switchPanel('orders')">
+                📝 Mga Order
+                <span class="badge-nav" id="badgeOrderCount">0</span>
             </div>
+            <div class="admin-nav-item" data-panel="routes" onclick="switchPanel('routes')">
+                🛣️ Mga Ruta
+            </div>
+            <div class="admin-nav-item" data-panel="gps" onclick="switchPanel('gps')">
+                📍 GPS / Mapa
+            </div>
+            
+            <div class="admin-nav-section">PAMAMAHALA</div>
+            <div class="admin-nav-item" data-panel="riders" onclick="switchPanel('riders')">
+                🏍️ Mga Rider
+                <span class="badge-nav" id="badgeRiderCount">0</span>
+            </div>
+            <div class="admin-nav-item" data-panel="assign" onclick="switchPanel('assign')">
+                📤 Magtalaga
+            </div>
+            <div class="admin-nav-item" data-panel="tasks" onclick="switchPanel('tasks')">
+                ✅ Mga Gawain
+            </div>
+            
+            <div class="admin-nav-section">PANANALAPI</div>
+            <div class="admin-nav-item" data-panel="finance" onclick="switchPanel('finance')">
+                💰 Kita / Gastos
+            </div>
+            <div class="admin-nav-item" data-panel="records" onclick="switchPanel('records')">
+                📋 Talaan
+            </div>
+            
+            <div class="admin-nav-section">PAGTATAKDA</div>
+            <div class="admin-nav-item" data-panel="settings" onclick="switchPanel('settings')">
+                ⚙️ Pangkalahatan
+            </div>
+            <div class="admin-nav-item" data-panel="backup" onclick="switchPanel('backup')">
+                💾 Backup
+            </div>
+            <div class="admin-nav-item danger" onclick="confirmLogout()">
+                🚪 Mag-Logout
+            </div>
+        </nav>
+        <div class="copyright">© 2026 martodosko</div>
+    </aside>
 
-            <p style="font-weight:bold;color:var(--p);margin:12px 0;">
-                📏 Distansya: <span id="p-use-km" class="val-ok">0.00</span> km
-            </p>
-            <p style="font-weight:600;color:var(--ok);margin:4px 0 8px;">
-                ⛽ Konsumo: <span id="p-liter">0.00</span> L
-            </p>
-
-            <label>💰 Presyo ng Gasolina (₱/L)</label>
-            <input type="number" id="p-gas" step="0.01" placeholder="Hal. 92.00">
-
-            <label>💵 Singil sa Pamasahe (₱)</label>
-            <input type="number" id="p-fare" step="0.01" placeholder="Ilagay ang halaga">
-
-            <button class="btn btn-blue" onclick="portalDoCalc()" style="margin-top:12px;">✅ KUWENTAHIN</button>
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="admin-topbar">
+            <h1 id="panelTitle">📊 Buod ng Sistema</h1>
+            <div class="admin-user">
+                <span>Admin</span>
+                <span class="admin-role">MASTER</span>
+                <button class="btn-logout" onclick="confirmLogout()">🚪 Lumabas</button>
+            </div>
         </div>
-        <div id="p-results" class="card hidden">
-            <h3 style="text-align:center;margin-bottom:16px;">📊 BUOD NG BIYAHE</h3>
-            <div id="p-res-body"></div>
+
+        <!-- PANEL: DASHBOARD -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Kabuuang Order</div>
+                    <div class="stat-value purple" id="statOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Natapos</div>
+                    <div class="stat-value green" id="statDone">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Kabuuang Rider</div>
+                    <div class="stat-value purple" id="statRiders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Malinis na Kita</div>
+                    <div class="stat-value blue" id="statIncome">₱0.00</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">ℹ️ Impormasyon</span>
+                </div>
+                <p><strong>Bersyon:</strong> Riders Dispatcher System v14.0</p>
+                <p><strong>May-akda:</strong> martodosko</p>
+                <p><strong>Pag-iimbak:</strong> Lokal — sa telepono lamang</p>
+                <p class="alert alert-purple" style="margin-top:12px;">
+                    💡 I-export nang madalas bilang backup.
+                </p>
+            </div>
         </div>
-    </div>
-</div>
 
-<!-- ===== ADMIN LOGIN ===== -->
-<div id="adminLoginView" class="page hidden" style="max-width:420px;">
-    <div class="card">
-        <h2 style="text-align:center;margin-bottom:20px;">🔑 Admin Login</h2>
-        <label>Admin Master Key</label>
-        <input type="password" id="adminPassInput" placeholder="Ilagay ang susi...">
-        <p id="adminLoginErr" style="color:var(--danger);margin:8px 0;display:none;">❌ Maling susi</p>
-        <button class="btn btn-admin" style="width:100%;margin-top:12px;" onclick="doAdminLogin()">🔑 MAG-LOGIN</button>
-        <button class="btn btn-out" style="width:100%;margin-top:8px;" onclick="backToSelector()">← Bumalik</button>
-    </div>
-</div>
+        <!-- PANEL: RATE CALCULATOR -->
+        <div class="panel" id="panel-ratecalc">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🧮 Habal-Habal Rate Calculator</span>
+                    <div class="btn-group">
+                        <button class="btn btn-outline btn-sm" onclick="toggleHelp()">❓ Tulong</button>
+                        <button class="btn btn-primary btn-sm" onclick="loadCalcRoutes()">🔄 I-refresh</button>
+                    </div>
+                </div>
 
-<!-- ===== ADMIN FULL PANEL ===== -->
-<div id="adminFullPanel" class="page-wide hidden">
-    <div class="admin-topbar">
-        <h1 id="adminPageTitle">📊 Buod ng Sistema</h1>
-        <div class="admin-user">
-            <span>Admin</span>
-            <span class="admin-role">MASTER</span>
-            <button class="btn-logout" onclick="doAdminLogout()">🚪 Lumabas</button>
+                <!-- Help Section -->
+                <div id="calcHelpSection" class="help-box hidden">
+                    <h4>📖 PAANO GUMAMIT</h4>
+                    <p><strong>Layunin:</strong> Alamin kung lugi o kumita sa biyahe, at kung magkano dapat ang singil.</p>
+                    
+                    <h4>📐 PORMULA</h4>
+                    <p>• <strong>Gastos sa Gasolina</strong> = (Km ÷ km/L) × Presyo/Litro</p>
+                    <p>• <strong>Piyesa/Araw</strong> = Pang-araw-araw na gastos sa pagkumpuni</p>
+                    <p>• <strong>Oras na Gastos</strong> = (Piyesa ÷ Oras/Araw) × Oras ng Biyahe</p>
+                    <p>• <strong>Kabuuang Gastos</strong> = Gasolina + Oras na Gastos</p>
+                    <p>• <strong>Malinis na Kita</strong> = Pamasahe − Kabuuang Gastos</p>
+                    
+                    <h4>✅ KUMITA vs ❌ LUGI</h4>
+                    <p>• <span class="text-success">KUMITA</span> — Kapag positibo ang resulta</p>
+                    <p>• <span class="text-danger">LUGI</span> — Kapag negatibo ang resulta</p>
+                    <p>• <span class="text-warning">BREAK-EVEN</span> — Pinakamababang pamasahe na hindi lugi</p>
+                    
+                    <h4>💡 TANDAAN</h4>
+                    <p>• I-set ang presyo ng gasolina at piyesa sa <strong>Pangkalahatan</strong> na tab</p>
+                    <p>• I-save ang ruta para magamit ulit</p>
+                    <p>• Ang 2-way = dobleng distansya</p>
+                </div>
+
+                <!-- Select Route -->
+                <h4 style="margin:20px 0 10px;">🗺️ Pumili ng Ruta</h4>
+                <div id="calcRoutesList" style="margin-bottom:16px;">
+                    <p class="empty-state" style="padding:10px 0;">Naglo-load...</p>
+                </div>
+
+                <!-- Or Manual Entry -->
+                <h4 style="margin:20px 0 10px;">✍️ O Ipasok nang Manwal</h4>
+                <div class="calc-grid">
+                    <div class="form-group">
+                        <label>Pangalan ng Ruta</label>
+                        <input type="text" id="cName" placeholder="Hal. Lopez → Calauag">
+                    </div>
+                    <div class="form-group">
+                        <label>Distansya (km / isang daan)</label>
+                        <input type="number" id="cKm" step="0.01" min="0" placeholder="Hal. 12.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Uri ng Biyahe</label>
+                        <select id="cType">
+                            <option value="two">🔁 Two-Way (Pabalik-balik)</option>
+                            <option value="one">➡️ One-Way (Isang daan)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Singil na Pamasahe (₱)</label>
+                        <input type="number" id="cFare" step="1" min="0" placeholder="Hal. 150">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="doCalculate()">🧮 KUWENTAHIN</button>
+                <button class="btn btn-success" style="margin-left:8px;" onclick="saveCalcRoute()">💾 I-save Bilang Ruta</button>
+
+                <!-- Result -->
+                <div id="calcResult" class="hidden" style="margin-top:20px;">
+                    <h3>📋 RESULTA</h3>
+                    <div id="calcResultBody"></div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div style="display:flex;gap:20px;flex-wrap:wrap;">
-        <aside style="width:240px;flex-shrink:0;">
-            <div class="card" style="padding:16px;">
-                <div style="text-align:center;margin-bottom:16px;">
-                    <div style="font-size:32px;">🏍️</div>
-                    <h3 style="margin-top:8px;">Admin Panel v14</h3>
-                    <p style="font-size:11px;color:var(--muted);">martodosko © 2026</p>
+        <!-- PANEL: ORDERS -->
+        <div class="panel" id="panel-orders">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📝 Mga Order / Pagbiyahe</span>
+                    <button class="btn btn-primary" onclick="openOrderModal()">➕ Bagong Order</button>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:4px;">
-                    <div class="sd-item active admin-only" data-apanel="dashboard" onclick="switchAdminPanel('dashboard')">📊 Buod</div>
-                    <div class="sd-divider"></div>
-                    <div class="sd-item admin-only" data-apanel="routes" onclick="switchAdminPanel('routes')">🛣️ Mga Ruta</div>
-                    <div class="sd-item admin-only" data-apanel="finance" onclick="switchAdminPanel('finance')">💰 Pananalapi</div>
-                    <div class="sd-item admin-only" data-apanel="settings" onclick="switchAdminPanel('settings')">⚙️ Pagtatakda</div>
-                    <div class="sd-item admin-only" data-apanel="keys" onclick="switchAdminPanel('keys')">🔑 Susi</div>
-                    <div class="sd-divider"></div>
-                    <div class="sd-item" onclick="backToSelector()">🔁 Palitan ang Pananaw</div>
+                <div id="ordersList" class="table-container">
+                    <p class="empty-state">Naglo-load...</p>
                 </div>
             </div>
-        </aside>
+        </div>
 
-        <main style="flex:1;min-width:300px;">
-            <!-- DASHBOARD -->
-            <div id="ap-dashboard" class="apanel active">
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Kabuuang Ruta</div>
-                        <div class="stat-value purple" id="a-stat-routes">0</div>
+        <!-- PANEL: ROUTES -->
+        <div class="panel" id="panel-routes">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🛣️ Listahan ng Ruta</span>
+                    <button class="btn btn-primary" onclick="openRouteModal()">➕ Bagong Ruta</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Pangalan</th>
+                            <th>Simula</th>
+                            <th>Dulo</th>
+                            <th>Km</th>
+                            <th>Pamasahe</th>
+                            <th>Aksyon</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routesBody">
+                        <tr><td colspan="7" class="empty-state">Wala pang ruta.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PANEL: GPS / MAP -->
+        <div class="panel" id="panel-gps">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📍 GPS at Mapa</span>
+                </div>
+                <div id="map-container">
+                    <div id="map"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Simula</label>
+                        <input type="text" id="gpsFrom" placeholder="Hal. Lopez, Quezon">
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Kabuuang Biyahe</div>
-                        <div class="stat-value orange" id="a-stat-trips">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Kabuuang Kita</div>
-                        <div class="stat-value green" id="a-stat-income">₱0.00</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Aktibong Susi</div>
-                        <div class="stat-value blue" id="a-stat-keys">0</div>
+                    <div class="form-group">
+                        <label>Dulo</label>
+                        <input type="text" id="gpsTo" placeholder="Hal. Calauag, Quezon">
                     </div>
                 </div>
-                <div class="card">
-                    <h3 style="margin-bottom:12px;">ℹ️ Sistema</h3>
-                    <p><strong>Bersyon:</strong> v14.0</p>
-                    <p><strong>May-akda:</strong> martodosko</p>
-                    <p><strong>Imbakan:</strong> Lokal na Telepono (LocalStorage)</p>
-                    <p class="alert alert-purple" style="margin-top:12px;">
-                        💡 Gumamit ng "I-Export" para makagawa ng backup. Huwag burahin nang walang kopya.
-                    </p>
-                    <div class="export-btns">
-                        <button class="btn btn-pri" onclick="exportData()">📤 I-Export</button>
-                        <button class="btn btn-out" onclick="importData()">📥 I-Import</button>
-                    </div>
+                <button class="btn btn-primary" onclick="fetchGPSRoute()">🗺️ Kumuha Ruta</button>
+                <p id="gpsResult" style="margin-top:12px;"></p>
+            </div>
+        </div>
+
+        <!-- PANEL: RIDERS -->
+        <div class="panel" id="panel-riders">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🏍️ Mga Rider</span>
+                    <button class="btn btn-primary" onclick="openRiderModal()">➕ Magdagdag</button>
+                </div>
+                <div id="ridersList">
+                    <p class="empty-state">Naglo-load...</p>
                 </div>
             </div>
+        </div>
 
-            <!-- ROUTES -->
-            <div id="ap-routes" class="apanel hidden">
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
-                        <h3>🛣️ Pamamahala sa Ruta</h3>
-                        <button class="btn btn-pri" onclick="adminAddRoute()">➕ Bagong Ruta</button>
-                    </div>
-                    <div id="adminRoutesList"></div>
+        <!-- PANEL: ASSIGN -->
+        <div class="panel" id="panel-assign">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📤 Magtalaga ng Order sa Rider</span>
                 </div>
-            </div>
-
-            <!-- FINANCE -->
-            <div id="ap-finance" class="apanel hidden">
-                <div class="card">
-                    <h3 style="margin-bottom:16px;">💰 Pananalapi at Kita</h3>
-                    <div class="finance-card">
-                        <div class="finance-row">
-                            <span>Kabuuang Pamasahe</span>
-                            <span id="fin-fare">₱0.00</span>
-                        </div>
-                        <div class="finance-row">
-                            <span>− Kabuuang Gastos sa Gasolina</span>
-                            <span id="fin-gas">₱0.00</span>
-                        </div>
-                        <div class="finance-row">
-                            <span>− Iba pang Gastos</span>
-                            <span id="fin-other">₱0.00</span>
-                        </div>
-                        <div class="finance-row">
-                            <span>💵 MALINIS NA KITA</span>
-                            <span id="fin-net" style="color:var(--ok);">₱0.00</span>
-                        </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pumili ng Order</label>
+                        <select id="assignOrder">
+                            <option value="">— Pumili —</option>
+                        </select>
                     </div>
-                    <div id="adminFinanceList" style="margin-top:20px;"></div>
-                </div>
-            </div>
-
-            <!-- SETTINGS -->
-            <div id="ap-settings" class="apanel hidden">
-                <div class="card">
-                    <h3 style="margin-bottom:16px;">⚙️ Pangkalahatang Pagtatakda</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Presyo ng Gasolina (₱/Litro)</label>
-                            <input type="number" id="a-gas-global" step="0.01" value="92.00">
-                        </div>
-                        <div class="form-group">
-                            <label>Piyesa / Araw (₱)</label>
-                            <input type="number" id="a-maint" step="1" value="20">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Upa / Boundary / Araw (₱)</label>
-                            <input type="number" id="a-rent" step="1" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label>Oras ng Trabaho / Araw</label>
-                            <input type="number" id="a-work-hours" step="0.5" value="8">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Motor — Km bawat Litro</label>
-                            <input type="number" id="a-km-per-l" step="0.1" value="20">
-                        </div>
-                        <div class="form-group">
-                            <label>Layunin sa Kita / Araw (₱)</label>
-                            <input type="number" id="a-daily-goal" step="1" value="300">
-                        </div>
-                    </div>
-                    <button class="btn btn-pri" onclick="saveAllAdminSettings()" style="margin-top:12px;">💾 I-save ang Lahat</button>
-                    <p id="adminSaveNote" class="saved-note hidden">✅ Nakatago na!</p>
-                </div>
-            </div>
-
-            <!-- KEYS -->
-            <div id="ap-keys" class="apanel hidden">
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
-                        <h3>🔑 Pamamahala sa Susi</h3>
-                        <button class="btn btn-pri" onclick="adminAddKey()">➕ Lumikha ng Susi</button>
-                    </div>
-                    <p class="note" style="margin-bottom:12px;">Ang susi ay ibinibigay sa mga pinapayagang makagamit ng Portal View</p>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Pangalan</th>
-                                    <th>Antas</th>
-                                    <th>Susi</th>
-                                    <th>Katayuan</th>
-                                    <th>Aksyon</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminKeysBody"></tbody>
-                        </table>
+                    <div class="form-group">
+                        <label>Pumili ng Rider</label>
+                        <select id="assignRider">
+                            <option value="">— Pumili —</option>
+                        </select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Pamasahe (₱)</label>
+                        <input type="number" id="assignFare" step="1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Komisyon (₱)</label>
+                        <input type="number" id="assignComm" step="1" min="0">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="doAssign()">📤 ITALAGA</button>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <!-- PANEL: TASKS -->
+        <div class="panel" id="panel-tasks">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">✅ Mga Gawain</span>
+                </div>
+                <div id="tasksList">
+                    <p class="empty-state">Wala pang gawain.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: FINANCE -->
+        <div class="panel" id="panel-finance">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">💰 Pananalapi</span>
+                </div>
+                <div class="finance-card">
+                    <h3>Buod</h3>
+                    <div class="finance-row"><span>Kabuuang Kita</span><span id="finTotalFare">₱0.00</span></div>
+                    <div class="finance-row"><span>− Kabuuang Gastos</span><span id="finTotalCost">₱0.00</span></div>
+                    <div class="finance-row"><span>💵 Malinis na Kita</span><span id="finNet">₱0.00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: RECORDS -->
+        <div class="panel" id="panel-records">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📋 Talaan ng Biyahe</span>
+                    <button class="btn btn-outline" onclick="exportRecords()">📤 I-Export</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Oras</th>
+                            <th>Ruta</th>
+                            <th>Pamasahe</th>
+                            <th>Gastos</th>
+                            <th>Net Kita</th>
+                            <th>Katayuan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody">
+                        <tr><td colspan="6" class="empty-state">Wala pang talaan.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PANEL: SETTINGS -->
+        <div class="panel" id="panel-settings">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">⚙️ Pangkalahatang Pagtatakda</span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Presyo ng Gasolina (₱/Litro)</label>
+                        <input type="number" id="gasPrice" step="0.01" value="92.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Piyesa/Araw (₱)</label>
+                        <input type="number" id="maint" step="1" value="20">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Konsumo ng Sasakyan (km/Litro)</label>
+                        <input type="number" id="kmPerLiter" step="0.1" value="20.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Oras ng Trabaho/Araw</label>
+                        <input type="number" id="workHours" step="0.5" value="8">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="saveSettings()">💾 I-save</button>
+                <p id="saveNote" class="alert alert-success hidden" style="margin-top:12px;">✅ Nakatakda na!</p>
+            </div>
+        </div>
+
+        <!-- PANEL: BACKUP -->
+        <div class="panel" id="panel-backup">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">💾 Backup at Pagbabalik</span>
+                </div>
+                <button class="btn btn-primary" onclick="doBackup()">📤 I-Export Lahat</button>
+                <h4 style="margin:20px 0 10px;">📥 I-Balik</h4>
+                <input type="file" id="restoreFile" accept=".json" onchange="doRestore(event)">
+            </div>
+        </div>
+    </main>
 </div>
 
 <!-- ===== MODALS ===== -->
-<div id="addRouteModal" class="modal-bg">
+<div class="modal-bg" id="orderModal">
     <div class="modal">
-        <h3 id="arm-title">➕ Bagong Ruta</h3>
-        <input type="hidden" id="arm-id">
-        <label>Pangalan ng Ruta</label>
-        <input type="text" id="arm-name" placeholder="Hal. Lopez → Calauag">
+        <h3 id="orderModalTitle">➕ Bagong Order</h3>
+        <input type="hidden" id="editOrderId">
         <label>Simula</label>
-        <input type="text" id="arm-start" placeholder="Hal. Lopez, Quezon">
+        <input type="text" id="oFrom">
         <label>Dulo</label>
-        <input type="text" id="arm-end" placeholder="Hal. Calauag, Quezon">
-        <label>Distansya (km / isang daan)</label>
-        <input type="number" id="arm-km" step="0.01" placeholder="Hal. 12.00">
-        <label>Inirerekomendang Singil (₱ / 2-Way)</label>
-        <input type="number" id="arm-fare" step="1" placeholder="Hal. 150">
+        <input type="text" id="oTo">
+        <label>Distansya (km)</label>
+        <input type="number" id="oKm" step="0.01">
+        <label>Pamasahe (₱)</label>
+        <input type="number" id="oFare" step="1">
+        <label>Uri</label>
+        <select id="oType">
+            <option value="two">🔁 Two-Way</option>
+            <option value="one">➡️ One-Way</option>
+        </select>
         <div class="modal-btns">
-            <button class="btn btn-out" onclick="closeAddRouteModal()">Isara</button>
-            <button class="btn btn-pri" onclick="saveAddRoute()">💾 I-save</button>
+            <button class="btn btn-outline" onclick="closeModal('orderModal')">Isara</button>
+            <button class="btn btn-success" onclick="saveOrder()">💾 I-save</button>
         </div>
     </div>
 </div>
 
-<div id="helpModal" class="modal-bg">
+<div class="modal-bg" id="routeModal">
     <div class="modal">
-        <h3>📖 Tulong — Buong Detalye</h3>
-        <div style="font-size:14px;line-height:1.7;max-height:70vh;overflow-y:auto;">
-            <p><strong>🔑 Portal View</strong> — Ilagay ang susi para makapagsimula. Pwede kang magkuwenta, magdagdag ng ruta, at magtala ng biyahe.</p>
-            <p><strong>👑 Admin Panel</strong> — Buong kontrol: pamahalaan ang mga ruta, susi, pagtatakda, at talaan ng kita.</p>
-            <p><strong>📍 GPS</strong> — Pindutin para sukatin ang tunay na distansya. Sa hinaharap: awtomatikong pagkuha ng distansya mula sa mapa.</p>
-            <hr style="border:none;border-top:1px solid #EEE;margin:12px 0;">
-            <p><strong>💰 PAANO KINUKUWENTA:</strong></p>
-            <p>• Gastos sa Gasolina = (Distansya ÷ Km bawat Litro) × Presyo bawat Litro</p>
-            <p>• Para sa 2-Way: I-doble ang distansya</p>
-            <p>• Gastos sa Piyesa/Upa = (Piyesa+Upa ÷ Oras ng Trabaho) × Tinatayang Oras ng Biyahe</p>
-            <p>• Kabuuang Gastos = Gastos sa Gasolina + Gastos sa Piyesa/Upa</p>
-            <p>• <strong>Kita = Pamasahe − Kabuuang Gastos</strong></p>
-            <p>• Kung positibo = KUMITA ✅ | Kung negatibo = LUGI ❌</p>
-            <hr style="border:none;border-top:1px solid #EEE;margin:12px 0;">
-            <p><strong>📌 HALIMBAWA:</strong></p>
-            <p>• Distansya: 12 km (isang daan) → 24 km (2-way)</p>
-            <p>• Konsumo: 24 km ÷ 20 km/L = 1.2 L</p>
-            <p>• Gastos sa Gas: 1.2 L × ₱92 = ₱110.40</p>
-            <p>• Piyesa: ₱20/araw ÷ 8 oras = ₱2.50/oras</p>
-            <p>• Kabuuang Gastos: ₱110.40 + ₱2.50 = ₱112.90</p>
-            <p>• Pamasahe: ₱150 → Kita: ₱37.10 ✅</p>
-            <hr style="border:none;border-top:1px solid #EEE;margin:12px 0;">
-            <p><strong>🔑 Pamamahala sa Susi</strong> — Ang Admin ay lumilikha ng susi at ibinibigay sa mga pinapayagang gumamit ng Portal View.</p>
-            <p><strong>💾 Imbakan</strong> — Lahat ng datos ay nakatago sa telepono. Gumamit ng Export/Import para makagawa ng backup.</p>
-        </div>
+        <h3 id="routeModalHeader">➕ Bagong Ruta</h3>
+        <input type="hidden" id="editRouteId">
+        <label>Pangalan</label>
+        <input type="text" id="rName">
+        <label>Simula</label>
+        <input type="text" id="rStart">
+        <label>Dulo</label>
+        <input type="text" id="rEnd">
+        <label>Distansya (km/isang daan)</label>
+        <input type="number" id="rKm" step="0.01">
+        <label>Singil 2-Way (₱)</label>
+        <input type="number" id="rFare" step="1">
         <div class="modal-btns">
-            <button class="btn btn-pri" onclick="closeHelpModal()">Naiintindihan ✅</button>
+            <button class="btn btn-outline" onclick="closeModal('routeModal')">Isara</button>
+            <button class="btn btn-success" onclick="saveRoute()">💾 I-save</button>
         </div>
     </div>
 </div>
 
-<div id="gpsModal" class="modal-bg">
+<div class="modal-bg" id="riderModal">
     <div class="modal">
-        <h3>📍 GPS Distansya</h3>
-        <p id="gps-status" style="margin:12px 0;">Hinihintay ang lokasyon...</p>
-        <p><strong>Distansya:</strong> <span id="gps-distance">0.00</span> km</p>
+        <h3>➕ Magdagdag ng Rider</h3>
+        <label>Pangalan</label>
+        <input type="text" id="rdName">
+        <label>Numero</label>
+        <input type="text" id="rdPhone">
+        <label>Katayuan</label>
+        <select id="rdStatus">
+            <option value="online">🟢 Online</option>
+            <option value="busy">🟡 Abala</option>
+            <option value="offline">⚪ Hindi Available</option>
+        </select>
         <div class="modal-btns">
-            <button class="btn btn-out" onclick="stopGPS()">Itigil</button>
-            <button class="btn btn-pri" onclick="useGPSDistance()">Gamitin</button>
+            <button class="btn btn-outline" onclick="closeModal('riderModal')">Isara</button>
+            <button class="btn btn-success" onclick="saveRider()">💾 I-save</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="confirmModal">
+    <div class="modal">
+        <h3 id="confirmTitle">⚠️ Sigurado ka ba?</h3>
+        <p id="confirmText"></p>
+        <div class="modal-btns">
+            <button class="btn btn-outline" onclick="closeModal('confirmModal')">Hindi</button>
+            <button class="btn btn-danger" id="confirmYes">Oo</button>
         </div>
     </div>
 </div>
 
 <script>
-// ===== DATA STORE =====
-const STORAGE_KEYS = {
-    SETTINGS: 'hrc_settings',
-    ROUTES: 'hrc_routes',
-    KEYS: 'hrc_keys',
-    TRIPS: 'hrc_trips',
-    ADMIN_KEY: 'martodosko_admin_2026'
+// ========== KONFIGURASYON ==========
+const STORAGE = {
+    pass: 'rds_pass',
+    orders: 'rds_orders',
+    routes: 'rds_routes',
+    riders: 'rds_riders',
+    tasks: 'rds_tasks',
+    records: 'rds_records',
+    settings: 'rds_settings'
 };
+const DEFAULT_PASS = 'admin110';
+const DEFAULT_ROUTES = [
+    { id:1, name:'Lopez → Calauag', start:'Lopez, Quezon', end:'Calauag, Quezon', km:12.0, fare:150 },
+    { id:2, name:'Calauag Bayan → Sumilang BLISS', start:'Calauag, Quezon', end:'Sumilang, Calauag', km:5.5, fare:80 },
+    { id:3, name:'Lopez → Gumaca', start:'Lopez, Quezon', end:'Gumaca, Quezon', km:18.0, fare:200 }
+];
 
-let appState = {
-    portalUnlocked: false,
-    currentRouteId: null,
-    tripType: 'round',
-    currentKm: 0,
-    portalMap: null,
-    gpsWatchId: null,
-    gpsLastLat: null,
-    gpsLastLng: null,
-    gpsDistance: 0
-};
+let map = null;
+let currentConfirm = null;
+let selectedCalcRouteId = null;
 
-function getStore(key) {
-    try { return JSON.parse(localStorage.getItem(key)) || {}; }
-    catch { return {}; }
+// ========== TULONG ==========
+function now() { return new Date().toLocaleString('fil-PH'); }
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function showConfirm(msg, fn) {
+    document.getElementById('confirmText').textContent = msg;
+    document.getElementById('confirmModal').style.display = 'flex';
+    currentConfirm = fn;
 }
-function setStore(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+document.addEventListener('click', e => {
+    if (e.target.id === 'confirmYes' && currentConfirm) {
+        currentConfirm();
+        closeModal('confirmModal');
+    }
+});
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function toggleHelp() {
+    document.getElementById('calcHelpSection').classList.toggle('hidden');
 }
 
-function getSettings() {
-    const s = getStore(STORAGE_KEYS.SETTINGS);
-    return {
-        gasPrice: s.gasPrice ?? 92.00,
-        maintenance: s.maintenance ?? 20,
-        rent: s.rent ?? 0,
-        workHours: s.workHours ?? 8,
-        kmPerLiter: s.kmPerLiter ?? 20,
-        dailyGoal: s.dailyGoal ?? 300
+// ========== LOGIN ==========
+function getPass() { return localStorage.getItem(STORAGE.pass) || DEFAULT_PASS; }
+function adminLogin() {
+    if (document.getElementById('adminPassInput').value === getPass()) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminSystem').style.display = 'block';
+        initData();
+        loadDashboard();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
+function confirmLogout() {
+    if (confirm('Lumabas na ba?')) {
+        document.getElementById('adminSystem').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('adminPassInput').value = '';
+    }
+}
+
+// ========== SIDEBAR ==========
+function switchPanel(id) {
+    document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.toggle('active', n.dataset.panel === id));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${id}`));
+    const titles = {
+        dashboard:'📊 Buod', ratecalc:'🧮 Rate Calculator',
+        orders:'📝 Mga Order', routes:'🛣️ Ruta', gps:'📍 GPS/Mapa',
+        riders:'🏍️ Mga Rider', assign:'📤 Magtalaga', tasks:'✅ Gawain',
+        finance:'💰 Pananalapi', records:'📋 Talaan', settings:'⚙️ Pagtatakda', backup:'💾 Backup'
     };
+    document.getElementById('panelTitle').textContent = titles[id] || id;
+    
+    if (id === 'dashboard') loadDashboard();
+    if (id === 'ratecalc') loadCalcRoutes();
+    if (id === 'orders') renderOrders();
+    if (id === 'routes') renderRoutes();
+    if (id === 'gps') initMap();
+    if (id === 'riders') renderRiders();
+    if (id === 'assign') loadAssignOpts();
+    if (id === 'tasks') renderTasks();
+    if (id === 'finance') renderFinance();
+    if (id === 'records') renderRecords();
+    if (id === 'settings') loadSettings();
 }
-function saveSettings(s) {
-    setStore(STORAGE_KEYS.SETTINGS, s);
-}
-function getRoutes() {
-    return getStore(STORAGE_KEYS.ROUTES).list || [];
-}
-function saveRoutes(r) {
-    setStore(STORAGE_KEYS.ROUTES, { list: r });
-}
-function getKeys() {
-    return getStore(STORAGE_KEYS.KEYS).list || [];
-}
-function saveKeys(k) {
-    setStore(STORAGE_KEYS.KEYS, { list: k });
-}
-function getTrips() {
-    return getStore(STORAGE_KEYS.TRIPS).list || [];
-}
-function saveTrips(t) {
-    setStore(STORAGE_KEYS.TRIPS, { list: t });
-}
-
-// ===== UTILITIES =====
-function formatPeso(n) {
-    return '₱' + Number(n).toFixed(2);
-}
-function genId() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-function showModal(id) {
-    document.getElementById(id).style.display = 'flex';
-}
-function hideModal(id) {
-    document.getElementById(id).style.display = 'none';
+document.getElementById('sidebarToggleBtn')?.addEventListener('click', () => {
+    document.getElementById('adminSidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('visible');
+});
+function closeSidebar() {
+    document.getElementById('adminSidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('visible');
 }
 
-// ===== VIEW SWITCHING =====
-function hideAllViews() {
-    document.getElementById('viewSelector').classList.add('hidden');
-    document.getElementById('portalView').classList.add('hidden');
-    document.getElementById('adminLoginView').classList.add('hidden');
-    document.getElementById('adminFullPanel').classList.add('hidden');
+// ========== DATOS ==========
+function getOrders() { return JSON.parse(localStorage.getItem(STORAGE.orders) || '[]'); }
+function saveOrders(a) { localStorage.setItem(STORAGE.orders, JSON.stringify(a)); }
+function getRoutes() { return JSON.parse(localStorage.getItem(STORAGE.routes) || JSON.stringify(DEFAULT_ROUTES)); }
+function saveRoutes(a) { localStorage.setItem(STORAGE.routes, JSON.stringify(a)); }
+function getRiders() { return JSON.parse(localStorage.getItem(STORAGE.riders) || '[]'); }
+function saveRiders(a) { localStorage.setItem(STORAGE.riders, JSON.stringify(a)); }
+function getTasks() { return JSON.parse(localStorage.getItem(STORAGE.tasks) || '[]'); }
+function saveTasks(a) { localStorage.setItem(STORAGE.tasks, JSON.stringify(a)); }
+function getRecords() { return JSON.parse(localStorage.getItem(STORAGE.records) || '[]'); }
+function saveRecords(a) { localStorage.setItem(STORAGE.records, JSON.stringify(a)); }
+function getSettings() {
+    const d = localStorage.getItem(STORAGE.settings);
+    return d ? JSON.parse(d) : { gasPrice:92.00, maint:20, kmPerLiter:20.0, workHours:8 };
 }
-function backToSelector() {
-    hideAllViews();
-    document.getElementById('viewSelector').classList.remove('hidden');
-}
-function openPortalView() {
-    hideAllViews();
-    document.getElementById('portalView').classList.remove('hidden');
-    portalGoHome();
-}
-function openAdminLogin() {
-    hideAllViews();
-    document.getElementById('adminLoginView').classList.remove('hidden');
-    document.getElementById('adminPassInput').value = '';
-    document.getElementById('adminLoginErr').style.display = 'none';
-}
-function doAdminLogin() {
-    const input = document.getElementById('adminPassInput').value.trim();
-    if (input === STORAGE_KEYS.ADMIN_KEY) {
-        hideAllViews();
-        document.getElementById('adminFullPanel').classList.remove('hidden');
-        renderAdminDashboard();
-    } else {
-        document.getElementById('adminLoginErr').style.display = 'block';
-    }
-}
-function doAdminLogout() {
-    backToSelector();
+function saveSettingsObj(s) { localStorage.setItem(STORAGE.settings, JSON.stringify(s)); }
+function initData() {
+    if (!localStorage.getItem(STORAGE.routes)) saveRoutes(DEFAULT_ROUTES);
 }
 
-// ===== PORTAL MENU =====
-function togglePortalMenu() {
-    document.getElementById('portalMenu').classList.toggle('open');
-    document.getElementById('portalOverlay').classList.toggle('open');
-}
-function closePortalMenu() {
-    document.getElementById('portalMenu').classList.remove('open');
-    document.getElementById('portalOverlay').classList.remove('open');
-}
-
-// ===== PORTAL KEY VERIFICATION =====
-function verifyPortalKey() {
-    const input = document.getElementById('portalKeyInput').value.trim();
-    const keys = getKeys();
-    const found = keys.find(k => k.key === input && k.active !== false);
-    if (found || input === STORAGE_KEYS.ADMIN_KEY) {
-        appState.portalUnlocked = true;
-        document.getElementById('portalKeyGate').classList.add('hidden');
-        document.getElementById('portalUnlockedContent').classList.remove('hidden');
-        document.getElementById('portalRoleBadge').textContent = found?.name || 'Admin';
-        refreshPortalSettings();
-        renderPortalRoutes();
-    } else {
-        alert('❌ Maling susi — Subukan muli');
-    }
-}
-function checkAdminAccess() {
-    const input = document.getElementById('portalKeyInput')?.value.trim() || '';
-    if (input === STORAGE_KEYS.ADMIN_KEY) {
-        closePortalMenu();
-        hideAllViews();
-        document.getElementById('adminFullPanel').classList.remove('hidden');
-        renderAdminDashboard();
-    } else {
-        alert('Kailangan ng Admin Master Key');
-    }
+// ========== DASHBOARD ==========
+function loadDashboard() {
+    const o = getOrders();
+    const r = getRecords();
+    document.getElementById('statOrders').textContent = o.length;
+    document.getElementById('statDone').textContent = o.filter(x => x.status === 'done').length;
+    document.getElementById('statRiders').textContent = getRiders().length;
+    const total = r.reduce((s,x) => s + (x.net||0), 0);
+    document.getElementById('statIncome').textContent = `₱${total.toFixed(2)}`;
 }
 
-// ===== PORTAL HOME =====
-function portalGoHome() {
-    document.getElementById('portalHome').classList.remove('hidden');
-    document.getElementById('portalCalc').classList.add('hidden');
-    if (appState.portalUnlocked) {
-        refreshPortalSettings();
-        renderPortalRoutes();
-    }
-}
-function portalBackHome() {
-    portalGoHome();
-    appState.currentRouteId = null;
-}
-function refreshPortalSettings() {
-    const s = getSettings();
-    document.getElementById('p-show-gas').textContent = s.gasPrice.toFixed(2);
-    document.getElementById('p-show-maint').textContent = s.maintenance.toFixed(2);
-    document.getElementById('p-show-rent').textContent = s.rent.toFixed(2);
-    document.getElementById('p-show-kmpl').textContent = s.kmPerLiter.toFixed(1);
-}
-function renderPortalRoutes() {
-    const list = document.getElementById('portalRouteList');
+// ========== RATE CALCULATOR ==========
+function loadCalcRoutes() {
+    const list = document.getElementById('calcRoutesList');
     const routes = getRoutes();
+    selectedCalcRouteId = null;
+    
     if (!routes.length) {
-        list.innerHTML = '<p class="empty-state">Wala pang ruta — pindutin ang ➕ Bagong Ruta</p>';
+        list.innerHTML = '<p class="empty-state">Wala pang naka-save na ruta.</p>';
         return;
     }
-    list.innerHTML = routes.map((r, i) => `
-        <div class="route-item">
-            <div class="route-num">${i+1}</div>
-            <div class="route-info">
-                <div class="route-name">${r.name}</div>
-                <div class="route-meta">${r.start} → ${r.end} • ${r.km} km • ₱${r.fare}/2-way</div>
-            </div>
-            <div class="route-actions">
-                <button class="icon-btn btn-go" title="Kuwentahin" onclick="openCalcForRoute('${r.id}')">➡️</button>
-            </div>
+    
+    list.innerHTML = routes.map(r => `
+        <div class="route-option" data-id="${r.id}" onclick="selectCalcRoute(${r.id})">
+            <strong>${r.name}</strong><br>
+            <small>${r.start} → ${r.end} · ${r.km} km · ₱${r.fare}</small>
         </div>
     `).join('');
 }
 
-// ===== CALCULATION =====
-function openCalcForRoute(id) {
-    const routes = getRoutes();
-    const r = routes.find(x => x.id === id);
+function selectCalcRoute(id) {
+    selectedCalcRouteId = id;
+    const r = getRoutes().find(x => x.id === id);
     if (!r) return;
-    appState.currentRouteId = id;
-    appState.currentKm = Number(r.km);
-    document.getElementById('portalHome').classList.add('hidden');
-    document.getElementById('portalCalc').classList.remove('hidden');
-    document.getElementById('p-calc-name').textContent = r.name;
-    document.getElementById('p-calc-desc').textContent = `${r.start} → ${r.end}`;
-    document.getElementById('p-fare').value = r.fare;
-    const s = getSettings();
-    document.getElementById('p-gas').value = s.gasPrice;
-    updateTripDisplay();
-    initPortalMap();
+    
+    document.getElementById('cName').value = r.name;
+    document.getElementById('cKm').value = r.km;
+    document.getElementById('cFare').value = r.fare;
+    
+    document.querySelectorAll('.route-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.id == id);
+    });
 }
-function portalSetTripType(type) {
-    appState.tripType = type;
-    document.getElementById('p-btn-one').classList.toggle('active', type === 'one');
-    document.getElementById('p-btn-round').classList.toggle('active', type === 'round');
-    updateTripDisplay();
-}
-function updateTripDisplay() {
-    const km = appState.tripType === 'round' ? appState.currentKm * 2 : appState.currentKm;
-    const s = getSettings();
-    const liters = km / s.kmPerLiter;
-    document.getElementById('p-use-km').textContent = km.toFixed(2);
-    document.getElementById('p-liter').textContent = liters.toFixed(2);
-}
-function initPortalMap() {
-    if (appState.portalMap) {
-        appState.portalMap.remove();
+
+function doCalculate() {
+    const name = document.getElementById('cName').value.trim() || 'Ruta';
+    const kmOneWay = parseFloat(document.getElementById('cKm').value);
+    const fare = parseFloat(document.getElementById('cFare').value);
+    const type = document.getElementById('cType').value;
+    
+    if (isNaN(kmOneWay) || kmOneWay <= 0 || isNaN(fare) || fare <= 0) {
+        return alert('Punan nang tama ang distansya at pamasahe!');
     }
-    appState.portalMap = L.map('p-map').setView([14.0, 122.0], 9);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(appState.portalMap);
-}
-function portalDoCalc() {
-    const km = appState.tripType === 'round' ? appState.currentKm * 2 : appState.currentKm;
-    const gasPrice = Number(document.getElementById('p-gas').value) || 0;
-    const fare = Number(document.getElementById('p-fare').value) || 0;
+    
+    const kmActual = type === 'two' ? kmOneWay * 2 : kmOneWay;
     const s = getSettings();
     
-    const gasCost = (km / s.kmPerLiter) * gasPrice;
-    const tripHours = km / 35; // ~35 kph average
-    const shareCost = (s.maintenance + s.rent) / s.workHours * tripHours;
-    const totalCost = gasCost + shareCost;
+    // Gastos sa gasolina
+    const litersUsed = kmActual / s.kmPerLiter;
+    const gasCost = litersUsed * s.gasPrice;
+    
+    // Oras ng biyahe (tantiya: 35 km/oras)
+    const travelHours = kmActual / 35;
+    const dailyMaintShare = s.maint / s.workHours;
+    const timeCost = dailyMaintShare * travelHours;
+    
+    // Kabuuan
+    const totalCost = gasCost + timeCost;
     const net = fare - totalCost;
+    const breakEvenFare = totalCost;
+    
+    // Resulta
+    const container = document.getElementById('calcResult');
+    const body = document.getElementById('calcResultBody');
+    container.classList.remove('hidden');
+    
     const isProfit = net >= 0;
-
-    // Save trip
-    const trips = getTrips();
-    trips.push({
-        id: genId(),
-        routeId: appState.currentRouteId,
-        km, fare, gasCost, shareCost, net,
-        timestamp: new Date().toISOString()
-    });
-    saveTrips(trips);
-
-    document.getElementById('p-results').classList.remove('hidden');
-    document.getElementById('p-res-body').innerHTML = `
-        <div class="res-row"><span>📏 Distansya</span><span>${km.toFixed(2)} km</span></div>
-        <div class="res-row"><span>⛽ Gasolina</span><span>${(km/s.kmPerLiter).toFixed(2)} L × ${formatPeso(gasPrice)}</span></div>
-        <div class="res-row"><span>• Gastos sa Gas</span><span>${formatPeso(gasCost)}</span></div>
-        <div class="res-row"><span>🔧 Piyesa + Upa</span><span>${formatPeso(shareCost)}</span></div>
-        <div class="res-row divider-bold"><span>KABUUANG GASTOS</span><span>${formatPeso(totalCost)}</span></div>
-        <div class="res-row"><span>💰 Pamasahe</span><span>${formatPeso(fare)}</span></div>
-        <div class="res-row ${isProfit ? 'res-hi' : 'res-warn'}" style="font-size:18px;">
-            <span>${isProfit ? '✅ KITA' : '❌ LUGI'}</span>
-            <span>${formatPeso(net)}</span>
+    const statusClass = isProfit ? 'result-profit' : 'result-loss';
+    const statusText = isProfit ? '✅ KUMITA' : '❌ LUGI';
+    
+    body.innerHTML = `
+        <div class="calc-result ${statusClass}">
+            <h4 style="margin-bottom:12px;">${statusText}</h4>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>📏 Kabuuang Distansya:</span>
+                <strong>${kmActual.toFixed(2)} km (${type === 'two' ? '🔁 Two-Way' : '➡️ One-Way'})</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>⛽ Nagamit na Gasolina:</span>
+                <strong>${litersUsed.toFixed(3)} L × ₱${s.gasPrice.toFixed(2)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>💰 Gastos sa Gasolina:</span>
+                <strong>₱${gasCost.toFixed(2)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>🔧 Piyesa / Oras:</span>
+                <strong>₱${dailyMaintShare.toFixed(2)} × ${travelHours.toFixed(2)} oras</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>⏱️ Gastos sa Oras/Piyesa:</span>
+                <strong>₱${timeCost.toFixed(2)}</strong>
+            </div>
+            <hr style="margin:10px 0;border:none;border-top:1px dashed #ccc;">
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>💵 Kabuuang Gastos:</span>
+                <strong>₱${totalCost.toFixed(2)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                <span>💳 Ibinayad na Pamasahe:</span>
+                <strong>₱${fare.toFixed(2)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:18px;border-top:2px solid;padding-top:10px;">
+                <span>💎 MALINIS NA KITA:</span>
+                <strong>${isProfit ? '+' : ''}₱${net.toFixed(2)}</strong>
+            </div>
+            <div style="margin-top:12px;padding:10px;background:rgba(0,0,0,0.05);border-radius:8px;">
+                <strong>⚠️ Pinakamababang pamasahe na HINDI LUGI:</strong>
+                <div style="font-size:20px;font-weight:bold;margin-top:4px;">₱${breakEvenFare.toFixed(2)}</div>
+                <small>(${type === 'two' ? 'One-Way: ₱' + (breakEvenFare/2).toFixed(2) : ''})</small>
+            </div>
         </div>
-        <p style="margin-top:12px;font-size:12px;color:var(--muted);text-align:center;">
-            Layunin: ${formatPeso(s.dailyGoal)}/araw • ${isProfit ? 'Sulit ang biyahe!' : 'Kailangan ng mas mataas na singil'}
-        </p>
     `;
 }
 
-// ===== ROUTE MANAGEMENT =====
-function portalOpenAddRoute() {
-    document.getElementById('arm-title').textContent = '➕ Bagong Ruta';
-    document.getElementById('arm-id').value = '';
-    document.getElementById('arm-name').value = '';
-    document.getElementById('arm-start').value = '';
-    document.getElementById('arm-end').value = '';
-    document.getElementById('arm-km').value = '';
-    document.getElementById('arm-fare').value = '';
-    showModal('addRouteModal');
-}
-function adminAddRoute() {
-    portalOpenAddRoute();
-}
-function closeAddRouteModal() {
-    hideModal('addRouteModal');
-}
-function saveAddRoute() {
-    const name = document.getElementById('arm-name').value.trim();
-    const start = document.getElementById('arm-start').value.trim();
-    const end = document.getElementById('arm-end').value.trim();
-    const km = Number(document.getElementById('arm-km').value);
-    const fare = Number(document.getElementById('arm-fare').value);
-    if (!name || !km) {
-        alert('Punan ang pangalan at distansya');
-        return;
+function saveCalcRoute() {
+    const name = document.getElementById('cName').value.trim();
+    const km = parseFloat(document.getElementById('cKm').value);
+    const fare = parseFloat(document.getElementById('cFare').value);
+    
+    if (!name || isNaN(km) || km <= 0 || isNaN(fare) || fare <= 0) {
+        return alert('Punan muna ang lahat ng detalye bago mag-save!');
     }
-    let routes = getRoutes();
-    const id = document.getElementById('arm-id').value || genId();
-    const idx = routes.findIndex(r => r.id === id);
-    const routeData = { id, name, start, end, km, fare };
-    if (idx >= 0) routes[idx] = routeData;
-    else routes.push(routeData);
-    saveRoutes(routes);
-    closeAddRouteModal();
-    renderPortalRoutes();
-    if (document.getElementById('adminFullPanel').classList.contains('hidden') === false) {
-        renderAdminRoutes();
+    
+    const arr = getRoutes();
+    if (selectedCalcRouteId) {
+        const i = arr.findIndex(r => r.id === selectedCalcRouteId);
+        if (i >= 0) {
+            arr[i].name = name;
+            arr[i].km = km;
+            arr[i].fare = fare;
+        }
+    } else {
+        arr.push({
+            id: genId(),
+            name: name,
+            start: name.split('→')[0]?.trim() || name,
+            end: name.split('→')[1]?.trim() || name,
+            km: km,
+            fare: fare
+        });
     }
-}
-function deleteRoute(id) {
-    if (!confirm('Burahin ang ruta?')) return;
-    saveRoutes(getRoutes().filter(r => r.id !== id));
-    renderPortalRoutes();
-    renderAdminRoutes();
+    
+    saveRoutes(arr);
+    alert('✅ Nakatago na sa listahan ng ruta!');
+    loadCalcRoutes();
 }
 
-// ===== GPS =====
-function openGPSRoute() {
-    appState.gpsDistance = 0;
-    appState.gpsLastLat = null;
-    appState.gpsLastLng = null;
-    document.getElementById('gps-distance').textContent = '0.00';
-    document.getElementById('gps-status').textContent = 'Sinusubaybayan ang lokasyon...';
-    showModal('gpsModal');
-    if (!navigator.geolocation) {
-        document.getElementById('gps-status').textContent = '❌ Hindi sinusuportahan ng telepono ang GPS';
-        return;
-    }
-    appState.gpsWatchId = navigator.geolocation.watchPosition(
-        pos => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            if (appState.gpsLastLat !== null) {
-                const d = calcHaversine(appState.gpsLastLat, appState.gpsLastLng, lat, lng);
-                appState.gpsDistance += d;
-                document.getElementById('gps-distance').textContent = appState.gpsDistance.toFixed(2);
-            }
-            appState.gpsLastLat = lat;
-            appState.gpsLastLng = lng;
-            document.getElementById('gps-status').textContent = `✅ Aktibo — ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-        },
-        err => {
-            document.getElementById('gps-status').textContent = '⚠️ Error: ' + err.message;
-        },
-        { enableHighAccuracy: true }
-    );
-}
-function stopGPS() {
-    if (appState.gpsWatchId !== null) {
-        navigator.geolocation.clearWatch(appState.gpsWatchId);
-        appState.gpsWatchId = null;
-    }
-    hideModal('gpsModal');
-}
-function useGPSDistance() {
-    stopGPS();
-    document.getElementById('arm-km').value = appState.gpsDistance.toFixed(2);
-    portalOpenAddRoute();
-}
-function calcHaversine(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Earth radius km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-// ===== SETTINGS =====
-function portalOpenSettings() {
+// ========== ORDER CALCULATION ==========
+function calcCost(km, fare) {
     const s = getSettings();
-    document.getElementById('a-gas-global').value = s.gasPrice;
-    document.getElementById('a-maint').value = s.maintenance;
-    document.getElementById('a-rent').value = s.rent;
-    document.getElementById('a-work-hours').value = s.workHours;
-    document.getElementById('a-km-per-l').value = s.kmPerLiter;
-    document.getElementById('a-daily-goal').value = s.dailyGoal;
-    switchAdminPanel('settings');
-    openPortalView();
-}
-function saveAllAdminSettings() {
-    saveSettings({
-        gasPrice: Number(document.getElementById('a-gas-global').value) || 92,
-        maintenance: Number(document.getElementById('a-maint').value) || 20,
-        rent: Number(document.getElementById('a-rent').value) || 0,
-        workHours: Number(document.getElementById('a-work-hours').value) || 8,
-        kmPerLiter: Number(document.getElementById('a-km-per-l').value) || 20,
-        dailyGoal: Number(document.getElementById('a-daily-goal').value) || 300
-    });
-    document.getElementById('adminSaveNote').classList.remove('hidden');
-    refreshPortalSettings();
-    setTimeout(() => document.getElementById('adminSaveNote').classList.add('hidden'), 2500);
+    const litersUsed = km / s.kmPerLiter;
+    const gasCost = litersUsed * s.gasPrice;
+    const travelHours = km / 35;
+    const timeCost = (s.maint / s.workHours) * travelHours;
+    const totalCost = gasCost + timeCost;
+    return {
+        gas: gasCost,
+        timeCost: timeCost,
+        total: totalCost,
+        net: fare - totalCost
+    };
 }
 
-// ===== ADMIN PANEL =====
-function switchAdminPanel(name) {
-    document.querySelectorAll('.apanel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.admin-only').forEach(i => i.classList.remove('active'));
-    document.querySelector(`[data-apanel="${name}"]`)?.classList.add('active');
-    document.getElementById(`ap-${name}`).classList.add('active');
-    if (name === 'dashboard') renderAdminDashboard();
-    if (name === 'routes') renderAdminRoutes();
-    if (name === 'finance') renderAdminFinance();
-    if (name === 'keys') renderAdminKeys();
-}
-function renderAdminDashboard() {
-    const routes = getRoutes();
-    const trips = getTrips();
-    const keys = getKeys();
-    document.getElementById('a-stat-routes').textContent = routes.length;
-    document.getElementById('a-stat-trips').textContent = trips.length;
-    const totalNet = trips.reduce((sum, t) => sum + (t.net || 0), 0);
-    document.getElementById('a-stat-income').textContent = formatPeso(totalNet);
-    document.getElementById('a-stat-keys').textContent = keys.filter(k => k.active !== false).length;
-}
-function renderAdminRoutes() {
-    const list = document.getElementById('adminRoutesList');
-    const routes = getRoutes();
-    if (!routes.length) {
-        list.innerHTML = '<p class="empty-state">Wala pang ruta</p>';
+// ========== ORDERS ==========
+function renderOrders() {
+    const list = document.getElementById('ordersList');
+    const o = getOrders();
+    if (!o.length) {
+        list.innerHTML = '<p class="empty-state">Wala pang order.<br><button class="btn btn-primary btn-sm" onclick="openOrderModal()" style="margin-top:10px;">➕ Gumawa</button></p>';
         return;
     }
-    list.innerHTML = routes.map((r, i) => `
-        <div class="route-item">
-            <div class="route-num">${i+1}</div>
-            <div class="route-info">
-                <div class="route-name">${r.name}</div>
-                <div class="route-meta">${r.start} → ${r.end} • ${r.km} km • ₱${r.fare}/2-way</div>
+    const st = { pending:'⏳ Nakabinbin', confirmed:'✅ Nakumpirma', assigned:'📤 Natalaga', done:'✅ Natapos', cancelled:'❌ Kinansela' };
+    list.innerHTML = o.map(x => `
+        <div class="order-card order-${x.status}">
+            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;">
+                <strong>${x.from} → ${x.to}</strong>
+                <span class="badge badge-${x.status}">${st[x.status]}</span>
             </div>
-            <div class="route-actions">
-                <button class="icon-btn btn-edit" onclick="editRoute('${r.id}')">✏️</button>
-                <button class="icon-btn btn-del" onclick="deleteRoute('${r.id}')">🗑️</button>
+            <div style="margin-top:4px;">${x.km} km · ₱${x.fare} · ${x.type==='two'?'🔁 Two-Way':'➡️ One-Way'}</div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+                ${x.status!=='done'&&x.status!=='cancelled'?`<button class="btn btn-success btn-xs" onclick="markDone('${x.id}')">✅ Natapos</button>`:''}
+                ${x.status!=='done'&&x.status!=='cancelled'?`<button class="btn btn-danger btn-xs" onclick="cancelOrder('${x.id}')">❌ Kanselahin</button>`:''}
             </div>
         </div>
     `).join('');
 }
-function editRoute(id) {
-    const r = getRoutes().find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('arm-title').textContent = '✏️ Baguhin ang Ruta';
-    document.getElementById('arm-id').value = r.id;
-    document.getElementById('arm-name').value = r.name;
-    document.getElementById('arm-start').value = r.start;
-    document.getElementById('arm-end').value = r.end;
-    document.getElementById('arm-km').value = r.km;
-    document.getElementById('arm-fare').value = r.fare;
-    showModal('addRouteModal');
+
+function openOrderModal(id=null) {
+    document.getElementById('orderModal').style.display = 'flex';
+    if (id) {
+        document.getElementById('orderModalTitle').textContent = '✏️ Baguhin';
+        const x = getOrders().find(o => o.id === id);
+        document.getElementById('editOrderId').value = id;
+        document.getElementById('oFrom').value = x.from;
+        document.getElementById('oTo').value = x.to;
+        document.getElementById('oKm').value = x.km;
+        document.getElementById('oFare').value = x.fare;
+        document.getElementById('oType').value = x.type;
+    } else {
+        document.getElementById('orderModalTitle').textContent = '➕ Bagong Order';
+        document.getElementById('editOrderId').value = '';
+        document.getElementById('oFrom').value = '';
+        document.getElementById('oTo').value = '';
+        document.getElementById('oKm').value = '';
+        document.getElementById('oFare').value = '';
+        document.getElementById('oType').value = 'two';
+    }
 }
-function renderAdminFinance() {
-    const trips = getTrips();
-    const totalFare = trips.reduce((s, t) => s + (t.fare || 0), 0);
-    const totalGas = trips.reduce((s, t) => s + (t.gasCost || 0), 0);
-    const totalOther = trips.reduce((s, t) => s + (t.shareCost || 0), 0);
-    const totalNet = trips.reduce((s, t) => s + (t.net || 0), 0);
-    
-    document.getElementById('fin-fare').textContent = formatPeso(totalFare);
-    document.getElementById('fin-gas').textContent = formatPeso(totalGas);
-    document.getElementById('fin-other').textContent = formatPeso(totalOther);
-    document.getElementById('fin-net').textContent = formatPeso(totalNet);
-    document.getElementById('fin-net').style.color = totalNet >= 0 ? 'var(--ok)' : 'var(--danger)';
-    
-    const list = document.getElementById('adminFinanceList');
-    if (!trips.length) {
-        list.innerHTML = '<p class="empty-state">Wala pang talaan ng biyahe</p>';
+
+function saveOrder() {
+    const from = document.getElementById('oFrom').value.trim();
+    const to = document.getElementById('oTo').value.trim();
+    const km = parseFloat(document.getElementById('oKm').value);
+    const fare = parseFloat(document.getElementById('oFare').value);
+    if (!from||!to||isNaN(km)||km<=0||isNaN(fare)||fare<=0) return alert('Punan lahat nang tama!');
+    const o = {
+        id: document.getElementById('editOrderId').value || genId(),
+        from, to, km, fare,
+        type: document.getElementById('oType').value,
+        status:'pending',
+        createdAt: now()
+    };
+    const arr = getOrders();
+    const i = arr.findIndex(x => x.id === o.id);
+    i>=0 ? arr[i]=o : arr.unshift(o);
+    saveOrders(arr);
+    closeModal('orderModal');
+    alert('✅ Nakatago na!');
+    renderOrders();
+}
+
+function markDone(id) {
+    showConfirm('Markahan na natapos at ilagay sa talaan?', () => {
+        const arr = getOrders();
+        const x = arr.find(o => o.id === id);
+        if (!x) return;
+        x.status = 'done';
+        const usedKm = x.type === 'two' ? x.km * 2 : x.km;
+        const cost = calcCost(usedKm, x.fare);
+        const rec = getRecords();
+        rec.unshift({
+            id: genId(),
+            time: now(),
+            route: `${x.from} → ${x.to}`,
+            fare: x.fare,
+            gas: cost.gas,
+            other: cost.timeCost,
+            total: cost.total,
+            net: cost.net,
+            status: cost.net >= 0 ? 'KUMITA' : 'LUGI'
+        });
+        saveRecords(rec);
+        saveOrders(arr);
+        closeModal('confirmModal');
+        alert('✅ Naitala na!');
+        renderOrders();
+        loadDashboard();
+    });
+}
+
+function cancelOrder(id) {
+    showConfirm('Kanselahin ba talaga?', () => {
+        const arr = getOrders();
+        const x = arr.find(o => o.id === id);
+        if (!x) return;
+        x.status = 'cancelled';
+        saveOrders(arr);
+        closeModal('confirmModal');
+        renderOrders();
+    });
+}
+
+// ========== ROUTES ==========
+function renderRoutes() {
+    const tbody = document.getElementById('routesBody');
+    const r = getRoutes();
+    if (!r.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Wala pang ruta.</td></tr>';
         return;
     }
-    list.innerHTML = '<h4 style="margin-bottom:8px;">📋 Talaan ng Biyahe</h4>' + trips.slice(-10).reverse().map(t => `
-        <div class="res-row ${t.net >= 0 ? 'res-hi' : 'res-warn'}">
-            <span>${new Date(t.timestamp).toLocaleString('fil-PH', {dateStyle:'short',timeStyle:'short'})}</span>
-            <span>${formatPeso(t.fare)} − ${formatPeso(t.gasCost + t.shareCost)} = <strong>${formatPeso(t.net)}</strong></span>
-        </div>
-    `).join('');
-}
-function renderAdminKeys() {
-    const tbody = document.getElementById('adminKeysBody');
-    const keys = getKeys();
-    if (!keys.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Wala pang susi — lumikha ng una</td></tr>';
-        return;
-    }
-    tbody.innerHTML = keys.map(k => `
+    tbody.innerHTML = r.map((x,i) => `
         <tr>
-            <td>${k.name}</td>
-            <td><span class="badge ${k.level === 'admin' ? 'badge-success' : 'badge-pending'}">${k.level || 'user'}</span></td>
-            <td><code style="background:#f5f5f5;padding:2px 6px;border-radius:4px;">${k.key}</code></td>
-            <td><span class="badge ${k.active !== false ? 'badge-success' : 'badge-danger'}">${k.active !== false ? 'Aktibo' : 'Naka-hinto'}</span></td>
+            <td>${i+1}</td>
+            <td><strong>${x.name}</strong></td>
+            <td>${x.start}</td>
+            <td>${x.end}</td>
+            <td>${x.km}</td>
+            <td>₱${x.fare}</td>
             <td>
-                <button class="btn btn-xs btn-out" onclick="toggleKey('${k.key}')">${k.active !== false ? 'Ihinto' : 'Buhayin'}</button>
-                <button class="btn btn-xs btn-del" onclick="deleteKey('${k.key}')">Burahin</button>
+                <button class="btn btn-xs btn-primary" onclick="editRoute('${x.id}')">✏️</button>
+                <button class="btn btn-xs btn-danger" onclick="deleteRoute('${x.id}')">🗑️</button>
             </td>
         </tr>
     `).join('');
 }
-function adminAddKey() {
-    const name = prompt('Pangalan ng may-susi:');
-    if (!name) return;
-    const keyVal = genId().slice(0, 8).toUpperCase();
-    const keys = getKeys();
-    keys.push({ name, key: keyVal, level: 'user', active: true });
-    saveKeys(keys);
-    renderAdminKeys();
-    alert('Bagong susi: ' + keyVal);
+
+function openRouteModal() {
+    document.getElementById('routeModalHeader').textContent = '➕ Bagong Ruta';
+    document.getElementById('editRouteId').value = '';
+    document.getElementById('rName').value = '';
+    document.getElementById('rStart').value = '';
+    document.getElementById('rEnd').value = '';
+    document.getElementById('rKm').value = '';
+    document.getElementById('rFare').value = '';
+    document.getElementById('routeModal').style.display = 'flex';
 }
-function toggleKey(keyVal) {
-    const keys = getKeys();
-    const k = keys.find(x => x.key === keyVal);
-    if (k) {
-        k.active = k.active === false;
-        saveKeys(keys);
-        renderAdminKeys();
+
+function editRoute(id) {
+    document.getElementById('routeModalHeader').textContent = '✏️ Baguhin ang Ruta';
+    const x = getRoutes().find(r => r.id === id);
+    if (!x) return;
+    document.getElementById('editRouteId').value = id;
+    document.getElementById('rName').value = x.name;
+    document.getElementById('rStart').value = x.start;
+    document.getElementById('rEnd').value = x.end;
+    document.getElementById('rKm').value = x.km;
+    document.getElementById('rFare').value = x.fare;
+    document.getElementById('routeModal').style.display = 'flex';
+}
+
+function saveRoute() {
+    const name = document.getElementById('rName').value.trim();
+    const start = document.getElementById('rStart').value.trim();
+    const end = document.getElementById('rEnd').value.trim();
+    const km = parseFloat(document.getElementById('rKm').value);
+    const fare = parseFloat(document.getElementById('rFare').value);
+    
+    if (!name || !start || !end || isNaN(km) || km <= 0 || isNaN(fare) || fare <= 0) {
+        return alert('Punan lahat nang tama!');
+    }
+    
+    const arr = getRoutes();
+    const id = document.getElementById('editRouteId').value;
+    const obj = { id: id || genId(), name, start, end, km, fare };
+    const idx = arr.findIndex(x => x.id === id);
+    idx >= 0 ? arr[idx] = obj : arr.push(obj);
+    saveRoutes(arr);
+    closeModal('routeModal');
+    alert('✅ Nakatago na!');
+    renderRoutes();
+    loadCalcRoutes();
+}
+
+function deleteRoute(id) {
+    showConfirm('Burahin ba ang rutang ito?', () => {
+        saveRoutes(getRoutes().filter(x => x.id !== id));
+        closeModal('confirmModal');
+        renderRoutes();
+        loadCalcRoutes();
+    });
+}
+
+// ========== GPS / MAP ==========
+function initMap() {
+    if (map) return;
+    map = L.map('map').setView([14.7389, 121.6347], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+}
+
+async function fetchGPSRoute() {
+    const from = document.getElementById('gpsFrom').value.trim();
+    const to = document.getElementById('gpsTo').value.trim();
+    if (!from || !to) return alert('Ilagay ang simula at dulo!');
+    
+    const res = document.getElementById('gpsResult');
+    res.textContent = '🔍 Naghahanap...';
+    
+    try {
+        // Geocode from
+        const fRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(from)}&countrycode=ph&limit=1&format=json`);
+        const fData = await fRes.json();
+        if (!fData.length) throw new Error('Hindi mahanap ang simula');
+        
+        // Geocode to
+        const tRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(to)}&countrycode=ph&limit=1&format=json`);
+        const tData = await tRes.json();
+        if (!tData.length) throw new Error('Hindi mahanap ang dulo');
+        
+        const fLat = parseFloat(fData[0].lat), fLon = parseFloat(fData[0].lon);
+        const tLat = parseFloat(tData[0].lat), tLon = parseFloat(tData[0].lon);
+        
+        // Distansya sa km
+        const R = 6371;
+        const dLat = (tLat - fLat) * Math.PI / 180;
+        const dLon = (tLon - fLon) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(fLat*Math.PI/180)*Math.cos(tLat*Math.PI/180)*Math.sin(dLon/2)**2;
+        const dist = (2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(2);
+        
+        // Ipakita sa mapa
+        map.setView([(fLat+tLat)/2, (fLon+tLon)/2], 10);
+        L.marker([fLat, fLon]).addTo(map).bindPopup(`Simula: ${from}`);
+        L.marker([tLat, tLon]).addTo(map).bindPopup(`Dulo: ${to}`);
+        L.polyline([[fLat,fLon],[tLat,tLon]], {color:'#7C3AED'}).addTo(map);
+        
+        res.innerHTML = `✅ <strong>Natagpuan!</strong><br>Distansya: <strong>${dist} km</strong> (isang daan)<br>Two-Way: <strong>${(dist*2).toFixed(2)} km</strong>`;
+        
+    } catch (err) {
+        res.textContent = `❌ Nabigo: ${err.message}`;
     }
 }
-function deleteKey(keyVal) {
-    if (!confirm('Burahin ang susi? Hindi na ito gagana.')) return;
-    saveKeys(getKeys().filter(k => k.key !== keyVal));
-    renderAdminKeys();
+
+// ========== RIDERS ==========
+function renderRiders() {
+    const list = document.getElementById('ridersList');
+    const rd = getRiders();
+    document.getElementById('badgeRiderCount').textContent = rd.length;
+    if (!rd.length) {
+        list.innerHTML = '<p class="empty-state">Wala pang rider.<br><button class="btn btn-primary btn-sm" onclick="openRiderModal()" style="margin-top:10px;">➕ Magdagdag</button></p>';
+        return;
+    }
+    const statusIcon = { online:'🟢', busy:'🟡', offline:'⚪' };
+    list.innerHTML = rd.map(x => `
+        <div class="customer-card">
+            <div class="customer-avatar">${x.name.charAt(0).toUpperCase()}</div>
+            <div class="customer-info">
+                <div class="customer-name">${statusIcon[x.status]} ${x.name}</div>
+                <div class="customer-details">${x.phone || 'Walang numero'}</div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-xs btn-primary" onclick="editRider('${x.id}')">✏️</button>
+                <button class="btn btn-xs btn-danger" onclick="deleteRider('${x.id}')">🗑️</button>
+            </div>
+        </div>
+    `).join('');
 }
 
-// ===== HELP & SHARE =====
-function showHelp() {
-    showModal('helpModal');
-}
-function closeHelpModal() {
-    hideModal('helpModal');
-}
-function shareFB() {
-    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href), '_blank');
-}
-function shareWA() {
-    window.open('https://wa.me/?text=' + encodeURIComponent('🏍️ Habal-Habal Rate Calculator — Kita/Lugi Calculator by martodosko'), '_blank');
-}
-function copyLink() {
-    navigator.clipboard.writeText(location.href).then(() => alert('Nakopya na!'));
+function openRiderModal() {
+    document.getElementById('rdName').value = '';
+    document.getElementById('rdPhone').value = '';
+    document.getElementById('rdStatus').value = 'online';
+    document.getElementById('riderModal').style.display = 'flex';
 }
 
-// ===== EXPORT / IMPORT =====
-function exportData() {
+function saveRider() {
+    const name = document.getElementById('rdName').value.trim();
+    const phone = document.getElementById('rdPhone').value.trim();
+    const status = document.getElementById('rdStatus').value;
+    if (!name) return alert('Ilagay ang pangalan!');
+    
+    const arr = getRiders();
+    arr.push({ id: genId(), name, phone, status, joined: now() });
+    saveRiders(arr);
+    closeModal('riderModal');
+    alert('✅ Naitala na!');
+    renderRiders();
+}
+
+function deleteRider(id) {
+    showConfirm('Burahin ba ang rider?', () => {
+        saveRiders(getRiders().filter(x => x.id !== id));
+        closeModal('confirmModal');
+        renderRiders();
+    });
+}
+
+// ========== ASSIGN ==========
+function loadAssignOpts() {
+    const orderSel = document.getElementById('assignOrder');
+    const riderSel = document.getElementById('assignRider');
+    
+    const orders = getOrders().filter(x => x.status === 'pending' || x.status === 'confirmed');
+    const riders = getRiders().filter(x => x.status === 'online' || x.status === 'busy');
+    
+    orderSel.innerHTML = '<option value="">— Pumili —</option>' +
+        orders.map(x => `<option value="${x.id}">${x.from} → ${x.to} (₱${x.fare})</option>`).join('');
+    
+    riderSel.innerHTML = '<option value="">— Pumili —</option>' +
+        riders.map(x => `<option value="${x.id}">${x.name}</option>`).join('');
+}
+
+function doAssign() {
+    const oid = document.getElementById('assignOrder').value;
+    const rid = document.getElementById('assignRider').value;
+    const fare = parseFloat(document.getElementById('assignFare').value);
+    const comm = parseFloat(document.getElementById('assignComm').value) || 0;
+    
+    if (!oid || !rid) return alert('Pumili ng order at rider!');
+    
+    const orders = getOrders();
+    const x = orders.find(o => o.id === oid);
+    if (!x) return;
+    
+    x.status = 'assigned';
+    x.assignedTo = rid;
+    x.assignedFare = fare || x.fare;
+    x.commission = comm;
+    saveOrders(orders);
+    
+    alert('✅ Natalaga na!');
+    loadAssignOpts();
+}
+
+// ========== TASKS ==========
+function renderTasks() {
+    const list = document.getElementById('tasksList');
+    const t = getTasks();
+    if (!t.length) {
+        list.innerHTML = '<p class="empty-state">Wala pang gawain.</p>';
+        return;
+    }
+    list.innerHTML = t.map(x => `
+        <div class="ticket-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong>${x.title}</strong>
+                <span class="ticket-status ticket-${x.status}">${x.status.toUpperCase()}</span>
+            </div>
+            <p style="margin-top:6px;color:#666;font-size:13px;">${x.desc || ''}</p>
+        </div>
+    `).join('');
+}
+
+// ========== FINANCE ==========
+function renderFinance() {
+    const rec = getRecords();
+    const totalFare = rec.reduce((s,x) => s + (x.fare||0), 0);
+    const totalCost = rec.reduce((s,x) => s + (x.total||0), 0);
+    const net = rec.reduce((s,x) => s + (x.net||0), 0);
+    
+    document.getElementById('finTotalFare').textContent = `₱${totalFare.toFixed(2)}`;
+    document.getElementById('finTotalCost').textContent = `₱${totalCost.toFixed(2)}`;
+    document.getElementById('finNet').textContent = `₱${net.toFixed(2)}`;
+}
+
+// ========== RECORDS ==========
+function renderRecords() {
+    const tbody = document.getElementById('recordsBody');
+    const rec = getRecords();
+    if (!rec.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Wala pang talaan.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = rec.map(x => `
+        <tr>
+            <td style="font-size:12px;">${x.time}</td>
+            <td>${x.route}</td>
+            <td>₱${(x.fare||0).toFixed(2)}</td>
+            <td>₱${(x.total||0).toFixed(2)}</td>
+            <td style="font-weight:bold;color:${(x.net||0)>=0?'var(--ok)':'var(--danger)'}">₱${(x.net||0).toFixed(2)}</td>
+            <td><span class="badge ${x.status==='KUMITA'?'badge-success':'badge-danger'}">${x.status}</span></td>
+        </tr>
+    `).join('');
+}
+
+function exportRecords() {
+    const rec = getRecords();
+    if (!rec.length) return alert('Wala pang mai-export!');
+    const csv = 'Oras,Ruta,Pamasahe,Gastos,Net,Katayuan\n' +
+        rec.map(x => `"${x.time}","${x.route}",${x.fare},${x.total},${x.net},${x.status}`).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `talaan_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+}
+
+// ========== SETTINGS ==========
+function loadSettings() {
+    const s = getSettings();
+    document.getElementById('gasPrice').value = s.gasPrice;
+    document.getElementById('maint').value = s.maint;
+    document.getElementById('kmPerLiter').value = s.kmPerLiter;
+    document.getElementById('workHours').value = s.workHours;
+}
+
+function saveSettings() {
+    const s = {
+        gasPrice: parseFloat(document.getElementById('gasPrice').value),
+        maint: parseFloat(document.getElementById('maint').value),
+        kmPerLiter: parseFloat(document.getElementById('kmPerLiter').value),
+        workHours: parseFloat(document.getElementById('workHours').value)
+    };
+    if (isNaN(s.gasPrice) || isNaN(s.maint) || isNaN(s.kmPerLiter) || isNaN(s.workHours)) {
+        return alert('Punan lahat nang tama!');
+    }
+    saveSettingsObj(s);
+    const note = document.getElementById('saveNote');
+    note.classList.remove('hidden');
+    setTimeout(() => note.classList.add('hidden'), 2500);
+}
+
+// ========== BACKUP ==========
+function doBackup() {
     const data = {
         version: '14.0',
-        exported: new Date().toISOString(),
-        settings: getSettings(),
+        author: 'martodosko',
+        exportedAt: now(),
+        orders: getOrders(),
         routes: getRoutes(),
-        keys: getKeys(),
-        trips: getTrips()
+        riders: getRiders(),
+        tasks: getTasks(),
+        records: getRecords(),
+        settings: getSettings()
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `habal-calc-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.href = URL.createObjectURL(blob);
+    a.download = `rds_backup_${new Date().toISOString().slice(0,10)}.json`;
     a.click();
-    URL.revokeObjectURL(url);
-}
-function importData() {
-    const input = prompt('I-paste ang nilalaman ng backup file:');
-    if (!input) return;
-    try {
-        const data = JSON.parse(input);
-        if (!data.version) throw new Error('Hindi backup file');
-        if (data.settings) saveSettings(data.settings);
-        if (data.routes) saveRoutes(data.routes);
-        if (data.keys) saveKeys(data.keys);
-        if (data.trips) saveTrips(data.trips);
-        alert('✅ Matagumpay ang pag-import!');
-        renderAdminDashboard();
-        renderAdminRoutes();
-        renderAdminKeys();
-        renderAdminFinance();
-    } catch (e) {
-        alert('❌ Mali ang format: ' + e.message);
-    }
 }
 
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded', () => {
-    // Default admin key notification
-    console.log('%c🔑 ADMIN MASTER KEY', 'font-size:16px; font-weight:bold; color:purple;', '\n', STORAGE_KEYS.ADMIN_KEY);
-});
+function doRestore(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (!confirm('Papalitan ang lahat ng kasalukuyang datos? Sigurado ka ba?')) return;
+    
+    const r = new FileReader();
+    r.onload = ev => {
+        try {
+            const d = JSON.parse(ev.target.result);
+            if (d.orders) saveOrders(d.orders);
+            if (d.routes) saveRoutes(d.routes);
+            if (d.riders) saveRiders(d.riders);
+            if (d.tasks) saveTasks(d.tasks);
+            if (d.records) saveRecords(d.records);
+            if (d.settings) saveSettingsObj(d.settings);
+            alert('✅ Naibalik na! I-refresh ang pahina.');
+            location.reload();
+        } catch {
+            alert('❌ Mali ang format ng file!');
+        }
+    };
+    r.readAsText(f);
+}
 </script>
 </body>
 </html>
