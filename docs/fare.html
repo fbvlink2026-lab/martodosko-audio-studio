@@ -254,17 +254,18 @@
         
         
         
-        /* ===== MOTORCYCLE ANALOG DASHBOARD STYLE ===== */
+
+/* ===== MOTOR DASHBOARD — INAYOS ===== */
 .dashboard-panel {
   background: linear-gradient(180deg, #111827 0%, #050505 100%);
   border-radius: 22px;
-  padding: 18px 14px;
-  margin: 16px 0;
+  padding: 16px 14px;
+  margin: 12px 0;
   box-shadow:
     inset 0 0 25px rgba(0,0,0,0.9),
     0 0 0 4px #1f2937,
     0 0 0 8px #050505,
-    0 8px 20px rgba(0,0,0,0.5);
+    0 6px 16px rgba(0,0,0,0.5);
 }
 
 .dashboard-title {
@@ -273,18 +274,36 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   text-align: center;
+}
+
+/* ⚠️ LOW FUEL WARNING */
+.low-fuel-warning {
+  background: linear-gradient(90deg, rgba(239,68,68,0.25), rgba(239,68,68,0.1));
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+  animation: blink-warning 1.2s infinite;
+}
+@keyframes blink-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .gauges-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .gauge-wrap {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -293,165 +312,129 @@
 .speedometer {
   position: relative;
   width: 100%;
-  max-width: 200px;
+  max-width: 190px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle at center, #050505 55%, #111827 100%);
-  box-shadow:
-    0 0 0 6px #1f2937,
-    inset 0 0 20px rgba(0,0,0,0.95);
-  padding: 6px;
+  box-shadow: 0 0 0 5px #1f2937, inset 0 0 20px rgba(0,0,0,0.95);
+  padding: 4px;
 }
 
-.speedometer-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.needle-group {
-  transform-origin: center;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+.speedometer-svg { width: 100%; height: 100%; }
+.needle-group { transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
 
 .gauge-center {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -38%);
   text-align: center;
   pointer-events: none;
 }
 
 .gauge-big-num {
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 900;
   line-height: 1;
-  font-family: system-ui, -apple-system, sans-serif;
   letter-spacing: -1px;
-  transition: color 0.2s, text-shadow 0.2s;
 }
+.gauge-unit { font-size: 10px; color: #6b7280; margin-top: 2px; text-transform: uppercase; }
+.gauge-sub { font-size: 9px; color: #4b5563; margin-top: 1px; }
+.gauge-label { margin-top: 8px; font-size: 10px; color: #9ca3af; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
 
-.gauge-unit {
-  font-size: 11px;
-  color: #6b7280;
-  margin-top: 4px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+/* Speed Colors */
+.speed-green { color: #22c55e; text-shadow: 0 0 8px rgba(34,197,94,0.4); }
+.speed-yellow { color: #eab308; text-shadow: 0 0 8px rgba(234,179,8,0.4); }
+.speed-red { color: #ef4444; text-shadow: 0 0 8px rgba(239,68,68,0.5); }
 
-.gauge-sub {
-  font-size: 10px;
-  color: #4b5563;
-  margin-top: 2px;
-}
-
-.gauge-label {
-  margin-top: 10px;
-  font-size: 11px;
-  color: #9ca3af;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Kulay ng numero */
-.speed-green { color: #22c55e; text-shadow: 0 0 10px rgba(34,197,94,0.5); }
-.speed-yellow { color: #eab308; text-shadow: 0 0 10px rgba(234,179,8,0.5); }
-.speed-red { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.6); }
-
-.accel-green { color: #22c55e; }
-.accel-blue { color: #3b82f6; }
+/* Accel Colors */
 .accel-gray { color: #6b7280; }
+.accel-green { color: #22c55e; }
+.accel-yellow { color: #eab308; }
+.accel-red { color: #ef4444; }
 
-/* FUEL BAR -- katulad ng nasa larawan */
+/* FUEL BAR — NAKATUGMA SA KAPASIDAD NG TANGKE */
 .fuel-bar-panel {
-  margin-top: 14px;
-  padding: 12px;
-  background: rgba(15,23,42,0.8);
-  border-radius: 14px;
+  background: rgba(15,23,42,0.7);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
   border: 1px solid #1e293b;
 }
-
-.fuel-bar-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  margin-bottom: 8px;
+.fuel-bar-row {
+  display: flex; justify-content: space-between; gap: 6px;
+  font-size: 11px; color: #94a3b8; margin-bottom: 6px; flex-wrap: wrap;
 }
-
+.fuel-bar-row strong { color: #fff; }
 .fuel-bar-container {
-  width: 100%;
-  height: 8px;
-  background: #1e293b;
-  border-radius: 4px;
-  overflow: hidden;
+  width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden;
 }
-
-.fuel-bar {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.3s ease, background 0.3s ease;
+.fuel-bar { height: 100%; border-radius: 4px; transition: width 0.3s ease, background 0.3s ease; }
+.fuel-status-row {
+  margin-top: 6px; font-size: 11px; color: #9ca3af;
 }
+.fuel-status-row strong { color: #fff; }
 
-.fuel-values {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  font-size: 11px;
-  color: #94a3b8;
-}
-
-.gps-info-row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 14px;
-  padding: 12px;
-  background: rgba(15,23,42,0.8);
-  border-radius: 12px;
-  font-size: 11px;
-  color: #9ca3af;
+/* ===== KOMPAKTOK NA INPUTS — NASA IBABA ===== */
+.compact-inputs-panel {
+  background: rgba(15,23,42,0.7);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
   border: 1px solid #1e293b;
 }
-
-.gps-info-col {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
 }
-
-.gps-info-col span:first-child {
-  color: #475569;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
+.input-group {
+  display: flex; flex-direction: column; gap: 3px;
 }
+.input-group label {
+  font-size: 10px; color: #9ca3af; font-weight: 600;
+}
+.input-group input {
+  background: #111827; border: 1px solid #374151; border-radius: 6px;
+  padding: 7px 8px; color: #fff; font-size: 13px; outline: none;
+}
+.input-group input:focus { border-color: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,0.15); }
+.inputs-buttons {
+  display: flex; gap: 8px;
+}
+.btn-set, .btn-add {
+  flex: 1; border: none; border-radius: 6px; padding: 8px 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: transform 0.15s ease;
+}
+.btn-set { background: linear-gradient(90deg, #3b82f6, #2563eb); color: white; }
+.btn-add { background: linear-gradient(90deg, #22c55e, #16a34a); color: white; }
+.btn-set:active, .btn-add:active { transform: scale(0.97); }
 
+/* GPS INFO */
+.gps-info-row {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;
+  padding: 8px 12px; background: rgba(15,23,42,0.7); border-radius: 8px;
+  font-size: 10px; color: #9ca3af; border: 1px solid #1e293b;
+}
+.gps-info-row strong { color: #fff; }
+
+/* SHAKE HINT */
 .shake-hint {
-  text-align: center;
-  font-size: 10px;
-  color: #6b7280;
-  margin-top: 10px;
-  padding: 8px;
-  background: rgba(59,130,246,0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(59,130,246,0.2);
+  text-align: center; font-size: 10px; color: #6b7280; margin-top: 10px;
+  padding: 7px; background: rgba(59,130,246,0.08); border-radius: 6px;
+  border: 1px solid rgba(59,130,246,0.15);
 }
-
-.shake-active {
-  animation: pulse-shake 0.5s ease-in-out;
-}
-
+.shake-active { animation: pulse-shake 0.5s ease-in-out; }
 @keyframes pulse-shake {
   0% { transform: scale(1); }
-  50% { transform: scale(1.05); background: rgba(34,197,94,0.2); }
+  50% { transform: scale(1.03); background: rgba(34,197,94,0.15); }
   100% { transform: scale(1); }
 }
+
+
+
+
+
 
         
         
@@ -600,25 +583,28 @@
             
             
             
-            <!-- MOTORCYCLE ANALOG DASHBOARD STYLE -->
+
+
 <div class="dashboard-panel" id="gauge-dashboard" style="display:none;">
   <div class="dashboard-title">🏍️ MOTOR DASHBOARD</div>
 
+  <!-- ⚠️ LOW FUEL WARNING -->
+  <div id="low-fuel-warning" class="low-fuel-warning" style="display:none;">
+    ⚠️ MABABA NA ANG GASOLINA — Maglagay agad!
+  </div>
+
+  <!-- GAUGES -->
   <div class="gauges-grid">
-    <!-- SPEEDOMETER -->
+    <!-- SPEEDOMETER: 0–120 km/h -->
     <div class="gauge-wrap">
       <div class="speedometer">
         <svg class="speedometer-svg" viewBox="0 0 220 220">
-          <!-- Outer black rim -->
           <circle cx="110" cy="110" r="100" fill="#0a0a0a" stroke="#111" stroke-width="6"/>
-
-          <!-- Colored arc: green 0–60, yellow 60–100, red 100–120 -->
-          <path d="M 30 110 A 80 80 0 0 1 190 110" fill="none" stroke="#22c55e" stroke-width="14" stroke-linecap="round"/>
+          
           <path d="M 30 110 A 80 80 0 0 1 90 35" fill="none" stroke="#22c55e" stroke-width="14" stroke-linecap="round"/>
           <path d="M 90 35 A 80 80 0 0 1 150 35" fill="none" stroke="#eab308" stroke-width="14" stroke-linecap="round"/>
           <path d="M 150 35 A 80 80 0 0 1 190 110" fill="none" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
-
-          <!-- Tick marks -->
+          
           <g stroke="#fff" stroke-width="2">
             <line x1="30" y1="110" x2="42" y2="110"/>
             <line x1="55" y1="65" x2="65" y2="75"/>
@@ -628,8 +614,7 @@
             <line x1="165" y1="65" x2="155" y2="75"/>
             <line x1="190" y1="110" x2="178" y2="110"/>
           </g>
-
-          <!-- Numbers -->
+          
           <g fill="#fff" font-size="15" font-weight="bold" text-anchor="middle">
             <text x="24" y="125">0</text>
             <text x="48" y="80">20</text>
@@ -639,108 +624,115 @@
             <text x="172" y="80">100</text>
             <text x="196" y="125">120</text>
           </g>
-
-          <!-- Needle -->
-          <g id="speed-needle-group" class="needle-group">
+          
+          <g id="speed-needle-group" class="needle-group" style="transform-origin: 110px 110px;">
             <polygon points="110,110 106,32 114,32" fill="#ef4444"/>
             <circle cx="110" cy="110" r="9" fill="#ef4444"/>
             <circle cx="110" cy="110" r="5" fill="#000"/>
           </g>
         </svg>
-
         <div class="gauge-center">
           <div id="speed-num" class="gauge-big-num speed-green">0</div>
           <div class="gauge-unit">km/h</div>
-          <div class="gauge-sub">MAX 120</div>
         </div>
       </div>
       <div class="gauge-label">BILIS</div>
     </div>
 
-    <!-- ACCELEROMETER -->
+    <!-- ACCEL / FUEL RATE -->
     <div class="gauge-wrap">
       <div class="speedometer">
         <svg class="speedometer-svg" viewBox="0 0 220 220">
           <circle cx="110" cy="110" r="100" fill="#0a0a0a" stroke="#111" stroke-width="6"/>
-
-          <!-- Colored arc: blue -5–0, green 0–+5 -->
-          <path d="M 30 110 A 80 80 0 0 1 110 30" fill="none" stroke="#3b82f6" stroke-width="14" stroke-linecap="round"/>
-          <path d="M 110 30 A 80 80 0 0 1 190 110" fill="none" stroke="#22c55e" stroke-width="14" stroke-linecap="round"/>
-
-          <!-- Tick marks -->
+          <path d="M 30 110 A 80 80 0 0 1 110 30" fill="none" stroke="#22c55e" stroke-width="14" stroke-linecap="round"/>
+          <path d="M 110 30 A 80 80 0 0 1 158 45" fill="none" stroke="#eab308" stroke-width="14" stroke-linecap="round"/>
+          <path d="M 158 45 A 80 80 0 0 1 190 110" fill="none" stroke="#ef4444" stroke-width="14" stroke-linecap="round"/>
+          
           <g stroke="#fff" stroke-width="2">
             <line x1="30" y1="110" x2="42" y2="110"/>
-            <line x1="65" y1="55" x2="72" y2="67"/>
-            <line x1="110" y1="30" x2="110" y2="43" stroke="#fff" stroke-width="3"/>
-            <line x1="155" y1="55" x2="148" y2="67"/>
+            <line x1="60" y1="60" x2="68" y2="72"/>
+            <line x1="110" y1="30" x2="110" y2="43" stroke-width="3"/>
+            <line x1="160" y1="60" x2="152" y2="72"/>
             <line x1="190" y1="110" x2="178" y2="110"/>
           </g>
-
-          <!-- Numbers -->
+          
           <g fill="#fff" font-size="14" font-weight="bold" text-anchor="middle">
-            <text x="22" y="125">-5</text>
-            <text x="62" y="65">-2.5</text>
-            <text x="110" y="38">0</text>
-            <text x="158" y="65">+2.5</text>
-            <text x="198" y="125">+5</text>
+            <text x="28" y="125">0</text>
+            <text x="60" y="68">2.5</text>
+            <text x="110" y="38">5</text>
+            <text x="160" y="68">7.5</text>
+            <text x="196" y="125">10</text>
           </g>
-
-          <!-- Needle -->
-          <g id="accel-needle-group" class="needle-group">
-            <polygon points="110,110 107,35 113,35" fill="#f59e0b"/>
+          
+          <g id="accel-needle-group" class="needle-group" style="transform-origin: 110px 110px;">
+            <polygon points="110,110 35,107 35,113" fill="#f59e0b"/>
             <circle cx="110" cy="110" r="9" fill="#f59e0b"/>
             <circle cx="110" cy="110" r="5" fill="#000"/>
           </g>
         </svg>
-
         <div class="gauge-center">
           <div id="accel-num" class="gauge-big-num accel-gray">0.00</div>
           <div class="gauge-unit">m/s²</div>
           <div id="fuel-rate-sub" class="gauge-sub">— L/100km</div>
         </div>
       </div>
-      <div class="gauge-label">ACCEL / FUEL</div>
+      <div class="gauge-label">KONSUMO NG GAS</div>
     </div>
   </div>
 
-  <!-- FUEL BAR -- katulad ng nasa larawan -->
+  <!-- FUEL BAR — NAKATUGMA SA KAPASIDAD NG TANGKE -->
   <div class="fuel-bar-panel">
-    <div class="fuel-bar-labels">
-      <span>Distance</span>
-      <span>Fuel Consumed</span>
-      <span>Fuel Rate</span>
+    <div class="fuel-bar-row">
+      <span>Dist: <strong id="distance-val">0.00 km</strong></span>
+      <span>Nagas: <strong id="fuel-used-val">0.00 L</strong></span>
+      <span>Rate: <strong id="fuel-econ-val">—</strong></span>
     </div>
     <div class="fuel-bar-container">
       <div id="fuel-level-bar" class="fuel-bar" style="width: 100%; background: #22c55e;"></div>
     </div>
-    <div class="fuel-values">
-      <span id="distance-val">0.00 km</span>
-      <span id="fuel-used-val">0.00 L</span>
-      <span id="fuel-econ-val">— L/100km</span>
+    <div class="fuel-status-row">
+      Tangke: <strong id="fuel-status-val">50.00 L</strong> / <span id="tank-cap-display">50.00 L</span>
+    </div>
+  </div>
+
+  <!-- ⚙️ SETTINGS — KAPASIDAD NG TANGKE -->
+  <div class="compact-inputs-panel">
+    <div class="inputs-grid">
+      <div class="input-group">
+        <label>Kap. Tangke (L)</label>
+        <input type="number" id="tank-capacity-set" step="1" min="1" max="200" value="50">
+      </div>
+      <div class="input-group">
+        <label>Nasa Tangke (L)</label>
+        <input type="number" id="current-fuel-set" step="0.1" min="0" max="200" value="50">
+      </div>
+      <div class="input-group">
+        <label>Idadagdag (L)</label>
+        <input type="number" id="add-fuel-set" step="0.1" min="0" max="200" placeholder="0.0">
+      </div>
+    </div>
+    <div class="inputs-buttons">
+      <button id="apply-settings-btn" class="btn-set">✅ I-set</button>
+      <button id="add-fuel-btn" class="btn-add">➕ Magdagdag</button>
     </div>
   </div>
 
   <!-- GPS INFO -->
   <div class="gps-info-row">
-    <div class="gps-info-col">
-      <span>Latitude</span>
-      <span id="gps-lat">—</span>
-    </div>
-    <div class="gps-info-col">
-      <span>Longitude</span>
-      <span id="gps-lng">—</span>
-    </div>
-    <div class="gps-info-col">
-      <span>Accuracy</span>
-      <span id="gps-accuracy">—</span>
-    </div>
+    <span>Lat: <strong id="gps-lat">—</strong></span>
+    <span>Lng: <strong id="gps-lng">—</strong></span>
+    <span>±<strong id="gps-accuracy">— m</strong></span>
   </div>
 
   <!-- SHAKE HINT -->
   <div id="shake-hint-box" class="shake-hint">
-    📳 Ipagpag ang cellphone para simulan ang GPS
+    📳 Ipagpag ang cellphone → simulan ang GPS
   </div>
 </div>
+
+
+
+
 
             
             
@@ -1257,7 +1249,18 @@ function useGPSDistance() {
 
 
 
-// ========== MOTORCYCLE ANALOG DASHBOARD LOGIC ==========
+// ========== DASHBOARD — NAKATUGMA SA BUONG SISTEMA ==========
+let TANK_CAPACITY = 50;
+const LOW_FUEL_THRESHOLD = 2;
+const MAX_ACCEL = 10;
+const SHAKE_THRESHOLD = 15;
+
+let sessionDistanceKm = 0;
+let sessionFuelUsedLiters = 0;
+let totalDistanceKm = 0;
+let totalFuelUsedLiters = 0;
+let remainingFuelLiters = 50;
+
 let lastGPSUpdateTime = null;
 let previousSpeedKmh = 0;
 let currentSpeedKmh = 0;
@@ -1265,233 +1268,330 @@ let currentAccelMs2 = 0;
 let lastValidLat = null;
 let lastValidLng = null;
 
-let totalDistanceKm = 0;
-let totalFuelUsedLiters = 0;
-const AVG_FUEL_CONSUMPTION = 6.5;
-const TANK_CAPACITY = 50;
-let remainingFuelLiters = TANK_CAPACITY;
-
 let lastShakeTime = 0;
-const SHAKE_THRESHOLD = 15;
 let isGPSActive = false;
 let lastAcceleration = { x: null, y: null, z: null };
+
+const STORAGE = {
+  TANK_CAP: 'motor_dash_tank_cap',
+  TOTAL_DIST: 'motor_dash_total_dist',
+  TOTAL_FUEL: 'motor_dash_total_fuel',
+  REMAINING_FUEL: 'motor_dash_remaining_fuel'
+};
+
+// Kumuha ng konsumo mula sa pangunahing sistema
+function getCurrentConsumptionRate() {
+  const v = getActiveVehicle();
+  // km/L → L/100km
+  return v.kmPerL > 0 ? 100 / v.kmPerL : 6.5;
+}
+
+function loadFromCache() {
+  try {
+    const cap = localStorage.getItem(STORAGE.TANK_CAP);
+    const d = localStorage.getItem(STORAGE.TOTAL_DIST);
+    const f = localStorage.getItem(STORAGE.TOTAL_FUEL);
+    const r = localStorage.getItem(STORAGE.REMAINING_FUEL);
+    if (cap) TANK_CAPACITY = parseFloat(cap);
+    if (d) totalDistanceKm = parseFloat(d);
+    if (f) totalFuelUsedLiters = parseFloat(f);
+    if (r) remainingFuelLiters = parseFloat(r);
+    const tankSet = document.getElementById('tank-capacity-set');
+    const currentSet = document.getElementById('current-fuel-set');
+    const tankDisplay = document.getElementById('tank-cap-display');
+    if (tankSet) tankSet.value = TANK_CAPACITY;
+    if (currentSet) currentSet.value = remainingFuelLiters.toFixed(1);
+    if (tankDisplay) tankDisplay.textContent = TANK_CAPACITY.toFixed(2) + ' L';
+  } catch (e) { console.warn('Load failed:', e); }
+  updateFuelDisplay();
+}
+
+function saveToCache() {
+  try {
+    localStorage.setItem(STORAGE.TANK_CAP, TANK_CAPACITY.toString());
+    localStorage.setItem(STORAGE.TOTAL_DIST, totalDistanceKm.toFixed(6));
+    localStorage.setItem(STORAGE.TOTAL_FUEL, totalFuelUsedLiters.toFixed(6));
+    localStorage.setItem(STORAGE.REMAINING_FUEL, remainingFuelLiters.toFixed(6));
+  } catch (e) { console.warn('Save failed:', e); }
+}
+
+function applySettings() {
+  const tankInput = document.getElementById('tank-capacity-set');
+  const currentInput = document.getElementById('current-fuel-set');
+  const tankDisplay = document.getElementById('tank-cap-display');
+  const newCap = parseFloat(tankInput.value);
+  const newCurrent = parseFloat(currentInput.value);
+  
+  if (!newCap || newCap <= 0) { alert('❌ Ilagay ang tamang kapasidad'); return; }
+  if (isNaN(newCurrent) || newCurrent < 0 || newCurrent > newCap) {
+    alert(`❌ Dapat 0 hanggang ${newCap}L lang`); return;
+  }
+  
+  TANK_CAPACITY = newCap;
+  remainingFuelLiters = newCurrent;
+  if (tankDisplay) tankDisplay.textContent = TANK_CAPACITY.toFixed(2) + ' L';
+  saveToCache(); 
+  updateFuelDisplay();
+  alert(`✅ Nai-set!\nTangke: ${TANK_CAPACITY}L\nNasa Tangke: ${remainingFuelLiters.toFixed(2)}L`);
+}
+
+function addFuel() {
+  const addInput = document.getElementById('add-fuel-set');
+  const amount = parseFloat(addInput.value);
+  if (!amount || amount <= 0) { alert('❌ Ilagay ang dami'); return; }
+  if (remainingFuelLiters + amount > TANK_CAPACITY) {
+    alert(`⚠️ Sobrang dami!\nPwede pa: ${(TANK_CAPACITY - remainingFuelLiters).toFixed(2)}L`); return;
+  }
+  remainingFuelLiters += amount;
+  saveToCache(); 
+  updateFuelDisplay();
+  alert(`✅ Naidagdag: ${amount.toFixed(2)}L\nNasa Tangke: ${remainingFuelLiters.toFixed(2)}L`);
+  addInput.value = '';
+}
+
+function checkLowFuelWarning() {
+  const w = document.getElementById('low-fuel-warning');
+  if (!w) return;
+  w.style.display = (remainingFuelLiters <= LOW_FUEL_THRESHOLD && remainingFuelLiters > 0) ? 'block' : 'none';
+}
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
+// TINANGGAL ANG DOBLE — GUMAGAMIT NG IISANG PINAGMULAN NG GPS
 function updateGaugesFromPosition(pos) {
   const now = new Date();
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
-
+  const fuelRatePer100km = getCurrentConsumptionRate(); // mula sa sasakyan
+  
   if (lastGPSUpdateTime && lastValidLat !== null) {
     const dtSec = (now - lastGPSUpdateTime) / 1000;
     const dtHours = dtSec / 3600;
-
+    
     if (dtHours > 0.0001) {
       const distKm = calculateDistance(lastValidLat, lastValidLng, lat, lng);
+      
+      // I-update ang distansya — parehong pinagmumulan
+      sessionDistanceKm += distKm; 
       totalDistanceKm += distKm;
-
+      
+      // Bilis — iwas sa hindi makatotohanang halaga
       previousSpeedKmh = currentSpeedKmh;
       currentSpeedKmh = distKm / dtHours;
       if (currentSpeedKmh > 200) currentSpeedKmh = previousSpeedKmh;
-
+      
+      // Pagbilis
       if (dtSec > 0.01) {
-        const speedChangeKmh = currentSpeedKmh - previousSpeedKmh;
-        currentAccelMs2 = speedChangeKmh / 3.6 / dtSec;
-        currentAccelMs2 = Math.max(-5, Math.min(5, currentAccelMs2));
+        const change = currentSpeedKmh - previousSpeedKmh;
+        currentAccelMs2 = Math.max(0, change / 3.6 / dtSec);
+        currentAccelMs2 = Math.min(MAX_ACCEL, currentAccelMs2);
       }
-
-      const fuelForSegment = (distKm / 100) * AVG_FUEL_CONSUMPTION;
-      totalFuelUsedLiters += fuelForSegment;
-      remainingFuelLiters = Math.max(0, TANK_CAPACITY - totalFuelUsedLiters);
+      
+      // Gasolina — mula sa konsumo ng sasakyan
+      const fuel = (distKm / 100) * fuelRatePer100km;
+      sessionFuelUsedLiters += fuel; 
+      totalFuelUsedLiters += fuel;
+      remainingFuelLiters = Math.max(0, remainingFuelLiters - fuel);
+      
+      saveToCache(); 
+      checkLowFuelWarning();
     }
   }
-
-  lastGPSUpdateTime = now;
-  lastValidLat = lat;
+  
+  lastGPSUpdateTime = now; 
+  lastValidLat = lat; 
   lastValidLng = lng;
-
-  renderSpeedometer(currentSpeedKmh);
+  
+  renderSpeedometer(currentSpeedKmh); 
   renderAccelerometer(currentAccelMs2);
-  updateFuelDisplay();
-  updateGaugeInfoRow(pos);
+  updateFuelDisplay(); 
+  updateGPSInfo(pos);
 }
 
 function renderSpeedometer(speedKmh) {
-  const maxSpeed = 120;
-  const clamped = Math.max(0, Math.min(speedKmh, maxSpeed));
-  const rotationDeg = -90 + (clamped / maxSpeed) * 180;
-
+  const clamped = Math.max(0, Math.min(speedKmh, 120));
+  const deg = -90 + (clamped / 120) * 180;
   const needle = document.getElementById('speed-needle-group');
-  if (needle) needle.style.transform = `rotate(${rotationDeg}deg)`;
-
-  const numEl = document.getElementById('speed-num');
-  if (numEl) {
-    numEl.textContent = Math.round(clamped);
-    numEl.className = 'gauge-big-num';
-    if (clamped < 60) numEl.classList.add('speed-green');
-    else if (clamped < 100) numEl.classList.add('speed-yellow');
-    else numEl.classList.add('speed-red');
+  if (needle) needle.style.transform = `rotate(${deg}deg)`;
+  
+  const num = document.getElementById('speed-num');
+  if (num) {
+    num.textContent = Math.round(clamped);
+    num.className = 'gauge-big-num';
+    if (clamped < 60) num.classList.add('speed-green');
+    else if (clamped < 100) num.classList.add('speed-yellow');
+    else num.classList.add('speed-red');
   }
 }
 
-function renderAccelerometer(accelMs2) {
-  const maxAccel = 5;
-  const clamped = Math.max(-maxAccel, Math.min(accelMs2, maxAccel));
-  const rotationDeg = (clamped / maxAccel) * 90;
-
+function renderAccelerometer(accel) {
+  const clamped = Math.max(0, Math.min(accel, MAX_ACCEL));
+  const deg = 180 - (clamped / MAX_ACCEL) * 180;
   const needle = document.getElementById('accel-needle-group');
-  if (needle) needle.style.transform = `rotate(${rotationDeg}deg)`;
-
-  const numEl = document.getElementById('accel-num');
-  if (numEl) {
-    numEl.textContent = clamped.toFixed(2);
-    numEl.className = 'gauge-big-num';
-    if (Math.abs(clamped) < 0.15) numEl.classList.add('accel-gray');
-    else if (clamped > 0) numEl.classList.add('accel-green');
-    else numEl.classList.add('accel-blue');
+  if (needle) needle.style.transform = `rotate(${deg}deg)`;
+  
+  const num = document.getElementById('accel-num');
+  if (num) {
+    num.textContent = clamped.toFixed(2);
+    num.className = 'gauge-big-num';
+    if (clamped < 5) num.classList.add('accel-green');
+    else if (clamped < 8) num.classList.add('accel-yellow');
+    else num.classList.add('accel-red');
   }
 }
 
 function updateFuelDisplay() {
   const distEl = document.getElementById('distance-val');
-  const fuelUsedEl = document.getElementById('fuel-used-val');
-  const fuelEconEl = document.getElementById('fuel-econ-val');
-  const fuelRateSubEl = document.getElementById('fuel-rate-sub');
-  const fuelBarEl = document.getElementById('fuel-level-bar');
-
-  if (distEl) distEl.textContent = totalDistanceKm.toFixed(2) + ' km';
-  if (fuelUsedEl) fuelUsedEl.textContent = totalFuelUsedLiters.toFixed(2) + ' L';
-
-  let econText = '—';
-  if (totalDistanceKm > 0.01) {
-    const econ = (totalFuelUsedLiters / totalDistanceKm) * 100;
+  const fuelEl = document.getElementById('fuel-used-val');
+  const econEl = document.getElementById('fuel-econ-val');
+  const rateSubEl = document.getElementById('fuel-rate-sub');
+  const barEl = document.getElementById('fuel-level-bar');
+  const statusVal = document.getElementById('fuel-status-val');
+  const currentSet = document.getElementById('current-fuel-set');
+  
+  if (distEl) distEl.textContent = sessionDistanceKm.toFixed(2) + ' km';
+  if (fuelEl) fuelEl.textContent = sessionFuelUsedLiters.toFixed(2) + ' L';
+  if (statusVal) statusVal.textContent = remainingFuelLiters.toFixed(2) + ' L';
+  if (currentSet) currentSet.value = remainingFuelLiters.toFixed(1);
+  
+  let econText = '— L/100km';
+  if (sessionDistanceKm > 0.01) {
+    const econ = (sessionFuelUsedLiters / sessionDistanceKm) * 100;
     econText = econ.toFixed(2) + ' L/100km';
-    if (fuelEconEl) fuelEconEl.textContent = econText;
-    if (fuelRateSubEl) fuelRateSubEl.textContent = econText;
+    if (econEl) econEl.textContent = econText;
+    if (rateSubEl) rateSubEl.textContent = econText;
   }
-
-  const fuelPercent = (remainingFuelLiters / TANK_CAPACITY) * 100;
-  if (fuelBarEl) {
-    fuelBarEl.style.width = fuelPercent + '%';
-    if (fuelPercent > 50) fuelBarEl.style.background = '#22c55e';
-    else if (fuelPercent > 25) fuelBarEl.style.background = '#eab308';
-    else fuelBarEl.style.background = '#ef4444';
+  
+  const pct = TANK_CAPACITY > 0 ? (remainingFuelLiters / TANK_CAPACITY) * 100 : 100;
+  if (barEl) {
+    barEl.style.width = pct + '%';
+    barEl.style.background = pct > 50 ? '#22c55e' : pct > 25 ? '#eab308' : '#ef4444';
   }
+  
+  checkLowFuelWarning();
 }
 
-function updateGaugeInfoRow(pos) {
-  const latEl = document.getElementById('gps-lat');
-  const lngEl = document.getElementById('gps-lng');
-  const accEl = document.getElementById('gps-accuracy');
-
-  if (latEl) latEl.textContent = pos.coords.latitude.toFixed(6);
-  if (lngEl) lngEl.textContent = pos.coords.longitude.toFixed(6);
-  if (accEl) accEl.textContent = (pos.coords.accuracy || 0).toFixed(1) + ' m';
+function updateGPSInfo(pos) {
+  const lat = document.getElementById('gps-lat');
+  const lng = document.getElementById('gps-lng');
+  const acc = document.getElementById('gps-accuracy');
+  if (lat) lat.textContent = pos.coords.latitude.toFixed(6);
+  if (lng) lng.textContent = pos.coords.longitude.toFixed(6);
+  if (acc) acc.textContent = (pos.coords.accuracy || 0).toFixed(1) + ' m';
 }
 
-function resetGauges() {
-  lastGPSUpdateTime = null;
-  previousSpeedKmh = 0;
+function resetSession() {
+  lastGPSUpdateTime = null; 
+  previousSpeedKmh = 0; 
   currentSpeedKmh = 0;
-  currentAccelMs2 = 0;
-  lastValidLat = null;
+  currentAccelMs2 = 0; 
+  lastValidLat = null; 
   lastValidLng = null;
-
-  totalDistanceKm = 0;
-  totalFuelUsedLiters = 0;
-  remainingFuelLiters = TANK_CAPACITY;
-
-  renderSpeedometer(0);
-  renderAccelerometer(0);
+  sessionDistanceKm = 0; 
+  sessionFuelUsedLiters = 0;
+  renderSpeedometer(0); 
+  renderAccelerometer(0); 
   updateFuelDisplay();
 }
 
 function initShakeDetection() {
-  if (!window.DeviceMotionEvent) {
-    console.log('Device motion hindi suportado');
-    return;
-  }
-
-  window.addEventListener('devicemotion', function(e) {
+  loadFromCache();
+  
+  const applyBtn = document.getElementById('apply-settings-btn');
+  const addFuelBtn = document.getElementById('add-fuel-btn');
+  if (applyBtn) applyBtn.addEventListener('click', applySettings);
+  if (addFuelBtn) addFuelBtn.addEventListener('click', addFuel);
+  
+  if (!window.DeviceMotionEvent) return;
+  window.addEventListener('devicemotion', e => {
     const acc = e.accelerationIncludingGravity;
     if (!acc) return;
-
     const { x, y, z } = acc;
-    if (lastAcceleration.x === null) {
-      lastAcceleration = { x, y, z };
-      return;
+    if (lastAcceleration.x === null) { 
+      lastAcceleration = { x, y, z }; 
+      return; 
     }
-
-    const deltaX = Math.abs(x - lastAcceleration.x);
-    const deltaY = Math.abs(y - lastAcceleration.y);
-    const deltaZ = Math.abs(z - lastAcceleration.z);
-
+    const dX = Math.abs(x - lastAcceleration.x);
+    const dY = Math.abs(y - lastAcceleration.y);
+    const dZ = Math.abs(z - lastAcceleration.z);
     lastAcceleration = { x, y, z };
-
     const now = Date.now();
-    if ((deltaX > SHAKE_THRESHOLD || deltaY > SHAKE_THRESHOLD || deltaZ > SHAKE_THRESHOLD)
+    if ((dX > SHAKE_THRESHOLD || dY > SHAKE_THRESHOLD || dZ > SHAKE_THRESHOLD) 
         && now - lastShakeTime > 2000) {
-      lastShakeTime = now;
+      lastShakeTime = now; 
       handleShake();
     }
   });
 }
 
 function handleShake() {
-  const hintBox = document.getElementById('shake-hint-box');
-  if (hintBox) {
-    hintBox.classList.add('shake-active');
-    setTimeout(() => hintBox.classList.remove('shake-active'), 500);
+  const hint = document.getElementById('shake-hint-box');
+  if (hint) { 
+    hint.classList.add('shake-active'); 
+    setTimeout(() => hint.classList.remove('shake-active'), 500); 
   }
-
+  
   if (!isGPSActive) {
-    isGPSActive = true;
-    resetGauges();
-
-    const dashboard = document.getElementById('gauge-dashboard');
-    if (dashboard) dashboard.style.display = 'block';
-
-    if (typeof startGPSTracking === 'function') {
-      startGPSTracking();
-    }
-
-    if (hintBox) {
-      hintBox.innerHTML = '✅ GPS Sinimulan! Ipagpag ulit para i-reset';
-    }
+    isGPSActive = true; 
+    resetSession();
+    const dash = document.getElementById('gauge-dashboard');
+    if (dash) dash.style.display = 'block';
+    if (typeof startGPSTracking === 'function') startGPSTracking();
+    if (hint) hint.innerHTML = '✅ GPS Sinimulan!';
   } else {
-    resetGauges();
-    if (hintBox) {
-      hintBox.innerHTML = '🔄 Na-reset! Ipagpag ulit para simulan muli';
-      setTimeout(() => {
-        hintBox.innerHTML = '📳 Ipagpag ang cellphone para simulan ang GPS';
-      }, 2000);
+    isGPSActive = false; 
+    saveToCache();
+    if (hint) {
+      hint.innerHTML = '💾 Naisave! Ipagpag ulit → bagong biyahe';
+      setTimeout(() => { 
+        hint.innerHTML = '📳 Ipagpag ang cellphone → simulan ang GPS'; 
+      }, 3000);
     }
+    resetSession();
   }
 }
 
-const originalOnGPSPosition = window.onGPSPosition || function(){};
-window.onGPSPosition = function(pos) {
-  originalOnGPSPosition(pos);
-  if (isGPSActive) updateGaugesFromPosition(pos);
+// ========== PAGTUTUGMA SA PANGUNAHING GPS SISTEMA ==========
+// Hindi nagbabanggaan — tinatawag mula sa orihinal na function
+const origOnGPSPosition = window.onGPSPosition;
+window.onGPSPosition = pos => {
+  if (typeof origOnGPSPosition === 'function') {
+    origOnGPSPosition(pos);
+  }
+  if (isGPSActive) {
+    updateGaugesFromPosition(pos);
+  }
 };
 
-const originalStartGPSTracking = window.startGPSTracking || function(){};
-window.startGPSTracking = function() {
-  resetGauges();
-  originalStartGPSTracking();
+const origStartGPSTracking = window.startGPSTracking;
+window.startGPSTracking = () => {
+  resetSession();
+  if (typeof origStartGPSTracking === 'function') {
+    origStartGPSTracking();
+  }
+  isGPSActive = true;
 };
 
+const origStopGPSTracking = window.stopGPSTracking;
+window.stopGPSTracking = () => {
+  if (typeof origStopGPSTracking === 'function') {
+    origStopGPSTracking();
+  }
+  isGPSActive = false;
+};
+
+// Simulan kapag nakabuo ang pahina
 document.addEventListener('DOMContentLoaded', initShakeDetection);
+
+
+
+
 
 
 
