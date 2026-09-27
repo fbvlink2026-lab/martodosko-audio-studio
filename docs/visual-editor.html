@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Visual Editor</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, sans-serif; }
+body { display:flex; flex-direction:column; height:100vh; background:#0f172a; color:#e5e7eb; }
+
+/* ---- NAKAITAAS: MGA KASANGKAPAN ---- */
+.toolbar {
+  background:#1e293b; padding:10px 14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  border-bottom:2px solid #334155;
+}
+.tool-group { display:flex; gap:6px; align-items:center; margin-right:12px; }
+.tool-group label { font-size:11px; color:#94a3b8; margin-right:4px; }
+.tool-group input[type="range"] { width:90px; }
+button {
+  background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;
+  font-weight:600; font-size:12px; transition:all 0.2s;
+}
+button:hover { background:#2563eb; }
+button.secondary { background:#475569; }
+button.secondary:hover { background:#64748b; }
+button.success { background:#22c55e; }
+button.success:hover { background:#16a34a; }
+select, input[type="number"] {
+  background:#1e293b; border:1px solid #475569; color:white; padding:5px 8px; border-radius:6px; font-size:12px;
+}
+
+/* ---- HATI: EDITOR SA KALIWA, PREVIEW SA KANAN ---- */
+.workspace { display:flex; flex:1; overflow:hidden; }
+.editor-pane { width:40%; display:flex; flex-direction:column; background:#1e293b; border-right:2px solid #334155; }
+.editor-header { padding:8px 12px; background:#334155; font-size:12px; font-weight:600; }
+#css-editor {
+  flex:1; background:#0f172a; color:#e2e8f0; border:none; padding:12px;
+  font-family:Consolas,Monaco,monospace; font-size:12px; line-height:1.5; resize:none;
+}
+.preview-pane { width:60%; display:flex; flex-direction:column; background:#020617; }
+.preview-header {
+  padding:8px 12px; background:#334155; font-size:12px; font-weight:600; display:flex;
+  justify-content:space-between; align-items:center;
+}
+#live-preview { flex:1; border:none; background:#050505; }
+
+/* ---- MGA PINILING ELEMENTO ---- */
+.select-hint {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  color:#94a3b8; font-size:14px; text-align:center; pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<!-- 🛠️ KASANGKAPAN -->
+<div class="toolbar">
+  <div class="tool-group">
+    <label>Piliin:</label>
+    <select id="el-selector">
+      <option value=".speedometer">Speedometer</option>
+      <option value=".accelerator">Accelerator</option>
+      <option value=".dashboard-panel">Panel ng Dashboard</option>
+      <option value=".gauge-big-num">Bilang sa Gauge</option>
+    </select>
+  </div>
+
+  <div class="tool-group">
+    <label>Lapad:</label>
+    <input type="range" id="el-width" min="100" max="300" value="190">
+    <span id="w-val">190px</span>
+  </div>
+
+  <div class="tool-group">
+    <label>Taas:</label>
+    <input type="range" id="el-height" min="100" max="300" value="190">
+    <span id="h-val">190px</span>
+  </div>
+
+  <div class="tool-group">
+    <label>Bilog:</label>
+    <input type="range" id="el-radius" min="0" max="50" value="50">
+    <span id="r-val">50%</span>
+  </div>
+
+  <div class="tool-group">
+    <label>Anino:</label>
+    <input type="range" id="el-shadow" min="0" max="30" value="20">
+    <span id="s-val">20px</span>
+  </div>
+
+  <button id="apply-btn">✅ Ilapat</button>
+  <button id="copy-btn" class="secondary">📋 Kopyahin CSS</button>
+  <button id="reset-btn" class="secondary">↩️ Ibalik</button>
+  <button id="save-btn" class="success">💾 I-save</button>
+</div>
+
+<!-- 📝 EDITOR + PREVIEW -->
+<div class="workspace">
+  <div class="editor-pane">
+    <div class="editor-header">📝 CSS Code — I-edit dito</div>
+    <textarea id="css-editor" spellcheck="false"></textarea>
+  </div>
+  <div class="preview-pane">
+    <div class="preview-header">
+      👁️ Agad na Nakikita
+      <span id="status">Handa</span>
+    </div>
+    <iframe id="live-preview"></iframe>
+  </div>
+</div>
+
+<script>
+// ===== ORIHINAL NA ESTILO NG DASHBOARD =====
+const baseHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+<style id="dynamic-styles">
+/* Dito ilalagay ang pagbabago */
+</style>
+<style>
+/* BATAYANG ESTILO */
+.dashboard-panel {
+  background: linear-gradient(180deg, #111827 0%, #050505 100%);
+  border-radius: 22px;
+  padding: 16px 14px;
+  margin: 12px auto;
+  max-width: 420px;
+}
+.dashboard-title {
+  color: #9ca3af; font-size: 12px; font-weight:700;
+  text-transform: uppercase; letter-spacing:1.5px; text-align:center; margin-bottom:10px;
+}
+.gauges-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap:14px;
+}
+.gauge-wrap { display:flex; flex-direction:column; align-items:center; }
+
+/* ✅ Accelerator — HUWARAN / HINDI BABAGUHIN */
+.accelerator {
+  width: 190px; height: 190px; border-radius: 50%;
+  background: radial-gradient(circle at center, #050505 55%, #111827 100%);
+  box-shadow: 0 0 0 5px #1f2937, inset 0 0 20px rgba(0,0,0,0.95);
+  position: relative; padding:4px;
+}
+.accel-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  text-align:center; color:white;
+}
+.accel-value { font-size:30px; font-weight:900; }
+.accel-label { font-size:10px; color:#6b7280; text-transform:uppercase; }
+
+/* ✅ Speedometer — AYUSIN DITO */
+.speedometer {
+  width: 190px; height: 190px; border-radius: 50%;
+  background: radial-gradient(circle at center, #050505 55%, #111827 100%);
+  box-shadow: 0 0 0 5px #1f2937, inset 0 0 20px rgba(0,0,0,0.95);
+  position: relative; padding:4px;
+}
+.speed-center {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  text-align:center; color:white;
+}
+.speed-value { font-size:30px; font-weight:900; }
+.speed-unit { font-size:10px; color:#6b7280; text-transform:uppercase; }
+</style>
+</head>
+<body>
+  <div class="dashboard-panel">
+    <div class="dashboard-title">MOTOR DASHBOARD</div>
+    <div class="gauges-grid">
+      
+      <!-- SPEEDOMETER — ITO ANG AYUSIN -->
+      <div class="gauge-wrap">
+        <div class="speedometer" id="speedo-demo">
+          <div class="speed-center">
+            <div class="speed-value">0</div>
+            <div class="speed-unit">km/h</div>
+          </div>
+        </div>
+        <div class="gauge-label">SPEEDO</div>
+      </div>
+      
+      <!-- ACCELERATOR — HUWARAN -->
+      <div class="gauge-wrap">
+        <div class="accelerator">
+          <div class="accel-center">
+            <div class="accel-value">1.1</div>
+            <div class="accel-label">ACCEL</div>
+          </div>
+        </div>
+        <div class="gauge-label">ACCEL (HUWARAN)</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+// ===== MGA ELEMENTO =====
+const previewFrame = document.getElementById('live-preview');
+const cssEditor = document.getElementById('css-editor');
+const elSelector = document.getElementById('el-selector');
+const widthSlider = document.getElementById('el-width');
+const heightSlider = document.getElementById('el-height');
+const radiusSlider = document.getElementById('el-radius');
+const shadowSlider = document.getElementById('el-shadow');
+const applyBtn = document.getElementById('apply-btn');
+const copyBtn = document.getElementById('copy-btn');
+const resetBtn = document.getElementById('reset-btn');
+const saveBtn = document.getElementById('save-btn');
+const statusText = document.getElementById('status');
+
+// Kumuha ng orihinal na CSS mula sa localStorage o simula
+let originalCSS = localStorage.getItem('visualEditorCSS') || '';
+if (!originalCSS) {
+  originalCSS = `/* Ilagay dito ang CSS na gusto mong i-ayusin */
+.speedometer {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+}`;
+}
+cssEditor.value = originalCSS;
+
+// I-update ang preview
+function refreshPreview() {
+  const dynamicCSS = cssEditor.value;
+  const fullPage = baseHTML.replace(
+    '<style id="dynamic-styles">/* Dito ilalagay ang pagbabago */</style>',
+    `<style id="dynamic-styles">${dynamicCSS}</style>`
+  );
+  previewFrame.srcdoc = fullPage;
+  statusText.textContent = 'Nai-update ✅';
+  setTimeout(() => statusText.textContent = 'Handa', 1500);
+}
+
+// Ipakita ang halaga ng slider
+function updateSliderLabels() {
+  document.getElementById('w-val').textContent = widthSlider.value + 'px';
+  document.getElementById('h-val').textContent = heightSlider.value + 'px';
+  document.getElementById('r-val').textContent = radiusSlider.value + '%';
+  document.getElementById('s-val').textContent = shadowSlider.value + 'px';
+}
+
+// Bumuo ng CSS mula sa slider
+function buildCSSFromSliders() {
+  const sel = elSelector.value;
+  return `${sel} {
+  width: ${widthSlider.value}px;
+  height: ${heightSlider.value}px;
+  border-radius: ${radiusSlider.value}%;
+  box-shadow: 0 0 0 5px #1f2937, inset 0 0 ${shadowSlider.value}px rgba(0,0,0,0.95);
+}`;
+}
+
+// Palitan ang CSS rule para sa napiling elemento
+function updateEditorFromSliders() {
+  const sel = elSelector.value;
+  const newRule = buildCSSFromSliders();
+  
+  // Tanggalin ang lumang rule para sa parehong selector
+  let lines = cssEditor.value.split('\n');
+  let output = [];
+  let insideBlock = false;
+  let found = false;
+  
+  for (let line of lines) {
+    if (line.trim().startsWith(sel + ' {')) {
+      insideBlock = true;
+      found = true;
+      output.push(newRule);
+      continue;
+    }
+    if (insideBlock) {
+      if (line.trim() === '}') { insideBlock = false; }
+      continue;
+    }
+    output.push(line);
+  }
+  
+  if (!found) {
+    output.push('');
+    output.push(newRule);
+  }
+  
+  cssEditor.value = output.join('\n').trim() + '\n';
+  refreshPreview();
+}
+
+// KAPAG NAGBAGO ANG SLIDER
+[widthSlider, heightSlider, radiusSlider, shadowSlider].forEach(slider => {
+  slider.addEventListener('input', () => {
+    updateSliderLabels();
+    updateEditorFromSliders();
+  });
+});
+
+// KAPAG NAGBAGO ANG SELECTOR — ilipat ang halaga sa slider
+elSelector.addEventListener('change', () => {
+  refreshSlidersFromEditor();
+});
+
+// Magbasa ng CSS at ilagay sa slider
+function refreshSlidersFromEditor() {
+  const sel = elSelector.value;
+  const match = cssEditor.value.match(new RegExp(sel + '\\s*\\{[^}]*\\}', 's'));
+  if (match) {
+    const block = match[0];
+    const w = block.match(/width:\s*(\d+)/);
+    const h = block.match(/height:\s*(\d+)/);
+    const r = block.match(/border-radius:\s*(\d+)/);
+    const s = block.match(/inset 0 0 (\d+)/);
+    
+    if (w) widthSlider.value = w[1];
+    if (h) heightSlider.value = h[1];
+    if (r) radiusSlider.value = r[1];
+    if (s) shadowSlider.value = s[1];
+    updateSliderLabels();
+  }
+}
+
+// KAPAG NAG-TYPE SA EDITOR — agad na nagbabago
+let debounce;
+cssEditor.addEventListener('input', () => {
+  clearTimeout(debounce);
+  debounce = setTimeout(refreshPreview, 300);
+});
+
+// MGA BUTTON
+applyBtn.addEventListener('click', refreshPreview);
+
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(cssEditor.value).then(() => {
+    statusText.textContent = 'Nakopya ✅';
+    setTimeout(() => statusText.textContent = 'Handa', 1500);
+  });
+});
+
+resetBtn.addEventListener('click', () => {
+  if (confirm('Ibalik sa orihinal na anyo?')) {
+    localStorage.removeItem('visualEditorCSS');
+    location.reload();
+  }
+});
+
+saveBtn.addEventListener('click', () => {
+  localStorage.setItem('visualEditorCSS', cssEditor.value);
+  statusText.textContent = 'Nai-save 💾';
+  setTimeout(() => statusText.textContent = 'Handa', 1500);
+});
+
+// SIMULA
+refreshPreview();
+updateSliderLabels();
+refreshSlidersFromEditor();
+</script>
+</body>
+</html>
