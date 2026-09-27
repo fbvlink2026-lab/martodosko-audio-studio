@@ -254,7 +254,10 @@
         
         
         
-/* ===== MOTOR DASHBOARD — SPEEDOMETER & FUEL SYSTEM ===== */
+
+
+
+/* ===== MOTOR DASHBOARD — SPEEDOMETER & FUEL SYSTEM ✅ INAYOS ===== */
 .dashboard-panel {
   background: linear-gradient(180deg, #111827 0%, #050505 100%);
   border-radius: 22px;
@@ -434,8 +437,6 @@
 
 
 
-
-
         
         
     </style>
@@ -583,6 +584,7 @@
             
             
             
+
 
 
 <!-- ===== MOTOR DASHBOARD — SPEEDOMETER & FUEL SYSTEM ✅ INAYOS ===== -->
@@ -1250,12 +1252,15 @@ function useGPSDistance() {
 
 
 
+
+
+
 // ========== DASHBOARD — INAYOS NA LOGIKA ==========
 let TANK_CAPACITY = 50;
 const LOW_FUEL_THRESHOLD = 2;
 const MAX_ACCEL = 10;
 const SHAKE_THRESHOLD = 15;
-const MIN_DISTANCE_UPDATE_KM = 0.005; // ✅ 5 metro — noise filter
+const MIN_DISTANCE_UPDATE_KM = 0.005; // ✅ Bug #4: 5 metro — noise filter
 
 let sessionDistanceKm = 0;
 let sessionFuelUsedLiters = 0;
@@ -1281,7 +1286,7 @@ const STORAGE = {
   REMAINING_FUEL: 'motor_dash_remaining_fuel'
 };
 
-// ✅ Siguradong na-load muna ang settings bago mag-init
+// ✅ Bug #5: Siguradong na-load muna ang settings bago mag-init
 function loadFromCache() {
   try {
     const cap = localStorage.getItem(STORAGE.TANK_CAP);
@@ -1358,7 +1363,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// ✅ Inayos na: dtSec > 0.2 + 5m minimum filter + tamang needle rotation
+// ✅ Bug #2: dtSec > 0.2 (hindi dtHours) + Bug #4: 5m filter + Bug #1: tamang needle rotation
 function updateGaugesFromPosition(pos) {
   const now = new Date();
   const lat = pos.coords.latitude;
@@ -1376,11 +1381,11 @@ function updateGaugesFromPosition(pos) {
   if (lastGPSUpdateTime && lastValidLat !== null) {
     const dtSec = (now - lastGPSUpdateTime) / 1000;
     
-    // ✅ Mas matatag na kondisyon — hindi masyadong mahigpit
+    // ✅ Bug #2: Mas matatag na kondisyon — hindi masyadong mahigpit
     if (dtSec > 0.2) {
       const distKm = calculateDistance(lastValidLat, lastValidLng, lat, lng);
       
-      // ✅ 5 metro minimum — hindi mag-a-update kung mas maikli rito
+      // ✅ Bug #4: 5 metro minimum — hindi mag-a-update kung mas maikli rito
       if (distKm >= MIN_DISTANCE_UPDATE_KM) {
         sessionDistanceKm += distKm;
         totalDistanceKm += distKm;
@@ -1419,7 +1424,7 @@ function updateGaugesFromPosition(pos) {
   updateGPSInfo(pos);
 }
 
-// ✅ TAMA NA ANG DIREKSYON: 0 km/h = -90° (kaliwa) → 120 km/h = +90° (kanan)
+// ✅ Bug #1: TAMA NA ANG DIREKSYON: 0 km/h = -90° (kaliwa) → 120 km/h = +90° (kanan)
 function renderSpeedometer(speedKmh) {
   const clamped = Math.max(0, Math.min(speedKmh, 120));
   const deg = -90 + (clamped / 120) * 180; // ✅ NAKA-AYOS
@@ -1511,7 +1516,7 @@ function resetSession() {
 }
 
 function initShakeDetection() {
-  // ✅ Siguradong na-load muna ang settings bago mag-init
+  // ✅ Bug #5: Siguradong na-load muna ang settings bago mag-init
   if (typeof loadSettings === 'function') loadSettings();
   loadFromCache();
   
@@ -1583,20 +1588,18 @@ function handleShake() {
   }
 }
 
-// ✅ Tiyak na tinatawag ang dashboard update sa loob mismo ng onGPSPosition
+// ✅ Bug #3: Direktang tawag sa loob mismo ng onGPSPosition — hindi umaasa sa panlabas na reference
 window.onGPSPosition = pos => {
   // Ipagpatuloy ang orihinal na gawain
   if (typeof updateDashboardFromMainGPS === 'function') {
     updateDashboardFromMainGPS(pos);
   }
-  // ✅ Direktang tawag — hindi na umaasa sa panlabas na reference
+  // ✅ Direktang tawag — siguradong gagana
   if (isGPSActive) updateGaugesFromPosition(pos);
 };
 
 // Inisyalisa
 document.addEventListener('DOMContentLoaded', initShakeDetection);
-
-
 
 
 
