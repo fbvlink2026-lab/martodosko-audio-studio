@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universal Visual UI Editor — Para sa Lahat ng Pahina</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+body { height: 100vh; display: flex; flex-direction: column; background: #0f172a; color: #e2e8f0; overflow: hidden; }
+
+/* ===== ITAAS — MGA KASANGKAPAN ===== */
+.top-bar {
+  background: linear-gradient(180deg, #1e293b, #1e293b);
+  border-bottom: 2px solid #334155;
+  padding: 10px 14px;
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.brand { font-weight: 700; color: #22c55e; margin-right: 12px; font-size: 13px; }
+.tool-group { display: flex; gap: 6px; align-items: center; }
+.tool-group label { font-size: 11px; color: #94a3b8; margin-right: 4px; white-space: nowrap; }
+.tool-group input[type="range"] { width: 70px; }
+.tool-group input[type="color"] { width: 32px; height: 28px; border: none; border-radius: 4px; cursor: pointer; background: transparent; }
+select, input[type="number"] {
+  background: #0f172a; border: 1px solid #475569; color: #fff; padding: 5px 8px; border-radius: 6px; font-size: 12px;
+}
+button {
+  border: none; border-radius: 6px; padding: 7px 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 12px;
+}
+.btn-primary { background: #3b82f6; color: white; }
+.btn-primary:hover { background: #2563eb; }
+.btn-green { background: #22c55e; color: white; }
+.btn-green:hover { background: #16a34a; }
+.btn-orange { background: #f59e0b; color: #111; }
+.btn-orange:hover { background: #d97706; }
+.btn-red { background: #ef4444; color: white; }
+.btn-red:hover { background: #dc2626; }
+.btn-gray { background: #475569; color: white; }
+.btn-gray:hover { background: #64748b; }
+.status { margin-left: auto; font-size: 11px; color: #94a3b8; }
+.status.ok { color: #22c55e; }
+
+/* ===== HATI — KALIWA: CODE, KANAN: PREVIEW ===== */
+.workspace { display: flex; flex: 1; overflow: hidden; }
+.code-pane {
+  width: 40%; display: flex; flex-direction: column;
+  background: #1e293b; border-right: 2px solid #334155;
+}
+.pane-header {
+  padding: 8px 12px; background: #334155; font-size: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center;
+}
+textarea#code-input {
+  flex: 1; background: #020617; color: #e2e8f0; border: none; padding: 12px;
+  font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; line-height: 1.6; resize: none; outline: none;
+}
+.preview-pane {
+  width: 60%; display: flex; flex-direction: column; background: #020617;
+}
+.preview-toolbar {
+  padding: 6px 12px; background: #1e293b; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #334155;
+}
+.preview-frame { flex: 1; border: none; background: white; }
+
+/* ===== VISUAL EDITOR OVERLAY — SA LOOB NG PREVIEW ===== */
+.ve-selected { outline: 2px solid #3b82f6 !important; outline-offset: 2px; }
+.ve-handle {
+  position: absolute; width: 10px; height: 10px; background: #3b82f6; border: 2px solid white; border-radius: 2px;
+  z-index: 9999; pointer-events: auto; cursor: move;
+}
+.ve-handle.nw { top: -5px; left: -5px; cursor: nw-resize; }
+.ve-handle.ne { top: -5px; right: -5px; cursor: ne-resize; }
+.ve-handle.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+.ve-handle.se { bottom: -5px; right: -5px; cursor: se-resize; }
+.ve-toolbar {
+  position: absolute; top: -32px; left: 0; background: #1e293b; border: 1px solid #3b82f6; border-radius: 6px; padding: 4px 8px;
+  font-size: 11px; z-index: 9999; white-space: nowrap;
+}
+.ve-toolbar button { padding: 2px 6px; font-size: 10px; margin: 0 2px; }
+
+/* ===== PANE NG ESTILO — SA IBABAWA ===== */
+.style-panel {
+  position: absolute; top: 60px; right: 14px; width: 260px; background: #1e293b; border: 2px solid #334155; border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100; display: none;
+}
+.style-panel.show { display: block; }
+.style-header { padding: 8px 12px; background: #334155; border-radius: 8px 8px 0 0; font-weight: 600; font-size: 12px; display: flex; justify-content: space-between; }
+.style-body { padding: 12px; }
+.style-row { margin-bottom: 10px; }
+.style-row label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 3px; }
+.style-row input, .style-row select { width: 100%; }
+.style-actions { display: flex; gap: 6px; margin-top: 12px; }
+.style-actions button { flex: 1; font-size: 11px; padding: 6px; }
+
+/* ===== MGA PABABA ===== */
+.pages-bar {
+  background: #1e293b; border-top: 2px solid #334155; padding: 6px 14px; display: flex; gap: 8px; align-items: center;
+}
+.page-tab {
+  background: #334155; border: none; color: #94a3b8; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;
+}
+.page-tab.active { background: #3b82f6; color: white; }
+</style>
+</head>
+<body>
+
+<!-- 🛠️ ITAAS NA BAR -->
+<div class="top-bar">
+  <span class="brand">🛠️ UNIVERSAL VISUAL EDITOR</span>
+  
+  <div class="tool-group">
+    <label>Buksan:</label>
+    <button id="btn-load" class="btn-gray">📂 File</button>
+    <button id="btn-new" class="btn-gray">➕ Bago</button>
+  </div>
+  
+  <div class="tool-group">
+    <label>Eksport:</label>
+    <button id="btn-export" class="btn-green">📄 HTML</button>
+    <button id="btn-export-css" class="btn-orange">🎨 CSS</button>
+  </div>
+  
+  <div class="tool-group">
+    <label>Preview:</label>
+    <button id="btn-refresh" class="btn-primary">🔄 I-refresh</button>
+  </div>
+  
+  <div class="tool-group">
+    <label>Mode:</label>
+    <select id="edit-mode">
+      <option value="visual">👁️ Visual</option>
+      <option value="code">📝 Code Lang</option>
+    </select>
+  </div>
+  
+  <div class="status" id="status">Handa — I-click ang elemento sa kanan ✅</div>
+</div>
+
+<!-- 📝 KATAWAN NG EDITOR -->
+<div class="workspace">
+  <div class="code-pane" id="code-pane">
+    <div class="pane-header">
+      <span>HTML / CSS Code</span>
+      <span style="font-size:10px; color:#94a3b8;">Auto-save sa browser</span>
+    </div>
+    <textarea id="code-input" spellcheck="false" placeholder="Ilagay dito ang HTML..."></textarea>
+  </div>
+  
+  <div class="preview-pane">
+    <div class="preview-toolbar">
+      <span style="font-size:11px; color:#94a3b8;">Preview — I-click ang elemento para i-edit</span>
+      <button id="btn-clear-select" class="btn-gray" style="margin-left:auto; padding:4px 8px; font-size:11px;">✖️ Huwag Pumili</button>
+    </div>
+    <iframe id="preview-frame" class="preview-frame" title="Preview"></iframe>
+  </div>
+</div>
+
+<!-- 🎨 PANE NG ESTILO -->
+<div class="style-panel" id="style-panel">
+  <div class="style-header">
+    <span id="sel-label">Elemento</span>
+    <button id="close-panel" class="btn-gray" style="padding:2px 6px; font-size:10px;">✖</button>
+  </div>
+  <div class="style-body">
+    <div class="style-row">
+      <label>Pangalan / Selector</label>
+      <input type="text" id="el-selector" placeholder=".class o #id">
+    </div>
+    <div class="style-row">
+      <label>Lapad (px)</label>
+      <input type="number" id="el-w" value="" placeholder="hal. 190">
+    </div>
+    <div class="style-row">
+      <label>Taas (px)</label>
+      <input type="number" id="el-h" value="" placeholder="hal. 190">
+    </div>
+    <div class="style-row">
+      <label>Bilog / Border-Radius (%)</label>
+      <input type="number" id="el-radius" value="" placeholder="0–50">
+    </div>
+    <div class="style-row">
+      <label>Kulay ng Loob</label>
+      <input type="color" id="el-bg">
+    </div>
+    <div class="style-row">
+      <label>Anino</label>
+      <input type="text" id="el-shadow" placeholder="hal. 0 0 10px rgba(0,0,0,0.5)">
+    </div>
+    <div class="style-row">
+      <label>Paligid / Margin (px)</label>
+      <input type="text" id="el-margin" placeholder="itaas kanan ibaba kaliwa">
+    </div>
+    <div class="style-actions">
+      <button id="btn-apply-style" class="btn-green">✅ Ilapat</button>
+      <button id="btn-reset-style" class="btn-red">↩️ Balik</button>
+    </div>
+  </div>
+</div>
+
+<!-- 📄 MGA PAHINA -->
+<div class="pages-bar">
+  <span style="font-size:11px; color:#94a3b8;">Mga Pahina:</span>
+  <button class="page-tab active" data-page="main">Pangunahin</button>
+  <button class="page-tab" data-page="dashboard">Dashboard</button>
+  <button class="page-tab" data-page="settings">Settings</button>
+  <button class="page-tab" id="btn-del-tab" style="margin-left:auto; background:#7f1d1d; color:white;">🗑️ Tanggalin Tab</button>
+</div>
+
+<script>
+// ===== PAGTATIPON NG MGA ELEMENTO =====
+const codeInput = document.getElementById('code-input');
+const previewFrame = document.getElementById('preview-frame');
+const statusEl = document.getElementById('status');
+const stylePanel = document.getElementById('style-panel');
+const selLabel = document.getElementById('sel-label');
+const elSelector = document.getElementById('el-selector');
+const elW = document.getElementById('el-w');
+const elH = document.getElementById('el-h');
+const elRadius = document.getElementById('el-radius');
+const elBg = document.getElementById('el-bg');
+const elShadow = document.getElementById('el-shadow');
+const elMargin = document.getElementById('el-margin');
+
+let selectedElement = null;
+let currentPage = 'main';
+let pageData = {
+  main: '',
+  dashboard: '',
+  settings: ''
+};
+
+// ===== HALIMBAWA — DASHBOARD NA NAKA-LOAD =====
+const starterDashboard = `
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.dashboard-panel {
+  background: linear-gradient(180deg, #111827 0%, #050505 100%);
+  border-radius: 22px;
+  padding: 16px 14px;
+  margin: 12px auto;
+  max-width: 420px;
+}
+.dashboard-title {
+  color: #9ca3af; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px; text-align: center; margin-bottom: 10px;
+}
+.gauges-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.gauge-wrap { display: flex; flex-direction: column; align-items: center; }
+
+/* ✅ Accelerator — HUWARAN */
+.accelerator {
+  width: 190px; height: 190px; border-radius: 50%;
+  background: radial-gradient(circle at center, #050505 55%, #111827 100%);
+  box-shadow: 0 0 0 5px #1f2937, inset 0 0 20px rgba(0,0,0,0.95);
+  position: relative; padding: 4px;
+}
+.accel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; }
+.accel-value { font-size: 30px; font-weight: 900; }
+.accel-label { font-size: 10px; color: #6b7280; text-transform: uppercase; margin-top: 4px; }
+
+/* ✅ Speedometer — I-AYUSIN DITO */
+.speedometer {
+  width: 190px; height: 190px; border-radius: 50%;
+  background: radial-gradient(circle at center, #050505 55%, #111827 100%);
+  box-shadow: 0 0 0 5px #1f2937, inset 0 0 20px rgba(0,0,0,0.95);
+  position: relative; padding: 4px;
+}
+.speed-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; }
+.speed-value { font-size: 30px; font-weight: 900; }
+.speed-unit { font-size: 10px; color: #6b7280; text-transform: uppercase; margin-top: 4px; }
+.gauge-label { margin-top: 8px; font-size: 10px; color: #9ca3af; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+  <div class="dashboard-panel">
+    <div class="dashboard-title">MOTOR DASHBOARD</div>
+    <div class="gauges-grid">
+      
+      <!-- SPEEDOMETER — I-click sa kanan para i-edit -->
+      <div class="gauge-wrap">
+        <div class="speedometer" id="speedo">
+          <div class="speed-center">
+            <div class="speed-value">0</div>
+            <div class="speed-unit">km/h</div>
+          </div>
+        </div>
+        <div class="gauge-label">SPEEDO</div>
+      </div>
+      
+      <!-- ACCELERATOR — HUWARAN -->
+      <div class="gauge-wrap">
+        <div class="accelerator">
+          <div class="accel-center">
+            <div class="accel-value">1.1</div>
+            <div class="accel-label">ACCEL</div>
+          </div>
+        </div>
+        <div class="gauge-label">ACCEL (HUWARAN)</div>
+      </div>
+      
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+// ===== PAGTATIPON NG DATA SA BROWSER =====
+function loadAllPages() {
+  const saved = localStorage.getItem('uve-pages');
+  if (saved) {
+    pageData = JSON.parse(saved);
+  } else {
+    pageData.dashboard = starterDashboard;
+    pageData.main = `<!-- Ilagay dito ang iyong pangunahing pahina -->\n<h1>Akong Website</h1>\n<p>Simulan dito...</p>`;
+    pageData.settings = `<!-- Settings Page -->\n<h2>Mga Setting</h2>`;
+  }
+  loadPage(currentPage);
+}
+
+function saveAllPages() {
+  localStorage.setItem('uve-pages', JSON.stringify(pageData));
+  statusEl.textContent = '✅ Nai-save';
+  statusEl.classList.add('ok');
+  setTimeout(() => { statusEl.textContent = 'Handa'; statusEl.classList.remove('ok'); }, 2000);
+}
+
+function loadPage(name) {
+  pageData[currentPage] = codeInput.value;
+  currentPage = name;
+  codeInput.value = pageData[name] || '';
+  refreshPreview();
+  
+  // I-update ang mga tab
+  document.querySelectorAll('.page-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.page === name);
+  });
+}
+
+// ===== I-REFRESH ANG PREVIEW =====
+function refreshPreview() {
+  const html = codeInput.value;
+  previewFrame.srcdoc = html;
+}
+
+// ===== KAPAG NAGBAGO ANG CODE — HINTAYIN ANG TIGIL =====
+let debounceTimer;
+codeInput.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    refreshPreview();
+    saveAllPages();
+  }, 400);
+});
+
+// ===== KAPAG NAGBUKAS ANG PREVIEW — I-attach ang visual editor =====
+previewFrame.addEventListener('load', () => {
+  const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+  
+  // I-click ang elemento → piliin
+  doc.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Alisin sa naunang napili
+    if (selectedElement) {
+      selectedElement.classList.remove('ve-selected');
+    }
+    
+    selectedElement = e.target;
+    selectedElement.classList.add('ve-selected');
+    
+    // Hanapin ang pinakamalapit na may klase o ID
+    let el = selectedElement;
+    let selector = '';
+    while (el && el !== doc.body) {
+      if (el.id) { selector = `#${el.id}`; break; }
+      if (el.className && typeof el.className === 'string' && el.className.trim()) {
+        const firstClass = el.className.trim().split(/\s+/)[0];
+        selector = `.${firstClass}`; break;
+      }
+      el = el.parentElement;
+    }
+    
+    // Ipakita sa panel
+    selLabel.textContent = selector || e.target.tagName;
+    elSelector.value = selector;
+    
+    // Kunin ang kasalukuyang sukat
+    const styles = getComputedStyle(selectedElement);
+    elW.value = parseInt(styles.width) || '';
+    elH.value = parseInt(styles.height) || '';
+    elRadius.value = parseInt(styles.borderRadius) || '';
+    elBg.value = rgbToHex(styles.backgroundColor) || '#000000';
+    elShadow.value = styles.boxShadow || '';
+    elMargin.value = styles.margin ? 
+      `${parseInt(styles.marginTop)} ${parseInt(styles.marginRight)} ${parseInt(styles.marginBottom)} ${parseInt(styles.marginLeft)}` : '';
+    
+    stylePanel.classList.add('show');
+    statusEl.textContent = `Napili: ${selector || e.target.tagName}`;
+  });
+});
+
+// ===== TULONG — RGB → HEX =====
+function rgbToHex(rgb) {
+  if (!rgb || rgb === 'transparent' || rgb === 'rgba(0, 0, 0, 0)') return '';
+  const m = rgb.match(/\d+/g);
+  if (!m || m.length < 3) return '';
+  return '#' + ((1<<24) + (+m[0]<<16) + (+m[1]<<8) + +m[2]).toString(16).slice(1);
+}
+
+// ===== ILAPAT ANG ESTILO =====
+document.getElementById('btn-apply-style').addEventListener('click', () => {
+  if (!elSelector.value) {
+    alert('Ilagay ang selector (hal. .speedometer)');
+    return;
+  }
+  
+  // Bumuo ng CSS rule
+  let cssLines = [`${elSelector.value} {`];
+  if (elW.value) cssLines.push(`  width: ${elW.value}px;`);
+  if (elH.value) cssLines.push(`  height: ${elH.value}px;`);
+  if (elRadius.value) cssLines.push(`  border-radius: ${elRadius.value}%;`);
+  if (elBg.value) cssLines.push(`  background: ${elBg.value};`);
+  if (elShadow.value) cssLines.push(`  box-shadow: ${elShadow.value};`);
+  if (elMargin.value) cssLines.push(`  margin: ${elMargin.value};`);
+  cssLines.push('}');
+  
+  // Ipasok sa code — hanapin o idagdag ang rule
+  const newRule = cssLines.join('\n');
+  let code = codeInput.value;
+  
+  // Subukang palitan kung mayroon na
+  const sel = elSelector.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const ruleRegex = new RegExp(`${sel}\\s*\\{[^}]*\\}`, 's');
+  
+  if (ruleRegex.test(code)) {
+    code = code.replace(ruleRegex, newRule);
+  } else {
+    // Idagdag sa loob ng <style>...</style>
+    if (code.includes('</style>')) {
+      code = code.replace('</style>', newRule + '\n</style>');
+    } else {
+      code += '\n' + newRule + '\n';
+    }
+  }
+  
+  codeInput.value = code;
+  refreshPreview();
+  saveAllPages();
+  statusEl.textContent = '✅ Nailapat na!';
+});
+
+// ===== MGA BUTTON =====
+document.getElementById('close-panel').addEventListener('click', () => {
+  stylePanel.classList.remove('show');
+  if (selectedElement) selectedElement.classList.remove('ve-selected');
+  selectedElement = null;
+});
+
+document.getElementById('btn-clear-select').addEventListener('click', () => {
+  stylePanel.classList.remove('show');
+  if (selectedElement) selectedElement.classList.remove('ve-selected');
+  selectedElement = null;
+  statusEl.textContent = 'Handa';
+});
+
+document.getElementById('btn-refresh').addEventListener('click', refreshPreview);
+
+document.getElementById('btn-export').addEventListener('click', () => {
+  const blob = new Blob([codeInput.value], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${currentPage}.html`;
+  a.click();
+  statusEl.textContent = '📄 Na-download ang HTML';
+});
+
+document.getElementById('btn-export-css').addEventListener('click', () => {
+  // Kunin ang nilalaman sa loob ng <style>
+  const match = codeInput.value.match(/<style>([\s\S]*?)<\/style>/);
+  const css = match ? match[1] : codeInput.value;
+  navigator.clipboard.writeText(css).then(() => {
+    statusEl.textContent = '🎨 CSS Nakopya!';
+  });
+});
+
+document.getElementById('btn-new').addEventListener('click', () => {
+  if (confirm('Gumawa ng bagong pahina? Mawawala ang hindi naisave.')) {
+    codeInput.value = '<!DOCTYPE html>\n<html>\n<head>\n<style>\n\n</style>\n</head>\n<body>\n\n</body>\n</html>';
+    refreshPreview();
+  }
+});
+
+document.getElementById('btn-load').addEventListener('click', () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.html,.htm';
+  input.onchange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      codeInput.value = ev.target.result;
+      refreshPreview();
+    };
+    reader.readAsText(f);
+  };
+  input.click();
+});
+
+document.getElementById('btn-reset-style').addEventListener('click', () => {
+  elW.value = elH.value = elRadius.value = elShadow.value = elMargin.value = '';
+  elBg.value = '#000000';
+});
+
+// ===== MGA TAB =====
+document.querySelectorAll('.page-tab').forEach(tab => {
+  tab.addEventListener('click', () => loadPage(tab.dataset.page));
+});
+
+// ===== SIMULA =====
+loadAllPages();
+refreshPreview();
+</script>
+</body>
+</html>
