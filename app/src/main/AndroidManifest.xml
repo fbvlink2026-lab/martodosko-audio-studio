@@ -1,70 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- ================================================== -->
+<!-- FILE: AndroidManifest.xml                          -->
+<!-- VERSION: 2.1.0                                     -->
+<!-- UPDATED: 2026-10-11                                -->
+<!-- PURPOSE: Secure Configuration for Martodosko Studio-->
+<!-- AUTHOR: Martodosko Studio                          -->
+<!-- NOTE: Removed ghost activities, added audio perms  -->
+<!-- ================================================== -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- ✅ Kailangan para makacheck ng update mula sa GitHub -->
+    <!-- ✅ NETWORK & SECURITY -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- ✅ Kailangan para makapag-download at mag-install ng APK -->
+    
+    <!-- ✅ AUDIO PROCESSING (Critical for <10ms Latency) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    
+    <!-- ✅ BACKGROUND EXECUTION (Keep Audio Engine Alive) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" 
+        tools:targetApi="34" /> <!-- Required for Android 14+ -->
+        
+    <!-- ✅ INSTALLATION (For Self-Updates via GitHub/Supabase) -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    
+    <!-- ✅ STORAGE (Legacy support for Export/Import files) -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
+
+    <!-- Optional: If targeting Android 13+, use granular media permissions instead of READ_EXTERNAL_STORAGE -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <application
-        android:allowBackup="true"
+        android:name=".MartodoskoApp" <!-- ✅ REGISTERED HILT APP CLASS -->
+        android:allowBackup="false"   <!-- ✅ DISABLED BACKUP FOR SECURITY (Prevents data leakage) -->
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="Martodosko Studio"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Martodosko.Dark" <!-- ✅ CUSTOM THEME -->
+        android:networkSecurityConfig="@xml/network_security_config" <!-- ✅ ENFORCE HTTPS -->
+        tools:targetApi="34">
 
-        <!-- ✅ Splash — UNANG LALABAS -->
+        <!-- ========================================== -->
+        <!-- ACTIVITIES                                 -->
+        <!-- ========================================== -->
+
+        <!-- ✅ SPLASH SCREEN (Launcher) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.screens.SplashActivity" <!-- Updated Package Path -->
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Martodosko.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- ✅ Main Screen — LALABAS PAGKATAPUS NG SPLASH -->
+        <!-- ✅ MAIN ACTIVITY (Pedal Board / Home Hub) -->
         <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-
-        <!-- ✅ Mixer Screen — 🎚️ -->
-        <activity
-            android:name=".MixerActivity"
+            android:name=".ui.screens.MainActivity" <!-- Updated Package Path -->
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
 
-        <!-- ✅ Guitar Effects Activity — 🎸 -->
+        <!-- ✅ MIXER ACTIVITY (Detailed Channel View) -->
         <activity
-            android:name=".GuitarActivity"
+            android:name=".ui.screens.mixer.MixerActivity" <!-- Updated Package Path -->
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:parentActivityName=".ui.screens.MainActivity" />
 
-        <!-- ✅ Presets Activity — 📋 -->
+        <!-- ✅ CONTENT HOST (Settings, Help, About, Legal, Admin Login) -->
         <activity
-            android:name=".PresetsActivity"
+            android:name=".ui.screens.ContentActivity" <!-- Consolidated Host -->
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:launchMode="singleTop" />
 
-        <!-- ✅ Content Activity — ⚙️ SETTINGS / HELP / JOIN US / ABOUT / ADMIN / ABISO ✅ singleTop = HINDI BAGONG INSTANCE! -->
+        <!-- ✅ ADMIN PANEL DASHBOARD (Role-Gated) -->
         <activity
-            android:name=".ContentActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <!-- ✅ Admin Panel Activity — 🔐 KEY CODE LOGIN + ADMIN DASHBOARD! -->
-        <activity
-            android:name=".AdminPanelActivity"
+            android:name=".ui.screens.admin.AdminPanelActivity" <!-- Updated Package Path -->
             android:exported="false"
             android:label="Admin Panel"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" 
+            tools:ignore="ProtectedPermissions" /> 
+            <!-- Note: Remove permission attr if not using Accessibility services. Just exported=false is enough for internal navigation. -->
 
-        <!-- ✅ FileProvider — KAILANGAN PARA MA-INSTALL ANG APK sa Android 7+ -->
+        <!-- ========================================== -->
+        <!-- SERVICES                                   -->
+        <!-- ========================================== -->
+        
+        <!-- ✅ AUDIO FOREGROUND SERVICE -->
+        <service
+            android:name=".service.AudioForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <!-- ========================================== -->
+        <!-- PROVIDERS                                  -->
+        <!-- ========================================== -->
+
+        <!-- ✅ FILE PROVIDER (For Sharing Presets/APK Installs) -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -76,4 +121,5 @@
         </provider>
 
     </application>
+
 </manifest>
