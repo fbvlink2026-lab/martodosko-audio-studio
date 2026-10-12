@@ -1,22 +1,36 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.Martodosko.Dark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- 
+        BASE APPLICATION THEME (MATERIAL 3)
+        Note: Using Material3 parent ensures compatibility with Compose components.
+        If you still get "Resource not found", ensure 'com.google.android.material:material:1.11.0' is in build.gradle.kts
+    -->
+    <style name="Theme.Martodosko.Dark" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/neon_cyan</item>
-        <item name="colorPrimaryVariant">@color/deep_black</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/deep_black</item>
+        
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/accent_purple</item>
-        <item name="colorSecondaryVariant">@color/dark_gray</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <!-- Tertiary (Optional for accents) -->
+        <item name="colorTertiary">@color/success_green</item>
+        <item name="colorOnTertiary">@color/deep_black</item>
+        
+        <!-- Background & Surface Colors -->
+        <item name="android:colorBackground">@color/deep_black</item>
+        <item name="colorSurface">@color/panel_gray</item>
+        <item name="colorOnSurface">@color/metal_light</item>
+        
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/deep_black</item>
         <item name="android:navigationBarColor">@color/deep_black</item>
-        <!-- Customize your theme here. -->
+        
+        <!-- Window Background -->
         <item name="android:windowBackground">@color/bg_dark</item>
     </style>
 
-    <!-- Splash Screen Theme (No ActionBar, Full Screen) -->
+    <!-- SPLASH SCREEN THEME -->
     <style name="Theme.Martodosko.Splash" parent="Theme.Martodosko.Dark">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
