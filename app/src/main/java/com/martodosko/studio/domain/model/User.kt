@@ -1,13 +1,13 @@
-package com.martodosko.studio.data.mapper
+// ==================================================
+// FILE: User.kt
+// VERSION: 2.1.0
+// PURPOSE: Domain Model for User Entity
+// ==================================================
+package com.martodosko.studio.domain.model // ✅ TAMA DAPAT ANG PACKAGE NAME
 
-import com.martodosko.studio.data.local.entities.UserEntity
-import com.martodosko.studio.domain.model.User
-
-fun UserEntity.toDomain(): User {
-    return User(
-        id = this.id,
-        username = this.username ?: "Unknown",
-        role = this.role,
-        isPaidMember = this.isPaidMember
-    )
-}
+data class User(
+    val id: String,
+    val username: String,
+    val role: String,
+    val isPaidMember: Boolean
+)
