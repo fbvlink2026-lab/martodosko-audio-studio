@@ -1,7 +1,7 @@
 # ==================================================
 # FILE: build-apk.yml
-# VERSION: 2.1.0 — SECURE & PERSISTENT SIGNING
-# UPDATED: 2026-10-11
+# VERSION: 2.1.1 — AUTO-WRAPPER GENERATION FIX
+# UPDATED: 2026-10-12
 # PURPOSE: Build Signed Release APK using GitHub Secrets
 # AUTHOR: Martodosko Studio
 # ==================================================
@@ -16,7 +16,6 @@ jobs:
     name: 📦 Compile & Sign Release APK
     runs-on: ubuntu-latest
     
-    # ✅ LEAST PRIVILEGE: Only need write access to push artifacts/docs
     permissions:
       contents: write 
 
@@ -30,13 +29,37 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🐘 Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: wrapper # Uses the project's defined wrapper version
+      # ==================================================
+      # 🔧 STEP 1: ENSURE GRADLE WRAPPER EXISTS (CRITICAL FIX)
+      # ==================================================
+      - name: 🐘 Generate Gradle Wrapper if Missing
+        run: |
+          echo "Checking for gradlew..."
+          if [ ! -f "./gradlew" ]; then
+            echo "⚠️ gradlew not found. Installing Gradle 8.2 to generate wrapper..."
+            
+            # Download and install Gradle globally on the runner
+            wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip
+            unzip -q gradle-8.2-bin.zip
+            export PATH=$PWD/gradle-8.2/bin:$PATH
+            
+            # Verify installation
+            gradle --version
+            
+            # Generate the wrapper files in the current directory
+            echo "Generating wrapper files..."
+            gradle wrapper --gradle-version 8.2
+            
+            # Make sure it's executable
+            chmod +x ./gradlew
+            echo "✅ Gradle Wrapper Generated Successfully!"
+          else
+            echo "✅ Gradle Wrapper Already Exists."
+            chmod +x ./gradlew
+          fi
 
       # ==================================================
-      # 🔑 STEP 1: RESTORE PERSISTENT KEYSTORE FROM SECRETS
+      # 🔑 STEP 2: RESTORE PERSISTENT KEYSTORE FROM SECRETS
       # ==================================================
       - name: 🔓 Decrypt & Restore Keystore
         env:
@@ -59,7 +82,7 @@ jobs:
           echo "✅ Keystore restored successfully."
 
       # ==================================================
-      # 🏷️ STEP 2: AUTOMATIC VERSION BUMPING
+      # 🏷️ STEP 3: AUTOMATIC VERSION BUMPING
       # ==================================================
       - name: 🏷️ Calculate Next Version
         id: version
@@ -103,7 +126,7 @@ jobs:
           echo "✅ Updated build.gradle.kts to v$VERSION_NAME"
 
       # ==================================================
-      # 📦 STEP 3: BUILD THE APK WITH SECURE ENV VARS
+      # 📦 STEP 4: BUILD THE APK WITH SECURE ENV VARS
       # ==================================================
       - name: 🛠️ Assemble Release APK
         env:
@@ -116,13 +139,12 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          chmod +x ./gradlew
           echo "🚀 Starting Release Build..."
-          # Clean build to ensure no cache issues
+          # Now ./gradlew definitely exists because of Step 1
           ./gradlew clean assembleRelease --no-daemon --stacktrace
 
       # ==================================================
-      # 📤 STEP 4: ARTIFACT HANDLING & REPORTING
+      # 📤 STEP 5: ARTIFACT HANDLING & REPORTING
       # ==================================================
       - name: 📂 Locate Generated APK
         id: locate
@@ -162,7 +184,7 @@ jobs:
           
           ### ⚙️ Configuration Used
           - **Java:** 17 (Temurin)
-          - **Gradle:** Wrapper Default
+          - **Gradle:** Auto-generated Wrapper (8.2)
           - **Supabase URL:** Injected via Secrets
           EOF
           
@@ -178,11 +200,10 @@ jobs:
           # Add updated files
           git add docs/version.json docs/build-report.md app/build.gradle.kts
           
-          # Try to copy APK to docs for direct download link (optional, increases repo size)
-          # cp ${{ steps.locate.outputs.path }} docs/${{ steps.version.outputs.filename }}
-          # git add docs/${{ steps.version.outputs.filename }}
+          # Also commit the generated wrapper files so next time we don't need to regenerate them!
+          git add gradlew gradlew.bat gradle/wrapper/
           
-          git commit -m "🤖 Auto-Build v${{ steps.version.outputs.name }} — Secure Release" || echo "No changes to commit"
+          git commit -m "🤖 Auto-Build v${{ steps.version.outputs.name }} — Secure Release + Wrapper Init" || echo "No changes to commit"
           git push origin main || echo "⚠️ Push failed (maybe protected branch)"
 
       - name: 🎉 Success Message
