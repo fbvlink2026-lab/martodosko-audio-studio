@@ -91,6 +91,7 @@ dependencies {
     // --- CORE ANDROID ---
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
     
     // --- JETPACK COMPOSE UI ---
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
