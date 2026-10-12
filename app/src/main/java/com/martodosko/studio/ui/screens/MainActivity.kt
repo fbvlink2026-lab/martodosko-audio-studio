@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MainActivity.kt
-// VERSION: v2.1.0-monolith-debug
-// PURPOSE: Single-File Consolidated App Shell for Crash Isolation
-// NOTE: Contains Splash, Nav, UI, and Custom Components inline.
+// VERSION: v2.1.0-monolith-final-fixed-imports
+// PURPOSE: Consolidated App Shell (Splash + Nav + UI)
+// NOTE: Added missing 'lazy' imports for LazyColumn
 // ==================================================
 package com.martodosko.studio.ui.screens
 
@@ -15,6 +15,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn // ✅ CRITICAL IMPORT ADDED HERE
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
@@ -53,12 +54,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // CANARY LOG: Confirm Activity Start
         Log.e("MONOLITH", "✅ MainActivity Started")
 
         setContent {
             MartodoskoTheme {
-                // STATE MACHINE: SPLASH vs MAIN APP
                 var showSplash by remember { mutableStateOf(true) }
 
                 if (showSplash) {
@@ -77,12 +76,12 @@ class MainActivity : ComponentActivity() {
 }
 
 // ==========================================
-// COMPONENT 1: SPLASH SCREEN (INLINE)
+// COMPONENT 1: SPLASH SCREEN
 // ==========================================
 @Composable
 fun MonolithSplashScreen(onFinished: () -> Unit) {
     LaunchedEffect(Unit) {
-        delay(1500L) // Simulate Load
+        delay(1500L)
         onFinished()
     }
 
@@ -95,13 +94,13 @@ fun MonolithSplashScreen(onFinished: () -> Unit) {
             Spacer(modifier = Modifier.height(20.dp))
             CircularProgressIndicator(color = Color(0xFF40E0D0))
             Spacer(modifier = Modifier.height(10.dp))
-            Text("Loading Monolith...", color = Color.Gray, fontSize = 12.sp)
+            Text("Loading...", color = Color.Gray, fontSize = 12.sp)
         }
     }
 }
 
 // ==========================================
-// COMPONENT 2: MAIN APP SHELL (NAVIGATION)
+// COMPONENT 2: MAIN APP SHELL
 // ==========================================
 data class NavItem(val route: String, val label: String, val icon: ImageVector)
 
@@ -152,7 +151,7 @@ fun MonolithMainApp() {
 }
 
 // ==========================================
-// COMPONENT 3: SIMPLE TEXT PLACEHOLDER
+// COMPONENT 3: PLACEHOLDER
 // ==========================================
 @Composable
 fun SimpleTextScreen(title: String) {
@@ -165,16 +164,16 @@ fun SimpleTextScreen(title: String) {
 }
 
 // ==========================================
-// COMPONENT 4: PEDAL BOARD UI (INLINE)
+// COMPONENT 4: PEDAL BOARD
 // ==========================================
 @Composable
 fun MonolithPedalBoard() {
-    // Local State for Knobs
     var vocalGain by remember { mutableStateOf(0f) }
     var vocalVol by remember { mutableStateOf(80f) }
     var guitarDrive by remember { mutableStateOf(0f) }
     var guitarLevel by remember { mutableStateOf(75f) }
 
+    // ✅ LazyColumn is now recognized because of the import above
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(Color.Black),
         contentPadding = PaddingValues(16.dp),
@@ -214,7 +213,7 @@ fun SectionHeader(title: String, color: Color) {
 }
 
 // ==========================================
-// COMPONENT 5: CUSTOM KNOB DRAWING (INLINE)
+// COMPONENT 5: INLINE KNOB
 // ==========================================
 @Composable
 fun InlineKnob(
