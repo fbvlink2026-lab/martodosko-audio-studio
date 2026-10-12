@@ -1,6 +1,3 @@
-// ==================================================
-// FILE: di/NetworkModule.kt
-// ==================================================
 package com.martodosko.studio.di
 
 import com.martodosko.studio.BuildConfig
@@ -27,7 +24,7 @@ object NetworkModule {
         val key = BuildConfig.SUPABASE_ANON_KEY
         
         if (url.isEmpty() || key.isEmpty()) {
-            throw IllegalStateException("❌ Supabase Credentials Missing! Check GitHub Secrets.")
+            throw IllegalStateException("❌ Supabase Credentials Missing!")
         }
 
         return createSupabaseClient(
@@ -37,7 +34,7 @@ object NetworkModule {
             install(Auth)
             install(Postgrest)
             install(Storage)
-            install(Realtime) // For Clan Chat
+            install(Realtime)
         }
     }
 }
