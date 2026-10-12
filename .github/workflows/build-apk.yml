@@ -1,78 +1,71 @@
 # ==================================================
 # FILE: build-apk.yml
-# VERSION: 2.1.1 — AUTO-WRAPPER GENERATION FIX
+# VERSION: 2.1.2 — HYBRID (Working Logic + Secure Secrets)
 # UPDATED: 2026-10-12
 # PURPOSE: Build Signed Release APK using GitHub Secrets
 # AUTHOR: Martodosko Studio
+# NOTE: Based on proven local workflow structure
 # ==================================================
 
 name: 🚀 Build Martodosko Release APK
 
 on:
-  workflow_dispatch: # Manual trigger only for now
+  workflow_dispatch: # Manual trigger only
 
 jobs:
   build-release:
     name: 📦 Compile & Sign Release APK
     runs-on: ubuntu-latest
     
+    # ✅ LEAST PRIVILEGE: Only need write access to push artifacts/docs
     permissions:
       contents: write 
+
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dkotlin.statistics.enabled=false
+      GRADLE_VERSION: "8.2"
+      
+      # ✅ SECURE SECRETS FROM GITHUB SETTINGS
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
 
     steps:
       - name: 🛒 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: ☕ Setup Java 17
+      - name: ☕ Ihanda ang Java 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # ==================================================
-      # 🔧 STEP 1: ENSURE GRADLE WRAPPER EXISTS (CRITICAL FIX)
-      # ==================================================
-      - name: 🐘 Generate Gradle Wrapper if Missing
+      - name: 📋 LISTAHAN NG FOLDER
         run: |
-          echo "Checking for gradlew..."
-          if [ ! -f "./gradlew" ]; then
-            echo "⚠️ gradlew not found. Installing Gradle 8.2 to generate wrapper..."
-            
-            # Download and install Gradle globally on the runner
-            wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip
-            unzip -q gradle-8.2-bin.zip
-            export PATH=$PWD/gradle-8.2/bin:$PATH
-            
-            # Verify installation
-            gradle --version
-            
-            # Generate the wrapper files in the current directory
-            echo "Generating wrapper files..."
-            gradle wrapper --gradle-version 8.2
-            
-            # Make sure it's executable
-            chmod +x ./gradlew
-            echo "✅ Gradle Wrapper Generated Successfully!"
-          else
-            echo "✅ Gradle Wrapper Already Exists."
-            chmod +x ./gradlew
-          fi
+          echo "=========================================="
+          echo "   📂 LAHAT NG FOLDER SA REPOSITORY"
+          echo "=========================================="
+          find . -maxdepth 5 -type d | grep -v '.git' | sort
 
       # ==================================================
-      # 🔑 STEP 2: RESTORE PERSISTENT KEYSTORE FROM SECRETS
+      # 🔑 STEP 1: RESTORE PERSISTENT KEYSTORE FROM SECRETS
+      # (Instead of generating new one every time)
       # ==================================================
       - name: 🔓 Decrypt & Restore Keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
         run: |
           echo "🔓 Restoring persistent signing key..."
-          if [ -z "$KEYSTORE_BASE64" ]; then
+          if [ -z "$RELEASE_KEYSTORE_BASE64" ]; then
             echo "❌ ERROR: RELEASE_KEYSTORE_BASE64 secret is missing!"
             exit 1
           fi
           
+          mkdir -p app
           # Decode base64 string back to binary .keystore file
-          echo "$KEYSTORE_BASE64" | base64 --decode > app/martodosko-release.keystore
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > app/martodosko-release.keystore
           
           # Verify file exists and has size
           if [ ! -s app/martodosko-release.keystore ]; then
@@ -82,23 +75,56 @@ jobs:
           echo "✅ Keystore restored successfully."
 
       # ==================================================
+      # 🐘 STEP 2: SETUP GRADLE & WRAPPER (PROVEN LOGIC)
+      # ==================================================
+      - name: 🛠️ I-setup ang Gradle ${{ env.GRADLE_VERSION }}
+        run: |
+          if [ -d "/opt/gradle/gradle-${{ env.GRADLE_VERSION }}" ] && [ -x "/opt/gradle/gradle-${{ env.GRADLE_VERSION }}/bin/gradle" ]; then
+              echo "✅ Gradle ${{ env.GRADLE_VERSION }} NASA LUGAR NA"
+              export PATH=/opt/gradle/gradle-${{ env.GRADLE_VERSION }}/bin:$PATH
+          else
+              echo "📥 I-download ang Gradle ${{ env.GRADLE_VERSION }}..."
+              wget -q https://services.gradle.org/distributions/gradle-${{ env.GRADLE_VERSION }}-bin.zip -O /tmp/gradle.zip
+              unzip -q /tmp/gradle.zip -d /opt/gradle
+              export PATH=/opt/gradle/gradle-${{ env.GRADLE_VERSION }}/bin:$PATH
+              rm /tmp/gradle.zip
+              echo "✅ Gradle ${{ env.GRADLE_VERSION }} NAKAINSTALL NA!"
+          fi
+          
+          # Generate Wrapper if missing (Critical for Clean Start)
+          if [ ! -f "./gradlew" ]; then
+              echo "⚠️ Walang gradlew. Generating..."
+              gradle wrapper --gradle-version ${{ env.GRADLE_VERSION }}
+              chmod +x gradlew
+              echo "✅ Gradle Wrapper NABUO NA"
+          else
+              chmod +x gradlew
+              echo "✅ Gradle Wrapper NASA LUGAR NA"
+          fi
+
+      # ==================================================
       # 🏷️ STEP 3: AUTOMATIC VERSION BUMPING
       # ==================================================
-      - name: 🏷️ Calculate Next Version
+      - name: 🏷️ Bumuo ng Bersyon — AWTOMATIKONG TUMAAS
         id: version
         run: |
           mkdir -p docs
           
           if [ -f docs/version.json ]; then
               CURRENT_VER=$(grep -o '"version":"[^"]*"' docs/version.json | head -1 | cut -d'"' -f4)
-              echo "📖 Current: v$CURRENT_VER"
+              echo "📖 Kasalukuyang Bersyon: v$CURRENT_VER"
               
               VERSION_MAJOR=$(echo "$CURRENT_VER" | cut -d. -f1)
               VERSION_MINOR=$(echo "$CURRENT_VER" | cut -d. -f2)
               VERSION_PATCH=$(echo "$CURRENT_VER" | cut -d. -f3)
+              [ -z "$VERSION_MAJOR" ] && VERSION_MAJOR=1
+              [ -z "$VERSION_MINOR" ] && VERSION_MINOR=0
+              [ -z "$VERSION_PATCH" ] && VERSION_PATCH=0
           else
-              echo "🆕 Starting fresh at v1.0.0"
-              VERSION_MAJOR=1; VERSION_MINOR=0; VERSION_PATCH=0
+              echo "🆕 Walang nakitang version.json — Magsisimula sa v1.0.1"
+              VERSION_MAJOR=1
+              VERSION_MINOR=0
+              VERSION_PATCH=0
           fi
           
           VERSION_PATCH=$((VERSION_PATCH + 1))
@@ -108,109 +134,130 @@ jobs:
           
           echo "name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "filename=$APK_FILENAME" >> $GITHUB_OUTPUT
+          echo "apk_filename=$APK_FILENAME" >> $GITHUB_OUTPUT
           
-          # Update local version.json immediately for consistency
           echo "{\"version\":\"$VERSION_NAME\",\"apkFile\":\"$APK_FILENAME\",\"released\":\"$(date +%Y-%m-%d)\"}" > docs/version.json
-          echo "✅ New Version: v$VERSION_NAME (Code: $VERSION_CODE)"
+          echo "✅ Bagong Bersyon: v$VERSION_NAME  (Code: $VERSION_CODE)"
+          cat docs/version.json
 
-      - name: ✍️ Inject Version into Build Config
+      - name: ✅ Isulat ang bagong bersyon sa build.gradle.kts
         run: |
           VERSION_NAME="${{ steps.version.outputs.name }}"
           VERSION_CODE="${{ steps.version.outputs.code }}"
           
-          # Update app/build.gradle.kts dynamically
           sed -i "s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/" app/build.gradle.kts
           sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" app/build.gradle.kts
           
-          echo "✅ Updated build.gradle.kts to v$VERSION_NAME"
+          echo "✅ Na-update: versionName=$VERSION_NAME, versionCode=$VERSION_CODE"
+          grep "versionName\|versionCode" app/build.gradle.kts
 
       # ==================================================
-      # 📦 STEP 4: BUILD THE APK WITH SECURE ENV VARS
+      # 📦 STEP 4: BUILD THE APK WITH DETAILED LOGGING
       # ==================================================
-      - name: 🛠️ Assemble Release APK
-        env:
-          # ✅ PASS SUPABASE SECRETS TO GRADLE
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          
-          # ✅ PASS SIGNING SECRETS TO GRADLE
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: 📦 Bumuo ng APK — MAY OPISYAL NA PINIRMA!
+        id: build-step
         run: |
-          echo "🚀 Starting Release Build..."
-          # Now ./gradlew definitely exists because of Step 1
-          ./gradlew clean assembleRelease --no-daemon --stacktrace
+          mkdir -p /tmp
+          ERROR_FILE="/tmp/build-report-content.txt"
+          > "$ERROR_FILE"
+          LOG_FILE="/tmp/martodosko-build-full.log"
+
+          echo "📦 BUMUO NG APK — MAY OPISYAL NA PINIRMA!"
+          cd "$GITHUB_WORKSPACE"
+
+          set +e
+          # Execute Build
+          ./gradlew clean assembleRelease --no-daemon --no-build-cache > "$LOG_FILE" 2>&1
+          EXIT_CODE=$?
+          set -e
+
+          APK_FILE=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+
+          {
+            echo "=================================================="
+            echo "📦 APLIKASYON: Martodosko Audio Studio"
+            echo "🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!"
+            echo "📂 LOKASYON:   app/build/outputs/apk/release"
+            echo "⏰ ORAS:       $(date '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "🏷️ BERSYON:    v${{ steps.version.outputs.name }}"
+            echo "=================================================="
+            echo ""
+
+            if [ -n "$APK_FILE" ] && [ -f "$APK_FILE" ]; then
+              APK_SIZE=$(du -h "$APK_FILE" | cut -f1)
+              echo "✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!"
+              echo "📂 APK Daan:   $APK_FILE"
+              echo "📏 Laki:       $APK_SIZE"
+              echo "📤 Kopyahin sa docs/..."
+              mkdir -p docs
+              cp "$APK_FILE" "docs/${{ steps.version.outputs.apk_filename }}"
+              echo "✅ Nasa: docs/${{ steps.version.outputs.apk_filename }}"
+              echo ""
+              echo "🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!"
+            else
+              echo "❌ NABIGO — Hindi nabuo o hindi mahanap ang APK"
+              echo "🔑 Exit Code: $EXIT_CODE"
+            fi
+
+            echo ""
+            echo "--------------------------------------------------"
+            echo "📋 BUONG LOG NG BUILD:"
+            echo "--------------------------------------------------"
+            cat "$LOG_FILE"
+            echo ""
+            echo "=================================================="
+          } >> "$ERROR_FILE"
+
+          echo "EXIT_CODE=$EXIT_CODE" >> $GITHUB_OUTPUT
 
       # ==================================================
-      # 📤 STEP 5: ARTIFACT HANDLING & REPORTING
+      # 📄 STEP 5: GENERATE REPORT
       # ==================================================
-      - name: 📂 Locate Generated APK
-        id: locate
-        run: |
-          APK_PATH=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
-          if [ -z "$APK_PATH" ]; then
-            echo "❌ ERROR: No APK found in release folder!"
-            exit 1
-          fi
-          echo "path=$APK_PATH" >> $GITHUB_OUTPUT
-          echo "size=$(du -h "$APK_PATH" | cut -f1)" >> $GITHUB_OUTPUT
-          echo "✅ Found APK: $APK_PATH (${{ steps.locate.outputs.size }})"
-
-      - name: 📝 Generate Build Report
+      - name: 📄 Isulat ang build-report.md
         if: always()
         run: |
           DATE=$(date "+%Y-%m-%d %H:%M UTC")
-          VERSION="${{ steps.version.outputs.name }}"
-          STATUS="SUCCESS"
-          if [ "${{ job.status }}" != "success" ]; then STATUS="FAILED"; fi
-          
-          cat <<EOF > docs/build-report.md
-          # 📋 Build Report — Martodosko Audio Studio
-          
-          > Created by CI/CD Pipeline © Copyright 2026
-          
-          ---
-          📅 **Date:** $DATE
-          🏷️ **Version:** v$VERSION
-          🔑 **Signing:** Persistent Key (Restored from Secret)
-          📊 **Status:** $STATUS
-          ---
-          
-          ### 📦 Artifacts
-          - **APK Location:** \`app/build/outputs/apk/release/\`
-          - **Filename:** \`${{ steps.version.outputs.filename }}\`
-          
-          ### ⚙️ Configuration Used
-          - **Java:** 17 (Temurin)
-          - **Gradle:** Auto-generated Wrapper (8.2)
-          - **Supabase URL:** Injected via Secrets
-          EOF
-          
-          echo "✅ Build report generated."
+          OUTPUT_FILE="$GITHUB_WORKSPACE/docs/build-report.md"
+          TEMP_FILE="/tmp/build-report-final.md"
 
-      - name: 💾 Commit Updates to Repo
-        if: success()
+          mkdir -p docs
+
+          {
+            echo "# 📋 Build Report — Martodosko Audio Studio"
+            echo ""
+            echo "> Created & Developed by MartoDosko © Copyright 2026"
+            echo ""
+            echo "---"
+            echo "📅 **Petsa:** $DATE"
+            echo "🏷️ **Bersyon:** v${{ steps.version.outputs.name }}"
+            echo "🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!"
+            echo "---"
+            echo ""
+            cat /tmp/build-report-content.txt
+            echo ""
+            echo "---"
+            echo "✅ **Katapusan ng Talaan**"
+          } > "$TEMP_FILE"
+
+          cp "$TEMP_FILE" "$OUTPUT_FILE"
+          echo "✅ build-report.md naisulat na!"
+
+      # ==================================================
+      # ✅ STEP 6: COMMIT AND PUSH
+      # ==================================================
+      - name: ✅ I-commit at i-push ang mga pagbabago
+        if: always()
         continue-on-error: true
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Add updated files
-          git add docs/version.json docs/build-report.md app/build.gradle.kts
+          # Add generated files
+          git add docs/version.json docs/build-report.md docs/*.apk app/build.gradle.kts 2>/dev/null || true
           
-          # Also commit the generated wrapper files so next time we don't need to regenerate them!
-          git add gradlew gradlew.bat gradle/wrapper/
+          # ALSO ADD THE GENERATED WRAPPER FILES SO THEY ARE CACHED FOR NEXT RUN
+          git add gradlew gradlew.bat gradle/wrapper/ 2>/dev/null || true
           
-          git commit -m "🤖 Auto-Build v${{ steps.version.outputs.name }} — Secure Release + Wrapper Init" || echo "No changes to commit"
-          git push origin main || echo "⚠️ Push failed (maybe protected branch)"
-
-      - name: 🎉 Success Message
-        if: success()
-        run: |
-          echo "=========================================="
-          echo "   ✅ BUILD SUCCESSFUL!"
-          echo "   Version: v${{ steps.version.outputs.name }}"
-          echo "   Artifact: ${{ steps.locate.outputs.path }}"
-          echo "=========================================="
+          git commit -m "🏷️ Build v${{ steps.version.outputs.name }} — Opisyal na Pinirma" --allow-empty || true
+          
+          git push origin main || echo "⚠️ Hindi maipush — pero nasa docs/ na sa runner!"
