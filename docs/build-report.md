@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-12 04:02 UTC
-🏷️ **Bersyon:** v1.0.300
+📅 **Petsa:** 2026-10-12 04:11 UTC
+🏷️ **Bersyon:** v1.0.301
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-12 04:02:04 UTC
-🏷️ BERSYON:    v1.0.300
+⏰ ORAS:       2026-10-12 04:11:38 UTC
+🏷️ BERSYON:    v1.0.301
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -48,10 +48,10 @@ Daemon will be stopped at the end of the build
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
+> Task :app:mergeReleaseResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
 > Task :app:parseReleaseLocalResources
-> Task :app:mergeReleaseResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
 > Task :app:javaPreCompileRelease
@@ -61,15 +61,15 @@ Daemon will be stopped at the end of the build
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
-> Task :app:processReleaseManifestForPackage
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
-> Task :app:processApplicationManifestReleaseForBundle
 > Task :app:compressReleaseAssets
+> Task :app:processApplicationManifestReleaseForBundle
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
@@ -142,7 +142,7 @@ Execution failed for task ':app:kspReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 42s
+BUILD FAILED in 1m 43s
 33 actionable tasks: 31 executed, 2 up-to-date
 
 ==================================================
