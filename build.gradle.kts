@@ -10,13 +10,13 @@ plugins {
     id("com.android.application") version "8.2.0" apply false
     
     // Kotlin Android Plugin
-    id("org.jetbrains.kotlin.android") version "1.9.20" apply false
+    id("org.jetbrains.kotlin.android") version "1.9.22" apply false
     
     // Hilt Dependency Injection Plugin
     id("com.google.dagger.hilt.android") version "2.50" apply false
     
     // KSP (Kotlin Symbol Processing) for Room/Hilt compilation speed
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17" apply false
 }
 
 // Optional: Task to clean all build directories
