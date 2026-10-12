@@ -2,10 +2,10 @@
 <!-- ================================================== -->
 <!-- FILE: AndroidManifest.xml                          -->
 <!-- VERSION: 2.1.0                                     -->
-<!-- UPDATED: 2026-10-11                                -->
+<!-- UPDATED: 2026-10-12                                -->
 <!-- PURPOSE: Secure Configuration for Martodosko Studio-->
 <!-- AUTHOR: Martodosko Studio                          -->
-<!-- NOTE: Removed ghost activities, added audio perms  -->
+<!-- NOTE: Fixed Inline Comment Syntax Errors           -->
 <!-- ================================================== -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -20,34 +20,41 @@
     
     <!-- ✅ BACKGROUND EXECUTION (Keep Audio Engine Alive) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" 
-        tools:targetApi="34" /> <!-- Required for Android 14+ -->
+    <uses-permission 
+        android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" 
+        tools:targetApi="34" /> 
         
     <!-- ✅ INSTALLATION (For Self-Updates via GitHub/Supabase) -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     
     <!-- ✅ STORAGE (Legacy support for Export/Import files) -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
-        android:maxSdkVersion="32" tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+    <uses-permission 
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" 
+        tools:ignore="ScopedStorage" />
+    <uses-permission 
+        android:name="android.permission.READ_EXTERNAL_STORAGE" 
         android:maxSdkVersion="32" />
 
-    <!-- Optional: If targeting Android 13+, use granular media permissions instead of READ_EXTERNAL_STORAGE -->
+    <!-- Optional: Granular media permissions for Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
+    <!-- ========================================== -->
+    <!-- APPLICATION CONFIGURATION                  -->
+    <!-- ========================================== -->
     <application
-        android:name=".MartodoskoApp" <!-- ✅ REGISTERED HILT APP CLASS -->
-        android:allowBackup="false"   <!-- ✅ DISABLED BACKUP FOR SECURITY (Prevents data leakage) -->
+        android:name=".MartodoskoApp"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Martodosko.Dark" <!-- ✅ CUSTOM THEME -->
-        android:networkSecurityConfig="@xml/network_security_config" <!-- ✅ ENFORCE HTTPS -->
+        android:theme="@style/Theme.Martodosko.Dark"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="34">
 
         <!-- ========================================== -->
@@ -56,7 +63,7 @@
 
         <!-- ✅ SPLASH SCREEN (Launcher) -->
         <activity
-            android:name=".ui.screens.SplashActivity" <!-- Updated Package Path -->
+            android:name=".ui.screens.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Martodosko.Splash">
@@ -68,37 +75,38 @@
 
         <!-- ✅ MAIN ACTIVITY (Pedal Board / Home Hub) -->
         <activity
-            android:name=".ui.screens.MainActivity" <!-- Updated Package Path -->
+            android:name=".ui.screens.MainActivity"
             android:exported="false"
             android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|keyboardHidden" />
 
         <!-- ✅ MIXER ACTIVITY (Detailed Channel View) -->
+        <!-- Note: Ensure MixerActivity.kt exists or remove this block to avoid crash -->
         <activity
-            android:name=".ui.screens.mixer.MixerActivity" <!-- Updated Package Path -->
+            android:name=".ui.screens.mixer.MixerActivity"
             android:exported="false"
             android:parentActivityName=".ui.screens.MainActivity" />
 
         <!-- ✅ CONTENT HOST (Settings, Help, About, Legal, Admin Login) -->
+        <!-- Note: Ensure ContentActivity.kt exists or remove this block -->
         <activity
-            android:name=".ui.screens.ContentActivity" <!-- Consolidated Host -->
+            android:name=".ui.screens.ContentActivity"
             android:exported="false"
             android:launchMode="singleTop" />
 
         <!-- ✅ ADMIN PANEL DASHBOARD (Role-Gated) -->
+        <!-- Note: Removed BIND_ACCESSIBILITY_SERVICE permission as it's not needed for internal admin panel -->
         <activity
-            android:name=".ui.screens.admin.AdminPanelActivity" <!-- Updated Package Path -->
+            android:name=".ui.screens.admin.AdminPanelActivity"
             android:exported="false"
-            android:label="Admin Panel"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" 
-            tools:ignore="ProtectedPermissions" /> 
-            <!-- Note: Remove permission attr if not using Accessibility services. Just exported=false is enough for internal navigation. -->
+            android:label="Admin Panel" />
 
         <!-- ========================================== -->
         <!-- SERVICES                                   -->
         <!-- ========================================== -->
         
         <!-- ✅ AUDIO FOREGROUND SERVICE -->
+        <!-- Note: Ensure AudioForegroundService.kt exists or remove this block -->
         <service
             android:name=".service.AudioForegroundService"
             android:enabled="true"
