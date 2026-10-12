@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-12 04:58 UTC
-🏷️ **Bersyon:** v1.0.304
+📅 **Petsa:** 2026-10-12 05:35 UTC
+🏷️ **Bersyon:** v1.0.305
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-12 04:58:40 UTC
-🏷️ BERSYON:    v1.0.304
+⏰ ORAS:       2026-10-12 05:35:02 UTC
+🏷️ BERSYON:    v1.0.305
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -61,6 +61,7 @@ Daemon will be stopped at the end of the build
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
@@ -74,40 +75,24 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
 > Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/model/UserMapper.kt:4:43 Unresolved reference: User
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/model/UserMapper.kt:6:1 Conflicting overloads: public fun UserEntity.toDomain(): [Error type: Unresolved type for User] defined in com.martodosko.studio.data.mapper in file UserMapper.kt, public fun UserEntity.toDomain(): [Error type: Unresolved type for User] defined in com.martodosko.studio.data.mapper in file User.kt
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/model/UserMapper.kt:6:28 Unresolved reference: User
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/model/UserMapper.kt:7:12 Unresolved reference: User
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/repository/UserRepositoryImpl.kt:11:43 Unresolved reference: User
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/repository/UserRepositoryImpl.kt:24:41 Unresolved reference: User
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/repository/UserRepositoryImpl.kt:28:17 Unresolved reference: User
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/di/NetworkModule.kt:6:31 Unresolved reference: auth
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/di/NetworkModule.kt:34:13 Not enough information to infer type variable Config
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/di/NetworkModule.kt:34:21 Unresolved reference: Auth
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/domain/model/User.kt:4:43 Unresolved reference: User
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/domain/model/User.kt:6:1 Conflicting overloads: public fun UserEntity.toDomain(): [Error type: Unresolved type for User] defined in com.martodosko.studio.data.mapper in file UserMapper.kt, public fun UserEntity.toDomain(): [Error type: Unresolved type for User] defined in com.martodosko.studio.data.mapper in file User.kt
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/domain/model/User.kt:6:28 Unresolved reference: User
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/domain/model/User.kt:7:12 Unresolved reference: User
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/domain/repository/UserRepository.kt:3:43 Unresolved reference: User
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/domain/repository/UserRepository.kt:7:32 Unresolved reference: User
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/BottomNavItem.kt:13:47 Unresolved reference: Tune
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/BottomNavItem.kt:25:43 Unresolved reference: Tune
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:15:47 Unresolved reference: GraphicEq
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:16:47 Unresolved reference: QueueMusic
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:44:21 Unresolved reference: MainNavGraph
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:59:43 Unresolved reference: GraphicEq
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:60:49 Unresolved reference: QueueMusic
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:54:21 Cannot find a parameter with this name: size
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:65:21 Cannot find a parameter with this name: size
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:72:16 Unresolved reference: HorizontalDivider
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:92:21 Cannot find a parameter with this name: size
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:103:21 Cannot find a parameter with this name: size
 
 FAILURE: Build failed with an exception.
 
@@ -122,7 +107,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 2m 4s
+BUILD FAILED in 1m 45s
 34 actionable tasks: 32 executed, 2 up-to-date
 
 ==================================================
