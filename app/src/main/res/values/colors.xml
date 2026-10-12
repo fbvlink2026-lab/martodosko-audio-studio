@@ -1,9 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ✅ BRAND COLORS -->
     <color name="neon_cyan">#40E0D0</color>
     <color name="accent_purple">#9C27B0</color>
+    
+    <!-- ✅ BACKGROUND & SURFACE COLORS -->
     <color name="deep_black">#081218</color>
     <color name="bg_dark">#12121F</color>
-    <color name="dark_gray">#1E1E2F</color>
+    <color name="panel_gray">#12232E</color>      <!-- Added for Theme -->
+    <color name="dark_gray">#1E1E2F</color>       <!-- Legacy/Alternative -->
+    
+    <!-- ✅ TEXT & ICON COLORS -->
     <color name="white">#FFFFFF</color>
     <color name="black">#FF000000</color>
+    <color name="metal_light">#E0E0E0</color>     <!-- Added for Theme -->
+    <color name="gray_text">#9E9E9E</color>
+    
+    <!-- ✅ STATUS COLORS -->
+    <color name="success_green">#4CAF50</color>   <!-- Added for Theme -->
+    <color name="warning_amber">#FFC107</color>
+    <color name="danger_red">#FF5252</color>
 </resources>
