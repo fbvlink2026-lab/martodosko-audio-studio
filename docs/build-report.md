@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-12 03:29 UTC
-🏷️ **Bersyon:** v1.0.297
+📅 **Petsa:** 2026-10-12 03:36 UTC
+🏷️ **Bersyon:** v1.0.298
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-12 03:29:29 UTC
-🏷️ BERSYON:    v1.0.297
+⏰ ORAS:       2026-10-12 03:36:43 UTC
+🏷️ BERSYON:    v1.0.298
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -24,6 +24,16 @@
 --------------------------------------------------
 Downloading https://services.gradle.org/distributions/gradle-8.2-bin.zip
 ............10%............20%............30%.............40%............50%............60%............70%.............80%............90%............100%
+
+Welcome to Gradle 8.2!
+
+Here are the highlights of this release:
+ - Kotlin DSL: new reference documentation, assignment syntax by default
+ - Kotlin DSL is now the default with Gradle init
+ - Improved suggestions to resolve errors in console output
+
+For more details see https://docs.gradle.org/8.2/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.2/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 > Task :clean UP-TO-DATE
@@ -42,13 +52,27 @@ Daemon will be stopped at the end of the build
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
 > Task :app:parseReleaseLocalResources
-> Task :app:processReleaseMainManifest FAILED
+> Task :app:processReleaseMainManifest
+> Task :app:processReleaseManifest
+> Task :app:extractProguardFiles
+> Task :app:javaPreCompileRelease
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:processReleaseManifestForPackage
+> Task :app:processReleaseResources FAILED
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:processReleaseMainManifest'.
-> com.android.manifmerger.ManifestMerger2$MergeFailureException: Error parsing /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml
+Execution failed for task ':app:processReleaseResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+   > Android resource linking failed
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml:47:5-131:19: AAPT: error: resource xml/data_extraction_rules (aka com.martodosko.studio:xml/data_extraction_rules) not found.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml:47:5-131:19: AAPT: error: resource xml/backup_rules (aka com.martodosko.studio:xml/backup_rules) not found.
+         
+     ERROR: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/AndroidManifest.xml:47:5-131:19: AAPT: error: resource mipmap/ic_launcher_round (aka com.martodosko.studio:mipmap/ic_launcher_round) not found.
+         
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -56,8 +80,8 @@ Execution failed for task ':app:processReleaseMainManifest'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 29s
-14 actionable tasks: 12 executed, 2 up-to-date
+BUILD FAILED in 1m 47s
+20 actionable tasks: 18 executed, 2 up-to-date
 
 ==================================================
 
