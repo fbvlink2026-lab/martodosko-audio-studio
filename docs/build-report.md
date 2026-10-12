@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-12 06:10 UTC
-🏷️ **Bersyon:** v1.0.307
+📅 **Petsa:** 2026-10-12 06:28 UTC
+🏷️ **Bersyon:** v1.0.308
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-12 06:10:22 UTC
-🏷️ BERSYON:    v1.0.307
+⏰ ORAS:       2026-10-12 06:28:49 UTC
+🏷️ BERSYON:    v1.0.308
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -48,10 +48,10 @@ Daemon will be stopped at the end of the build
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
-> Task :app:mergeReleaseResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
 > Task :app:parseReleaseLocalResources
+> Task :app:mergeReleaseResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
 > Task :app:extractProguardFiles
@@ -62,10 +62,10 @@ Daemon will be stopped at the end of the build
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:checkReleaseDuplicateClasses
+> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
-> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseAssets
 > Task :app:processApplicationManifestReleaseForBundle
 > Task :app:compressReleaseAssets
@@ -83,12 +83,12 @@ FAILURE: Build failed with an exception.
 Execution failed for task ':app:processReleaseResources'.
 > A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
    > Android resource linking failed
-     error: resource style/Theme.MaterialComponents.DayNight.NoActionBar (aka com.martodosko.studio:style/Theme.MaterialComponents.DayNight.NoActionBar) not found.
-     com.martodosko.studio.app-mergeReleaseResources-62:/values/values.xml:1884: error: style attribute 'attr/colorPrimaryVariant (aka com.martodosko.studio:attr/colorPrimaryVariant)' not found.
-     com.martodosko.studio.app-mergeReleaseResources-62:/values/values.xml:1885: error: style attribute 'attr/colorOnPrimary (aka com.martodosko.studio:attr/colorOnPrimary)' not found.
-     com.martodosko.studio.app-mergeReleaseResources-62:/values/values.xml:1887: error: style attribute 'attr/colorSecondary (aka com.martodosko.studio:attr/colorSecondary)' not found.
-     com.martodosko.studio.app-mergeReleaseResources-62:/values/values.xml:1888: error: style attribute 'attr/colorSecondaryVariant (aka com.martodosko.studio:attr/colorSecondaryVariant)' not found.
-     com.martodosko.studio.app-mergeReleaseResources-62:/values/values.xml:1889: error: style attribute 'attr/colorOnSecondary (aka com.martodosko.studio:attr/colorOnSecondary)' not found.
+     com.martodosko.studio.app-mergeReleaseResources-70:/values/values.xml:6470: error: resource color/success_green (aka com.martodosko.studio:color/success_green) not found.
+     com.martodosko.studio.app-mergeReleaseResources-70:/values/values.xml:6475: error: resource color/panel_gray (aka com.martodosko.studio:color/panel_gray) not found.
+     com.martodosko.studio.app-mergeReleaseResources-70:/values/values.xml:6476: error: resource color/metal_light (aka com.martodosko.studio:color/metal_light) not found.
+     com.martodosko.studio.app-mergeReleaseResources-70:/values/values.xml:6470: error: resource color/success_green (aka com.martodosko.studio:color/success_green) not found.
+     com.martodosko.studio.app-mergeReleaseResources-70:/values/values.xml:6475: error: resource color/panel_gray (aka com.martodosko.studio:color/panel_gray) not found.
+     com.martodosko.studio.app-mergeReleaseResources-70:/values/values.xml:6476: error: resource color/metal_light (aka com.martodosko.studio:color/metal_light) not found.
      error: failed linking references.
 
 
@@ -98,7 +98,7 @@ Execution failed for task ':app:processReleaseResources'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 19s
+BUILD FAILED in 1m 20s
 31 actionable tasks: 29 executed, 2 up-to-date
 
 ==================================================
