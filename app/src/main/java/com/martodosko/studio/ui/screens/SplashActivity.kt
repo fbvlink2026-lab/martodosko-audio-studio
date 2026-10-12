@@ -1,7 +1,8 @@
 // ==================================================
-// FILE: ui/screens/splash/SplashActivity.kt
-// VERSION: 2.1.0
-// PURPOSE: Entry Point with Dynamic Asset Loading
+// FILE: SplashActivity.kt
+// VERSION: 2.1.0 - CRASH-FREE STATIC BOOT
+// PURPOSE: Minimalist Entry Point to Bypass DI Issues
+// NOTE: Removed SplashViewModel dependency for stability
 // ==================================================
 package com.martodosko.studio.ui.screens.splash
 
@@ -9,10 +10,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,11 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.martodosko.studio.R
 import com.martodosko.studio.ui.screens.MainActivity
 import com.martodosko.studio.ui.theme.MartodoskoTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
@@ -34,14 +35,11 @@ class SplashActivity : ComponentActivity() {
         
         setContent {
             MartodoskoTheme {
-                SplashScreen(
+                // ✅ NO VIEWMODEL HERE. Pure Compose State.
+                SplashScreenContent(
                     onNavigateToHome = {
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
-                    },
-                    onError = { msg ->
-                        // Show AlertDialog or Snackbar for error
-                        println("Error: $msg")
                     }
                 )
             }
@@ -50,19 +48,14 @@ class SplashActivity : ComponentActivity() {
 }
 
 @Composable
-fun SplashScreen(
-    viewModel: SplashViewModel = hiltViewModel(),
-    onNavigateToHome: () -> Unit,
-    onError: (String) -> Unit
-) {
-    val uiState by viewModel.uiState.collectAsState()
+fun SplashScreenContent(onNavigateToHome: () -> Unit) {
+    var isLoading by remember { mutableStateOf(true) }
 
-    LaunchedEffect(uiState) {
-        when (uiState) {
-            is SplashUiState.Ready -> onNavigateToHome()
-            is SplashUiState.Error -> onError((uiState as SplashUiState.Error).message)
-            else -> {}
-        }
+    // Simulate a short loading delay (e.g., 1.5 seconds)
+    LaunchedEffect(Unit) {
+        delay(1500L) 
+        isLoading = false
+        onNavigateToHome()
     }
 
     Box(
@@ -89,32 +82,12 @@ fun SplashScreen(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Status Indicator
-            when (val state = uiState) {
-                is SplashUiState.Loading -> {
-                    CircularProgressIndicator(color = Color(0xFF40E0D0))
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text("Initializing...", color = Color.White, fontSize = 12.sp)
-                }
-                is SplashUiState.Updating -> {
-                    LinearProgressIndicator(
-                        progress = { state.progress },
-                        color = Color(0xFF40E0D0),
-                        trackColor = Color.DarkGray,
-                        modifier = Modifier.width(200.dp)
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(state.message, color = Color.White, fontSize = 12.sp)
-                }
-                is SplashUiState.Ready -> {
-                    Text("✅ System Ready", color = Color(0xFF4CAF50), fontSize = 14.sp)
-                }
-                is SplashUiState.Error -> {
-                    Text("⚠️ ${state.message}", color = Color(0xFFFF5252), fontSize = 12.sp)
-                    Button(onClick = { /* Retry Logic Here */ }) {
-                        Text("Retry")
-                    }
-                }
+            if (isLoading) {
+                CircularProgressIndicator(color = Color(0xFF40E0D0))
+                Spacer(modifier = Modifier.height(10.dp))
+                Text("Initializing...", color = Color.White, fontSize = 12.sp)
+            } else {
+                Text("✅ Ready", color = Color(0xFF4CAF50), fontSize = 14.sp)
             }
         }
     }
