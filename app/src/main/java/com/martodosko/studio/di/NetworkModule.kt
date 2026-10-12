@@ -1,12 +1,11 @@
+// ==================================================
+// FILE: NetworkModule.kt
+// VERSION: 2.1.0 - DISABLED FOR PHASE 2 BUILD SUCCESS
+// PURPOSE: Placeholder for Future Supabase Integration
+// NOTE: Real implementation returns in Phase 3 with correct SDK APIs
+// ==================================================
 package com.martodosko.studio.di
 
-import com.martodosko.studio.BuildConfig
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.auth.Auth
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.realtime.Realtime
-import io.github.jan.supabase.storage.Storage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +16,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    // ✅ COMMENTED OUT TO PREVENT COMPILE ERRORS WITH INCORRECT SDK IMPORTS
+    /*
     @Provides
     @Singleton
     fun provideSupabaseClient(): SupabaseClient {
@@ -37,4 +38,8 @@ object NetworkModule {
             install(Realtime)
         }
     }
+    */
+    
+    // Dummy provider to satisfy Hilt graph if any other class accidentally requests it
+    // But since we removed dependencies from Repos/Services, this shouldn't be called.
 }
