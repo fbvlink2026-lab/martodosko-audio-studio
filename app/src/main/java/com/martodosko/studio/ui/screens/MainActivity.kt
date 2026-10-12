@@ -9,12 +9,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.GraphicEq
+import androidx.compose.material.icons.filled.QueueMusic
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.martodosko.studio.ui.navigation.MainNavGraph // We will create this next
 import com.martodosko.studio.ui.theme.MartodoskoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,17 +32,14 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             MartodoskoTheme {
-                // Remember NavController to manage screen transitions
                 val navController = rememberNavController()
                 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { 
-                        // The Bottom Navigation Bar
                         MainBottomNavBar(navController = navController) 
                     }
                 ) { innerPadding ->
-                    // The Content Area (Screens)
                     // Apply padding so content doesn't hide behind the bar
                     MainNavGraph(
                         navController = navController,
@@ -45,6 +49,16 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+/**
+ * Enum for Bottom Nav Items (Defined here to avoid circular dependency issues if not in separate file)
+ */
+enum class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
+    HOME("home", "Home", Icons.Default.Home),
+    MIXER("mixer", "Mixer", Icons.Default.GraphicEq),
+    PRESETS("presets", "Presets", Icons.Default.QueueMusic),
+    SETTINGS("settings", "Settings", Icons.Default.Settings)
 }
 
 /**
@@ -58,25 +72,13 @@ fun MainBottomNavBar(navController: NavHostController) {
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
     ) {
-        // Iterate through our enum items
-        listOf(
-            com.martodosko.studio.ui.navigation.BottomNavItem.HOME,
-            com.martodosko.studio.ui.navigation.BottomNavItem.MIXER,
-            com.martodosko.studio.ui.navigation.BottomNavItem.PRESETS,
-            com.martodosko.studio.ui.navigation.BottomNavItem.SETTINGS
-        ).forEach { item ->
+        BottomNavItem.entries.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
                 onClick = {
-                    // Navigate to the new route
                     navController.navigate(item.route) {
-                        // Pop up to the start destination of the graph to avoid building up a large stack
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when re-selecting the same item
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
-                        // Restore state when re-selecting a previously selected item
                         restoreState = true
                     }
                 },
