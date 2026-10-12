@@ -1,8 +1,15 @@
+// ==================================================
+// FILE: PedalBoardScreen.kt
+// VERSION: 2.1.0 - FIXED PARAMETERS & DIVIDER
+// PURPOSE: Main Home Screen displaying Vocal/Guitar Chains
+// NOTE: Updated to use 'knobSize' param and standard Divider
+// ==================================================
 package com.martodosko.studio.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Divider // ✅ CORRECT IMPORT FOR MATERIAL3
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,7 +58,7 @@ fun PedalBoardScreen(
                     label = "GAIN",
                     minValue = -50f,
                     maxValue = 50f,
-                    size = 100.dp,
+                    knobSize = 100.dp, // ✅ CHANGED FROM 'size' TO 'knobSize'
                     accentColor = NeonCyan
                 )
                 
@@ -62,14 +69,16 @@ fun PedalBoardScreen(
                     label = "VOL",
                     minValue = 0f,
                     maxValue = 100f,
-                    size = 100.dp,
+                    knobSize = 100.dp, // ✅ CHANGED FROM 'size' TO 'knobSize'
                     accentColor = Color.White
                 )
             }
         }
 
         // Divider
-        item { HorizontalDivider(color = PanelGray, thickness = 2.dp) }
+        item { 
+            Divider(color = PanelGray, thickness = 2.dp) // ✅ USED STANDARD DIVIDER
+        }
 
         // ==========================================
         // SECTION 2: GUITAR CHANNEL
@@ -89,7 +98,7 @@ fun PedalBoardScreen(
                     label = "DRIVE",
                     minValue = -50f,
                     maxValue = 50f,
-                    size = 100.dp,
+                    knobSize = 100.dp, // ✅ CHANGED FROM 'size' TO 'knobSize'
                     accentColor = Color(0xFFFF9800)
                 )
                 
@@ -100,7 +109,7 @@ fun PedalBoardScreen(
                     label = "LEVEL",
                     minValue = 0f,
                     maxValue = 100f,
-                    size = 100.dp,
+                    knobSize = 100.dp, // ✅ CHANGED FROM 'size' TO 'knobSize'
                     accentColor = Color.White
                 )
             }
