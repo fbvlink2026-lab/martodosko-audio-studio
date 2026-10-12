@@ -1,12 +1,14 @@
 // ==================================================
 // FILE: MartodoskoApp.kt
-// VERSION: 2.1.0 - DEBUG MODE ENABLED
+// VERSION: 2.1.0 - DEBUG MODE ENABLED (FIXED THREADING)
 // PURPOSE: Application Class with Global Crash Handler
-// NOTE: Shows Toast on crash to identify error without Logcat
+// NOTE: Uses Handler instead of runOnUiThread for Application context
 // ==================================================
 package com.martodosko.studio
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import dagger.hilt.android.HiltAndroidApp
 import java.io.PrintWriter
@@ -26,8 +28,8 @@ class MartodoskoApp : Application() {
                 throwable.printStackTrace(pw)
                 val stackTrace = sw.toString().take(500) // Limit length for Toast
                 
-                // Show Toast on Main Thread
-                runOnUiThread {
+                // ✅ FIX: Use Handler to post to Main Thread since we are in a background crash handler
+                Handler(Looper.getMainLooper()).post {
                     Toast.makeText(
                         applicationContext, 
                         "💥 CRASH:\n${throwable.message}\n\nStack:\n$stackTrace", 
