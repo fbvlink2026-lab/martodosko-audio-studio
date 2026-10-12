@@ -1,7 +1,8 @@
 // ==================================================
 // FILE: MainActivity.kt
-// VERSION: 2.1.0 - BOTTOM NAVIGATION IMPLEMENTATION
+// VERSION: 2.1.0 - FINAL CLEAN BUILD
 // PURPOSE: Host Activity with Bottom Nav Bar
+// NOTE: Uses Enum Icons and Inline NavGraph to avoid missing files
 // ==================================================
 package com.martodosko.studio.ui.screens
 
@@ -12,16 +13,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.GraphicEq
-import androidx.compose.material.icons.filled.QueueMusic
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.martodosko.studio.ui.screens.home.PedalBoardScreen
+import com.martodosko.studio.ui.screens.placeholder.PlaceholderScreen
 import com.martodosko.studio.ui.theme.MartodoskoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,11 +45,17 @@ class MainActivity : ComponentActivity() {
                         MainBottomNavBar(navController = navController) 
                     }
                 ) { innerPadding ->
-                    // Apply padding so content doesn't hide behind the bar
-                    MainNavGraph(
+                    // Content Area
+                    NavHost(
                         navController = navController,
+                        startDestination = "home",
                         modifier = Modifier.padding(innerPadding)
-                    )
+                    ) {
+                        composable("home") { PedalBoardScreen() }
+                        composable("mixer") { PlaceholderScreen(title = "🎚️ Mixer Channel") }
+                        composable("presets") { PlaceholderScreen(title = "📋 Preset Library") }
+                        composable("settings") { PlaceholderScreen(title = "⚙️ Settings") }
+                    }
                 }
             }
         }
@@ -52,18 +63,21 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
- * Enum for Bottom Nav Items (Defined here to avoid circular dependency issues if not in separate file)
+ * Data Class for Navigation Items (Defined locally to ensure availability)
  */
-enum class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
-    HOME("home", "Home", Icons.Default.Home),
-    MIXER("mixer", "Mixer", Icons.Default.GraphicEq),
-    PRESETS("presets", "Presets", Icons.Default.QueueMusic),
-    SETTINGS("settings", "Settings", Icons.Default.Settings)
-}
+data class NavItem(
+    val route: String,
+    val label: String,
+    val icon: ImageVector
+)
 
-/**
- * Composable for the Bottom Navigation Bar itself.
- */
+val navItems = listOf(
+    NavItem("home", "Home", Icons.Default.Home),
+    NavItem("mixer", "Mixer", Icons.Default.Menu),      // Using Menu as placeholder for Mixer
+    NavItem("presets", "Presets", Icons.Default.List),  // Using List for Presets
+    NavItem("settings", "Settings", Icons.Default.Settings)
+)
+
 @Composable
 fun MainBottomNavBar(navController: NavHostController) {
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -72,7 +86,7 @@ fun MainBottomNavBar(navController: NavHostController) {
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
     ) {
-        BottomNavItem.entries.forEach { item ->
+        navItems.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
                 onClick = {
