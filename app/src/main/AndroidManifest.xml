@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ================================================== -->
 <!-- FILE: AndroidManifest.xml                          -->
-<!-- VERSION: 2.1.0                                     -->
-<!-- UPDATED: 2026-10-12                                -->
-<!-- PURPOSE: Secure Configuration for Martodosko Studio-->
-<!-- AUTHOR: Martodosko Studio                          -->
-<!-- NOTE: Hybrid Fix - Uses existing icons/resources   -->
+<!-- VERSION: v2.1.0-monolith-final                     -->
+<!-- PURPOSE: Single Entry Point Configuration          -->
+<!-- NOTE: Removed Splash Activity reference entirely   -->
 <!-- ================================================== -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- ✅ NETWORK & SECURITY -->
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
-    <!-- ✅ AUDIO PROCESSING (Critical for <10ms Latency) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    
-    <!-- ✅ BACKGROUND EXECUTION (Keep Audio Engine Alive) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission 
         android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" 
         tools:targetApi="34" /> 
-        
-    <!-- ✅ INSTALLATION (For Self-Updates via GitHub/Supabase) -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    
-    <!-- ✅ STORAGE (Legacy support for Export/Import files) -->
     <uses-permission 
         android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
         android:maxSdkVersion="32" 
@@ -35,15 +25,10 @@
     <uses-permission 
         android:name="android.permission.READ_EXTERNAL_STORAGE" 
         android:maxSdkVersion="32" />
-
-    <!-- Optional: Granular media permissions for Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
-    <!-- ========================================== -->
-    <!-- APPLICATION CONFIGURATION                  -->
-    <!-- ========================================== -->
     <application
         android:name=".MartodoskoApp"
         android:allowBackup="false"
@@ -54,40 +39,18 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="34">
 
-        <!-- ========================================== -->
-        <!-- ACTIVITIES                                 -->
-        <!-- ========================================== -->
-
-        <!-- ✅ SPLASH SCREEN (Launcher) -->
+        <!-- ✅ SINGLE LAUNCHER ACTIVITY -->
         <activity
-            android:name=".ui.screens.SplashActivity"
+            android:name=".ui.screens.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Martodosko.Splash">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- ✅ MAIN ACTIVITY (Pedal Board / Home Hub) -->
-        <activity
-            android:name=".ui.screens.MainActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
-
-        <!-- 
-           NOTE: Other activities (Mixer, Content, Admin) are omitted here 
-           to prevent build failures since their Kotlin classes don't exist yet.
-           We will add them back in Phase 3 when we implement those screens.
-        -->
-
-        <!-- ========================================== -->
-        <!-- PROVIDERS                                  -->
-        <!-- ========================================== -->
-
-        <!-- ✅ FILE PROVIDER (For Sharing Presets/APK Installs) -->
+        <!-- File Provider for Updates/Sharing -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
