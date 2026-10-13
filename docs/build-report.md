@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 12:22 UTC
-🏷️ **Bersyon:** v1.0.331
+📅 **Petsa:** 2026-10-13 12:44 UTC
+🏷️ **Bersyon:** v1.0.332
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 12:22:46 UTC
-🏷️ BERSYON:    v1.0.331
+⏰ ORAS:       2026-10-13 12:44:15 UTC
+🏷️ BERSYON:    v1.0.332
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.3M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.331.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -72,8 +67,8 @@ Daemon will be stopped at the end of the build
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
-> Task :app:compressReleaseAssets
 > Task :app:processApplicationManifestReleaseForBundle
+> Task :app:compressReleaseAssets
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
@@ -84,40 +79,27 @@ Daemon will be stopped at the end of the build
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
-> Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:53:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/mixer/MixerMonitorScreen.kt:100:24 Unresolved reference: updateParam
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/mixer/MixerMonitorScreen.kt:100:41 Unresolved reference: copy
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/mixer/MixerMonitorScreen.kt:142:24 Unresolved reference: updateParam
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/mixer/MixerMonitorScreen.kt:142:41 Unresolved reference: copy
 
-> Task :app:compileReleaseJavaWithJavac
-> Task :app:hiltAggregateDepsRelease
+FAILURE: Build failed with an exception.
 
-> Task :app:hiltJavaCompileRelease
-Note: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/generated/hilt/component_sources/release/com/martodosko/studio/Hilt_MartodoskoApp.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:processReleaseJavaRes
-> Task :app:transformReleaseClassesWithAsm
-> Task :app:mergeReleaseGeneratedProguardFiles
-> Task :app:mergeReleaseJavaResource
-> Task :app:expandReleaseArtProfileWildcards
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
-> Task :app:minifyReleaseWithR8
-Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
-
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:shrinkReleaseRes
-> Task :app:optimizeReleaseResources
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:assembleRelease
-
-BUILD SUCCESSFUL in 2m 37s
-52 actionable tasks: 50 executed, 2 up-to-date
+BUILD FAILED in 1m 47s
+34 actionable tasks: 32 executed, 2 up-to-date
 
 ==================================================
 
