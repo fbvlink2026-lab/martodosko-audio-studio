@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 17:37 UTC
-🏷️ **Bersyon:** v1.0.345
+📅 **Petsa:** 2026-10-13 20:09 UTC
+🏷️ **Bersyon:** v1.0.346
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,12 +12,17 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 17:37:09 UTC
-🏷️ BERSYON:    v1.0.345
+⏰ ORAS:       2026-10-13 20:09:07 UTC
+🏷️ BERSYON:    v1.0.346
 ==================================================
 
-❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
-🔑 Exit Code: 1
+✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
+📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
+📏 Laki:       4.2M
+📤 Kopyahin sa docs/...
+✅ Nasa: docs/Martodosko-Studio-v1.0.346.apk
+
+🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -43,8 +48,8 @@ Daemon will be stopped at the end of the build
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preReleaseBuild UP-TO-DATE
 > Task :app:generateReleaseBuildConfig
-> Task :app:generateReleaseResValues
 > Task :app:checkReleaseAarMetadata
+> Task :app:generateReleaseResValues
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
@@ -61,10 +66,9 @@ Daemon will be stopped at the end of the build
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
-> Task :app:processReleaseManifestForPackage
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
+> Task :app:mergeReleaseArtProfile
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -75,57 +79,47 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
-> Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:90:42 None of the following functions can be called with the arguments supplied: 
-public fun <T : Comparable<TypeVariable(T)>> maxOf(a: TypeVariable(T), b: TypeVariable(T)): TypeVariable(T) defined in kotlin.comparisons
-public fun <T : Comparable<TypeVariable(T)>> maxOf(a: TypeVariable(T), vararg other: TypeVariable(T)): TypeVariable(T) defined in kotlin.comparisons
-public inline fun maxOf(a: Byte, b: Byte): Byte defined in kotlin.comparisons
-public fun maxOf(a: Byte, vararg other: Byte): Byte defined in kotlin.comparisons
-public inline fun maxOf(a: Double, b: Double): Double defined in kotlin.comparisons
-public fun maxOf(a: Double, vararg other: Double): Double defined in kotlin.comparisons
-public inline fun maxOf(a: Float, b: Float): Float defined in kotlin.comparisons
-public fun maxOf(a: Float, vararg other: Float): Float defined in kotlin.comparisons
-public inline fun maxOf(a: Int, b: Int): Int defined in kotlin.comparisons
-public fun maxOf(a: Int, vararg other: Int): Int defined in kotlin.comparisons
-public inline fun maxOf(a: Long, b: Long): Long defined in kotlin.comparisons
-public fun maxOf(a: Long, vararg other: Long): Long defined in kotlin.comparisons
-public inline fun maxOf(a: Short, b: Short): Short defined in kotlin.comparisons
-public fun maxOf(a: Short, vararg other: Short): Short defined in kotlin.comparisons
-public fun maxOf(a: UByte, b: UByte): UByte defined in kotlin.comparisons
-public fun maxOf(a: UByte, vararg other: UByte): UByte defined in kotlin.comparisons
-public fun maxOf(a: UInt, b: UInt): UInt defined in kotlin.comparisons
-public fun maxOf(a: UInt, vararg other: UInt): UInt defined in kotlin.comparisons
-public fun maxOf(a: ULong, b: ULong): ULong defined in kotlin.comparisons
-public fun maxOf(a: ULong, vararg other: ULong): ULong defined in kotlin.comparisons
-public fun maxOf(a: UShort, b: UShort): UShort defined in kotlin.comparisons
-public fun maxOf(a: UShort, vararg other: UShort): UShort defined in kotlin.comparisons
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:96:51 Overload resolution ambiguity: 
-public final operator fun div(other: Byte): Float defined in kotlin.Float
-public final operator fun div(other: Double): Double defined in kotlin.Float
-public final operator fun div(other: Float): Float defined in kotlin.Float
-public final operator fun div(other: Int): Float defined in kotlin.Float
-public final operator fun div(other: Long): Float defined in kotlin.Float
-public final operator fun div(other: Short): Float defined in kotlin.Float
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:76:33 Parameter 'dragAmount' is never used, could be renamed to _
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:53:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:65:9 Variable 'params' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
 
-FAILURE: Build failed with an exception.
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:hiltAggregateDepsRelease
 
-* What went wrong:
-Execution failed for task ':app:compileReleaseKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+> Task :app:hiltJavaCompileRelease
+Note: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/generated/hilt/component_sources/release/com/martodosko/studio/Hilt_MartodoskoApp.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
 
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:processReleaseJavaRes
+> Task :app:transformReleaseClassesWithAsm
+> Task :app:mergeReleaseGeneratedProguardFiles
+> Task :app:expandReleaseArtProfileWildcards
+> Task :app:mergeReleaseJavaResource
 
-BUILD FAILED in 1m 53s
-34 actionable tasks: 32 executed, 2 up-to-date
+> Task :app:minifyReleaseWithR8
+Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
+
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:shrinkReleaseRes
+> Task :app:optimizeReleaseResources
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+
+BUILD SUCCESSFUL in 4m 44s
+52 actionable tasks: 50 executed, 2 up-to-date
 
 ==================================================
 
