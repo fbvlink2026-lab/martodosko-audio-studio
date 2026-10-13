@@ -1,8 +1,9 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-step3-knobs-only
+// VERSION: v2.3.0-phase2-step3-final-fix
 // PURPOSE: Detailed Channel View with ROTARY KNOBS
-// NOTE: Consistent with Strategic Master Plan v2.3 Visual Style. No Sliders.
+// NOTE: Fixed compilation errors by removing invalid VM calls.
+//       Gain/Drive are Read-Only here. Vol/Lvl are Editable.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -93,17 +94,16 @@ fun VocalChannelPanel(gain: Float, volume: Float, vm: MixerViewModel) {
             Text("INPUT GAIN", color = Color.Cyan, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             
+            // ✅ READ-ONLY DISPLAY FOR GAIN (Controlled in Home)
             ProAudioKnob(
                 value = gain,
-                onValueChange = { /* Read-only display or sync back to Home logic */ 
-                    // Note: In a real app, changing this here might update the global state too
-                    vm.updateParam { it.copy(vocalGain = it) } 
-                },
+                onValueChange = { /* No-op: Display Only */ }, 
                 label = "${gain.toInt()} dB",
                 minValue = -50f,
                 maxValue = 50f,
                 knobSize = 90.dp,
-                accentColor = Color.Cyan
+                accentColor = Color.Cyan,
+                isEnabled = false // Visually indicate it's locked/read-only
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -111,6 +111,7 @@ fun VocalChannelPanel(gain: Float, volume: Float, vm: MixerViewModel) {
             Text("CHANNEL VOLUME", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
 
+            // ✅ EDITABLE CONTROL FOR VOLUME
             ProAudioKnob(
                 value = volume,
                 onValueChange = { newValue -> vm.onVocalVolumeChange(newValue) },
@@ -136,16 +137,16 @@ fun GuitarChannelPanel(drive: Float, level: Float, vm: MixerViewModel) {
             Text("DRIVE AMOUNT", color = Color(0xFFFF9800), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             
+            // ✅ READ-ONLY DISPLAY FOR DRIVE (Controlled in Home)
             ProAudioKnob(
                 value = drive,
-                onValueChange = { /* Sync logic */ 
-                    vm.updateParam { it.copy(guitarDrive = it) }
-                },
+                onValueChange = { /* No-op: Display Only */ },
                 label = "${drive.toInt()}%",
                 minValue = -50f,
                 maxValue = 50f,
                 knobSize = 90.dp,
-                accentColor = Color(0xFFFF9800)
+                accentColor = Color(0xFFFF9800),
+                isEnabled = false
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -153,6 +154,7 @@ fun GuitarChannelPanel(drive: Float, level: Float, vm: MixerViewModel) {
             Text("OUTPUT LEVEL", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
 
+            // ✅ EDITABLE CONTROL FOR LEVEL
             ProAudioKnob(
                 value = level,
                 onValueChange = { newValue -> vm.onGuitarLevelChange(newValue) },
@@ -183,6 +185,7 @@ fun MasterPanel(volume: Float, vm: MixerViewModel) {
                 Text("Global Output Control", color = Color.Gray, fontSize = 10.sp)
             }
             
+            // ✅ EDITABLE CONTROL FOR MASTER
             ProAudioKnob(
                 value = volume,
                 onValueChange = { newValue -> vm.onMasterVolumeChange(newValue) },
