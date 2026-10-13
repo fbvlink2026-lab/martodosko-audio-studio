@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MainActivity.kt
-// VERSION: v2.3.0-phase1-step3-clean
-// PURPOSE: Host Activity using Modular Components
-// NOTE: Imports PedalBoardScreen instead of defining it inline.
+// VERSION: v2.3.0-phase1-step4-clean
+// PURPOSE: Pure Host Activity for Hilt & Lifecycle
+// NOTE: Delegates all UI/Navigation to MainNavGraph.
 // ==================================================
 package com.martodosko.studio.ui.screens
 
@@ -10,34 +10,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.martodosko.studio.ui.screens.home.PedalBoardScreen // ✅ IMPORT NEW SCREEN
+import com.martodosko.studio.ui.navigation.MainNavGraph
 import com.martodosko.studio.ui.theme.MartodoskoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,76 +21,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("MAIN_ACT", "✅ Starting Main Activity (Post-Splash)")
+        Log.e("MAIN_ACT", "✅ Starting Main Activity (Delegating to NavGraph)")
 
         setContent {
             MartodoskoTheme {
-                MainAppShell()
+                // The entire app shell is now handled by this single composable
+                MainNavGraph(modifier = Modifier.fillMaxSize())
             }
         }
-    }
-}
-
-// --- NAVIGATION SHELL ---
-data class NavItem(val route: String, val label: String, val icon: ImageVector)
-
-val navItems = listOf(
-    NavItem("mixer", "Mixer", Icons.Default.Tune),      
-    NavItem("presets", "Presets", Icons.Default.List),   
-    NavItem("home", "Board", Icons.Default.GridView),    
-    NavItem("settings", "Settings", Icons.Default.Settings), 
-    NavItem("more", "More", Icons.Default.Menu)          
-)
-
-@Composable
-fun MainAppShell() {
-    val navController = rememberNavController()
-    
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = { 
-            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-                navItems.forEach { item ->
-                    NavigationBarItem(
-                        selected = currentRoute == item.route,
-                        onClick = {
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = { Icon(item.icon, contentDescription = null) },
-                        label = { Text(item.label) }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = "home", // Default to Pedal Board (Center)
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            // ✅ USE EXTRACTED SCREEN HERE
-            composable("home") { PedalBoardScreen() } 
-            
-            composable("mixer") { PlaceholderScreen("🎚️ Mixer Monitor") }
-            composable("presets") { PlaceholderScreen("📋 Preset Library") }
-            composable("settings") { PlaceholderScreen("⚙️ Settings") }
-            composable("more") { PlaceholderScreen("☰ More Menu") }
-        }
-    }
-}
-
-// Keep PlaceholderScreen here as it's simple and used across multiple tabs
-@Composable
-fun PlaceholderScreen(title: String) {
-    Box(
-        modifier = Modifier.fillMaxSize().background(Color.Black),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = title, color = Color(0xFF40E0D0), fontSize = 24.sp)
     }
 }
