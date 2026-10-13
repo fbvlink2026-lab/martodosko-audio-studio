@@ -1,11 +1,19 @@
+// ==================================================
+// FILE: PedalBoardViewModel.kt
+// VERSION: v2.3.0-phase2-step2
+// PURPOSE: Bridges UI Interactions with AudioStateManager
+// NOTE: Injected via Hilt. Observes StateFlow from Manager.
+// ==================================================
 package com.martodosko.studio.ui.screens.home
 
 import androidx.lifecycle.ViewModel
-import com.martodosko.studio.domain.state.AudioStateManager
+import androidx.lifecycle.viewModelScope
+import com.martodosko.studio.data.audio.AudioStateManager
+import com.martodosko.studio.domain.model.AudioParams
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 
 @HiltViewModel
@@ -13,22 +21,21 @@ class PedalBoardViewModel @Inject constructor(
     private val audioManager: AudioStateManager
 ) : ViewModel() {
 
-    // Expose states directly from the manager for observation
-    val vocalState = audioManager.vocalState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
+    // Expose the current params as a StateFlow for the UI to collect
+    val audioParams: StateFlow<AudioParams> = audioManager.params
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = AudioParams()
+        )
 
-    val guitarState = audioManager.guitarState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
+    fun onVocalGainChange(value: Float) {
+        audioManager.updateParam { it.copy(vocalGain = value) }
+    }
 
-    // Delegate updates to the manager
-    fun onVocalGainChange(value: Float) = audioManager.updateVocalGain(value)
-    fun onVocalVolumeChange(value: Float) = audioManager.updateVocalVolume(value)
-    fun onGuitarGainChange(value: Float) = audioManager.updateGuitarGain(value)
-    fun onGuitarVolumeChange(value: Float) = audioManager.updateGuitarVolume(value)
+    fun onGuitarDriveChange(value: Float) {
+        audioManager.updateParam { it.copy(guitarDrive = value) }
+    }
+    
+    // Add more handlers as needed for Volume, etc.
 }
