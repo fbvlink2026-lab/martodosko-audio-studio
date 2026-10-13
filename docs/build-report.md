@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 17:25 UTC
-🏷️ **Bersyon:** v1.0.344
+📅 **Petsa:** 2026-10-13 17:37 UTC
+🏷️ **Bersyon:** v1.0.345
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 17:25:22 UTC
-🏷️ BERSYON:    v1.0.344
+⏰ ORAS:       2026-10-13 17:37:09 UTC
+🏷️ BERSYON:    v1.0.345
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -61,9 +61,10 @@ Daemon will be stopped at the end of the build
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:processReleaseManifestForPackage
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:mergeReleaseShaders
 > Task :app:mergeReleaseArtProfile
+> Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
@@ -74,14 +75,12 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
 > Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:74:46 Unresolved reference: position
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:88:42 None of the following functions can be called with the arguments supplied: 
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:90:42 None of the following functions can be called with the arguments supplied: 
 public fun <T : Comparable<TypeVariable(T)>> maxOf(a: TypeVariable(T), b: TypeVariable(T)): TypeVariable(T) defined in kotlin.comparisons
 public fun <T : Comparable<TypeVariable(T)>> maxOf(a: TypeVariable(T), vararg other: TypeVariable(T)): TypeVariable(T) defined in kotlin.comparisons
 public inline fun maxOf(a: Byte, b: Byte): Byte defined in kotlin.comparisons
@@ -104,20 +103,13 @@ public fun maxOf(a: ULong, b: ULong): ULong defined in kotlin.comparisons
 public fun maxOf(a: ULong, vararg other: ULong): ULong defined in kotlin.comparisons
 public fun maxOf(a: UShort, b: UShort): UShort defined in kotlin.comparisons
 public fun maxOf(a: UShort, vararg other: UShort): UShort defined in kotlin.comparisons
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:92:44 Overload resolution ambiguity: 
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:96:51 Overload resolution ambiguity: 
 public final operator fun div(other: Byte): Float defined in kotlin.Float
 public final operator fun div(other: Double): Double defined in kotlin.Float
 public final operator fun div(other: Float): Float defined in kotlin.Float
 public final operator fun div(other: Int): Float defined in kotlin.Float
 public final operator fun div(other: Long): Float defined in kotlin.Float
 public final operator fun div(other: Short): Float defined in kotlin.Float
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:94:46 Overload resolution ambiguity: 
-public final operator fun plus(other: Byte): Float defined in kotlin.Float
-public final operator fun plus(other: Double): Double defined in kotlin.Float
-public final operator fun plus(other: Float): Float defined in kotlin.Float
-public final operator fun plus(other: Int): Float defined in kotlin.Float
-public final operator fun plus(other: Long): Float defined in kotlin.Float
-public final operator fun plus(other: Short): Float defined in kotlin.Float
 
 FAILURE: Build failed with an exception.
 
@@ -132,7 +124,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 51s
+BUILD FAILED in 1m 53s
 34 actionable tasks: 32 executed, 2 up-to-date
 
 ==================================================
