@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 08:16 UTC
-🏷️ **Bersyon:** v1.0.328
+📅 **Petsa:** 2026-10-13 10:20 UTC
+🏷️ **Bersyon:** v1.0.329
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 08:16:54 UTC
-🏷️ BERSYON:    v1.0.328
+⏰ ORAS:       2026-10-13 10:20:55 UTC
+🏷️ BERSYON:    v1.0.329
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.2M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.328.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -59,14 +54,15 @@ Daemon will be stopped at the end of the build
 > Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
-> Task :app:extractProguardFiles
 > Task :app:javaPreCompileRelease
+> Task :app:extractProguardFiles
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:checkReleaseDuplicateClasses
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
@@ -79,45 +75,32 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
-> Task :app:kspReleaseKotlin
 
-> Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:52:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
+> Task :app:kspReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:91:15 Expecting an element
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:91:26 Expecting an element
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:91:33 Expecting an element
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:91:36 Expecting an element
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:91:44 Expecting an element
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:91:50 Expecting an element
 
-> Task :app:compileReleaseJavaWithJavac
-> Task :app:hiltAggregateDepsRelease
+FAILURE: Build failed with an exception.
 
-> Task :app:hiltJavaCompileRelease
-Note: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/generated/hilt/component_sources/release/com/martodosko/studio/Hilt_MartodoskoApp.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
+* What went wrong:
+Execution failed for task ':app:kspReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:processReleaseJavaRes
-> Task :app:transformReleaseClassesWithAsm
-> Task :app:mergeReleaseGeneratedProguardFiles
-> Task :app:mergeReleaseJavaResource
-> Task :app:expandReleaseArtProfileWildcards
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
-> Task :app:minifyReleaseWithR8
-Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
-
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:shrinkReleaseRes
-> Task :app:optimizeReleaseResources
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:assembleRelease
-
-BUILD SUCCESSFUL in 4m 3s
-52 actionable tasks: 50 executed, 2 up-to-date
+BUILD FAILED in 1m 50s
+33 actionable tasks: 31 executed, 2 up-to-date
 
 ==================================================
 
