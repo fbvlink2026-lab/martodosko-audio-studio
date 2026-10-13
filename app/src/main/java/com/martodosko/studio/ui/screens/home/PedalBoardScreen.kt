@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: PedalBoardScreen.kt
-// VERSION: v2.3.0-phase1-step3
-// PURPOSE: Dedicated Home Screen with Vocal/Guitar Chains
-// NOTE: Extracted from MainActivity for modularity. Uses ProAudioKnob.
+// VERSION: v2.3.0-phase2-step2-wired
+// PURPOSE: Dedicated Home Screen Connected to State Manager
+// NOTE: Uses PedalBoardViewModel for reactive updates.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
@@ -16,22 +16,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.martodosko.studio.ui.components.ProAudioKnob
 
 @Composable
-fun PedalBoardScreen(modifier: Modifier = Modifier) {
-    // Local State for Knobs (Will be replaced by ViewModel in Phase 2)
-    var vocalGain by remember { mutableStateOf(0f) }
-    var guitarDrive by remember { mutableStateOf(0f) }
+fun PedalBoardScreen(
+    modifier: Modifier = Modifier,
+    viewModel: PedalBoardViewModel = hiltViewModel()
+) {
+    // Collect the latest state from the ViewModel
+    val params by viewModel.audioParams.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -47,8 +48,10 @@ fun PedalBoardScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ProAudioKnob(
-                    value = vocalGain,
-                    onValueChange = { vocalGain = it },
+                    value = params.vocalGain, // ✅ FROM STATE MANAGER
+                    onValueChange = { newValue -> 
+                        viewModel.onVocalGainChange(newValue) // ✅ SEND TO VM
+                    },
                     label = "GAIN",
                     minValue = -50f,
                     maxValue = 50f,
@@ -64,8 +67,10 @@ fun PedalBoardScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ProAudioKnob(
-                    value = guitarDrive,
-                    onValueChange = { guitarDrive = it },
+                    value = params.guitarDrive, // ✅ FROM STATE MANAGER
+                    onValueChange = { newValue -> 
+                        viewModel.onGuitarDriveChange(newValue) // ✅ SEND TO VM
+                    },
                     label = "DRIVE",
                     minValue = -50f,
                     maxValue = 50f,
