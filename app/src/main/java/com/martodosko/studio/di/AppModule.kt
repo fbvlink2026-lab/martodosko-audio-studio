@@ -1,13 +1,8 @@
-// ==================================================
-// FILE: di/AppModule.kt
-// ==================================================
-package com.martodosko.studio.di
-
-import android.content.Context
+// Inside AppModule.kt
+import com.martodosko.studio.data.audio.AudioStateManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -17,7 +12,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApplicationContext(@ApplicationContext context: Context): Context {
-        return context
+    fun provideAudioStateManager(): AudioStateManager {
+        return AudioStateManager()
     }
 }
