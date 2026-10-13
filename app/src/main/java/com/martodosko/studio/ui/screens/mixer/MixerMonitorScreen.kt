@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-responsive-fix
-// PURPOSE: Channel Strips with Horizontal Scrolling
-// NOTE: Fixed padding application in Landscape mode.
+// VERSION: v2.3.0-phase2-mixer-simple
+// PURPOSE: Dual Channel Mixer (Vocal & Guitar)
+// NOTE: Removed Master Tab. Consistent Knob UI.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -45,41 +45,34 @@ fun MixerMonitorScreen(
     val isLandscape = configuration.screenHeightDp < configuration.screenWidthDp
 
     if (isLandscape) {
-        // LANDSCAPE MODE: Side-by-side Channels
+        // LANDSCAPE: Side-by-side
         Row(
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.Black)
                 .horizontalScroll(rememberScrollState())
-                .padding(PaddingValues(16.dp)), // ✅ APPLIED PADDING HERE
+                .padding(PaddingValues(16.dp)),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ChannelStrip(
-                title = "VOCAL",
+                title = "VOCAL CH",
                 gain = params.vocalGain,
                 vol = params.vocalVolume,
                 color = Color.Cyan,
                 onVolChange = { viewModel.onVocalVolumeChange(it) }
             )
             ChannelStrip(
-                title = "GUITAR",
+                title = "GUITAR CH",
                 gain = params.guitarDrive,
                 vol = params.guitarLevel,
                 color = Color(0xFFFF9800),
                 onVolChange = { viewModel.onGuitarLevelChange(it) }
             )
-            ChannelStrip(
-                title = "MASTER",
-                gain = 0f,
-                vol = params.masterVolume,
-                color = Color.Green,
-                onVolChange = { viewModel.onMasterVolumeChange(it) }
-            )
         }
     } else {
-        // PORTRAIT MODE: Tabs
+        // PORTRAIT: Tabs
         var selectedTab by remember { mutableIntStateOf(0) }
-        val tabs = listOf("VOCAL", "GUITAR", "MASTER")
+        val tabs = listOf("VOCAL", "GUITAR")
 
         Column(
             modifier = modifier
@@ -101,7 +94,6 @@ fun MixerMonitorScreen(
             when(selectedTab) {
                 0 -> ChannelStripFull(params.vocalGain, params.vocalVolume, Color.Cyan) { viewModel.onVocalVolumeChange(it) }
                 1 -> ChannelStripFull(params.guitarDrive, params.guitarLevel, Color(0xFFFF9800)) { viewModel.onGuitarLevelChange(it) }
-                2 -> ChannelStripFull(0f, params.masterVolume, Color.Green) { viewModel.onMasterVolumeChange(it) }
             }
         }
     }
@@ -117,6 +109,7 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
             Text(title, color = color, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(16.dp))
             
+            // Input Gain (Read Only in Mixer usually, but editable if desired. Keeping RO for sync safety)
             ProAudioKnob(
                 value = gain,
                 onValueChange = {},
@@ -128,6 +121,7 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
             
             Spacer(modifier = Modifier.height(24.dp))
             
+            // Output Volume (Editable)
             ProAudioKnob(
                 value = vol,
                 onValueChange = onVolChange,
@@ -149,7 +143,7 @@ fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)
         ProAudioKnob(
             value = gain,
             onValueChange = {},
-            label = "READ ONLY",
+            label = "SYNCED FROM BOARD",
             knobSize = 100.dp,
             accentColor = color,
             isEnabled = false
