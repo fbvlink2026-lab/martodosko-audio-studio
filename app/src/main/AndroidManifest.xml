@@ -29,7 +29,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
-    <application
+<application
         android:name=".MartodoskoApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -39,18 +39,26 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="34">
 
-        <!-- ✅ SINGLE LAUNCHER ACTIVITY -->
+        <!-- ✅ SPLASH SCREEN IS NOW THE LAUNCHER -->
         <activity
-            android:name=".ui.screens.MainActivity"
+            android:name=".ui.screens.splash.SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Martodosko.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- File Provider for Updates/Sharing -->
+        <!-- ✅ MAIN ACTIVITY IS NO LONGER EXPORTED/LAUNCHER -->
+        <activity
+            android:name=".ui.screens.MainActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <!-- File Provider remains unchanged -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -62,5 +70,4 @@
         </provider>
 
     </application>
-
 </manifest>
