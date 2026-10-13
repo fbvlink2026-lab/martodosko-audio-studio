@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 16:56 UTC
-🏷️ **Bersyon:** v1.0.343
+📅 **Petsa:** 2026-10-13 17:25 UTC
+🏷️ **Bersyon:** v1.0.344
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,17 +12,12 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 16:56:01 UTC
-🏷️ BERSYON:    v1.0.343
+⏰ ORAS:       2026-10-13 17:25:22 UTC
+🏷️ BERSYON:    v1.0.344
 ==================================================
 
-✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
-📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
-📏 Laki:       4.2M
-📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.343.apk
-
-🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
+❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
+🔑 Exit Code: 1
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -59,68 +54,86 @@ Daemon will be stopped at the end of the build
 > Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
-> Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
+> Task :app:javaPreCompileRelease
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
+> Task :app:mergeReleaseArtProfile
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
-> Task :app:processReleaseManifestForPackage
-> Task :app:compressReleaseAssets
 > Task :app:processApplicationManifestReleaseForBundle
+> Task :app:compressReleaseAssets
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
-> Task :app:compileReleaseKotlin
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:103:17 Variable 'panelRadius' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:108:17 Variable 'textRadius' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:53:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:65:9 Variable 'params' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
+> Task :app:compileReleaseKotlin FAILED
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:74:46 Unresolved reference: position
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:88:42 None of the following functions can be called with the arguments supplied: 
+public fun <T : Comparable<TypeVariable(T)>> maxOf(a: TypeVariable(T), b: TypeVariable(T)): TypeVariable(T) defined in kotlin.comparisons
+public fun <T : Comparable<TypeVariable(T)>> maxOf(a: TypeVariable(T), vararg other: TypeVariable(T)): TypeVariable(T) defined in kotlin.comparisons
+public inline fun maxOf(a: Byte, b: Byte): Byte defined in kotlin.comparisons
+public fun maxOf(a: Byte, vararg other: Byte): Byte defined in kotlin.comparisons
+public inline fun maxOf(a: Double, b: Double): Double defined in kotlin.comparisons
+public fun maxOf(a: Double, vararg other: Double): Double defined in kotlin.comparisons
+public inline fun maxOf(a: Float, b: Float): Float defined in kotlin.comparisons
+public fun maxOf(a: Float, vararg other: Float): Float defined in kotlin.comparisons
+public inline fun maxOf(a: Int, b: Int): Int defined in kotlin.comparisons
+public fun maxOf(a: Int, vararg other: Int): Int defined in kotlin.comparisons
+public inline fun maxOf(a: Long, b: Long): Long defined in kotlin.comparisons
+public fun maxOf(a: Long, vararg other: Long): Long defined in kotlin.comparisons
+public inline fun maxOf(a: Short, b: Short): Short defined in kotlin.comparisons
+public fun maxOf(a: Short, vararg other: Short): Short defined in kotlin.comparisons
+public fun maxOf(a: UByte, b: UByte): UByte defined in kotlin.comparisons
+public fun maxOf(a: UByte, vararg other: UByte): UByte defined in kotlin.comparisons
+public fun maxOf(a: UInt, b: UInt): UInt defined in kotlin.comparisons
+public fun maxOf(a: UInt, vararg other: UInt): UInt defined in kotlin.comparisons
+public fun maxOf(a: ULong, b: ULong): ULong defined in kotlin.comparisons
+public fun maxOf(a: ULong, vararg other: ULong): ULong defined in kotlin.comparisons
+public fun maxOf(a: UShort, b: UShort): UShort defined in kotlin.comparisons
+public fun maxOf(a: UShort, vararg other: UShort): UShort defined in kotlin.comparisons
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:92:44 Overload resolution ambiguity: 
+public final operator fun div(other: Byte): Float defined in kotlin.Float
+public final operator fun div(other: Double): Double defined in kotlin.Float
+public final operator fun div(other: Float): Float defined in kotlin.Float
+public final operator fun div(other: Int): Float defined in kotlin.Float
+public final operator fun div(other: Long): Float defined in kotlin.Float
+public final operator fun div(other: Short): Float defined in kotlin.Float
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:94:46 Overload resolution ambiguity: 
+public final operator fun plus(other: Byte): Float defined in kotlin.Float
+public final operator fun plus(other: Double): Double defined in kotlin.Float
+public final operator fun plus(other: Float): Float defined in kotlin.Float
+public final operator fun plus(other: Int): Float defined in kotlin.Float
+public final operator fun plus(other: Long): Float defined in kotlin.Float
+public final operator fun plus(other: Short): Float defined in kotlin.Float
 
-> Task :app:compileReleaseJavaWithJavac
-> Task :app:hiltAggregateDepsRelease
+FAILURE: Build failed with an exception.
 
-> Task :app:hiltJavaCompileRelease
-Note: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/generated/hilt/component_sources/release/com/martodosko/studio/Hilt_MartodoskoApp.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
-> Task :app:generateReleaseLintVitalReportModel
-> Task :app:processReleaseJavaRes
-> Task :app:transformReleaseClassesWithAsm
-> Task :app:mergeReleaseGeneratedProguardFiles
-> Task :app:mergeReleaseJavaResource
-> Task :app:expandReleaseArtProfileWildcards
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
-> Task :app:minifyReleaseWithR8
-Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
-
-> Task :app:lintVitalAnalyzeRelease
-> Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
-> Task :app:compileReleaseArtProfile
-> Task :app:shrinkReleaseRes
-> Task :app:optimizeReleaseResources
-> Task :app:packageRelease
-> Task :app:createReleaseApkListingFileRedirect
-> Task :app:assembleRelease
-
-BUILD SUCCESSFUL in 3m 39s
-52 actionable tasks: 50 executed, 2 up-to-date
+BUILD FAILED in 1m 51s
+34 actionable tasks: 32 executed, 2 up-to-date
 
 ==================================================
 
