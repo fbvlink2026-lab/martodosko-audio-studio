@@ -1,12 +1,11 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-phase2-compose-legacy-match-v2
-// PURPOSE: High-Fidelity Rotary Control matching Legacy KnobView Aesthetics
-// NOTE: Fixed Pointer Drawing using manual coords. Added missing imports.
+// VERSION: v2.3.0-phase2-knob-direct-control
+// PURPOSE: High-Fidelity Rotary Control with Direct Input Response
+// NOTE: Removed animation to fix jitter/back-tracking. Optimized hit area.
 // ==================================================
 package com.martodosko.studio.ui.components
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
-import kotlin.math.roundToInt // ✅ ADDED IMPORT FOR ROUNDING
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Composable
@@ -42,7 +41,7 @@ fun ProAudioKnob(
     value: Float,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    knobSize: Dp = 100.dp,
+    knobSize: Dp = 120.dp, // Increased default size for better visibility
     minValue: Float = 0f,
     maxValue: Float = 100f,
     label: String = "",
@@ -50,9 +49,6 @@ fun ProAudioKnob(
     accentColor: Color = Color(0xFF40E0D0),
     isEnabled: Boolean = true
 ) {
-    val normalizedValue = ((value - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
-    val animatedRotation by animateFloatAsState(targetValue = normalizedValue, label = "rotation")
-    
     var isDragging by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.size(knobSize)) {
@@ -70,9 +66,11 @@ fun ProAudioKnob(
                     ) { change, dragAmount ->
                         change.consume()
                         
+                        // Direct mapping: Vertical drag distance maps to value range
+                        // Sensitivity factor: 0.008f allows fine control without being too slow
                         val delta = -dragAmount.y 
                         val range = abs(maxValue - minValue)
-                        val step = range * 0.006f 
+                        val step = range * 0.008f 
                         
                         var newValue = value + (delta * step)
                         newValue = newValue.coerceIn(minValue, maxValue)
@@ -84,39 +82,39 @@ fun ProAudioKnob(
             val cy = size.height / 2f
             val halfSize = minOf(size.width, size.height) * 0.5f
             
-            // Colors
+            // Colors matching Legacy
             val panelColor = Color(0xFF12232E)
-            val knobBgColor = Color(0xFF081218)
             val knobShineStart = Color(0xFF2A5F7A)
             val knobShineEnd = Color(0xFF081218)
             val tickActiveColor = Color(0xFF8AF0E0)
             val tickNormalColor = Color(0xFF3A4A54)
             
-            // Dimensions
-            val knobRadius = halfSize * 0.54f
-            val arcRadius = halfSize * 0.68f
-            val tickInner = arcRadius * 1.03f
-            val tickOuter = arcRadius * 1.08f
+            // Dimensions scaled relative to canvas size
+            val knobRadius = halfSize * 0.50f // Slightly smaller body to leave room for ticks
+            val arcRadius = halfSize * 0.65f
+            val tickInner = arcRadius * 1.05f
+            val tickOuter = arcRadius * 1.15f
 
             // 1. DRAW RECTANGULAR PANEL BACKGROUND
-            val panelWidth = size.width * 0.9f
-            val panelHeight = size.height * 1.2f
+            // Make it tall enough to contain the ticks and labels comfortably
+            val panelWidth = size.width * 0.95f
+            val panelHeight = size.height * 1.15f 
             drawRoundRect(
                 color = panelColor,
                 topLeft = Offset((size.width - panelWidth)/2, (size.height - panelHeight)/2),
                 size = Size(panelWidth, panelHeight),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(12f, 12f)
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(16f, 16f)
             )
 
             // 2. DRAW KNOB BODY
             val brush = Brush.radialGradient(
                 colors = listOf(knobShineStart, knobShineEnd),
-                center = Offset(cx - knobRadius*0.3f, cy - knobRadius*0.3f),
-                radius = knobRadius * 1.5f
+                center = Offset(cx - knobRadius*0.2f, cy - knobRadius*0.2f),
+                radius = knobRadius * 1.4f
             )
             drawCircle(brush = brush, radius = knobRadius, center = Offset(cx, cy))
             drawCircle(
-                color = Color.Black.copy(alpha = 0.4f),
+                color = Color.Black.copy(alpha = 0.5f),
                 radius = knobRadius,
                 center = Offset(cx, cy),
                 style = Stroke(width = 2f)
@@ -129,19 +127,21 @@ fun ProAudioKnob(
                 val endAngleDeg = -135f + (((value - minValue)/(maxValue-minValue)) * 270f)
                 val sweep = endAngleDeg - startAngleDeg
                 
+                // Glow layer
+                drawArc(
+                    color = accentColor.copy(alpha = 0.2f),
+                    startAngle = if(sweep < 0) endAngleDeg else startAngleDeg,
+                    sweepAngle = abs(sweep),
+                    useCenter = false,
+                    style = Stroke(width = 10f, cap = StrokeCap.Round)
+                )
+                // Core layer
                 drawArc(
                     color = accentColor,
                     startAngle = if(sweep < 0) endAngleDeg else startAngleDeg,
                     sweepAngle = abs(sweep),
                     useCenter = false,
                     style = Stroke(width = 4f, cap = StrokeCap.Round)
-                )
-                drawArc(
-                    color = accentColor.copy(alpha = 0.3f),
-                    startAngle = if(sweep < 0) endAngleDeg else startAngleDeg,
-                    sweepAngle = abs(sweep),
-                    useCenter = false,
-                    style = Stroke(width = 8f, cap = StrokeCap.Round)
                 )
             }
 
@@ -170,45 +170,40 @@ fun ProAudioKnob(
                     color = if (isActive) tickActiveColor else tickNormalColor,
                     start = Offset(x1, y1),
                     end = Offset(x2, y2),
-                    strokeWidth = 2f,
+                    strokeWidth = if(isActive) 3f else 1.5f,
                     cap = StrokeCap.Round
                 )
             }
 
-            // 5. DRAW TRIANGULAR POINTER (Manual Calculation - No Save/Restore Needed)
+            // 5. DRAW TRIANGULAR POINTER (Direct Angle Calculation)
+            val normalizedValue = ((value - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
             val pointerAngleDeg = -135f + (normalizedValue * 270f)
             val pointerRad = Math.toRadians(pointerAngleDeg.toDouble()).toFloat()
             
-            // Define Triangle Points relative to Center
-            val len = knobRadius * 0.75f
-            val w = 6f
+            val len = knobRadius * 0.85f // Extend further out
+            val w = 8f // Wider base for visibility
             
-            // Tip of the triangle (points outward)
+            // Tip
             val tipX = cx + cos(pointerRad) * len
             val tipY = cy + sin(pointerRad) * len
             
-            // Base corners (perpendicular to the angle)
-            // Rotate 90 degrees for perpendicular vector
+            // Base perpendicular vector
             val perpRad = pointerRad + PI.toFloat() / 2f
             val baseHalfW = w / 2f
             
-            val bx1 = cx + cos(perpRad) * baseHalfW
-            val by1 = cy + sin(perpRad) * baseHalfW
+            // Shift base slightly towards center to create arrow shape
+            val shift = 0.4f 
             
-            val bx2 = cx - cos(perpRad) * baseHalfW
-            val by2 = cy - sin(perpRad) * baseHalfW
+            val bx1 = cx + (cos(perpRad) * baseHalfW) + (cos(pointerRad) * len * shift)
+            val by1 = cy + (sin(perpRad) * baseHalfW) + (sin(pointerRad) * len * shift)
             
-            // Shift base inward slightly so it looks like an arrowhead starting from center-ish
-            val shiftFactor = 0.3f
-            val sbx1 = cx + (bx1 - cx) * shiftFactor
-            val sby1 = cy + (by1 - cy) * shiftFactor
-            val sbx2 = cx + (bx2 - cx) * shiftFactor
-            val sby2 = cy + (by2 - cy) * shiftFactor
+            val bx2 = cx - (cos(perpRad) * baseHalfW) + (cos(pointerRad) * len * shift)
+            val by2 = cy - (sin(perpRad) * baseHalfW) + (sin(pointerRad) * len * shift)
 
             val path = Path().apply {
                 moveTo(tipX, tipY)
-                lineTo(sbx1, sby1)
-                lineTo(sbx2, sby2)
+                lineTo(bx1, by1)
+                lineTo(bx2, by2)
                 close()
             }
             
@@ -218,12 +213,12 @@ fun ProAudioKnob(
         // LAYER 2: Labels & Values
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 4.dp)
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp)
         ) {
              Text(
                  text = "${value.roundToInt()} $unit",
                  color = accentColor,
-                 fontSize = 12.sp,
+                 fontSize = 14.sp, // Larger font
                  fontWeight = FontWeight.Bold
              )
              
@@ -231,8 +226,9 @@ fun ProAudioKnob(
                 Text(
                     text = label.uppercase(),
                     color = Color.LightGray,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 1.sp
                 )
             }
         }
