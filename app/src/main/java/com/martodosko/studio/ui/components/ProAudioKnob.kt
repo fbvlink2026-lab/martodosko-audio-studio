@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-phase2-legacy-exact-match-v4-GEOMETRY-FIX
-// PURPOSE: Exact Port with Corrected Angular Geometry
-// NOTE: Fixed Tick Positions to match Android Canvas (0deg=East, CW+).
+// VERSION: v2.3.0-phase2-legacy-exact-match-v5-TYPE-FIX
+// PURPOSE: Exact Port with Corrected Types & Touch API
+// NOTE: Fixed 'pos.position' to 'pos'. Fixed Float division/maxOf issues.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -55,7 +55,6 @@ fun ProAudioKnob(
     val ANGLE_OFFSET = -90f
     
     // Helper: Maps Value to Angle in Degrees (0=East, Clockwise Positive)
-    // Matches Legacy KnobView.valueToAngle()
     fun valueToAngle(v: Float): Float {
         val percent = (v - minValue) / (maxValue - minValue)
         return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
@@ -71,7 +70,8 @@ fun ProAudioKnob(
                     
                     detectDragGestures(
                         onDragStart = { pos -> 
-                            lastTouchY = pos.position.y 
+                            // FIX: 'pos' is already an Offset. Use pos.y directly.
+                            lastTouchY = pos.y 
                         },
                         onDragEnd = { lastTouchY = Float.NaN },
                         onDragCancel = { lastTouchY = Float.NaN }
@@ -85,11 +85,15 @@ fun ProAudioKnob(
 
                         val currentY = change.position.y
                         val deltaY = lastTouchY - currentY 
+                        
+                        // FIX: Ensure safeHeight is explicitly Float to avoid overload ambiguity
                         val safeHeight = maxOf(size.height, 100f) 
+                        
                         val range = abs(maxValue - minValue)
                         
                         // Sensitivity tuned for mobile touch feel
-                        val step = (deltaY / safeHeight) * range * 0.8f 
+                        // Explicitly cast steps to Float to ensure clean math
+                        val step: Float = (deltaY / safeHeight) * range * 0.8f 
                         
                         var newValue = value + step
                         newValue = newValue.coerceIn(minValue, maxValue)
@@ -145,8 +149,6 @@ fun ProAudioKnob(
                 val zeroAngle = valueToAngle(zeroPoint)
                 val endAngle = valueToAngle(value)
                 
-                // Calculate start and sweep for drawArc
-                // In Compose/Android Canvas: Start Angle is where it begins, Sweep is how far it goes (CW)
                 val startAngle = if (currentValInt > zeroPoint) zeroAngle else endAngle
                 val sweepAngle = abs(endAngle - zeroAngle)
                 
@@ -175,18 +177,6 @@ fun ProAudioKnob(
                 if (markFloat < minValue || markFloat > maxValue) continue
 
                 val angleDeg = valueToAngle(markFloat)
-                // Convert to Radians for Cos/Sin
-                // IMPORTANT: Android/Compose Canvas Y-axis points DOWN.
-                // Standard Trig assumes Y points UP.
-                // However, since we define 0deg = East and Positive = Clockwise,
-                // The formula x = cos(rad), y = sin(rad) actually WORKS for Y-DOWN systems
-                // IF we interpret the angle correctly.
-                // Let's verify:
-                // 0 deg (East): cos(0)=1, sin(0)=0 -> (cx+r, cy). Correct.
-                // 90 deg (South/CW): cos(90)=0, sin(90)=1 -> (cx, cy+r). Correct (Down).
-                // 180 deg (West): cos(180)=-1, sin(180)=0 -> (cx-r, cy). Correct.
-                // 270 deg (North): cos(270)=0, sin(270)=-1 -> (cx, cy-r). Correct (Up).
-                
                 val rad = Math.toRadians(angleDeg.toDouble()).toFloat()
                 
                 val x1 = cx + tickInner * cos(rad)
@@ -216,19 +206,13 @@ fun ProAudioKnob(
             
             val pointerRad = Math.toRadians(indAngle.toDouble()).toFloat()
             
-            // Tip
             val tipX = cx + cos(pointerRad) * indLen
             val tipY = cy + sin(pointerRad) * indLen
             
-            // Base Perpendicular
-            // Rotate 90 degrees CCW for one side, CW for other? 
-            // Since Y is down, adding PI/2 rotates Counter-Clockwise visually?
-            // Let's just use vector addition perpendicular to the radial line.
             val perpRad = pointerRad + PI.toFloat() / 2f
             val hw = indW / 2f
             val shift = 0.3f 
             
-            // Points forming the base of the triangle
             val b1x = cx + (cos(perpRad) * hw) + (cos(pointerRad) * indLen * shift)
             val b1y = cy + (sin(perpRad) * hw) + (sin(pointerRad) * indLen * shift)
             
