@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 04:01 UTC
-🏷️ **Bersyon:** v1.0.322
+📅 **Petsa:** 2026-10-13 04:27 UTC
+🏷️ **Bersyon:** v1.0.323
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 04:01:23 UTC
-🏷️ BERSYON:    v1.0.322
+⏰ ORAS:       2026-10-13 04:27:47 UTC
+🏷️ BERSYON:    v1.0.323
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.2M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.322.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.323.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -72,21 +72,21 @@ Daemon will be stopped at the end of the build
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
-> Task :app:processApplicationManifestReleaseForBundle
+> Task :app:processReleaseManifestForPackage
 > Task :app:compressReleaseAssets
+> Task :app:processApplicationManifestReleaseForBundle
 > Task :app:collectReleaseDependencies
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
 > Task :app:compileReleaseKotlin
 w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
-w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:106:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/MainActivity.kt:76:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
 w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
 
 > Task :app:compileReleaseJavaWithJavac
@@ -100,8 +100,8 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:processReleaseJavaRes
 > Task :app:transformReleaseClassesWithAsm
 > Task :app:mergeReleaseGeneratedProguardFiles
-> Task :app:mergeReleaseJavaResource
 > Task :app:expandReleaseArtProfileWildcards
+> Task :app:mergeReleaseJavaResource
 
 > Task :app:minifyReleaseWithR8
 Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
@@ -116,7 +116,7 @@ Supplied proguard configuration does not exist: /home/runner/work/martodosko-aud
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 7m 29s
+BUILD SUCCESSFUL in 3m 39s
 52 actionable tasks: 50 executed, 2 up-to-date
 
 ==================================================
