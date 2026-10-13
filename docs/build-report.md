@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 07:24 UTC
-🏷️ **Bersyon:** v1.0.327
+📅 **Petsa:** 2026-10-13 08:16 UTC
+🏷️ **Bersyon:** v1.0.328
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 07:24:35 UTC
-🏷️ BERSYON:    v1.0.327
+⏰ ORAS:       2026-10-13 08:16:54 UTC
+🏷️ BERSYON:    v1.0.328
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.2M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.327.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.328.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -100,8 +100,8 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:processReleaseJavaRes
 > Task :app:transformReleaseClassesWithAsm
 > Task :app:mergeReleaseGeneratedProguardFiles
-> Task :app:expandReleaseArtProfileWildcards
 > Task :app:mergeReleaseJavaResource
+> Task :app:expandReleaseArtProfileWildcards
 
 > Task :app:minifyReleaseWithR8
 Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
@@ -116,7 +116,7 @@ Supplied proguard configuration does not exist: /home/runner/work/martodosko-aud
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 3m 43s
+BUILD SUCCESSFUL in 4m 3s
 52 actionable tasks: 50 executed, 2 up-to-date
 
 ==================================================
