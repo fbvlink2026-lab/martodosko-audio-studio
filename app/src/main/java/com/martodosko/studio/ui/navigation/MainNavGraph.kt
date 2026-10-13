@@ -87,7 +87,10 @@ fun MainNavGraph(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { PedalBoardScreen() } 
-            composable("mixer") { PlaceholderScreen("🎚️ Mixer Monitor") }
+            composable("mixer") { 
+    import com.martodosko.studio.ui.screens.mixer.MixerMonitorScreen // Add this import at top of file
+    MixerMonitorScreen() 
+}
             composable("presets") { PlaceholderScreen("📋 Preset Library") }
             composable("settings") { PlaceholderScreen("⚙️ Settings") }
             composable("more") { PlaceholderScreen("☰ More Menu") }
