@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MainActivity.kt
-// VERSION: v2.3.0-phase1-step1-final-imports
+// VERSION: v2.3.0-phase1-step1-final-fix
 // PURPOSE: Host Activity using Modular Components
-// NOTE: Explicit imports added for Color, Dp, Sp, FontWeight to fix unresolved references.
+// NOTE: Added missing imports for LaunchedEffect and fillMaxWidth.
 // ==================================================
 package com.martodosko.studio.ui.screens
 
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth // ✅ ADDED THIS
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,6 +36,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect // ✅ ADDED THIS
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,7 +82,7 @@ class MainActivity : ComponentActivity() {
 // --- SPLASH (Still Inline for Safety in Step 1) ---
 @Composable
 fun SimpleSplashScreen(onFinished: () -> Unit) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) { // ✅ NOW RECOGNIZED
         delay(1000L)
         onFinished()
     }
@@ -160,7 +162,10 @@ fun HomeScreenContent() {
     ) {
         item {
             SectionHeader("🎤 VOCAL CHAIN", Color.Cyan)
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly, 
+                modifier = Modifier.fillMaxWidth() // ✅ NOW RECOGNIZED
+            ) {
                 ProAudioKnob(
                     value = vocalGain,
                     onValueChange = { vocalGain = it },
@@ -174,7 +179,10 @@ fun HomeScreenContent() {
         }
         item {
             SectionHeader("🎸 GUITAR CHAIN", Color(0xFFFF9800))
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly, 
+                modifier = Modifier.fillMaxWidth() // ✅ NOW RECOGNIZED
+            ) {
                 ProAudioKnob(
                     value = guitarDrive,
                     onValueChange = { guitarDrive = it },
