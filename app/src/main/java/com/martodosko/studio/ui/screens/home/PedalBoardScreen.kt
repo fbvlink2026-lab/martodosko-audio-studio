@@ -1,25 +1,41 @@
 // ==================================================
 // FILE: PedalBoardScreen.kt
-// VERSION: v2.3.0-phase2-pedal-redesign
+// VERSION: v2.3.0-phase2-pedal-redesign-fix
 // PURPOSE: Realistic Stompbox Chain Interface
-// NOTE: Each pedal has On/Off, Effect, NG, Vol controls.
+// NOTE: Fixed padding and border imports.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Power
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,22 +55,20 @@ fun PedalBoardScreen(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
-            .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(16.dp)
+            .horizontalScroll(rememberScrollState())
+            .padding(PaddingValues(16.dp)), // ✅ APPLIED PADDING HERE INSTEAD OF PARAMETER
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // VOCAL PEDAL CARD
         PedalCard(
             title = "VOCAL CHAIN",
             accentColor = Color.Cyan,
-            isActive = true, // Mock state for now
+            isActive = true,
             gain = params.vocalGain,
             volume = params.vocalVolume,
             onGainChange = { viewModel.onVocalGainChange(it) },
             onVolChange = { /* Handle Vocal Vol */ }
         )
 
-        // GUITAR PEDAL CARD
         PedalCard(
             title = "GUITAR DRIVE",
             accentColor = Color(0xFFFF9800),
@@ -83,13 +97,12 @@ fun PedalCard(
             .height(320.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-        border = BorderStroke(2.dp, if(isActive) accentColor else Color.DarkGray)
+        border = BorderStroke(2.dp, if(isActive) accentColor else Color.DarkGray) // ✅ BORDERSTROKE FIXED
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header: Title + Power Switch
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -108,7 +121,6 @@ fun PedalCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Top Row: Effect Selector (Mock Dropdown/Button)
             OutlinedButton(
                 onClick = { /* Open Effect Menu */ },
                 modifier = Modifier.fillMaxWidth().height(40.dp),
@@ -119,7 +131,6 @@ fun PedalCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Middle: Two Knobs Side-by-Side
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -135,7 +146,7 @@ fun PedalCard(
                     accentColor = accentColor
                 )
                 ProAudioKnob(
-                    value = 50f, // Mock Noise Gate
+                    value = 50f,
                     onValueChange = { },
                     label = "NGATE",
                     unit = "",
@@ -148,7 +159,6 @@ fun PedalCard(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Bottom: Volume Knob (Large)
             ProAudioKnob(
                 value = volume,
                 onValueChange = onVolChange,
