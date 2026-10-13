@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: PedalBoardScreen.kt
-// VERSION: v2.3.0-phase2-detachable-board
+// VERSION: v2.3.0-phase2-detachable-board-fix
 // PURPOSE: Detachable Stompbox Chain Interface
-// NOTE: Pedals are added from Library. Can be removed.
+// NOTE: Fixed Modifier.size import issue.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size // ✅ EXPLICIT IMPORT FOR SIZE MODIFIER
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,11 +47,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.martodosko.studio.ui.components.ProAudioKnob
 
-// Mock Data Structure for Active Pedals
 data class ActivePedal(
     val id: String,
     val name: String,
-    val type: String, // "VOCAL" or "GUITAR"
+    val type: String,
     val fxParam: Float,
     val gateParam: Float,
     val volParam: Float,
@@ -64,8 +64,6 @@ fun PedalBoardScreen(
 ) {
     val params by viewModel.audioParams.collectAsState()
     
-    // Local list of active pedals (In real app, this comes from Preset State)
-    // Initializing with one Vocal and one Guitar pedal for demonstration
     val activePedals = remember { 
         mutableStateListOf(
             ActivePedal("ped-1", "Chorus", "VOCAL", 50f, 20f, 80f, true),
@@ -82,15 +80,13 @@ fun PedalBoardScreen(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (activePedals.isEmpty()) {
-             Text("No Pedals Selected.\nGo to Presets Library to add.", color = Color.Gray, modifier = Modifier.padding(top = 100.dp))
+             Text("No Pedals Selected.\nGo to Presets Library.", color = Color.Gray, modifier = Modifier.padding(top = 100.dp))
         } else {
             activePedals.forEachIndexed { index, pedal ->
                 PedalCard(
                     pedal = pedal,
                     onUpdateFx = { newVal -> 
-                        // Update local list
                         activePedals[index] = pedal.copy(fxParam = newVal)
-                        // Sync to Global State if needed
                         if(pedal.type == "VOCAL") viewModel.onVocalGainChange(newVal)
                         else viewModel.onGuitarDriveChange(newVal)
                     },
@@ -131,7 +127,6 @@ fun PedalCard(
             modifier = Modifier.padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header: Name + Remove Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -146,7 +141,6 @@ fun PedalCard(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Power Switch Visual
             OutlinedButton(
                 onClick = onToggleActive,
                 modifier = Modifier.fillMaxWidth().height(36.dp),
@@ -163,7 +157,6 @@ fun PedalCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Controls Grid (2x2 roughly)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -180,7 +173,7 @@ fun PedalCard(
                 )
                 ProAudioKnob(
                     value = pedal.gateParam,
-                    onValueChange = { /* Gate Logic */ },
+                    onValueChange = { },
                     label = "NG",
                     unit = "%",
                     minValue = 0f,
@@ -192,7 +185,6 @@ fun PedalCard(
             
             Spacer(modifier = Modifier.weight(1f))
 
-            // Volume Knob (Large, Bottom)
             ProAudioKnob(
                 value = pedal.volParam,
                 onValueChange = onUpdateVol,
