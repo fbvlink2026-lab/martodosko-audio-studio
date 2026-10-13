@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-phase2-FINAL-STABLE
-// PURPOSE: Stable Rotary Control with Numeric Ticks
-// NOTE: Uses Relative Delta for smoothness. Uses TextMeasurer for accurate numbers.
+// VERSION: v2.3.0-compose-native-fixed
+// PURPOSE: Pure Jetpack Compose Rotary Knob with Correct Geometry & Touch Physics
+// NOTE: Fixes Y-axis inversion for ticks/pointer and normalizes touch sensitivity by view size.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -48,14 +48,20 @@ fun ProAudioKnob(
     accentColor: Color = Color(0xFF40E0D0),
     isEnabled: Boolean = true
 ) {
-    // Constants from Legacy Code
-    val ANGLE_TOTAL_RANGE = 270f
-    val ANGLE_OFFSET = -90f
+    // Constants
+    val ANGLE_START_DEG = 135f   // Bottom Left (7:30 position)
+    val ANGLE_END_DEG = 45f      // Bottom Right (4:30 position)
+    val TOTAL_SWEEP_DEG = 270f   // Total range
     
-    // Helper: Maps Value to Angle in Degrees (0=East, Clockwise Positive)
+    // Helper: Value to Angle (in Degrees, 0=East, Clockwise Positive)
+    // We map 0% to 135 deg and 100% to 45+360=405 deg? 
+    // Actually, simpler: Map percent to angle between Start and End going CW.
     fun valueToAngle(v: Float): Float {
-        val percent = (v - minValue) / (maxValue - minValue)
-        return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
+        val percent = ((v - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
+        // Start at 135, go clockwise 270 degrees.
+        // In Android/Compose Canvas: 0=Right, 90=Down, 180=Left, 270=Up.
+        // So 135 is Down-Left. Adding 270 brings us to 405 (which is 45, Down-Right).
+        return ANGLE_START_DEG + (percent * TOTAL_SWEEP_DEG)
     }
 
     Box(modifier = modifier.size(knobSize)) {
@@ -69,15 +75,18 @@ fun ProAudioKnob(
                     detectDragGestures { change, dragAmount ->
                         change.consume()
                         
-                        // SMOOTH MOVEMENT LOGIC:
-                        // Use the raw delta provided by Compose. 
-                        // Multiply by a sensitivity factor. 
-                        // Higher factor = faster movement. Lower = slower/fine-tuned.
-                        // 0.008f is a good balance for mobile screens.
-                        val deltaY = -dragAmount.y // Negative because Up increases value
+                        // FIX: Normalize sensitivity based on the physical size of the knob in pixels.
+                        // Moving up decreases Y coordinate. We want moving UP to increase VALUE.
+                        // So we use negative dragAmount.y.
+                        // Divide by height to make it independent of screen density/resolution.
+                        val deltaY = -dragAmount.y 
+                        val normalizedDelta = deltaY / size.height
                         
                         val range = abs(maxValue - minValue)
-                        val step = deltaY * 0.008f * range 
+                        
+                        // Multiplier controls speed. 1.0 means full range in one swipe across height.
+                        // 0.8 gives slightly finer control.
+                        val step = normalizedDelta * range * 0.8f 
                         
                         var newValue = value + step
                         newValue = newValue.coerceIn(minValue, maxValue)
@@ -90,19 +99,18 @@ fun ProAudioKnob(
             val cy = size.height / 2f
             val halfSize = minOf(size.width, size.height) * 0.5f
             
-            // Dimensions matching Legacy proportions
-            val knobRadius = halfSize * 0.54f   
-            val arcRadius = halfSize * 0.68f
-            val tickInner = arcRadius * 1.03f
-            val tickOuter = arcRadius * 1.08f
-            val textRadius = halfSize * 0.84f // Radius for placing numbers
+            // Dimensions
+            val knobRadius = halfSize * 0.50f   
+            val arcRadius = halfSize * 0.65f
+            val tickInner = arcRadius * 1.05f
+            val tickOuter = arcRadius * 1.15f
+            val textRadius = halfSize * 0.85f 
 
             // Colors
             val colorPanel = Color(0xFF12232E)
             val colorKnobBg = Color(0xFF081218)
             val colorShineStart = Color(0xFF2A5F7A)
             val colorShineEnd = Color(0xFF081218)
-            val colorIndicator = accentColor 
             val colorTickActive = Color(0xFF8AF0E0)
             val colorTickNormal = Color(0xFF3A4A54)
             val colorText = Color(0xFFB8DDE6)
@@ -139,7 +147,7 @@ fun ProAudioKnob(
                 
                 // Glow
                 drawArc(
-                    color = colorIndicator.copy(alpha = 0.3f),
+                    color = accentColor.copy(alpha = 0.3f),
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
                     useCenter = false,
@@ -147,7 +155,7 @@ fun ProAudioKnob(
                 )
                 // Core
                 drawArc(
-                    color = colorIndicator,
+                    color = accentColor,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
                     useCenter = false,
@@ -155,10 +163,8 @@ fun ProAudioKnob(
                 )
             }
 
-            // 4. TICKS AND NUMBERS
+            // 4. TICKS AND NUMBERS (FIXED COORDINATES)
             val marks = getMarks(minValue, maxValue)
-            
-            // We need a TextMeasurer to draw text inside Canvas properly
             val textMeasurer = rememberTextMeasurer()
 
             for (mark in marks) {
@@ -166,11 +172,16 @@ fun ProAudioKnob(
                 if (markFloat < minValue || markFloat > maxValue) continue
 
                 val angleDeg = valueToAngle(markFloat)
+                // Convert to Radians. 
+                // CRITICAL: In Screen Space (Y down), sin(angle) gives positive Y for angles 0-180.
+                // Our angles are 135 to 405 (or 45).
+                // 135 deg -> cos=-0.7, sin=0.7 (Bottom Left). Correct.
+                // 270 deg -> cos=0, sin=-1 (Top). Correct.
+                // 45 deg -> cos=0.7, sin=0.7 (Bottom Right). Correct.
                 val rad = Math.toRadians(angleDeg.toDouble()).toFloat()
                 
-                // Draw Tick Line
                 val x1 = cx + tickInner * cos(rad)
-                val y1 = cy + tickInner * sin(rad)
+                val y1 = cy + tickInner * sin(rad) // Y is added because screen Y grows downwards
                 val x2 = cx + tickOuter * cos(rad)
                 val y2 = cy + tickOuter * sin(rad)
 
@@ -188,17 +199,16 @@ fun ProAudioKnob(
                     cap = StrokeCap.Round
                 )
 
-                // Draw Number Text
+                // Draw Number
                 val nx = cx + textRadius * cos(rad)
                 val ny = cy + textRadius * sin(rad)
                 
-                // Format string like legacy (+50, -50, 0)
                 val textStr = formatMark(mark, minValue)
                 
                 drawText(
                     textMeasurer = textMeasurer,
                     text = textStr,
-                    topLeft = Offset(nx - 10f, ny - 10f), // Center approximation
+                    topLeft = Offset(nx - 12f, ny - 12f), // Approximate centering
                     style = androidx.compose.ui.text.TextStyle(
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -207,19 +217,21 @@ fun ProAudioKnob(
                 )
             }
 
-            // 5. POINTER (Triangle)
+            // 5. POINTER (TRIANGLE)
             val indAngle = valueToAngle(value)
-            val indLen = knobRadius * 0.75f
-            val indW = 6f
+            val indLen = knobRadius * 0.80f
+            val indW = 8f
             
             val pointerRad = Math.toRadians(indAngle.toDouble()).toFloat()
             
+            // Tip
             val tipX = cx + cos(pointerRad) * indLen
             val tipY = cy + sin(pointerRad) * indLen
             
+            // Base Perpendicular
             val perpRad = pointerRad + PI.toFloat() / 2f
             val hw = indW / 2f
-            val shift = 0.3f 
+            val shift = 0.4f 
             
             val b1x = cx + (cos(perpRad) * hw) + (cos(pointerRad) * indLen * shift)
             val b1y = cy + (sin(perpRad) * hw) + (sin(pointerRad) * indLen * shift)
@@ -233,10 +245,10 @@ fun ProAudioKnob(
                 lineTo(b2x, b2y)
                 close()
             }
-            drawPath(path, color = colorIndicator)
+            drawPath(path, color = accentColor)
         }
         
-        // LABELS (Outside Canvas for crisp rendering)
+        // LABELS
         if (label.isNotEmpty()) {
              Text(
                  text = label.uppercase(),
