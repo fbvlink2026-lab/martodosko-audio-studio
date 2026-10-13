@@ -1,14 +1,15 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-step3-final-fix
-// PURPOSE: Detailed Channel View with ROTARY KNOBS
-// NOTE: Fixed compilation errors by removing invalid VM calls.
-//       Gain/Drive are Read-Only here. Vol/Lvl are Editable.
+// VERSION: v2.3.0-phase2-mixer-responsive
+// PURPOSE: Channel Strips with Horizontal Scrolling
+// NOTE: Optimized for Portrait (Tabs) and Landscape (Side-by-Side).
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Tab
@@ -18,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,171 +32,131 @@ fun MixerMonitorScreen(
     viewModel: MixerViewModel = hiltViewModel()
 ) {
     val params by viewModel.audioParams.collectAsState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.screenHeightDp < configuration.screenWidthDp
 
-    // Simple Tab Row for Vocal vs Guitar focus
-    var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("VOCAL CH", "GUITAR CH")
+    if (isLandscape) {
+        // LANDSCAPE MODE: Side-by-side Channels
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            ChannelStrip(
+                title = "VOCAL",
+                gain = params.vocalGain,
+                vol = params.vocalVolume,
+                color = Color.Cyan,
+                onVolChange = { viewModel.onVocalVolumeChange(it) }
+            )
+            ChannelStrip(
+                title = "GUITAR",
+                gain = params.guitarDrive,
+                vol = params.guitarLevel,
+                color = Color(0xFFFF9800),
+                onVolChange = { viewModel.onGuitarLevelChange(it) }
+            )
+            ChannelStrip(
+                title = "MASTER",
+                gain = 0f,
+                vol = params.masterVolume,
+                color = Color.Green,
+                onVolChange = { viewModel.onMasterVolumeChange(it) }
+            )
+        }
+    } else {
+        // PORTRAIT MODE: Tabs
+        var selectedTab by remember { mutableIntStateOf(0) }
+        val tabs = listOf("VOCAL", "GUITAR", "MASTER")
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(16.dp)
-    ) {
-        
-        // Header
-        Text(
-            text = "MIXER CONSOLE",
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        // Tabs
-        TabRow(selectedTabIndex = selectedTab) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = { 
-                        Text(
-                            title, 
-                            color = if (selectedTab == index) Color.Cyan else Color.Gray,
-                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                        ) 
-                    }
-                )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.Black)
+                .padding(16.dp)
+        ) {
+             TabRow(selectedTabIndex = selectedTab) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = { Text(title, color = if (selectedTab == index) Color.Cyan else Color.Gray) }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            when(selectedTab) {
+                0 -> ChannelStripFull(params.vocalGain, params.vocalVolume, Color.Cyan) { viewModel.onVocalVolumeChange(it) }
+                1 -> ChannelStripFull(params.guitarDrive, params.guitarLevel, Color(0xFFFF9800)) { viewModel.onGuitarLevelChange(it) }
+                2 -> ChannelStripFull(0f, params.masterVolume, Color.Green) { viewModel.onMasterVolumeChange(it) }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Content Area based on Tab
-        when (selectedTab) {
-            0 -> VocalChannelPanel(params.vocalGain, params.vocalVolume, viewModel)
-            1 -> GuitarChannelPanel(params.guitarDrive, params.guitarLevel, viewModel)
-        }
-        
-        // Master Section (Always visible at bottom)
-        Spacer(modifier = Modifier.weight(1f))
-        MasterPanel(params.masterVolume, viewModel)
     }
 }
 
-// --- VOCAL CHANNEL PANEL ---
+// Compact Strip for Landscape
 @Composable
-fun VocalChannelPanel(gain: Float, volume: Float, vm: MixerViewModel) {
+fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E)) // Panel Gray
+        modifier = Modifier.width(140.dp).height(300.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E))
     ) {
-        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(title, color = color, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(16.dp))
             
-            Text("INPUT GAIN", color = Color.Cyan, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // ✅ READ-ONLY DISPLAY FOR GAIN (Controlled in Home)
             ProAudioKnob(
                 value = gain,
-                onValueChange = { /* No-op: Display Only */ }, 
-                label = "${gain.toInt()} dB",
-                minValue = -50f,
-                maxValue = 50f,
-                knobSize = 90.dp,
-                accentColor = Color.Cyan,
-                isEnabled = false // Visually indicate it's locked/read-only
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text("CHANNEL VOLUME", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // ✅ EDITABLE CONTROL FOR VOLUME
-            ProAudioKnob(
-                value = volume,
-                onValueChange = { newValue -> vm.onVocalVolumeChange(newValue) },
-                label = "${volume.toInt()}%",
-                minValue = 0f,
-                maxValue = 100f,
-                knobSize = 90.dp,
-                accentColor = Color.White
-            )
-        }
-    }
-}
-
-// --- GUITAR CHANNEL PANEL ---
-@Composable
-fun GuitarChannelPanel(drive: Float, level: Float, vm: MixerViewModel) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E)) // Panel Gray
-    ) {
-        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            
-            Text("DRIVE AMOUNT", color = Color(0xFFFF9800), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // ✅ READ-ONLY DISPLAY FOR DRIVE (Controlled in Home)
-            ProAudioKnob(
-                value = drive,
-                onValueChange = { /* No-op: Display Only */ },
-                label = "${drive.toInt()}%",
-                minValue = -50f,
-                maxValue = 50f,
-                knobSize = 90.dp,
-                accentColor = Color(0xFFFF9800),
+                onValueChange = {}, // Read only in mixer view for now
+                label = "IN",
+                knobSize = 50.dp,
+                accentColor = color,
                 isEnabled = false
             )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text("OUTPUT LEVEL", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // ✅ EDITABLE CONTROL FOR LEVEL
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
             ProAudioKnob(
-                value = level,
-                onValueChange = { newValue -> vm.onGuitarLevelChange(newValue) },
-                label = "${level.toInt()}%",
-                minValue = 0f,
-                maxValue = 100f,
-                knobSize = 90.dp,
+                value = vol,
+                onValueChange = onVolChange,
+                label = "OUT",
+                knobSize = 70.dp,
                 accentColor = Color.White
             )
         }
     }
 }
 
-// --- MASTER OUTPUT PANEL ---
+// Full View for Portrait
 @Composable
-fun MasterPanel(volume: Float, vm: MixerViewModel) {
-    Card(
+fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E2F)) // Darker Gray for distinction
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text("MASTER OUT", color = Color.Green, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                Text("Global Output Control", color = Color.Gray, fontSize = 10.sp)
-            }
-            
-            // ✅ EDITABLE CONTROL FOR MASTER
-            ProAudioKnob(
-                value = volume,
-                onValueChange = { newValue -> vm.onMasterVolumeChange(newValue) },
-                label = "${volume.toInt()}%",
-                minValue = 0f,
-                maxValue = 100f,
-                knobSize = 70.dp, // Slightly smaller for master
-                accentColor = Color.Green
-            )
-        }
+        Text("INPUT GAIN", color = color, fontSize = 12.sp)
+        ProAudioKnob(
+            value = gain,
+            onValueChange = {},
+            label = "READ ONLY",
+            knobSize = 100.dp,
+            accentColor = color,
+            isEnabled = false
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Text("CHANNEL VOLUME", color = Color.White, fontSize = 12.sp)
+        ProAudioKnob(
+            value = vol,
+            onValueChange = onVolChange,
+            label = "EDITABLE",
+            knobSize = 120.dp,
+            accentColor = Color.White
+        )
     }
 }
