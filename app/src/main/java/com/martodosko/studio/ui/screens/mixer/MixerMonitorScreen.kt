@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-simple
-// PURPOSE: Dual Channel Mixer (Vocal & Guitar)
-// NOTE: Removed Master Tab. Consistent Knob UI.
+// VERSION: v2.3.0-phase2-mixer-spacious
+// PURPOSE: Dual Channel Mixer with Proper Spacing for Large Knobs
+// NOTE: Adjusted card widths and heights to accommodate new knob aesthetics.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -45,14 +45,14 @@ fun MixerMonitorScreen(
     val isLandscape = configuration.screenHeightDp < configuration.screenWidthDp
 
     if (isLandscape) {
-        // LANDSCAPE: Side-by-side
+        // LANDSCAPE: Side-by-side Channels
         Row(
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.Black)
                 .horizontalScroll(rememberScrollState())
                 .padding(PaddingValues(16.dp)),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(24.dp) // More space between strips
         ) {
             ChannelStrip(
                 title = "VOCAL CH",
@@ -99,65 +99,71 @@ fun MixerMonitorScreen(
     }
 }
 
+// Compact Strip for Landscape - Made Wider/Taller
 @Composable
 fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Card(
-        modifier = Modifier.width(140.dp).height(300.dp),
+        modifier = Modifier.width(160.dp).height(380.dp), // Increased dimensions
         colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E))
     ) {
-        Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(title, color = color, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(title, color = color, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(20.dp))
             
-            // Input Gain (Read Only in Mixer usually, but editable if desired. Keeping RO for sync safety)
             ProAudioKnob(
                 value = gain,
                 onValueChange = {},
-                label = "IN",
-                knobSize = 50.dp,
+                label = "IN GAIN",
+                knobSize = 90.dp, // Standardized size
                 accentColor = color,
-                isEnabled = false
+                isEnabled = false,
+                unit = "dB"
             )
             
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             
-            // Output Volume (Editable)
             ProAudioKnob(
                 value = vol,
                 onValueChange = onVolChange,
-                label = "OUT",
-                knobSize = 70.dp,
-                accentColor = Color.White
+                label = "OUT VOL",
+                knobSize = 110.dp, // Primary control larger
+                accentColor = Color.White,
+                unit = "%"
             )
         }
     }
 }
 
+// Full View for Portrait - Centered and Spacious
 @Composable
 fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("INPUT GAIN", color = color, fontSize = 12.sp)
+        Text("INPUT GAIN", color = color, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
         ProAudioKnob(
             value = gain,
             onValueChange = {},
             label = "SYNCED FROM BOARD",
-            knobSize = 100.dp,
+            knobSize = 140.dp, // Big display knob
             accentColor = color,
-            isEnabled = false
+            isEnabled = false,
+            unit = "dB"
         )
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(40.dp))
         
-        Text("CHANNEL VOLUME", color = Color.White, fontSize = 12.sp)
+        Text("CHANNEL VOLUME", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
         ProAudioKnob(
             value = vol,
             onValueChange = onVolChange,
             label = "EDITABLE",
-            knobSize = 120.dp,
-            accentColor = Color.White
+            knobSize = 160.dp, // Main interactive knob
+            accentColor = Color.White,
+            unit = "%"
         )
     }
 }
