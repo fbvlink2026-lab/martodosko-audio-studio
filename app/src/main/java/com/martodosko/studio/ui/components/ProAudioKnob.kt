@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-phase2-legacy-exact-match-v5-TYPE-FIX
-// PURPOSE: Exact Port with Corrected Types & Touch API
-// NOTE: Fixed 'pos.position' to 'pos'. Fixed Float division/maxOf issues.
+// VERSION: v2.3.0-phase2-legacy-exact-match-v6-TYPE-SAFE
+// PURPOSE: Exact Port with Strict Float Casting to Prevent Overload Ambiguity
+// NOTE: All height/division calculations forced to Float explicitly.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -54,7 +54,6 @@ fun ProAudioKnob(
     val ANGLE_TOTAL_RANGE = 270f
     val ANGLE_OFFSET = -90f
     
-    // Helper: Maps Value to Angle in Degrees (0=East, Clockwise Positive)
     fun valueToAngle(v: Float): Float {
         val percent = (v - minValue) / (maxValue - minValue)
         return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
@@ -70,7 +69,6 @@ fun ProAudioKnob(
                     
                     detectDragGestures(
                         onDragStart = { pos -> 
-                            // FIX: 'pos' is already an Offset. Use pos.y directly.
                             lastTouchY = pos.y 
                         },
                         onDragEnd = { lastTouchY = Float.NaN },
@@ -86,13 +84,13 @@ fun ProAudioKnob(
                         val currentY = change.position.y
                         val deltaY = lastTouchY - currentY 
                         
-                        // FIX: Ensure safeHeight is explicitly Float to avoid overload ambiguity
-                        val safeHeight = maxOf(size.height, 100f) 
+                        // ✅ FIX: Explicitly cast size.height to Float and use Float literals everywhere
+                        val canvasHeight: Float = size.height.toFloat()
+                        val safeHeight: Float = if (canvasHeight > 100f) canvasHeight else 100f
                         
-                        val range = abs(maxValue - minValue)
+                        val range: Float = abs(maxValue - minValue)
                         
-                        // Sensitivity tuned for mobile touch feel
-                        // Explicitly cast steps to Float to ensure clean math
+                        // Sensitivity factor 0.8f ensures smooth response without jitter
                         val step: Float = (deltaY / safeHeight) * range * 0.8f 
                         
                         var newValue = value + step
@@ -170,7 +168,7 @@ fun ProAudioKnob(
                 )
             }
 
-            // 4. TICKS (Fixed Geometry)
+            // 4. TICKS
             val marks = getMarks(minValue, maxValue)
             for (mark in marks) {
                 val markFloat = mark.toFloat()
@@ -199,7 +197,7 @@ fun ProAudioKnob(
                 )
             }
 
-            // 5. POINTER (Triangle)
+            // 5. POINTER
             val indAngle = valueToAngle(value)
             val indLen = knobRadius * 0.75f
             val indW = 6f
