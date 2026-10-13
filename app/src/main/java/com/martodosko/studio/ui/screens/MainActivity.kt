@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MainActivity.kt
-// VERSION: v2.3.0-phase1-step1-final-fix
+// VERSION: v2.3.0-phase1-step2-clean
 // PURPOSE: Host Activity using Modular Components
-// NOTE: Added missing imports for LaunchedEffect and fillMaxWidth.
+// NOTE: Removed Inline Splash Logic. Now purely Navigation Shell.
 // ==================================================
 package com.martodosko.studio.ui.screens
 
@@ -13,13 +13,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth // ✅ ADDED THIS
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -28,7 +25,6 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -36,7 +32,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect // ✅ ADDED THIS
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,44 +51,19 @@ import androidx.navigation.compose.rememberNavController
 import com.martodosko.studio.ui.components.ProAudioKnob
 import com.martodosko.studio.ui.theme.MartodoskoTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("MAIN_ACT", "✅ Starting Refactored Main Activity (Step 1.1)")
+        Log.e("MAIN_ACT", "✅ Starting Main Activity (Post-Splash)")
 
         setContent {
             MartodoskoTheme {
-                var showSplash by remember { mutableStateOf(true) }
-
-                if (showSplash) {
-                    SimpleSplashScreen(onFinished = { showSplash = false })
-                } else {
-                    MainAppShell()
-                }
+                // Directly show the App Shell now that Splash handles the intro
+                MainAppShell()
             }
-        }
-    }
-}
-
-// --- SPLASH (Still Inline for Safety in Step 1) ---
-@Composable
-fun SimpleSplashScreen(onFinished: () -> Unit) {
-    LaunchedEffect(Unit) { // ✅ NOW RECOGNIZED
-        delay(1000L)
-        onFinished()
-    }
-    Box(
-        modifier = Modifier.fillMaxSize().background(Color.Black),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("MARTODOSKO", color = Color(0xFF40E0D0), fontSize = 32.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(20.dp))
-            CircularProgressIndicator(color = Color(0xFF40E0D0))
         }
     }
 }
@@ -164,7 +134,7 @@ fun HomeScreenContent() {
             SectionHeader("🎤 VOCAL CHAIN", Color.Cyan)
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, 
-                modifier = Modifier.fillMaxWidth() // ✅ NOW RECOGNIZED
+                modifier = Modifier.fillMaxWidth()
             ) {
                 ProAudioKnob(
                     value = vocalGain,
@@ -181,7 +151,7 @@ fun HomeScreenContent() {
             SectionHeader("🎸 GUITAR CHAIN", Color(0xFFFF9800))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly, 
-                modifier = Modifier.fillMaxWidth() // ✅ NOW RECOGNIZED
+                modifier = Modifier.fillMaxWidth()
             ) {
                 ProAudioKnob(
                     value = guitarDrive,
