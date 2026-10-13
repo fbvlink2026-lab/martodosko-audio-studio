@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-phase2-knob-upgrade
+// VERSION: v2.3.0-phase2-knob-upgrade-fix
 // PURPOSE: High-Fidelity Rotary Control with Numeric Feedback
-// NOTE: Improved drag sensitivity and added value display.
+// NOTE: Added Column import. Fixed syntax.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -10,6 +10,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -41,7 +42,7 @@ fun ProAudioKnob(
     minValue: Float = 0f,
     maxValue: Float = 100f,
     label: String = "",
-    unit: String = "%", // e.g., "%", "dB", ""
+    unit: String = "%",
     accentColor: Color = Color(0xFF40E0D0),
     isEnabled: Boolean = true,
     showNumericValue: Boolean = true
@@ -49,7 +50,6 @@ fun ProAudioKnob(
     val normalizedValue = ((value - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
     val animatedRotation by animateFloatAsState(targetValue = normalizedValue, label = "rotation")
     
-    // Track if user is currently dragging for visual feedback
     var isDragging by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.size(knobSize)) {
@@ -66,11 +66,9 @@ fun ProAudioKnob(
                     ) { change, dragAmount ->
                         change.consume()
                         
-                        // Calculate new value based on vertical drag distance
-                        // Negative Y means moving up (increase value)
                         val delta = -dragAmount.y 
                         val range = abs(maxValue - minValue)
-                        val step = range * 0.005f // Fine-tune sensitivity here
+                        val step = range * 0.005f
                         
                         var newValue = value + (delta * step)
                         newValue = newValue.coerceIn(minValue, maxValue)
@@ -82,26 +80,18 @@ fun ProAudioKnob(
             val centerY = size.height / 2f
             val radius = (size.minDimension / 2f) * 0.85f 
             
-            // 1. Draw Outer Ring (Ticks)
             drawOuterRing(Offset(centerX, centerY), radius)
-            
-            // 2. Draw Knob Body (Metallic Gradient)
             drawKnobBody(Offset(centerX, centerY), radius * 0.7f, isDragging, accentColor)
-            
-            // 3. Draw Pointer Line
             drawPointer(Offset(centerX, centerY), radius * 0.6f, animatedRotation, accentColor)
-            
-            // 4. Draw Center Cap
             drawCenterCap(Offset(centerX, centerY), radius * 0.2f)
         }
         
-        // 5. Labels & Values
+        // ✅ COLUMN IMPORT IS NOW AVAILABLE ABOVE
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             if (showNumericValue && !isDragging) {
-                 // Show current value when not dragging to avoid jitter
                  Text(
                      text = formatValue(value, unit),
                      color = Color.White.copy(alpha = 0.9f),
@@ -109,7 +99,6 @@ fun ProAudioKnob(
                      fontWeight = FontWeight.Bold
                  )
             } else if (isDragging) {
-                 // Show live updating value while dragging
                  Text(
                      text = formatValue(value, unit),
                      color = accentColor,
@@ -133,8 +122,6 @@ fun ProAudioKnob(
 private fun formatValue(v: Float, unit: String): String {
     return if (v == v.toInt().toFloat()) "${v.toInt()}$unit" else "%.1f%s".format(v, unit)
 }
-
-// --- PRIVATE HELPER DRAW FUNCTIONS ---
 
 private fun DrawScope.drawOuterRing(center: Offset, radius: Float) {
     val numTicks = 20
@@ -160,14 +147,12 @@ private fun DrawScope.drawOuterRing(center: Offset, radius: Float) {
 private fun DrawScope.drawKnobBody(center: Offset, radius: Float, isActive: Boolean, highlightColor: Color) {
     val lightSourceOffset = Offset(-radius * 0.3f, -radius * 0.3f)
     
-    // Base Metallic Gradient
     val baseColors = listOf(
         Color(0xFFEEEEEE), 
         Color(0xFFAAAAAA), 
         Color(0xFF444444)  
     )
     
-    // If active, add a subtle glow tint
     val finalColors = if (isActive) {
         baseColors.map { it.blend(highlightColor, 0.2f) }
     } else {
@@ -182,7 +167,6 @@ private fun DrawScope.drawKnobBody(center: Offset, radius: Float, isActive: Bool
     
     drawCircle(brush = brush, radius = radius, center = center)
     
-    // Inner Bevel
     drawCircle(
         color = Color.Black.copy(alpha = 0.4f),
         radius = radius,
@@ -224,7 +208,6 @@ private fun DrawScope.drawCenterCap(center: Offset, radius: Float) {
     )
 }
 
-// Helper for blending colors
 fun Color.blend(other: Color, fraction: Float): Color {
     val r = red * (1 - fraction) + other.red * fraction
     val g = green * (1 - fraction) + other.green * fraction
