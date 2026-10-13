@@ -1,24 +1,25 @@
 // ==================================================
 // FILE: PedalBoardScreen.kt
-// VERSION: v2.3.0-phase2-step2-wired
-// PURPOSE: Dedicated Home Screen Connected to State Manager
-// NOTE: Uses PedalBoardViewModel for reactive updates.
+// VERSION: v2.3.0-phase2-pedal-redesign
+// PURPOSE: Realistic Stompbox Chain Interface
+// NOTE: Each pedal has On/Off, Effect, NG, Vol controls.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Power
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,64 +32,133 @@ fun PedalBoardScreen(
     modifier: Modifier = Modifier,
     viewModel: PedalBoardViewModel = hiltViewModel()
 ) {
-    // Collect the latest state from the ViewModel
     val params by viewModel.audioParams.collectAsState()
 
-    LazyColumn(
+    // Horizontal Scroll for the Pedal Chain
+    Row(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+            .background(Color.Black)
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
     ) {
-        item {
-            SectionHeader(title = "🎤 VOCAL CHAIN", color = Color.Cyan)
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, 
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ProAudioKnob(
-                    value = params.vocalGain, // ✅ FROM STATE MANAGER
-                    onValueChange = { newValue -> 
-                        viewModel.onVocalGainChange(newValue) // ✅ SEND TO VM
-                    },
-                    label = "GAIN",
-                    minValue = -50f,
-                    maxValue = 50f,
-                    knobSize = 100.dp,
-                    accentColor = Color(0xFF40E0D0)
-                )
-            }
-        }
-        item {
-            SectionHeader(title = "🎸 GUITAR CHAIN", color = Color(0xFFFF9800))
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, 
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ProAudioKnob(
-                    value = params.guitarDrive, // ✅ FROM STATE MANAGER
-                    onValueChange = { newValue -> 
-                        viewModel.onGuitarDriveChange(newValue) // ✅ SEND TO VM
-                    },
-                    label = "DRIVE",
-                    minValue = -50f,
-                    maxValue = 50f,
-                    knobSize = 100.dp,
-                    accentColor = Color(0xFFFF9800)
-                )
-            }
-        }
+        // VOCAL PEDAL CARD
+        PedalCard(
+            title = "VOCAL CHAIN",
+            accentColor = Color.Cyan,
+            isActive = true, // Mock state for now
+            gain = params.vocalGain,
+            volume = params.vocalVolume,
+            onGainChange = { viewModel.onVocalGainChange(it) },
+            onVolChange = { /* Handle Vocal Vol */ }
+        )
+
+        // GUITAR PEDAL CARD
+        PedalCard(
+            title = "GUITAR DRIVE",
+            accentColor = Color(0xFFFF9800),
+            isActive = true,
+            gain = params.guitarDrive,
+            volume = params.guitarLevel,
+            onGainChange = { viewModel.onGuitarDriveChange(it) },
+            onVolChange = { /* Handle Guitar Level */ }
+        )
     }
 }
 
 @Composable
-fun SectionHeader(title: String, color: Color) {
-    Text(
-        text = title, 
-        color = color, 
-        fontSize = 18.sp, 
-        fontWeight = FontWeight.Bold, 
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
+fun PedalCard(
+    title: String,
+    accentColor: Color,
+    isActive: Boolean,
+    gain: Float,
+    volume: Float,
+    onGainChange: (Float) -> Unit,
+    onVolChange: (Float) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .width(180.dp)
+            .height(320.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
+        border = BorderStroke(2.dp, if(isActive) accentColor else Color.DarkGray)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header: Title + Power Switch
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(title, color = accentColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                
+                IconButton(onClick = { /* Toggle Active State */ }) {
+                    Icon(
+                        imageVector = Icons.Default.Power,
+                        contentDescription = "Power",
+                        tint = if (isActive) accentColor else Color.Gray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Top Row: Effect Selector (Mock Dropdown/Button)
+            OutlinedButton(
+                onClick = { /* Open Effect Menu */ },
+                modifier = Modifier.fillMaxWidth().height(40.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+            ) {
+                Text("CHORUS", fontSize = 10.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Middle: Two Knobs Side-by-Side
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                ProAudioKnob(
+                    value = gain,
+                    onValueChange = onGainChange,
+                    label = "FX AMT",
+                    unit = "%",
+                    minValue = 0f,
+                    maxValue = 100f,
+                    knobSize = 60.dp,
+                    accentColor = accentColor
+                )
+                ProAudioKnob(
+                    value = 50f, // Mock Noise Gate
+                    onValueChange = { },
+                    label = "NGATE",
+                    unit = "",
+                    minValue = 0f,
+                    maxValue = 100f,
+                    knobSize = 60.dp,
+                    accentColor = Color.LightGray
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Bottom: Volume Knob (Large)
+            ProAudioKnob(
+                value = volume,
+                onValueChange = onVolChange,
+                label = "LEVEL",
+                unit = "%",
+                minValue = 0f,
+                maxValue = 100f,
+                knobSize = 80.dp,
+                accentColor = Color.White
+            )
+        }
+    }
 }
