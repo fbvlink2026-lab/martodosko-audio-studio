@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 21:32 UTC
-🏷️ **Bersyon:** v1.0.348
+📅 **Petsa:** 2026-10-13 21:40 UTC
+🏷️ **Bersyon:** v1.0.349
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 21:32:40 UTC
-🏷️ BERSYON:    v1.0.348
+⏰ ORAS:       2026-10-13 21:40:12 UTC
+🏷️ BERSYON:    v1.0.349
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -48,9 +48,9 @@ Daemon will be stopped at the end of the build
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
+> Task :app:mergeReleaseResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
-> Task :app:mergeReleaseResources
 > Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
@@ -80,8 +80,7 @@ Daemon will be stopped at the end of the build
 > Task :app:kspReleaseKotlin
 
 > Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:168:32 Unresolved reference: rememberTextMeasurer
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:208:17 Unresolved reference: drawText
+e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:190:32 @Composable invocations can only happen from the context of a @Composable function
 
 FAILURE: Build failed with an exception.
 
@@ -96,7 +95,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 2m 5s
+BUILD FAILED in 1m 55s
 34 actionable tasks: 32 executed, 2 up-to-date
 
 ==================================================
