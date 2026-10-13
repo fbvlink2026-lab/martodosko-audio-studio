@@ -1,14 +1,23 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-responsive
+// VERSION: v2.3.0-phase2-mixer-responsive-fix
 // PURPOSE: Channel Strips with Horizontal Scrolling
-// NOTE: Optimized for Portrait (Tabs) and Landscape (Side-by-Side).
+// NOTE: Fixed padding application in Landscape mode.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,9 +50,9 @@ fun MixerMonitorScreen(
             modifier = modifier
                 .fillMaxSize()
                 .background(Color.Black)
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp)
+                .horizontalScroll(rememberScrollState())
+                .padding(PaddingValues(16.dp)), // ✅ APPLIED PADDING HERE
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ChannelStrip(
                 title = "VOCAL",
@@ -98,7 +107,6 @@ fun MixerMonitorScreen(
     }
 }
 
-// Compact Strip for Landscape
 @Composable
 fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Card(
@@ -111,7 +119,7 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
             
             ProAudioKnob(
                 value = gain,
-                onValueChange = {}, // Read only in mixer view for now
+                onValueChange = {},
                 label = "IN",
                 knobSize = 50.dp,
                 accentColor = color,
@@ -131,7 +139,6 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
     }
 }
 
-// Full View for Portrait
 @Composable
 fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Column(
