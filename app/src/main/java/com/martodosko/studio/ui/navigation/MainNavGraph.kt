@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MainNavGraph.kt
-// VERSION: v2.3.0-phase1-step4
+// VERSION: v2.3.0-phase2-step3-fix
 // PURPOSE: Central Navigation Definition & Bottom Bar Logic
-// NOTE: Extracted from MainActivity for separation of concerns.
+// NOTE: Fixed syntax error in Mixer composable block.
 // ==================================================
 package com.martodosko.studio.ui.navigation
 
@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.martodosko.studio.ui.screens.home.PedalBoardScreen
+import com.martodosko.studio.ui.screens.mixer.MixerMonitorScreen // ✅ IMPORT MOVED TO TOP
 
 /**
  * Data class representing a single destination in the bottom navigation.
@@ -87,10 +88,10 @@ fun MainNavGraph(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("home") { PedalBoardScreen() } 
-            composable("mixer") { 
-    import com.martodosko.studio.ui.screens.mixer.MixerMonitorScreen // Add this import at top of file
-    MixerMonitorScreen() 
-}
+            
+            // ✅ FIXED: Direct call to MixerMonitorScreen without inline import
+            composable("mixer") { MixerMonitorScreen() }
+            
             composable("presets") { PlaceholderScreen("📋 Preset Library") }
             composable("settings") { PlaceholderScreen("⚙️ Settings") }
             composable("more") { PlaceholderScreen("☰ More Menu") }
