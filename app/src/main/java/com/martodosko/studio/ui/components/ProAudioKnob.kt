@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-phase2-legacy-exact-match-v6-TYPE-SAFE
-// PURPOSE: Exact Port with Strict Float Casting to Prevent Overload Ambiguity
-// NOTE: All height/division calculations forced to Float explicitly.
+// VERSION: v2.3.0-phase2-FINAL-STABLE
+// PURPOSE: Stable Rotary Control with Numeric Ticks
+// NOTE: Uses Relative Delta for smoothness. Uses TextMeasurer for accurate numbers.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -48,12 +48,11 @@ fun ProAudioKnob(
     accentColor: Color = Color(0xFF40E0D0),
     isEnabled: Boolean = true
 ) {
-    var lastTouchY by remember { mutableStateOf(Float.NaN) }
-    
-    // LEGACY CONSTANTS
+    // Constants from Legacy Code
     val ANGLE_TOTAL_RANGE = 270f
     val ANGLE_OFFSET = -90f
     
+    // Helper: Maps Value to Angle in Degrees (0=East, Clockwise Positive)
     fun valueToAngle(v: Float): Float {
         val percent = (v - minValue) / (maxValue - minValue)
         return ANGLE_OFFSET + (percent - 0.5f) * ANGLE_TOTAL_RANGE
@@ -67,37 +66,23 @@ fun ProAudioKnob(
                 .pointerInput(Unit) {
                     if (!isEnabled) return@pointerInput
                     
-                    detectDragGestures(
-                        onDragStart = { pos -> 
-                            lastTouchY = pos.y 
-                        },
-                        onDragEnd = { lastTouchY = Float.NaN },
-                        onDragCancel = { lastTouchY = Float.NaN }
-                    ) { change, dragAmount ->
+                    detectDragGestures { change, dragAmount ->
                         change.consume()
                         
-                        if (lastTouchY.isNaN()) {
-                            lastTouchY = change.position.y
-                            return@detectDragGestures
-                        }
-
-                        val currentY = change.position.y
-                        val deltaY = lastTouchY - currentY 
+                        // SMOOTH MOVEMENT LOGIC:
+                        // Use the raw delta provided by Compose. 
+                        // Multiply by a sensitivity factor. 
+                        // Higher factor = faster movement. Lower = slower/fine-tuned.
+                        // 0.008f is a good balance for mobile screens.
+                        val deltaY = -dragAmount.y // Negative because Up increases value
                         
-                        // ✅ FIX: Explicitly cast size.height to Float and use Float literals everywhere
-                        val canvasHeight: Float = size.height.toFloat()
-                        val safeHeight: Float = if (canvasHeight > 100f) canvasHeight else 100f
-                        
-                        val range: Float = abs(maxValue - minValue)
-                        
-                        // Sensitivity factor 0.8f ensures smooth response without jitter
-                        val step: Float = (deltaY / safeHeight) * range * 0.8f 
+                        val range = abs(maxValue - minValue)
+                        val step = deltaY * 0.008f * range 
                         
                         var newValue = value + step
                         newValue = newValue.coerceIn(minValue, maxValue)
                         
                         onValueChange(newValue)
-                        lastTouchY = currentY
                     }
                 }
         ) {
@@ -110,6 +95,7 @@ fun ProAudioKnob(
             val arcRadius = halfSize * 0.68f
             val tickInner = arcRadius * 1.03f
             val tickOuter = arcRadius * 1.08f
+            val textRadius = halfSize * 0.84f // Radius for placing numbers
 
             // Colors
             val colorPanel = Color(0xFF12232E)
@@ -119,6 +105,7 @@ fun ProAudioKnob(
             val colorIndicator = accentColor 
             val colorTickActive = Color(0xFF8AF0E0)
             val colorTickNormal = Color(0xFF3A4A54)
+            val colorText = Color(0xFFB8DDE6)
 
             // 1. PANEL BACKGROUND
             val panelW = size.width * 0.95f
@@ -168,8 +155,12 @@ fun ProAudioKnob(
                 )
             }
 
-            // 4. TICKS
+            // 4. TICKS AND NUMBERS
             val marks = getMarks(minValue, maxValue)
+            
+            // We need a TextMeasurer to draw text inside Canvas properly
+            val textMeasurer = rememberTextMeasurer()
+
             for (mark in marks) {
                 val markFloat = mark.toFloat()
                 if (markFloat < minValue || markFloat > maxValue) continue
@@ -177,6 +168,7 @@ fun ProAudioKnob(
                 val angleDeg = valueToAngle(markFloat)
                 val rad = Math.toRadians(angleDeg.toDouble()).toFloat()
                 
+                // Draw Tick Line
                 val x1 = cx + tickInner * cos(rad)
                 val y1 = cy + tickInner * sin(rad)
                 val x2 = cx + tickOuter * cos(rad)
@@ -195,9 +187,27 @@ fun ProAudioKnob(
                     strokeWidth = 2f,
                     cap = StrokeCap.Round
                 )
+
+                // Draw Number Text
+                val nx = cx + textRadius * cos(rad)
+                val ny = cy + textRadius * sin(rad)
+                
+                // Format string like legacy (+50, -50, 0)
+                val textStr = formatMark(mark, minValue)
+                
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = textStr,
+                    topLeft = Offset(nx - 10f, ny - 10f), // Center approximation
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorText
+                    )
+                )
             }
 
-            // 5. POINTER
+            // 5. POINTER (Triangle)
             val indAngle = valueToAngle(value)
             val indLen = knobRadius * 0.75f
             val indW = 6f
@@ -226,7 +236,7 @@ fun ProAudioKnob(
             drawPath(path, color = colorIndicator)
         }
         
-        // LABELS
+        // LABELS (Outside Canvas for crisp rendering)
         if (label.isNotEmpty()) {
              Text(
                  text = label.uppercase(),
@@ -243,6 +253,14 @@ fun ProAudioKnob(
              fontWeight = FontWeight.Bold,
              modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 4.dp)
          )
+    }
+}
+
+private fun formatMark(mark: Int, min: Float): String {
+    return when {
+        mark == 0 -> "0"
+        min < 0f && mark > 0 -> "+$mark"
+        else -> "$mark"
     }
 }
 
