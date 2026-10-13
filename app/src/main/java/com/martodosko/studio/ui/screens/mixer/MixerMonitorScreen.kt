@@ -1,14 +1,18 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-step3
-// PURPOSE: Detailed Channel View with Sliders
-// NOTE: Demonstrates Bidirectional Sync via shared StateFlow.
+// VERSION: v2.3.0-phase2-step3-knobs-only
+// PURPOSE: Detailed Channel View with ROTARY KNOBS
+// NOTE: Consistent with Strategic Master Plan v2.3 Visual Style. No Sliders.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.martodosko.studio.ui.theme.MartodoskoTheme
+import com.martodosko.studio.ui.components.ProAudioKnob
 
 @Composable
 fun MixerMonitorScreen(
@@ -26,9 +30,9 @@ fun MixerMonitorScreen(
 ) {
     val params by viewModel.audioParams.collectAsState()
 
-    // Simple Tab Row for Vocal vs Guitar focus (Visual only for now)
+    // Simple Tab Row for Vocal vs Guitar focus
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("VOCAL", "GUITAR")
+    val tabs = listOf("VOCAL CH", "GUITAR CH")
 
     Column(
         modifier = modifier
@@ -39,7 +43,7 @@ fun MixerMonitorScreen(
         
         // Header
         Text(
-            text = "MIXER CHANNELS",
+            text = "MIXER CONSOLE",
             color = Color.White,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
@@ -52,7 +56,13 @@ fun MixerMonitorScreen(
                 Tab(
                     selected = selectedTab == index,
                     onClick = { selectedTab = index },
-                    text = { Text(title, color = if (selectedTab == index) Color.Cyan else Color.Gray) }
+                    text = { 
+                        Text(
+                            title, 
+                            color = if (selectedTab == index) Color.Cyan else Color.Gray,
+                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
+                        ) 
+                    }
                 )
             }
         }
@@ -61,59 +71,127 @@ fun MixerMonitorScreen(
 
         // Content Area based on Tab
         when (selectedTab) {
-            0 -> VocalChannelControls(params.vocalGain, params.vocalVolume, viewModel)
-            1 -> GuitarChannelControls(params.guitarDrive, params.guitarLevel, viewModel)
+            0 -> VocalChannelPanel(params.vocalGain, params.vocalVolume, viewModel)
+            1 -> GuitarChannelPanel(params.guitarDrive, params.guitarLevel, viewModel)
         }
         
         // Master Section (Always visible at bottom)
         Spacer(modifier = Modifier.weight(1f))
-        MasterSection(params.masterVolume, viewModel)
+        MasterPanel(params.masterVolume, viewModel)
     }
 }
 
+// --- VOCAL CHANNEL PANEL ---
 @Composable
-fun VocalChannelControls(gain: Float, volume: Float, vm: MixerViewModel) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SliderControl(label = "INPUT GAIN", value = gain, min = -50f, max = 50f, color = Color.Cyan, onValueChange = { /* Gain is controlled by Knob in Home, but we can display it here */ })
-        SliderControl(label = "CHANNEL VOL", value = volume, min = 0f, max = 100f, color = Color.White, onValueChange = { vm.onVocalVolumeChange(it) })
-    }
-}
-
-@Composable
-fun GuitarChannelControls(drive: Float, level: Float, vm: MixerViewModel) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SliderControl(label = "DRIVE AMT", value = drive, min = -50f, max = 50f, color = Color(0xFFFF9800), onValueChange = { /* Drive is controlled by Knob in Home */ })
-        SliderControl(label = "OUTPUT LVL", value = level, min = 0f, max = 100f, color = Color.White, onValueChange = { vm.onGuitarLevelChange(it) })
-    }
-}
-
-@Composable
-fun MasterSection(volume: Float, vm: MixerViewModel) {
+fun VocalChannelPanel(gain: Float, volume: Float, vm: MixerViewModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E)) // Panel Gray
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("MASTER OUTPUT", color = Color.White, fontWeight = FontWeight.Bold)
+        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            
+            Text("INPUT GAIN", color = Color.Cyan, fontSize = 12.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            SliderControl(label = "MAIN VOL", value = volume, min = 0f, max = 100f, color = Color.Green, onValueChange = { vm.onMasterVolumeChange(it) })
+            
+            ProAudioKnob(
+                value = gain,
+                onValueChange = { /* Read-only display or sync back to Home logic */ 
+                    // Note: In a real app, changing this here might update the global state too
+                    vm.updateParam { it.copy(vocalGain = it) } 
+                },
+                label = "${gain.toInt()} dB",
+                minValue = -50f,
+                maxValue = 50f,
+                knobSize = 90.dp,
+                accentColor = Color.Cyan
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text("CHANNEL VOLUME", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ProAudioKnob(
+                value = volume,
+                onValueChange = { newValue -> vm.onVocalVolumeChange(newValue) },
+                label = "${volume.toInt()}%",
+                minValue = 0f,
+                maxValue = 100f,
+                knobSize = 90.dp,
+                accentColor = Color.White
+            )
         }
     }
 }
 
-// Reusable Slider Component
+// --- GUITAR CHANNEL PANEL ---
 @Composable
-fun SliderControl(label: String, value: Float, min: Float, max: Float, color: Color, onValueChange: (Float) -> Unit) {
-    Column {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Text(label, color = Color.LightGray, fontSize = 12.sp)
-            Text(String.format("%.1f", value), color = color, fontSize = 12.sp)
+fun GuitarChannelPanel(drive: Float, level: Float, vm: MixerViewModel) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E)) // Panel Gray
+    ) {
+        Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            
+            Text("DRIVE AMOUNT", color = Color(0xFFFF9800), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            ProAudioKnob(
+                value = drive,
+                onValueChange = { /* Sync logic */ 
+                    vm.updateParam { it.copy(guitarDrive = it) }
+                },
+                label = "${drive.toInt()}%",
+                minValue = -50f,
+                maxValue = 50f,
+                knobSize = 90.dp,
+                accentColor = Color(0xFFFF9800)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text("OUTPUT LEVEL", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ProAudioKnob(
+                value = level,
+                onValueChange = { newValue -> vm.onGuitarLevelChange(newValue) },
+                label = "${level.toInt()}%",
+                minValue = 0f,
+                maxValue = 100f,
+                knobSize = 90.dp,
+                accentColor = Color.White
+            )
         }
-        Slider(
-            value = value.coerceIn(min, max),
-            onValueChange = onValueChange,
-            valueRange = min..max,
-            colors = SliderDefaults.colors(thumbColor = color, activeTrackColor = color)
-        )
+    }
+}
+
+// --- MASTER OUTPUT PANEL ---
+@Composable
+fun MasterPanel(volume: Float, vm: MixerViewModel) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E2F)) // Darker Gray for distinction
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text("MASTER OUT", color = Color.Green, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text("Global Output Control", color = Color.Gray, fontSize = 10.sp)
+            }
+            
+            ProAudioKnob(
+                value = volume,
+                onValueChange = { newValue -> vm.onMasterVolumeChange(newValue) },
+                label = "${volume.toInt()}%",
+                minValue = 0f,
+                maxValue = 100f,
+                knobSize = 70.dp, // Slightly smaller for master
+                accentColor = Color.Green
+            )
+        }
     }
 }
