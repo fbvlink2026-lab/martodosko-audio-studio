@@ -21,8 +21,8 @@ android {
         applicationId = "com.martodosko.studio"
         minSdk = 29 // Required for modern Audio APIs (<10ms latency goal)
         targetSdk = 34
-        versionCode = 10338
-        versionName = "1.0.338"
+        versionCode = 10339
+        versionName = "1.0.339"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
