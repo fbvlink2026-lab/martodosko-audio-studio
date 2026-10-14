@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-13 21:40 UTC
-🏷️ **Bersyon:** v1.0.349
+📅 **Petsa:** 2026-10-14 02:20 UTC
+🏷️ **Bersyon:** v1.0.350
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,12 +12,17 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-13 21:40:12 UTC
-🏷️ BERSYON:    v1.0.349
+⏰ ORAS:       2026-10-14 02:20:42 UTC
+🏷️ BERSYON:    v1.0.350
 ==================================================
 
-❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
-🔑 Exit Code: 1
+✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
+📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
+📏 Laki:       4.2M
+📤 Kopyahin sa docs/...
+✅ Nasa: docs/Martodosko-Studio-v1.0.350.apk
+
+🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
 --------------------------------------------------
 📋 BUONG LOG NG BUILD:
@@ -79,24 +84,42 @@ Daemon will be stopped at the end of the build
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
-> Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:190:32 @Composable invocations can only happen from the context of a @Composable function
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/components/ProAudioKnob.kt:78:33 Parameter 'dragAmount' is never used, could be renamed to _
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:53:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:65:9 Variable 'params' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
 
-FAILURE: Build failed with an exception.
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:hiltAggregateDepsRelease
 
-* What went wrong:
-Execution failed for task ':app:compileReleaseKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+> Task :app:hiltJavaCompileRelease
+Note: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/generated/hilt/component_sources/release/com/martodosko/studio/Hilt_MartodoskoApp.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
 
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:processReleaseJavaRes
+> Task :app:transformReleaseClassesWithAsm
+> Task :app:mergeReleaseGeneratedProguardFiles
+> Task :app:mergeReleaseJavaResource
+> Task :app:expandReleaseArtProfileWildcards
 
-BUILD FAILED in 1m 55s
-34 actionable tasks: 32 executed, 2 up-to-date
+> Task :app:minifyReleaseWithR8
+Supplied proguard configuration does not exist: /home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/proguard-rules.pro
+
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:compileReleaseArtProfile
+> Task :app:shrinkReleaseRes
+> Task :app:optimizeReleaseResources
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+
+BUILD SUCCESSFUL in 3m 54s
+52 actionable tasks: 50 executed, 2 up-to-date
 
 ==================================================
 
