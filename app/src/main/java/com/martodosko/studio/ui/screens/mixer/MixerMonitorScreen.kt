@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-spacing-fix
+// VERSION: v2.3.0-phase2-mixer-spacing-fix-v2
 // PURPOSE: Dual Channel Mixer with Proper Spacing Below Tabs
-// NOTE: Added significant padding below TabRow to prevent overlap with Knob Panels.
+// NOTE: Removed 'weight' to fix compilation error. Used fillMaxHeight + Center arrangement.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -143,7 +144,7 @@ fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .weight(1f), // Take remaining vertical space
+            .fillMaxHeight(), // Fill remaining height instead of weight
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center // Center the knobs vertically in the available space
     ) {
