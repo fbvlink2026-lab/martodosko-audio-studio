@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: NativeKnob.kt
-// VERSION: v2.3.0-final-bridge
-// PURPOSE: Wraps the working Legacy KnobView into Compose
-// NOTE: Uses AndroidView to ensure pixel-perfect behavior.
+// VERSION: v2.3.0-state-persistence-fix
+// PURPOSE: Wraps Legacy KnobView with Unique State Saving Capability
+// NOTE: Added 'uniqueKey' parameter to ensure each knob remembers its own state independently.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -19,7 +19,8 @@ fun NativeKnob(
     label: String = "",
     unit: String = "%",
     minValue: Float = 0f,
-    maxValue: Float = 100f
+    maxValue: Float = 100f,
+    uniqueKey: String = "" // ✅ NEW PARAMETER FOR STATE PERSISTENCE
 ) {
     AndroidView(
         factory = { context ->
@@ -28,6 +29,15 @@ fun NativeKnob(
                 unitText = unit
                 this.minValue = minValue
                 this.maxValue = maxValue
+                
+                // ✅ SET UNIQUE KEY IF PROVIDED, OTHERWISE FALLBACK TO LABEL/ID
+                if (uniqueKey.isNotEmpty()) {
+                    preferenceKey = uniqueKey
+                } else {
+                    // If no key provided, try using label as key, but warn about duplicates
+                    preferenceKey = label.ifEmpty { null } 
+                }
+
                 this.value = value
                 
                 // Connect listener
