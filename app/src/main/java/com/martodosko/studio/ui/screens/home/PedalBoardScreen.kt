@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: PedalBoardScreen.kt
-// VERSION: v2.3.0-phase2-detachable-board-fix
-// PURPOSE: Detachable Stompbox Chain Interface
-// NOTE: Fixed Modifier.size import issue.
+// VERSION: v2.3.0-phase2-detachable-board-native
+// PURPOSE: Detachable Stompbox Chain Interface using Native Knobs
+// NOTE: Replaced ProAudioKnob with NativeKnob for stability.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size // ✅ EXPLICIT IMPORT FOR SIZE MODIFIER
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.martodosko.studio.ui.components.ProAudioKnob
+import com.martodosko.studio.ui.components.NativeKnob // ✅ USE NATIVE KNOB
 
 data class ActivePedal(
     val id: String,
@@ -161,39 +161,36 @@ fun PedalCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProAudioKnob(
+                NativeKnob(
                     value = pedal.fxParam,
                     onValueChange = onUpdateFx,
                     label = "FX",
                     unit = "%",
                     minValue = 0f,
                     maxValue = 100f,
-                    knobSize = 60.dp,
-                    accentColor = accent
+                    modifier = Modifier.size(70.dp)
                 )
-                ProAudioKnob(
+                NativeKnob(
                     value = pedal.gateParam,
                     onValueChange = { },
                     label = "NG",
                     unit = "%",
                     minValue = 0f,
                     maxValue = 100f,
-                    knobSize = 60.dp,
-                    accentColor = Color.LightGray
+                    modifier = Modifier.size(70.dp)
                 )
             }
             
             Spacer(modifier = Modifier.weight(1f))
 
-            ProAudioKnob(
+            NativeKnob(
                 value = pedal.volParam,
                 onValueChange = onUpdateVol,
                 label = "VOL",
                 unit = "%",
                 minValue = 0f,
                 maxValue = 100f,
-                knobSize = 80.dp,
-                accentColor = Color.White
+                modifier = Modifier.size(90.dp)
             )
         }
     }
