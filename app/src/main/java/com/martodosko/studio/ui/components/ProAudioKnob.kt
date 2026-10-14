@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-FINAL-WITH-IMPORTS
+// VERSION: v2.3.0-FINAL-HOISTED-MEASURER
 // PURPOSE: Stable Rotary Knob for Martodosko Studio
-// NOTE: Added missing imports for TextMeasurer and drawText.
+// NOTE: Hoisted rememberTextMeasurer out of DrawScope to fix Composable invocation error.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-// ✅ ADDED MISSING IMPORTS BELOW
+// ✅ IMPORTS FOR TEXT MEASURER
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.drawText
 import kotlin.math.PI
@@ -53,6 +53,9 @@ fun ProAudioKnob(
 ) {
     // State to hold the last Y position of the finger during drag
     var lastY by remember { mutableStateOf(Float.NaN) }
+    
+    // ✅ HOISTED: Initialize TextMeasurer HERE, outside of Canvas/DrawScope
+    val textMeasurer = rememberTextMeasurer()
 
     Box(modifier = modifier.size(knobSize)) {
         
@@ -75,32 +78,19 @@ fun ProAudioKnob(
                     ) { change, dragAmount ->
                         change.consume()
                         
-                        // If we don't have a start reference, abort this frame
                         if (lastY.isNaN()) return@detectDragGestures
 
                         val currentY = change.position.y
-                        
-                        // Calculate how much the finger moved vertically since last frame
-                        // Moving UP (decreasing Y) should INCREASE Value
                         val deltaY = lastY - currentY 
-                        
-                        // Normalize movement by the height of the canvas to make it consistent across devices
-                        // A full swipe from bottom to top covers the entire range
                         val normalizedMove = deltaY / size.height
                         
                         val range = abs(maxValue - minValue)
-                        
-                        // Sensitivity multiplier: 
-                        // 1.0 = Full range in one screen-height swipe.
-                        // We use 0.8 for slightly finer control as requested in legacy feel.
                         val step = normalizedMove * range * 0.8f
                         
                         var newValue = value + step
                         newValue = newValue.coerceIn(minValue, maxValue)
                         
                         onValueChange(newValue)
-                        
-                        // Update reference for next frame
                         lastY = currentY
                     }
                 }
@@ -109,7 +99,7 @@ fun ProAudioKnob(
             val cy = size.height / 2f
             val halfSize = minOf(size.width, size.height) * 0.5f
             
-            // --- GEOMETRY CONSTANTS (Matching Legacy Visuals) ---
+            // --- GEOMETRY CONSTANTS ---
             val knobRadius = halfSize * 0.50f   
             val arcRadius = halfSize * 0.65f
             val tickInner = arcRadius * 1.05f
@@ -144,9 +134,7 @@ fun ProAudioKnob(
             )
             drawCircle(brush = brush, radius = knobRadius, center = Offset(cx, cy))
 
-            // 3. CALCULATE ANGLES FOR ARC AND TICKS
-            // Legacy Logic: Start at 135 deg (Bottom-Left), End at 45 deg (Bottom-Right) going Clockwise.
-            // Total Sweep: 270 degrees.
+            // 3. CALCULATE ANGLES
             fun getAngle(v: Float): Float {
                 val pct = ((v - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
                 return 135f + (pct * 270f)
@@ -160,14 +148,12 @@ fun ProAudioKnob(
                 val startAngleDeg = getAngle(zeroPoint)
                 val endAngleDeg = getAngle(value)
                 
-                // Determine sweep direction
                 val sweep = if (endAngleDeg >= startAngleDeg) {
                     endAngleDeg - startAngleDeg
                 } else {
                     (360f - startAngleDeg) + endAngleDeg
                 }
 
-                // Glow Layer
                 drawArc(
                     color = accentColor.copy(alpha = 0.3f),
                     startAngle = startAngleDeg,
@@ -175,7 +161,6 @@ fun ProAudioKnob(
                     useCenter = false,
                     style = Stroke(width = 8f, cap = StrokeCap.Round)
                 )
-                // Core Layer
                 drawArc(
                     color = accentColor,
                     startAngle = startAngleDeg,
@@ -187,23 +172,19 @@ fun ProAudioKnob(
 
             // 5. DRAW TICKS AND NUMBERS
             val marks = getMarks(minValue, maxValue)
-            val textMeasurer = rememberTextMeasurer() // ✅ NOW RECOGNIZED
 
             for (mark in marks) {
                 val markFloat = mark.toFloat()
                 if (markFloat < minValue || markFloat > maxValue) continue
 
                 val angleDeg = getAngle(markFloat)
-                // Convert to Radians for Math functions
                 val rad = Math.toRadians(angleDeg.toDouble()).toFloat()
                 
-                // Tick Line Coordinates
                 val x1 = cx + tickInner * cos(rad)
                 val y1 = cy + tickInner * sin(rad) 
                 val x2 = cx + tickOuter * cos(rad)
                 val y2 = cy + tickOuter * sin(rad)
 
-                // Active Check
                 val isActive = when {
                     currentValInt == zeroPoint.toInt() -> mark == zeroPoint.toInt()
                     currentValInt > zeroPoint -> mark >= zeroPoint && mark <= currentValInt
@@ -218,14 +199,13 @@ fun ProAudioKnob(
                     cap = StrokeCap.Round
                 )
 
-                // Number Text Position
                 val tx = cx + textRadius * cos(rad)
                 val ty = cy + textRadius * sin(rad)
                 
                 val txt = formatMark(mark, minValue)
                 
-                // Draw Text Centered approx
-                drawText( // ✅ NOW RECOGNIZED
+                // ✅ USE HOISTED TEXT MEASURER HERE
+                drawText(
                     textMeasurer = textMeasurer,
                     text = txt,
                     topLeft = Offset(tx - 10f, ty - 10f), 
@@ -242,17 +222,12 @@ fun ProAudioKnob(
             val pointerRad = Math.toRadians(pointerAngleDeg.toDouble()).toFloat()
             
             val len = knobRadius * 0.80f
-            val widthHalf = 4f // Half of base width
+            val widthHalf = 4f 
             
-            // Tip of triangle
             val tipX = cx + cos(pointerRad) * len
             val tipY = cy + sin(pointerRad) * len
             
-            // Base points (perpendicular to radial line)
-            // Rotate 90 degrees (PI/2) to find perpendicular vector
             val perpRad = pointerRad + PI.toFloat() / 2f
-            
-            // Shift base slightly towards center to form arrowhead shape
             val shiftDist = len * 0.3f 
             
             val b1x = cx + (cos(perpRad) * widthHalf) + (cos(pointerRad) * shiftDist)
