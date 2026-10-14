@@ -1,8 +1,9 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-FINAL-HOISTED-MEASURER
-// PURPOSE: Stable Rotary Knob for Martodosko Studio
-// NOTE: Hoisted rememberTextMeasurer out of DrawScope to fix Composable invocation error.
+// VERSION: v2.3.0-FINAL-LEGACY-MATH-PERFECT
+// PURPOSE: Stable Rotary Knob with Exact Legacy Geometry & Touch Physics
+// NOTE: Uses -90 offset math for angles to match deleted KnobView perfectly.
+//       Adjusted touch multiplier to 0.6f for authentic feel.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -82,10 +83,14 @@ fun ProAudioKnob(
 
                         val currentY = change.position.y
                         val deltaY = lastY - currentY 
-                        val normalizedMove = deltaY / size.height
+                        
+                        // EXACT LEGACY FORMULA:
+                        // value += (lastTouchY - e.y) / height * range * 0.6f
+                        val canvasHeight = size.height
+                        if (canvasHeight == 0f) return@detectDragGestures
                         
                         val range = abs(maxValue - minValue)
-                        val step = normalizedMove * range * 0.8f
+                        val step = (deltaY / canvasHeight) * range * 0.6f // Back to 0.6f for authenticity
                         
                         var newValue = value + step
                         newValue = newValue.coerceIn(minValue, maxValue)
@@ -99,12 +104,13 @@ fun ProAudioKnob(
             val cy = size.height / 2f
             val halfSize = minOf(size.width, size.height) * 0.5f
             
-            // --- GEOMETRY CONSTANTS ---
-            val knobRadius = halfSize * 0.50f   
-            val arcRadius = halfSize * 0.65f
-            val tickInner = arcRadius * 1.05f
-            val tickOuter = arcRadius * 1.15f
-            val textRadius = halfSize * 0.85f 
+            // --- GEOMETRY CONSTANTS (MATCHING LEGACY RATIOS) ---
+            // Legacy used specific multipliers relative to 'size' (min dim)
+            val knobRadius = halfSize * 0.54f   // Slightly larger body
+            val arcRadius = halfSize * 0.68f    // Arc sits further out
+            val tickInner = arcRadius * 1.03f
+            val tickOuter = arcRadius * 1.08f
+            val textRadius = halfSize * 0.84f   // Numbers sit here
 
             // --- COLORS ---
             val colorPanel = Color(0xFF12232E)
@@ -115,7 +121,7 @@ fun ProAudioKnob(
             val colorTickNormal = Color(0xFF3A4A54)
             val colorText = Color(0xFFB8DDE6)
 
-            // 1. DRAW PANEL BACKGROUND
+            // 1. DRAW PANEL BACKGROUND (Tall Rectangle)
             val panelW = size.width * 0.95f
             val panelH = size.height * 1.28f 
             drawRoundRect(
@@ -134,10 +140,12 @@ fun ProAudioKnob(
             )
             drawCircle(brush = brush, radius = knobRadius, center = Offset(cx, cy))
 
-            // 3. CALCULATE ANGLES
+            // 3. ANGLE CALCULATION (EXACT LEGACY LOGIC)
+            // Legacy: ANGLE_OFFSET (-90) + (percent - 0.5) * 270
+            // This maps Min to -225deg (135deg visually) and Max to 45deg.
             fun getAngle(v: Float): Float {
-                val pct = ((v - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
-                return 135f + (pct * 270f)
+                val percent = ((v - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
+                return -90f + (percent - 0.5f) * 270f
             }
 
             val currentValInt = value.roundToInt()
@@ -148,12 +156,14 @@ fun ProAudioKnob(
                 val startAngleDeg = getAngle(zeroPoint)
                 val endAngleDeg = getAngle(value)
                 
+                // Determine sweep direction correctly
                 val sweep = if (endAngleDeg >= startAngleDeg) {
                     endAngleDeg - startAngleDeg
                 } else {
                     (360f - startAngleDeg) + endAngleDeg
                 }
 
+                // Glow Layer
                 drawArc(
                     color = accentColor.copy(alpha = 0.3f),
                     startAngle = startAngleDeg,
@@ -161,6 +171,7 @@ fun ProAudioKnob(
                     useCenter = false,
                     style = Stroke(width = 8f, cap = StrokeCap.Round)
                 )
+                // Core Layer
                 drawArc(
                     color = accentColor,
                     startAngle = startAngleDeg,
@@ -180,6 +191,7 @@ fun ProAudioKnob(
                 val angleDeg = getAngle(markFloat)
                 val rad = Math.toRadians(angleDeg.toDouble()).toFloat()
                 
+                // Tick Lines
                 val x1 = cx + tickInner * cos(rad)
                 val y1 = cy + tickInner * sin(rad) 
                 val x2 = cx + tickOuter * cos(rad)
@@ -199,16 +211,17 @@ fun ProAudioKnob(
                     cap = StrokeCap.Round
                 )
 
+                // Number Text Position
                 val tx = cx + textRadius * cos(rad)
                 val ty = cy + textRadius * sin(rad)
                 
                 val txt = formatMark(mark, minValue)
                 
-                // ✅ USE HOISTED TEXT MEASURER HERE
+                // Draw Text Centered approx (Adjusted offsets for better alignment)
                 drawText(
                     textMeasurer = textMeasurer,
                     text = txt,
-                    topLeft = Offset(tx - 10f, ty - 10f), 
+                    topLeft = Offset(tx - 12f, ty - 8f), // Fine-tuned centering
                     style = androidx.compose.ui.text.TextStyle(
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -221,12 +234,14 @@ fun ProAudioKnob(
             val pointerAngleDeg = getAngle(value)
             val pointerRad = Math.toRadians(pointerAngleDeg.toDouble()).toFloat()
             
-            val len = knobRadius * 0.80f
-            val widthHalf = 4f 
+            val len = knobRadius * 0.75f // Match legacy length ratio
+            val widthHalf = 3f // Thinner base
             
+            // Tip
             val tipX = cx + cos(pointerRad) * len
             val tipY = cy + sin(pointerRad) * len
             
+            // Base Perpendicular
             val perpRad = pointerRad + PI.toFloat() / 2f
             val shiftDist = len * 0.3f 
             
