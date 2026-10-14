@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-label-fix-final
-// PURPOSE: Dual Channel Mixer with Internal Labels
-// NOTE: Removed external text headers. Labels are now drawn inside KnobView canvas.
+// VERSION: v2.3.0-phase2-mixer-native-knobs
+// PURPOSE: Dual Channel Mixer using Native Knobs
+// NOTE: Replaced ProAudioKnob with NativeKnob for stability.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -100,36 +100,32 @@ fun MixerMonitorScreen(
     }
 }
 
-// Compact Strip for Landscape - Made Wider/Taller
 @Composable
 fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Card(
-        modifier = Modifier.width(160.dp).height(380.dp), 
+        modifier = Modifier.width(160.dp).height(380.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E))
     ) {
         Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            // External Title kept for identification in landscape list view
             Text(title, color = color, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             
-            // Knob with INTERNAL Label "IN"
             NativeKnob(
                 value = gain,
-                onValueChange = {}, // Read only display usually
-                label = "IN",       // ✅ LABEL INSIDE CANVAS
+                onValueChange = {},
+                label = "IN GAIN",
                 unit = "dB",
                 minValue = -50f,
                 maxValue = 50f,
                 modifier = Modifier.size(90.dp)
             )
             
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             
-            // Knob with INTERNAL Label "OUT"
             NativeKnob(
                 value = vol,
                 onValueChange = onVolChange,
-                label = "OUT",      // ✅ LABEL INSIDE CANVAS
+                label = "OUT VOL",
                 unit = "%",
                 minValue = 0f,
                 maxValue = 100f,
@@ -139,39 +135,36 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
     }
 }
 
-// Full View for Portrait - Centered and Spacious
 @Composable
 fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // ✅ NO EXTERNAL TEXT HEADER HERE ANYMORE
-        
-        // First Knob: Gain/Input
-        // The label "GAIN" will be drawn by the KnobView itself at the top of its panel
+        Text("INPUT GAIN", color = color, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
         NativeKnob(
             value = gain,
-            onValueChange = {}, // Read-only in mixer view for now to avoid sync conflicts
-            label = "GAIN",     // ✅ THIS REPLACES "SYNCED FROM BOARD" POSITION
+            onValueChange = {},
+            label = "SYNCED FROM BOARD",
             unit = "dB",
             minValue = -50f,
             maxValue = 50f,
-            modifier = Modifier.size(160.dp) // Large enough to show internal label clearly
+            modifier = Modifier.size(140.dp)
         )
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(40.dp))
         
-        // Second Knob: Volume/Output
-        // The label "VOL" will be drawn by the KnobView itself
+        Text("CHANNEL VOLUME", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
         NativeKnob(
             value = vol,
             onValueChange = onVolChange,
-            label = "VOL",      // ✅ THIS REPLACES "EDITABLE" POSITION
+            label = "EDITABLE",
             unit = "%",
             minValue = 0f,
             maxValue = 100f,
-            modifier = Modifier.size(180.dp) // Largest knob for primary control
+            modifier = Modifier.size(160.dp)
         )
     }
 }
