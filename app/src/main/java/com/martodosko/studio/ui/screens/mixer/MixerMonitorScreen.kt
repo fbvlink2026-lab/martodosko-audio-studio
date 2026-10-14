@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-spacious
-// PURPOSE: Dual Channel Mixer with Proper Spacing for Large Knobs
-// NOTE: Adjusted card widths and heights to accommodate new knob aesthetics.
+// VERSION: v2.3.0-phase2-mixer-label-fix-final
+// PURPOSE: Dual Channel Mixer with Internal Labels
+// NOTE: Removed external text headers. Labels are now drawn inside KnobView canvas.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
@@ -33,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.martodosko.studio.ui.components.ProAudioKnob
+import com.martodosko.studio.ui.components.NativeKnob // ✅ USE NATIVE KNOB
 
 @Composable
 fun MixerMonitorScreen(
@@ -52,7 +53,7 @@ fun MixerMonitorScreen(
                 .background(Color.Black)
                 .horizontalScroll(rememberScrollState())
                 .padding(PaddingValues(16.dp)),
-            horizontalArrangement = Arrangement.spacedBy(24.dp) // More space between strips
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             ChannelStrip(
                 title = "VOCAL CH",
@@ -103,32 +104,36 @@ fun MixerMonitorScreen(
 @Composable
 fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Card(
-        modifier = Modifier.width(160.dp).height(380.dp), // Increased dimensions
+        modifier = Modifier.width(160.dp).height(380.dp), 
         colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E))
     ) {
         Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            // External Title kept for identification in landscape list view
             Text(title, color = color, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             
-            ProAudioKnob(
+            // Knob with INTERNAL Label "IN"
+            NativeKnob(
                 value = gain,
-                onValueChange = {},
-                label = "IN GAIN",
-                knobSize = 90.dp, // Standardized size
-                accentColor = color,
-                isEnabled = false,
-                unit = "dB"
+                onValueChange = {}, // Read only display usually
+                label = "IN",       // ✅ LABEL INSIDE CANVAS
+                unit = "dB",
+                minValue = -50f,
+                maxValue = 50f,
+                modifier = Modifier.size(90.dp)
             )
             
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             
-            ProAudioKnob(
+            // Knob with INTERNAL Label "OUT"
+            NativeKnob(
                 value = vol,
                 onValueChange = onVolChange,
-                label = "OUT VOL",
-                knobSize = 110.dp, // Primary control larger
-                accentColor = Color.White,
-                unit = "%"
+                label = "OUT",      // ✅ LABEL INSIDE CANVAS
+                unit = "%",
+                minValue = 0f,
+                maxValue = 100f,
+                modifier = Modifier.size(110.dp)
             )
         }
     }
@@ -141,29 +146,32 @@ fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("INPUT GAIN", color = color, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
-        ProAudioKnob(
+        // ✅ NO EXTERNAL TEXT HEADER HERE ANYMORE
+        
+        // First Knob: Gain/Input
+        // The label "GAIN" will be drawn by the KnobView itself at the top of its panel
+        NativeKnob(
             value = gain,
-            onValueChange = {},
-            label = "SYNCED FROM BOARD",
-            knobSize = 140.dp, // Big display knob
-            accentColor = color,
-            isEnabled = false,
-            unit = "dB"
+            onValueChange = {}, // Read-only in mixer view for now to avoid sync conflicts
+            label = "GAIN",     // ✅ THIS REPLACES "SYNCED FROM BOARD" POSITION
+            unit = "dB",
+            minValue = -50f,
+            maxValue = 50f,
+            modifier = Modifier.size(160.dp) // Large enough to show internal label clearly
         )
         
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         
-        Text("CHANNEL VOLUME", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
-        ProAudioKnob(
+        // Second Knob: Volume/Output
+        // The label "VOL" will be drawn by the KnobView itself
+        NativeKnob(
             value = vol,
             onValueChange = onVolChange,
-            label = "EDITABLE",
-            knobSize = 160.dp, // Main interactive knob
-            accentColor = Color.White,
-            unit = "%"
+            label = "VOL",      // ✅ THIS REPLACES "EDITABLE" POSITION
+            unit = "%",
+            minValue = 0f,
+            maxValue = 100f,
+            modifier = Modifier.size(180.dp) // Largest knob for primary control
         )
     }
 }
