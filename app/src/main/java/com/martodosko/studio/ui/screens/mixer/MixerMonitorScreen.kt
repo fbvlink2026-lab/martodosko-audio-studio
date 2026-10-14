@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-native-knobs
-// PURPOSE: Dual Channel Mixer using Native Knobs
-// NOTE: Replaced ProAudioKnob with NativeKnob for stability.
+// VERSION: v2.3.0-phase2-mixer-native-knobs-fixed-layout
+// PURPOSE: Dual Channel Mixer using Native Knobs with Correct Labels
+// NOTE: Removed redundant external texts. Labels are now handled by KnobView internally.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -107,25 +107,26 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
         colors = CardDefaults.cardColors(containerColor = Color(0xFF12232E))
     ) {
         Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            // Title inside card for identification
             Text(title, color = color, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             
             NativeKnob(
                 value = gain,
                 onValueChange = {},
-                label = "IN GAIN",
+                label = "IN GAIN", // Label inside panel
                 unit = "dB",
                 minValue = -50f,
                 maxValue = 50f,
                 modifier = Modifier.size(90.dp)
             )
             
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             
             NativeKnob(
                 value = vol,
                 onValueChange = onVolChange,
-                label = "OUT VOL",
+                label = "OUT VOL", // Label inside panel
                 unit = "%",
                 minValue = 0f,
                 maxValue = 100f,
@@ -141,26 +142,24 @@ fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("INPUT GAIN", color = color, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
+        // NO EXTERNAL HEADERS. The KnobView draws its own label at the top of the panel.
+        
         NativeKnob(
             value = gain,
-            onValueChange = {},
-            label = "SYNCED FROM BOARD",
+            onValueChange = {}, 
+            label = "INPUT GAIN", // ✅ This appears INSIDE the panel top
             unit = "dB",
             minValue = -50f,
             maxValue = 50f,
-            modifier = Modifier.size(140.dp)
+            modifier = Modifier.size(160.dp) 
         )
         
         Spacer(modifier = Modifier.height(40.dp))
         
-        Text("CHANNEL VOLUME", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
         NativeKnob(
             value = vol,
             onValueChange = onVolChange,
-            label = "EDITABLE",
+            label = "CHANNEL VOL", // ✅ This appears INSIDE the panel top
             unit = "%",
             minValue = 0f,
             maxValue = 100f,
