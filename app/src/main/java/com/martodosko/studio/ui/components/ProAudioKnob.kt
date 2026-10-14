@@ -1,9 +1,8 @@
 // ==================================================
 // FILE: ProAudioKnob.kt
-// VERSION: v2.3.0-FINAL-LEGACY-MATH-PERFECT
+// VERSION: v2.3.0-FINAL-TYPE-SAFE-COMPARE
 // PURPOSE: Stable Rotary Knob with Exact Legacy Geometry & Touch Physics
-// NOTE: Uses -90 offset math for angles to match deleted KnobView perfectly.
-//       Adjusted touch multiplier to 0.6f for authentic feel.
+// NOTE: Fixed Int vs Float comparison error in touch handler.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -87,7 +86,8 @@ fun ProAudioKnob(
                         // EXACT LEGACY FORMULA:
                         // value += (lastTouchY - e.y) / height * range * 0.6f
                         val canvasHeight = size.height
-                        if (canvasHeight == 0f) return@detectDragGestures
+                        // FIX: Ensure we compare Float to Float or handle zero check safely
+                        if (canvasHeight <= 0f) return@detectDragGestures
                         
                         val range = abs(maxValue - minValue)
                         val step = (deltaY / canvasHeight) * range * 0.6f // Back to 0.6f for authenticity
@@ -105,12 +105,11 @@ fun ProAudioKnob(
             val halfSize = minOf(size.width, size.height) * 0.5f
             
             // --- GEOMETRY CONSTANTS (MATCHING LEGACY RATIOS) ---
-            // Legacy used specific multipliers relative to 'size' (min dim)
-            val knobRadius = halfSize * 0.54f   // Slightly larger body
-            val arcRadius = halfSize * 0.68f    // Arc sits further out
+            val knobRadius = halfSize * 0.54f   
+            val arcRadius = halfSize * 0.68f    
             val tickInner = arcRadius * 1.03f
             val tickOuter = arcRadius * 1.08f
-            val textRadius = halfSize * 0.84f   // Numbers sit here
+            val textRadius = halfSize * 0.84f   
 
             // --- COLORS ---
             val colorPanel = Color(0xFF12232E)
@@ -141,8 +140,6 @@ fun ProAudioKnob(
             drawCircle(brush = brush, radius = knobRadius, center = Offset(cx, cy))
 
             // 3. ANGLE CALCULATION (EXACT LEGACY LOGIC)
-            // Legacy: ANGLE_OFFSET (-90) + (percent - 0.5) * 270
-            // This maps Min to -225deg (135deg visually) and Max to 45deg.
             fun getAngle(v: Float): Float {
                 val percent = ((v - minValue) / (maxValue - minValue)).coerceIn(0f, 1f)
                 return -90f + (percent - 0.5f) * 270f
@@ -156,7 +153,6 @@ fun ProAudioKnob(
                 val startAngleDeg = getAngle(zeroPoint)
                 val endAngleDeg = getAngle(value)
                 
-                // Determine sweep direction correctly
                 val sweep = if (endAngleDeg >= startAngleDeg) {
                     endAngleDeg - startAngleDeg
                 } else {
@@ -197,10 +193,11 @@ fun ProAudioKnob(
                 val x2 = cx + tickOuter * cos(rad)
                 val y2 = cy + tickOuter * sin(rad)
 
+                // FIX: Compare Ints directly here as well to avoid ambiguity
                 val isActive = when {
                     currentValInt == zeroPoint.toInt() -> mark == zeroPoint.toInt()
-                    currentValInt > zeroPoint -> mark >= zeroPoint && mark <= currentValInt
-                    else -> mark <= zeroPoint && mark >= currentValInt
+                    currentValInt > zeroPoint.toInt() -> mark >= zeroPoint.toInt() && mark <= currentValInt
+                    else -> mark <= zeroPoint.toInt() && mark >= currentValInt
                 }
 
                 drawLine(
@@ -217,11 +214,11 @@ fun ProAudioKnob(
                 
                 val txt = formatMark(mark, minValue)
                 
-                // Draw Text Centered approx (Adjusted offsets for better alignment)
+                // Draw Text Centered approx
                 drawText(
                     textMeasurer = textMeasurer,
                     text = txt,
-                    topLeft = Offset(tx - 12f, ty - 8f), // Fine-tuned centering
+                    topLeft = Offset(tx - 12f, ty - 8f), 
                     style = androidx.compose.ui.text.TextStyle(
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -234,8 +231,8 @@ fun ProAudioKnob(
             val pointerAngleDeg = getAngle(value)
             val pointerRad = Math.toRadians(pointerAngleDeg.toDouble()).toFloat()
             
-            val len = knobRadius * 0.75f // Match legacy length ratio
-            val widthHalf = 3f // Thinner base
+            val len = knobRadius * 0.75f 
+            val widthHalf = 3f 
             
             // Tip
             val tipX = cx + cos(pointerRad) * len
