@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-native-knobs-fixed-layout
-// PURPOSE: Dual Channel Mixer using Native Knobs with Correct Labels
-// NOTE: Removed redundant external texts. Labels are now handled by KnobView internally.
+// VERSION: v2.3.0-phase2-mixer-spacing-fix
+// PURPOSE: Dual Channel Mixer with Proper Spacing Below Tabs
+// NOTE: Added significant padding below TabRow to prevent overlap with Knob Panels.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -90,7 +90,9 @@ fun MixerMonitorScreen(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            
+            // ✅ CRITICAL FIX: Large Spacer to push content away from Tabs
+            Spacer(modifier = Modifier.height(32.dp)) 
             
             when(selectedTab) {
                 0 -> ChannelStripFull(params.vocalGain, params.vocalVolume, Color.Cyan) { viewModel.onVocalVolumeChange(it) }
@@ -139,8 +141,11 @@ fun ChannelStrip(title: String, gain: Float, vol: Float, color: Color, onVolChan
 @Composable
 fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)->Unit) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f), // Take remaining vertical space
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center // Center the knobs vertically in the available space
     ) {
         // NO EXTERNAL HEADERS. The KnobView draws its own label at the top of the panel.
         
@@ -154,7 +159,8 @@ fun ChannelStripFull(gain: Float, vol: Float, color: Color, onVolChange: (Float)
             modifier = Modifier.size(160.dp) 
         )
         
-        Spacer(modifier = Modifier.height(40.dp))
+        // ✅ Balanced spacing between the two knobs
+        Spacer(modifier = Modifier.height(48.dp)) 
         
         NativeKnob(
             value = vol,
