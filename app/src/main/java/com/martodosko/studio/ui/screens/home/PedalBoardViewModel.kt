@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: PedalBoardViewModel.kt
-// VERSION: v2.3.0-phase2-step2
-// PURPOSE: Bridges UI Interactions with AudioStateManager
-// NOTE: Injected via Hilt. Observes StateFlow from Manager.
+// VERSION: v2.3.0-full-control-sync
+// PURPOSE: Bridges Pedal Board Interactions with AudioStateManager
+// NOTE: Added handlers for all pedal controls to ensure bidirectional sync.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
@@ -21,7 +21,6 @@ class PedalBoardViewModel @Inject constructor(
     private val audioManager: AudioStateManager
 ) : ViewModel() {
 
-    // Expose the current params as a StateFlow for the UI to collect
     val audioParams: StateFlow<AudioParams> = audioManager.params
         .stateIn(
             scope = viewModelScope,
@@ -37,5 +36,12 @@ class PedalBoardViewModel @Inject constructor(
         audioManager.updateParam { it.copy(guitarDrive = value) }
     }
     
-    // Add more handlers as needed for Volume, etc.
+    // Add these if you want the Board to control Volume too
+    fun onVocalVolumeChange(value: Float) {
+        audioManager.updateParam { it.copy(vocalVolume = value) }
+    }
+
+    fun onGuitarLevelChange(value: Float) {
+        audioManager.updateParam { it.copy(guitarLevel = value) }
+    }
 }
