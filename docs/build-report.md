@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-15 08:13 UTC
-🏷️ **Bersyon:** v1.0.364
+📅 **Petsa:** 2026-10-15 08:17 UTC
+🏷️ **Bersyon:** v1.0.365
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-15 08:13:15 UTC
-🏷️ BERSYON:    v1.0.364
+⏰ ORAS:       2026-10-15 08:17:37 UTC
+🏷️ BERSYON:    v1.0.365
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -54,8 +54,8 @@ Daemon will be stopped at the end of the build
 > Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
-> Task :app:javaPreCompileRelease
 > Task :app:extractProguardFiles
+> Task :app:javaPreCompileRelease
 > Task :app:mergeReleaseJniLibFolders
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
@@ -82,7 +82,6 @@ Daemon will be stopped at the end of the build
 > Task :app:compileReleaseKotlin FAILED
 e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/audio/AudioStateManager.kt:53:15 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
 public fun kotlin.text.StringBuilder /* = java.lang.StringBuilder */.clear(): kotlin.text.StringBuilder /* = java.lang.StringBuilder */ defined in kotlin.text
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/di/AppModule.kt:23:33 No value passed for parameter 'context'
 
 FAILURE: Build failed with an exception.
 
@@ -97,7 +96,7 @@ Execution failed for task ':app:compileReleaseKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 39s
+BUILD FAILED in 1m 51s
 34 actionable tasks: 32 executed, 2 up-to-date
 
 ==================================================
