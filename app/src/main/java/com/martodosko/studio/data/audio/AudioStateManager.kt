@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: AudioStateManager.kt
-// VERSION: v2.3.0-phase2-persistent-state
+// VERSION: v2.3.0-phase2-persistent-state-fix
 // PURPOSE: Centralized Reactive State Holder with Basic Persistence
-// NOTE: Added SharedPreferences integration to survive process death/screen rotation.
+// NOTE: Fixed SharedPreferences clear() syntax.
 // ==================================================
 package com.martodosko.studio.data.audio
 
@@ -50,7 +50,13 @@ class AudioStateManager @Inject constructor(
     fun reset() {
         val defaultParams = AudioParams().validate()
         _params.value = defaultParams
-        prefs.clear() // Clear old keys or overwrite with defaults
+        
+        // ✅ FIX: Use edit {} block to clear preferences properly
+        prefs.edit {
+            clear()
+        }
+        
+        // Optionally save the default state back so it persists even after reset
         saveToDisk(defaultParams)
     }
 
