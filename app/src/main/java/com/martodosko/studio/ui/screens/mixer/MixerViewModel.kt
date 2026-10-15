@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerViewModel.kt
-// VERSION: v2.3.0-phase2-step3
-// PURPOSE: Bridges Mixer UI with AudioStateManager
-// NOTE: Shares the same singleton state as PedalBoardViewModel.
+// VERSION: v2.3.0-phase2-gain-sync-fix
+// PURPOSE: Bridges Mixer UI with AudioStateManager for ALL parameters
+// NOTE: Added handlers for Vocal Gain and Guitar Drive to enable persistence.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -28,6 +28,7 @@ class MixerViewModel @Inject constructor(
             initialValue = AudioParams()
         )
 
+    // ✅ EXISTING VOLUME HANDLERS
     fun onVocalVolumeChange(value: Float) {
         audioManager.updateParam { it.copy(vocalVolume = value) }
     }
@@ -38,5 +39,14 @@ class MixerViewModel @Inject constructor(
     
     fun onMasterVolumeChange(value: Float) {
         audioManager.updateParam { it.copy(masterVolume = value) }
+    }
+
+    // ✅ NEW GAIN/DRIVE HANDLERS TO ENABLE PERSISTENCE
+    fun onVocalGainChange(value: Float) {
+        audioManager.updateParam { it.copy(vocalGain = value) }
+    }
+
+    fun onGuitarDriveChange(value: Float) {
+        audioManager.updateParam { it.copy(guitarDrive = value) }
     }
 }
