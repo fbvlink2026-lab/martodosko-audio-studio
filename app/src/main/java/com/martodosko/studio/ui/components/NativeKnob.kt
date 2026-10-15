@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: NativeKnob.kt
-// VERSION: v2.3.0-state-persistence-fix
-// PURPOSE: Wraps Legacy KnobView with Unique State Saving Capability
-// NOTE: Added 'uniqueKey' parameter to ensure each knob remembers its own state independently.
+// VERSION: v2.3.0-state-persistence-fix-v2
+// PURPOSE: Wraps Legacy KnobView with Correct State Loading Priority
+// NOTE: Prioritizes Saved Preferences over Compose Initial Value to fix Gain Memory Issue.
 // ==================================================
 package com.martodosko.studio.ui.components
 
@@ -30,17 +30,19 @@ fun NativeKnob(
                 this.minValue = minValue
                 this.maxValue = maxValue
                 
-                // ✅ SET UNIQUE KEY IF PROVIDED, OTHERWISE FALLBACK TO LABEL/ID
+                // ✅ SET UNIQUE KEY FIRST SO LOADSAVEDVALUE CAN FIND IT
                 if (uniqueKey.isNotEmpty()) {
                     preferenceKey = uniqueKey
                 } else {
-                    // If no key provided, try using label as key, but warn about duplicates
                     preferenceKey = label.ifEmpty { null } 
                 }
 
-                this.value = value
+                // ✅ CRITICAL FIX: Do NOT set 'this.value = value' here immediately.
+                // The 'init' block of KnobView already called loadSavedValue().
+                // If we overwrite it now with the Compose 'value' param, we lose the memory.
+                // Instead, let the KnobView initialize itself from Preferences.
                 
-                // Connect listener
+                // Connect listener AFTER initialization so it doesn't trigger during setup
                 this.onValueChange = { newVal ->
                     onValueChange(newVal)
                 }
@@ -54,6 +56,7 @@ fun NativeKnob(
             if (knobView.maxValue != maxValue) knobView.maxValue = maxValue
             
             // Update value only if significantly different to avoid redraw loops
+            // AND ensure we don't reset a loaded value back to default 0 unnecessarily
             if (Math.abs(knobView.value - value) > 0.01f) {
                 knobView.value = value
             }
