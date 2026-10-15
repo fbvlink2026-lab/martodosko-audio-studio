@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-15 08:17 UTC
-🏷️ **Bersyon:** v1.0.365
+📅 **Petsa:** 2026-10-15 08:31 UTC
+🏷️ **Bersyon:** v1.0.366
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,8 +12,8 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-15 08:17:37 UTC
-🏷️ BERSYON:    v1.0.365
+⏰ ORAS:       2026-10-15 08:31:08 UTC
+🏷️ BERSYON:    v1.0.366
 ==================================================
 
 ❌ NABIGO — Hindi nabuo o hindi mahanap ang APK
@@ -67,7 +67,6 @@ Daemon will be stopped at the end of the build
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
-> Task :app:processReleaseManifestForPackage
 > Task :app:compressReleaseAssets
 > Task :app:processApplicationManifestReleaseForBundle
 > Task :app:collectReleaseDependencies
@@ -75,29 +74,53 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseManifestForPackage
 > Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
-> Task :app:compileReleaseKotlin FAILED
-e: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/audio/AudioStateManager.kt:53:15 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
-public fun kotlin.text.StringBuilder /* = java.lang.StringBuilder */.clear(): kotlin.text.StringBuilder /* = java.lang.StringBuilder */ defined in kotlin.text
+> Task :app:compileReleaseKotlin
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/data/services/AssetSyncService.kt:57:34 Parameter 'asset' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/navigation/MainNavGraph.kt:53:49 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/home/PedalBoardScreen.kt:65:9 Variable 'params' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/screens/mixer/MixerMonitorScreen.kt:177:5 Parameter 'color' is never used
+w: file:///home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/src/main/java/com/martodosko/studio/ui/theme/Theme.kt:22:5 Parameter 'darkTheme' is never used
+
+> Task :app:compileReleaseJavaWithJavac
+> Task :app:hiltAggregateDepsRelease
+
+> Task :app:hiltJavaCompileRelease
+/home/runner/work/martodosko-audio-studio/martodosko-audio-studio/app/build/generated/hilt/component_sources/release/com/martodosko/studio/MartodoskoApp_HiltComponents.java:134: error: cannot find symbol
+          AppModule.class,
+          ^
+  symbol:   class AppModule
+  location: class MartodoskoApp_HiltComponents
+error: ComponentProcessingStep was unable to process 'com.martodosko.studio.MartodoskoApp_HiltComponents.SingletonC' because '<error>' could not be resolved.
+  
+  Dependency trace:
+      => element (CLASS): com.martodosko.studio.MartodoskoApp_HiltComponents.SingletonC
+      => annotation type: dagger.Component
+      => annotation: @dagger.Component(modules={<error>, dagger.hilt.android.internal.modules.ApplicationContextModule, com.martodosko.studio.di.DatabaseModule, dagger.hilt.android.flags.HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule, androidx.hilt.work.HiltWrapper_WorkerFactoryModule, com.martodosko.studio.MartodoskoApp_HiltComponents.ActivityRetainedCBuilderModule, com.martodosko.studio.MartodoskoApp_HiltComponents.ServiceCBuilderModule, com.martodosko.studio.di.NetworkModule}, dependencies={})
+      => annotation value (TYPE_ARRAY): modules={<error>, dagger.hilt.android.internal.modules.ApplicationContextModule, com.martodosko.studio.di.DatabaseModule, dagger.hilt.android.flags.HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule, androidx.hilt.work.HiltWrapper_WorkerFactoryModule, com.martodosko.studio.MartodoskoApp_HiltComponents.ActivityRetainedCBuilderModule, com.martodosko.studio.MartodoskoApp_HiltComponents.ServiceCBuilderModule, com.martodosko.studio.di.NetworkModule}
+      => annotation value (TYPE): modules=<error>
+  
+  If type '<error>' is a generated type, check above for compilation errors that may have prevented the type from being generated. Otherwise, ensure that type '<error>' is on your classpath.
+2 errors
+
+> Task :app:hiltJavaCompileRelease FAILED
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:compileReleaseKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+Execution failed for task ':app:hiltJavaCompileRelease'.
+> Compilation failed; see the compiler error output for details.
 
 * Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
+> Run with --info option to get more log output.
 > Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 51s
-34 actionable tasks: 32 executed, 2 up-to-date
+BUILD FAILED in 2m 4s
+37 actionable tasks: 35 executed, 2 up-to-date
 
 ==================================================
 
