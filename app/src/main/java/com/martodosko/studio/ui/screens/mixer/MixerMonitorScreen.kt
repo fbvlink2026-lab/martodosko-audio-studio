@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-unique-keys-final
-// PURPOSE: Dual Channel Mixer with Independent State Persistence
-// NOTE: Passed uniqueKeys to NativeKnob to fix "Gain Not Remembered" issue.
+// VERSION: v2.3.0-phase2-mixer-full-sync
+// PURPOSE: Dual Channel Mixer with Full State Synchronization
+// NOTE: Connected Gain Knobs to ViewModel to ensure values are saved globally.
 // ==================================================
 package com.martodosko.studio.ui.screens.mixer
 
@@ -61,18 +61,20 @@ fun MixerMonitorScreen(
                 gain = params.vocalGain,
                 vol = params.vocalVolume,
                 color = Color.Cyan,
+                onGainChange = { viewModel.onVocalGainChange(it) }, // ✅ CONNECTED
                 onVolChange = { viewModel.onVocalVolumeChange(it) },
-                gainKey = "landscape_vocal_gain", // Unique Key for Landscape Vocal Gain
-                volKey = "landscape_vocal_vol"    // Unique Key for Landscape Vocal Vol
+                gainKey = "landscape_vocal_gain",
+                volKey = "landscape_vocal_vol"
             )
             ChannelStrip(
                 title = "GUITAR CH",
                 gain = params.guitarDrive,
                 vol = params.guitarLevel,
                 color = Color(0xFFFF9800),
+                onGainChange = { viewModel.onGuitarDriveChange(it) }, // ✅ CONNECTED
                 onVolChange = { viewModel.onGuitarLevelChange(it) },
-                gainKey = "landscape_guitar_gain", // Unique Key for Landscape Guitar Gain
-                volKey = "landscape_guitar_vol"    // Unique Key for Landscape Guitar Vol
+                gainKey = "landscape_guitar_gain",
+                volKey = "landscape_guitar_vol"
             )
         }
     } else {
@@ -102,18 +104,20 @@ fun MixerMonitorScreen(
                 0 -> ChannelStripFull(
                     gain = params.vocalGain, 
                     vol = params.vocalVolume, 
-                    color = Color.Cyan, 
+                    color = Color.Cyan,
+                    onGainChange = { viewModel.onVocalGainChange(it) }, // ✅ CONNECTED
                     onVolChange = { viewModel.onVocalVolumeChange(it) },
-                    gainKey = "portrait_vocal_gain", // ✅ UNIQUE KEY
-                    volKey = "portrait_vocal_vol"    // ✅ UNIQUE KEY
+                    gainKey = "portrait_vocal_gain",
+                    volKey = "portrait_vocal_vol"
                 )
                 1 -> ChannelStripFull(
                     gain = params.guitarDrive, 
                     vol = params.guitarLevel, 
-                    color = Color(0xFFFF9800), 
+                    color = Color(0xFFFF9800),
+                    onGainChange = { viewModel.onGuitarDriveChange(it) }, // ✅ CONNECTED
                     onVolChange = { viewModel.onGuitarLevelChange(it) },
-                    gainKey = "portrait_guitar_gain", // ✅ UNIQUE KEY
-                    volKey = "portrait_guitar_vol"    // ✅ UNIQUE KEY
+                    gainKey = "portrait_guitar_gain",
+                    volKey = "portrait_guitar_vol"
                 )
             }
         }
@@ -126,6 +130,7 @@ fun ChannelStrip(
     gain: Float, 
     vol: Float, 
     color: Color, 
+    onGainChange: (Float)->Unit, // ✅ ADDED PARAMETER
     onVolChange: (Float)->Unit,
     gainKey: String,
     volKey: String
@@ -140,13 +145,13 @@ fun ChannelStrip(
             
             NativeKnob(
                 value = gain,
-                onValueChange = {},
+                onValueChange = onGainChange, // ✅ PASSED FUNCTION INSTEAD OF EMPTY {}
                 label = "IN GAIN",
                 unit = "dB",
                 minValue = -50f,
                 maxValue = 50f,
                 modifier = Modifier.size(90.dp),
-                uniqueKey = gainKey // ✅ PASS UNIQUE KEY
+                uniqueKey = gainKey
             )
             
             Spacer(modifier = Modifier.height(20.dp))
@@ -159,7 +164,7 @@ fun ChannelStrip(
                 minValue = 0f,
                 maxValue = 100f,
                 modifier = Modifier.size(110.dp),
-                uniqueKey = volKey // ✅ PASS UNIQUE KEY
+                uniqueKey = volKey
             )
         }
     }
@@ -170,6 +175,7 @@ fun ChannelStripFull(
     gain: Float, 
     vol: Float, 
     color: Color, 
+    onGainChange: (Float)->Unit, // ✅ ADDED PARAMETER
     onVolChange: (Float)->Unit,
     gainKey: String,
     volKey: String
@@ -183,13 +189,13 @@ fun ChannelStripFull(
     ) {
         NativeKnob(
             value = gain,
-            onValueChange = {}, 
+            onValueChange = onGainChange, // ✅ PASSED FUNCTION INSTEAD OF EMPTY {}
             label = "INPUT GAIN",
             unit = "dB",
             minValue = -50f,
             maxValue = 50f,
             modifier = Modifier.size(160.dp),
-            uniqueKey = gainKey // ✅ PASS UNIQUE KEY
+            uniqueKey = gainKey
         )
         
         Spacer(modifier = Modifier.height(48.dp)) 
@@ -202,7 +208,7 @@ fun ChannelStripFull(
             minValue = 0f,
             maxValue = 100f,
             modifier = Modifier.size(160.dp),
-            uniqueKey = volKey // ✅ PASS UNIQUE KEY
+            uniqueKey = volKey
         )
     }
 }
