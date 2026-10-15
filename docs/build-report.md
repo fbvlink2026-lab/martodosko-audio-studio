@@ -3,8 +3,8 @@
 > Created & Developed by MartoDosko © Copyright 2026
 
 ---
-📅 **Petsa:** 2026-10-15 04:53 UTC
-🏷️ **Bersyon:** v1.0.360
+📅 **Petsa:** 2026-10-15 06:18 UTC
+🏷️ **Bersyon:** v1.0.361
 🔑 **Pinirma:** Opisyal — Walang 'Install Anyway'!
 ---
 
@@ -12,15 +12,15 @@
 📦 APLIKASYON: Martodosko Audio Studio
 🔑 PINIRMA:    OPISYAL — WALANG 'Install Anyway'!
 📂 LOKASYON:   app/build/outputs/apk/release
-⏰ ORAS:       2026-10-15 04:53:59 UTC
-🏷️ BERSYON:    v1.0.360
+⏰ ORAS:       2026-10-15 06:18:59 UTC
+🏷️ BERSYON:    v1.0.361
 ==================================================
 
 ✅ TAGUMPAY — NABUO ANG APK NA MAY OPISYAL NA PINIRMA!
 📂 APK Daan:   app/build/outputs/apk/release/app-release.apk
 📏 Laki:       4.2M
 📤 Kopyahin sa docs/...
-✅ Nasa: docs/Martodosko-Studio-v1.0.360.apk
+✅ Nasa: docs/Martodosko-Studio-v1.0.361.apk
 
 🎉 WALANG 'Install Anyway'! WALANG CONFLICT! KUSANG PAPALITAN NA!
 
@@ -48,8 +48,8 @@ Daemon will be stopped at the end of the build
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preReleaseBuild UP-TO-DATE
 > Task :app:generateReleaseBuildConfig
-> Task :app:checkReleaseAarMetadata
 > Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
@@ -62,15 +62,17 @@ Daemon will be stopped at the end of the build
 > Task :app:extractProguardFiles
 > Task :app:javaPreCompileRelease
 > Task :app:mergeReleaseJniLibFolders
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseNativeLibs NO-SOURCE
 > Task :app:stripReleaseDebugSymbols NO-SOURCE
 > Task :app:extractReleaseNativeSymbolTables NO-SOURCE
 > Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:processReleaseResources
 > Task :app:checkReleaseDuplicateClasses
-> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseArtProfile
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
 > Task :app:processApplicationManifestReleaseForBundle
@@ -79,8 +81,6 @@ Daemon will be stopped at the end of the build
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:processReleaseManifestForPackage
-> Task :app:processReleaseResources
 > Task :app:bundleReleaseResources
 > Task :app:kspReleaseKotlin
 
@@ -118,7 +118,7 @@ Supplied proguard configuration does not exist: /home/runner/work/martodosko-aud
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
 
-BUILD SUCCESSFUL in 4m 4s
+BUILD SUCCESSFUL in 3m 42s
 52 actionable tasks: 50 executed, 2 up-to-date
 
 ==================================================
