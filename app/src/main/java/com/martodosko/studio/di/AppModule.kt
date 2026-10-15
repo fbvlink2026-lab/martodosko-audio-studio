@@ -1,15 +1,10 @@
-// ==================================================
-// FILE: AppModule.kt
-// VERSION: v2.3.0-phase2-step1-fix
-// PURPOSE: Provides Core Dependencies (AudioStateManager)
-// NOTE: Must be in 'com.martodosko.studio.di' package for Hilt discovery.
-// ==================================================
-package com.martodosko.studio.di // ✅ CRITICAL: Package must match folder structure exactly
-
+// Inside AppModule.kt
+import android.content.Context
 import com.martodosko.studio.data.audio.AudioStateManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,7 +14,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAudioStateManager(): AudioStateManager {
-        return AudioStateManager()
+    fun provideAudioStateManager(@ApplicationContext context: Context): AudioStateManager {
+        return AudioStateManager(context)
     }
 }
