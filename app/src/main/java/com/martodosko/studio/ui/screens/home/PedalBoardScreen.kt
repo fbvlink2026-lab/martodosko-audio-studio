@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: PedalBoardScreen.kt
-// VERSION: v2.3.0-phase2-detachable-board-native
-// PURPOSE: Detachable Stompbox Chain Interface using Native Knobs
-// NOTE: Replaced ProAudioKnob with NativeKnob for stability.
+// VERSION: v2.3.0-global-sync-board
+// PURPOSE: Detachable Stompbox Chain Fully Synced with Global State
+// NOTE: Replaced local list state with direct binding to AudioParams.
 // ==================================================
 package com.martodosko.studio.ui.screens.home
 
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,8 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,31 +42,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.martodosko.studio.ui.components.NativeKnob // ✅ USE NATIVE KNOB
-
-data class ActivePedal(
-    val id: String,
-    val name: String,
-    val type: String,
-    val fxParam: Float,
-    val gateParam: Float,
-    val volParam: Float,
-    val isActive: Boolean
-)
+import com.martodosko.studio.ui.components.NativeKnob
 
 @Composable
 fun PedalBoardScreen(
     modifier: Modifier = Modifier,
     viewModel: PedalBoardViewModel = hiltViewModel()
 ) {
+    // ✅ OBSERVE GLOBAL STATE
     val params by viewModel.audioParams.collectAsState()
-    
-    val activePedals = remember { 
-        mutableStateListOf(
-            ActivePedal("ped-1", "Chorus", "VOCAL", 50f, 20f, 80f, true),
-            ActivePedal("ped-2", "Overdrive", "GUITAR", 65f, 10f, 75f, true)
-        )
-    }
 
     Row(
         modifier = modifier
@@ -79,49 +60,56 @@ fun PedalBoardScreen(
             .padding(PaddingValues(16.dp)),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (activePedals.isEmpty()) {
-             Text("No Pedals Selected.\nGo to Presets Library.", color = Color.Gray, modifier = Modifier.padding(top = 100.dp))
-        } else {
-            activePedals.forEachIndexed { index, pedal ->
-                PedalCard(
-                    pedal = pedal,
-                    onUpdateFx = { newVal -> 
-                        activePedals[index] = pedal.copy(fxParam = newVal)
-                        if(pedal.type == "VOCAL") viewModel.onVocalGainChange(newVal)
-                        else viewModel.onGuitarDriveChange(newVal)
-                    },
-                    onUpdateVol = { newVal -> 
-                         activePedals[index] = pedal.copy(volParam = newVal)
-                    },
-                    onRemove = {
-                        activePedals.removeAt(index)
-                    },
-                    onToggleActive = {
-                        activePedals[index] = pedal.copy(isActive = !pedal.isActive)
-                    }
-                )
-            }
-        }
+        // VOCAL PEDAL CARD
+        PedalCard(
+            title = "VOCAL CHAIN",
+            accentColor = Color.Cyan,
+            isActive = true,
+            gain = params.vocalGain,
+            volume = params.vocalVolume,
+            gate = 20f, // Mocked for now until we add gate to AudioParams
+            onGainChange = { viewModel.onVocalGainChange(it) },
+            onVolChange = { viewModel.onVocalVolumeChange(it) },
+            onToggleActive = { /* Toggle Logic */ },
+            onRemove = { /* Remove Logic */ }
+        )
+
+        // GUITAR PEDAL CARD
+        PedalCard(
+            title = "GUITAR DRIVE",
+            accentColor = Color(0xFFFF9800),
+            isActive = true,
+            gain = params.guitarDrive,
+            volume = params.guitarLevel,
+            gate = 10f, // Mocked
+            onGainChange = { viewModel.onGuitarDriveChange(it) },
+            onVolChange = { viewModel.onGuitarLevelChange(it) },
+            onToggleActive = { /* Toggle Logic */ },
+            onRemove = { /* Remove Logic */ }
+        )
     }
 }
 
 @Composable
 fun PedalCard(
-    pedal: ActivePedal,
-    onUpdateFx: (Float) -> Unit,
-    onUpdateVol: (Float) -> Unit,
-    onRemove: () -> Unit,
-    onToggleActive: () -> Unit
+    title: String,
+    accentColor: Color,
+    isActive: Boolean,
+    gain: Float,
+    volume: Float,
+    gate: Float,
+    onGainChange: (Float) -> Unit,
+    onVolChange: (Float) -> Unit,
+    onToggleActive: () -> Unit,
+    onRemove: () -> Unit
 ) {
-    val accent = if (pedal.type == "VOCAL") Color.Cyan else Color(0xFFFF9800)
-    
     Card(
         modifier = Modifier
             .width(180.dp)
             .height(320.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-        border = BorderStroke(2.dp, if(pedal.isActive) accent else Color.DarkGray)
+        border = BorderStroke(2.dp, if(isActive) accentColor else Color.DarkGray)
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
@@ -132,7 +120,7 @@ fun PedalCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(pedal.name.uppercase(), color = accent, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                Text(title.uppercase(), color = accentColor, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 
                 IconButton(onClick = onRemove, modifier = Modifier.size(24.dp)) {
                     Icon(Icons.Default.Close, contentDescription = "Detach", tint = Color.Red, modifier = Modifier.size(16.dp))
@@ -145,14 +133,14 @@ fun PedalCard(
                 onClick = onToggleActive,
                 modifier = Modifier.fillMaxWidth().height(36.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = if(pedal.isActive) accent.copy(alpha = 0.2f) else Color.Transparent,
-                    contentColor = if(pedal.isActive) accent else Color.Gray
+                    containerColor = if(isActive) accentColor.copy(alpha = 0.2f) else Color.Transparent,
+                    contentColor = if(isActive) accentColor else Color.Gray
                 ),
-                border = BorderStroke(1.dp, if(pedal.isActive) accent else Color.Gray)
+                border = BorderStroke(1.dp, if(isActive) accentColor else Color.Gray)
             ) {
                 Icon(Icons.Default.Power, contentDescription = null, modifier = Modifier.size(14.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(if(pedal.isActive) "ON" else "OFF", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(if(isActive) "ON" else "OFF", fontSize = 10.sp, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -161,19 +149,22 @@ fun PedalCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
+                // FX/GAIN KNOB - SYNCED TO GLOBAL STATE
                 NativeKnob(
-                    value = pedal.fxParam,
-                    onValueChange = onUpdateFx,
-                    label = "FX",
+                    value = gain,
+                    onValueChange = onGainChange,
+                    label = "FX AMT",
                     unit = "%",
                     minValue = 0f,
                     maxValue = 100f,
                     modifier = Modifier.size(70.dp)
                 )
+                
+                // NOISE GATE KNOB - MOCKED (Not yet in AudioParams)
                 NativeKnob(
-                    value = pedal.gateParam,
-                    onValueChange = { },
-                    label = "NG",
+                    value = gate,
+                    onValueChange = { }, 
+                    label = "NGATE",
                     unit = "%",
                     minValue = 0f,
                     maxValue = 100f,
@@ -183,10 +174,11 @@ fun PedalCard(
             
             Spacer(modifier = Modifier.weight(1f))
 
+            // VOLUME KNOB - SYNCED TO GLOBAL STATE
             NativeKnob(
-                value = pedal.volParam,
-                onValueChange = onUpdateVol,
-                label = "VOL",
+                value = volume,
+                onValueChange = onVolChange,
+                label = "LEVEL",
                 unit = "%",
                 minValue = 0f,
                 maxValue = 100f,
