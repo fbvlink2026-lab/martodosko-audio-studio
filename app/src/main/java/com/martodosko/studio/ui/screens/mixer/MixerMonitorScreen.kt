@@ -1,6 +1,6 @@
 // ==================================================
 // FILE: MixerMonitorScreen.kt
-// VERSION: v2.3.0-phase2-mixer-unique-keys
+// VERSION: v2.3.0-phase2-mixer-unique-keys-final
 // PURPOSE: Dual Channel Mixer with Independent State Persistence
 // NOTE: Passed uniqueKeys to NativeKnob to fix "Gain Not Remembered" issue.
 // ==================================================
