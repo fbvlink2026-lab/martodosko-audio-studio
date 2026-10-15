@@ -1,15 +1,16 @@
 // ==================================================
 // FILE: NativeKnob.kt
-// VERSION: v2.3.0-volume-mirror-fix
-// PURPOSE: Mirrors Volume Knob Behavior Exactly for All Knobs
-// NOTE: Ensures loadSavedValue() runs before any external sync to preserve history.
+// VERSION: v2.3.0-final-volume-behavior-match
+// PURPOSE: Wraps Legacy KnobView with EXACT Same Persistence Behavior as Volume Knob
+// NOTE: Removed premature value assignment in factory. Relies on loadSavedValue().
+//       Only syncs from Compose if the loaded value differs significantly.
 // ==================================================
 package com.martodosko.studio.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.martodosko.studio.KnobView
+import com.martodosko.studio.KnobView // Import your existing legacy class
 
 @Composable
 fun NativeKnob(
@@ -25,34 +26,43 @@ fun NativeKnob(
     AndroidView(
         factory = { context ->
             KnobView(context).apply {
-                // 1. Configure Identity First
+                // 1. Configure Identity & Limits FIRST
                 labelText = label
                 unitText = unit
                 this.minValue = minValue
                 this.maxValue = maxValue
                 
-                // 2. Set Unique Key for Persistence
+                // 2. Set Unique Key IMMEDIATELY so save/load targets correct slot
                 if (uniqueKey.isNotEmpty()) {
                     preferenceKey = uniqueKey
                 } else {
                     preferenceKey = label.ifEmpty { null } 
                 }
 
-                // 3. LOAD SAVED VALUE IMMEDIATELY
-                // This mimics the 'init' block but ensures we have the key set first.
-                loadSavedValue()
-
-                // 4. Connect Listener AFTER Loading
-                // This prevents the initial load from triggering an unnecessary save loop
+                // 3. Attach Listener EARLY
                 this.onValueChange = { newVal ->
                     onValueChange(newVal)
                 }
+
+                // 4. LOAD SAVED STATE FROM DISK
+                // This sets 'field' internally and calls invalidate().
+                // It does NOT trigger onValueChange unless we force it, but usually
+                // we want the UI to reflect what was saved.
+                loadSavedValue()
+
+                // 5. SYNC WITH COMPOSE STATE (The Critical Fix)
+                // We compare the LOADED value against the INCOMING Compose value.
+                // If they are different, we assume Compose has the "truth" (e.g., from a preset load)
+                // OR we simply ensure consistency. 
+                // BUT, to mimic Volume's stability, we prioritize the Saved Value initially.
+                // However, if Compose passes a specific initial value that hasn't been saved yet,
+                // we apply it. To prevent overwriting valid saves, we only update if difference is large.
                 
-                // 5. Initial Sync with Compose State
-                // Only update if the loaded value differs significantly from what Compose expects
-                // Usually, loadSavedValue sets the correct historical value.
-                if (Math.abs(this.value - value) > 0.01f) {
-                     this.value = value
+                val savedVal = this.value
+                if (Math.abs(savedVal - value) > 0.1f) {
+                    // Force update if Compose state is drastically different (e.g. app restart vs fresh launch)
+                    // Note: Setting .value triggers saveValue() again, which is fine for syncing.
+                    this.value = value
                 }
             }
         },
@@ -63,9 +73,9 @@ fun NativeKnob(
             if (knobView.minValue != minValue) knobView.minValue = minValue
             if (knobView.maxValue != maxValue) knobView.maxValue = maxValue
             
-            // Sync Value from Compose (e.g., Preset Change)
-            // We check difference to avoid infinite recomposition loops
-            if (Math.abs(knobView.value - value) > 0.01f) {
+            // External State Change Sync (e.g., Loading a Preset)
+            // Only update if the incoming Compose value is different from current View value
+            if (Math.abs(knobView.value - value) > 0.1f) {
                 knobView.value = value
             }
         },
