@@ -1,0 +1,100 @@
+/* ==================================================
+// FILE: theme.css
+// VERSION: v2.4.0-proto-theme
+// PURPOSE: Global Design Tokens & Theme Configuration
+// NOTE: Defines the "Neon Industrial" color palette and base styles.
+// ================================================== */
+
+:root {
+    /* --- COLOR PALETTE (Matching KnobView.kt) --- */
+    --bg-app: #081218;          /* Deep Black-Blue Background */
+    --bg-panel: #12232E;        /* Panel/Card Background */
+    --bg-knob-body: #081218;    /* Knob Circle Fill */
+    
+    --accent-primary: #40E0D0;  /* Cyan / Turquoise Glow */
+    --accent-secondary: #FF9800;/* Orange for Guitar/Warnings */
+    --accent-active: #8AF0E0;   /* Brighter Cyan for Active States */
+    
+    --text-main: #B8DDE6;       /* Light Blue-Grey Text */
+    --text-muted: #5A7A8A;      /* Dimmed Text */
+    --text-danger: #FF5252;     /* Red for Errors/Delete */
+    
+    --border-color: #2A3F4C;    /* Subtle Borders */
+    
+    /* --- SPACING & SIZING --- */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    /* --- TYPOGRAPHY --- */
+    --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+}
+
+/* --- RESETS & BASE STYLES --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent; /* Remove blue tap highlight on Android Chrome */
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    line-height: 1.5;
+    overflow-x: hidden;
+    height: 100vh;
+    width: 100vw;
+    user-select: none; /* Prevent text selection during knob dragging */
+}
+
+h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+}
+
+input, select {
+    font-family: inherit;
+    outline: none;
+}
+
+/* --- UTILITY CLASSES --- */
+.hidden { display: none !important; }
+.visible { display: block !important; }
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.text-accent { color: var(--accent-primary); }
+.text-muted { color: var(--text-muted); }
+.badge {
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.badge.guest { background-color: #333; color: #aaa; }
+.badge.member { background-color: var(--accent-primary); color: #000; }
