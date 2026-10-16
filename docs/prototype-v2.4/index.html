@@ -37,15 +37,17 @@
                     <div class="mixer-strip">
                         <h3>VOCAL CHANNEL</h3>
                         
+                        <!-- REPLACED SLIDER WITH KNOB CANVAS -->
                         <div class="mixer-param">
                             <label>INPUT GAIN (Synced with Board FX)</label>
-                            <input type="range" id="input-mixer-vocal-gain" min="0" max="100" value="50" style="width:100%;">
+                            <canvas id="knob-mixer-vocal-gain" width="80" height="80" class="knob-canvas-board"></canvas>
                             <span class="value-display" id="display-mixer-vocal-gain">50%</span>
                         </div>
                         
+                        <!-- REPLACED SLIDER WITH KNOB CANVAS -->
                         <div class="mixer-param">
                             <label>OUTPUT VOL (Synced with Board VOL)</label>
-                            <input type="range" id="slider-mixer-vocal-vol" min="0" max="100" value="80" style="width:100%;">
+                            <canvas id="knob-mixer-vocal-vol" width="100" height="100" class="knob-canvas-large"></canvas>
                             <span class="value-display" id="display-mixer-vocal-vol">80%</span>
                         </div>
                     </div>
@@ -54,15 +56,17 @@
                     <div class="mixer-strip" style="border-color:#FF9800;">
                         <h3>GUITAR CHANNEL</h3>
                         
+                        <!-- REPLACED SLIDER WITH KNOB CANVAS -->
                         <div class="mixer-param">
                             <label>DRIVE AMOUNT (Synced with Board Drive)</label>
-                            <input type="range" id="input-mixer-guitar-drive" min="0" max="100" value="65" style="width:100%;">
+                            <canvas id="knob-mixer-guitar-drive" width="80" height="80" class="knob-canvas-board"></canvas>
                             <span class="value-display" id="display-mixer-guitar-drive">65%</span>
                         </div>
                         
+                        <!-- REPLACED SLIDER WITH KNOB CANVAS -->
                         <div class="mixer-param">
                             <label>LEVEL (Synced with Board Level)</label>
-                            <input type="range" id="slider-mixer-guitar-level" min="0" max="100" value="75" style="width:100%;">
+                            <canvas id="knob-mixer-guitar-level" width="100" height="100" class="knob-canvas-large"></canvas>
                             <span class="value-display" id="display-mixer-guitar-level">75%</span>
                         </div>
                     </div>
@@ -200,7 +204,6 @@
     </div>
 
     <!-- JAVASCRIPT FILES -->
-    <!-- ORDER MATTERS: Core -> Storage -> Components -> Navigation -> Controllers -> Libs -> App -->
     <script src="./assets/js/core.js"></script>
     <script src="./assets/js/storage.js"></script>
     <script src="./assets/js/components/knob.js"></script>
