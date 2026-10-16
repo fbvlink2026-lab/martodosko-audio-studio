@@ -1,12 +1,14 @@
 // ==================================================
 // FILE: core.js
-// VERSION: v2.4.0-proto-core
+// VERSION: v2.4.0-FIX-RACE-CONDITION
 // PURPOSE: Centralized Reactive State Management (AudioEngine)
-// NOTE: Implements Pub/Sub pattern for Bidirectional Sync between Board & Mixer.
+// NOTE: Ensures instance is created immediately upon script load.
 // ==================================================
 
 class AudioEngine {
     constructor() {
+        console.log("🏗️ [CORE] Constructing AudioEngine...");
+        
         // --- INITIAL STATE DEFINITION ---
         this.state = {
             activeTab: 'board', 
@@ -36,12 +38,11 @@ class AudioEngine {
         
         // Initialize persistence on load
         this.loadSession();
-        console.log("✅ AudioEngine Initialized.");
+        console.log("✅ [CORE] AudioEngine Instance Ready.");
     }
 
     /**
      * SUBSCRIBE: Allows UI components to listen for state changes.
-     * @param {Function} callback - Function to execute when state updates.
      */
     subscribe(callback) {
         if (typeof callback === 'function') {
@@ -51,49 +52,46 @@ class AudioEngine {
 
     /**
      * NOTIFY: Triggers all listeners and saves current session.
-     * This is the heart of the Bidirectional Sync.
      */
     notify() {
-        this.saveSession(); // Auto-persist to LocalStorage
+        this.saveSession(); 
         this.listeners.forEach(listener => listener(this.state));
     }
 
     /**
      * UPDATE PARAMETER: Generic setter for any channel parameter.
-     * @param {string} channel - 'vocal' or 'guitar'
-     * @param {string} param - Property name (e.g., 'fxIntensity', 'volume')
-     * @param {number|string|boolean} value - New value
      */
     updateParam(channel, param, value) {
-        if (this.state[channel] && typeof this.state[channel][param] !== 'undefined') {
-            // Ensure numeric values are floats
+        // SAFETY CHECK: Ensure channel exists before updating
+        if (!this.state[channel]) {
+            console.error(`❌ [CORE ERROR] Channel '${channel}' does not exist in state!`);
+            return;
+        }
+        
+        if (typeof this.state[channel][param] !== 'undefined') {
             if (typeof this.state[channel][param] === 'number') {
                 this.state[channel][param] = parseFloat(value);
             } else {
                 this.state[channel][param] = value;
             }
             
-            console.log(`🔄 Updated: ${channel}.${param} -> ${value}`);
+            console.log(`🔄 [CORE] Updated: ${channel}.${param} -> ${value}`);
             this.notify();
         }
     }
 
     /**
-     * TOGGLE POWER: Specifically handles the On/Off switch logic.
-     * @param {string} channel - 'vocal' or 'guitar'
+     * TOGGLE POWER
      */
     togglePower(channel) {
-        if (this.state[channel]) {
-            this.state[channel].power = !this.state[channel].power;
-            console.log(`⚡ Power Toggle: ${channel} -> ${this.state[channel].power ? 'ON' : 'OFF'}`);
-            this.notify();
-        }
+        if (!this.state[channel]) return;
+        this.state[channel].power = !this.state[channel].power;
+        console.log(`⚡ [CORE] Power Toggle: ${channel} -> ${this.state[channel].power ? 'ON' : 'OFF'}`);
+        this.notify();
     }
 
     /**
      * SAVE CURRENT STATE AS PRESET
-     * Captures the entire vocal/guitar config into a named object.
-     * @param {string} name - User-defined preset name.
      */
     saveCurrentAsPreset(name) {
         const timestamp = Date.now();
@@ -109,45 +107,32 @@ class AudioEngine {
             }
         };
         
-        // Add to top of list
         this.state.presets.unshift(newPreset);
-        
-        // Persist presets separately from session
         this.savePresetsToDisk();
-        
-        // Notify UI to refresh Library list
         this.notify();
-        
         alert(`💾 Saved: "${newPreset.name}"\nVisible as: ${newPreset.visibility}`);
     }
 
     /**
      * LOAD PRESET INTO ACTIVE STATE
-     * Overwrites current Board/Mixer values with saved preset data.
-     * @param {string} presetId - The ID of the preset to load.
      */
     loadPreset(presetId) {
         const preset = this.state.presets.find(p => p.id === presetId);
         if (!preset) {
-            console.warn("❌ Preset not found:", presetId);
+            console.warn("❌ [CORE WARN] Preset not found:", presetId);
             return;
         }
 
-        // Deep copy config to state
         this.state.vocal = { ...preset.config.vocal };
         this.state.guitar = { ...preset.config.guitar };
         
-        console.log(`📂 Loaded Preset: ${preset.name}`);
-        
-        // Trigger full UI refresh
+        console.log(`📂 [CORE] Loaded Preset: ${preset.name}`);
         this.notify();
-        
         alert(`✨ Applied: "${preset.name}"\nBoard & Mixer synced.`);
     }
 
     /**
      * DELETE PRESET
-     * @param {string} presetId 
      */
     deletePreset(presetId) {
         const index = this.state.presets.findIndex(p => p.id === presetId);
@@ -159,15 +144,15 @@ class AudioEngine {
     }
 
     /**
-     * SWITCH USER ROLE (For Testing Access Control)
+     * SWITCH USER ROLE
      */
     toggleUserRole() {
         this.state.userRole = this.state.userRole === 'guest' ? 'member' : 'guest';
-        console.log(`👤 Role Changed: ${this.state.userRole.toUpperCase()}`);
+        console.log(`👤 [CORE] Role Changed: ${this.state.userRole.toUpperCase()}`);
         this.notify();
     }
 
-    // --- PERSISTENCE HELPERS (LocalStorage) ---
+    // --- PERSISTENCE HELPERS ---
 
     saveSession() {
         try {
@@ -178,7 +163,7 @@ class AudioEngine {
             };
             localStorage.setItem('martodosko_session', JSON.stringify(sessionData));
         } catch (e) {
-            console.error("Failed to save session:", e);
+            console.error("[CORE] Failed to save session:", e);
         }
     }
 
@@ -187,9 +172,10 @@ class AudioEngine {
             const saved = localStorage.getItem('martodosko_session');
             if (saved) {
                 const data = JSON.parse(saved);
-                this.state.vocal = data.vocal || this.state.vocal;
-                this.state.guitar = data.guitar || this.state.guitar;
-                this.state.userRole = data.userRole || 'guest';
+                // Merge carefully to avoid losing structure if keys are missing
+                if(data.vocal) this.state.vocal = { ...this.state.vocal, ...data.vocal };
+                if(data.guitar) this.state.guitar = { ...this.state.guitar, ...data.guitar };
+                if(data.userRole) this.state.userRole = data.userRole;
             }
             
             const savedPresets = localStorage.getItem('martodosko_presets');
@@ -197,7 +183,7 @@ class AudioEngine {
                 this.state.presets = JSON.parse(savedPresets);
             }
         } catch (e) {
-            console.error("Failed to load session:", e);
+            console.error("[CORE] Failed to load session:", e);
         }
     }
 
@@ -205,10 +191,11 @@ class AudioEngine {
         try {
             localStorage.setItem('martodosko_presets', JSON.stringify(this.state.presets));
         } catch (e) {
-            console.error("Failed to save presets:", e);
+            console.error("[CORE] Failed to save presets:", e);
         }
     }
 }
 
-// Export Singleton Instance to Global Scope
+// EXPORT SINGLETON IMMEDIATELY
 window.AudioEngine = new AudioEngine();
+console.log("🚀 [BOOTSTRAP] Window.AudioEngine assigned.");
