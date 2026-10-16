@@ -1,8 +1,8 @@
 /* ==================================================
 // FILE: layout.css
-// VERSION: v2.4.0-proto-layout
+// VERSION: v2.4.0-proto-layout-knob-fix
 // PURPOSE: Structural Layouts for App Shell, Nav, and Screens
-// NOTE: Implements the Bottom Navigation and Screen Containers.
+// NOTE: Adjusted Mixer parameters to ensure Canvas visibility.
 // ================================================== */
 
 /* --- APP CONTAINER --- */
@@ -76,6 +76,7 @@
     width: 60px;
     color: var(--text-muted);
     transition: color 0.2s;
+    cursor: pointer;
 }
 
 .nav-item .icon {
@@ -115,6 +116,7 @@
     color: var(--text-muted);
     background: transparent;
     transition: all 0.2s;
+    cursor: pointer;
 }
 
 .channel-tab.active {
@@ -140,11 +142,25 @@
     gap: var(--spacing-md);
 }
 
+.mixer-strip h3 {
+    font-size: var(--font-size-md);
+    color: var(--text-main);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* CRITICAL FIX FOR KNOB VISIBILITY */
 .mixer-param {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
+    min-height: 140px; /* Ensure enough space for knob + label + value */
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
 }
 
 .mixer-param label {
@@ -152,6 +168,7 @@
     color: var(--text-muted);
     margin-bottom: var(--spacing-xs);
     text-transform: uppercase;
+    text-align: center;
 }
 
 .value-display {
@@ -271,12 +288,14 @@
     width: 80px;
     height: 80px;
     touch-action: none; /* Critical for preventing scroll while dragging */
+    display: block; /* Ensures no extra whitespace below canvas */
 }
 
 .knob-canvas-large {
     width: 100px;
     height: 100px;
     touch-action: none;
+    display: block;
 }
 
 /* --- LIBRARY SCREEN SPECIFICS --- */
@@ -301,6 +320,7 @@
     font-weight: bold;
     font-size: var(--font-size-sm);
     transition: all 0.2s;
+    cursor: pointer;
 }
 
 .action-btn.primary {
@@ -353,6 +373,7 @@
     border-radius: var(--radius-sm);
     font-size: var(--font-size-xs);
     font-weight: bold;
+    cursor: pointer;
 }
 
 /* --- SETTINGS & MORE --- */
@@ -386,6 +407,7 @@
     border-radius: var(--radius-md);
     text-align: center;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .menu-item.danger {
