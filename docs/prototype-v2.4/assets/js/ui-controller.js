@@ -1,12 +1,21 @@
 // ==================================================
 // FILE: ui-controller.js
-// VERSION: v2.4.0-proto-controller-knobs-only
-// PURPOSE: Initializes UI Components (All Knobs) and Establishes Bidirectional Sync
-// NOTE: Replaced Slider logic with RotaryKnob instances for consistency.
+// VERSION: v2.4.0-proto-controller-delayed-init
+// PURPOSE: Initializes UI Components with Safe Timing
+// NOTE: Uses setTimeout to ensure DOM is fully rendered before drawing canvases.
 // ==================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("🚀 Initializing UI Controller (Knob-Based)...");
+    console.log("🚀 Initializing UI Controller... Waiting for render...");
+
+    // DELAY INITIALIZATION BY 100ms TO ALLOW BROWSER TO RENDER LAYOUTS
+    setTimeout(() => {
+        initializeKnobsAndSync();
+    }, 100);
+});
+
+function initializeKnobsAndSync() {
+    console.log("✅ Starting Knob Initialization...");
 
     // --- 1. REGISTER BOARD KNOBS ---
     
@@ -35,12 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, '#FF9800');
 
 
-    // --- 2. REGISTER MIXER KNOBS (NEW) ---
+    // --- 2. REGISTER MIXER KNOBS ---
     // These are the counterparts to the Board knobs. They share the same State Keys.
 
     const mixerVocalGain = new RotaryKnob('knob-mixer-vocal-gain', 0, 100, AudioEngine.state.vocal.fxIntensity, (val) => {
-        // When Mixer Gain changes, update Global State. 
-        // The subscriber below will then update the Board knob visually.
         AudioEngine.updateParam('vocal', 'fxIntensity', val);
     }, '#40E0D0');
 
@@ -76,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     AudioEngine.subscribe((state) => {
         
         // UPDATE BOARD VISUALS
-        boardVocalFx.setValue(state.vocal.fxIntensity, false); // false = don't trigger callback loop
+        boardVocalFx.setValue(state.vocal.fxIntensity, false); 
         boardVocalNg.setValue(state.vocal.noiseGate, false);
         boardVocalVol.setValue(state.vocal.volume, false);
         
@@ -84,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         boardGuitarNg.setValue(state.guitar.noiseGate, false);
         boardGuitarLevel.setValue(state.guitar.level, false);
 
-        // UPDATE MIXER VISUALS (CRITICAL FOR BIDIRECTIONAL SYNC)
+        // UPDATE MIXER VISUALS
         mixerVocalGain.setValue(state.vocal.fxIntensity, false);
         mixerVocalVol.setValue(state.vocal.volume, false);
         
@@ -125,4 +132,4 @@ document.addEventListener('DOMContentLoaded', () => {
     AudioEngine.notify(); 
     
     console.log("✅ UI Controller Ready. Full Knob Sync Active.");
-});
+}
