@@ -1,0 +1,394 @@
+/* ==================================================
+// FILE: layout.css
+// VERSION: v2.4.0-proto-layout
+// PURPOSE: Structural Layouts for App Shell, Nav, and Screens
+// NOTE: Implements the Bottom Navigation and Screen Containers.
+// ================================================== */
+
+/* --- APP CONTAINER --- */
+#app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 600px; /* Limit width on desktop for phone-like feel */
+    margin: 0 auto;
+    background-color: var(--bg-app);
+    position: relative;
+}
+
+/* --- HEADER --- */
+.app-header {
+    padding: var(--spacing-md);
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.app-header h1 {
+    font-size: var(--font-size-lg);
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px rgba(64, 224, 208, 0.3);
+}
+
+/* --- MAIN CONTENT AREA --- */
+#content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 70px; /* Space for bottom nav */
+    position: relative;
+}
+
+.screen-section {
+    padding: var(--spacing-md);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- BOTTOM NAVIGATION BAR --- */
+#bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--bg-panel);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: var(--spacing-sm) 0;
+    z-index: 100;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+
+.nav-item .icon {
+    font-size: 20px;
+    margin-bottom: 2px;
+}
+
+.nav-item .label {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.nav-item.active {
+    color: var(--accent-primary);
+}
+
+.nav-item.active .icon {
+    filter: drop-shadow(0 0 5px var(--accent-primary));
+}
+
+/* --- MIXER SCREEN SPECIFICS --- */
+.tab-bar-inner {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    background: var(--bg-panel);
+    padding: 4px;
+    border-radius: var(--radius-md);
+}
+
+.channel-tab {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    color: var(--text-muted);
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.channel-tab.active {
+    background: var(--accent-primary);
+    color: #000;
+    box-shadow: 0 0 10px rgba(64, 224, 208, 0.4);
+}
+
+#mixer-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.mixer-strip {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.mixer-param {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.mixer-param label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+}
+
+.value-display {
+    font-size: var(--font-size-md);
+    font-weight: bold;
+    color: var(--accent-primary);
+    margin-top: var(--spacing-xs);
+}
+
+/* --- PEDAL BOARD SCREEN SPECIFICS --- */
+.board-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column stack on mobile */
+    gap: var(--spacing-lg);
+}
+
+@media (min-width: 500px) {
+    .board-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns on wider screens */
+    }
+}
+
+.pedal-card {
+    background: linear-gradient(145deg, #1a2f3d, #0d1b24);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pedal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: var(--accent-primary);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    opacity: 0.7;
+}
+
+.card-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.card-title {
+    font-size: var(--font-size-lg);
+    font-weight: bold;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.power-switch {
+    width: 40px;
+    height: 20px;
+    background: #333;
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.power-switch.on {
+    background: var(--accent-primary);
+    box-shadow: 0 0 8px var(--accent-primary);
+}
+
+.power-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.power-switch.on::after {
+    transform: translateX(20px);
+}
+
+.controls-row {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: var(--spacing-md);
+}
+
+.control-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.control-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Canvas sizing for knobs in Board */
+.knob-canvas-board {
+    width: 80px;
+    height: 80px;
+    touch-action: none; /* Critical for preventing scroll while dragging */
+}
+
+.knob-canvas-large {
+    width: 100px;
+    height: 100px;
+    touch-action: none;
+}
+
+/* --- LIBRARY SCREEN SPECIFICS --- */
+.library-header {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+#preset-search {
+    flex: 1;
+    padding: var(--spacing-sm);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+}
+
+.action-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s;
+}
+
+.action-btn.primary {
+    background: var(--accent-primary);
+    color: #000;
+}
+
+.action-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.scrollable-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.preset-item {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.preset-item:hover {
+    border-color: var(--accent-primary);
+}
+
+.preset-info h4 {
+    font-size: var(--font-size-md);
+    color: var(--text-main);
+}
+
+.preset-meta {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.btn-load {
+    background: var(--accent-secondary);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+}
+
+/* --- SETTINGS & MORE --- */
+.settings-group {
+    background: var(--bg-panel);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.menu-item {
+    display: block;
+    padding: var(--spacing-md);
+    background: var(--bg-panel);
+    color: var(--text-main);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-weight: bold;
+}
+
+.menu-item.danger {
+    color: var(--text-danger);
+    border: 1px solid var(--text-danger);
+}
