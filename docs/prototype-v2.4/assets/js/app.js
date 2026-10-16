@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: app.js
-// VERSION: v2.4.0-proto-app-boot
-// PURPOSE: Application Bootstrap & Global Utilities
-// NOTE: Handles Settings interactions and final initialization checks.
+// VERSION: v2.4.0-proto-app-boot-fixed
+// PURPOSE: Application Bootstrap, Settings, and Mixer Tabs
+// NOTE: Removed duplicate navigation logic. Fixed channel tab switching.
 // ==================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,20 +29,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- MIXER TAB SWITCHING LOGIC (Visual Only for Prototype) ---
-    // In a full app, this might hide/show specific strips. 
-    // Here we just toggle active classes for demonstration.
     const channelTabs = document.querySelectorAll('.channel-tab');
+    
     channelTabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Remove active from all tabs
+            // Remove active class from ALL channel tabs
             channelTabs.forEach(t => t.classList.remove('active'));
-            // Add active to clicked
+            
+            // Add active class to CLICKED tab
             tab.classList.add('active');
             
-            // Optional: Scroll to relevant strip if needed
+            // Get the target channel name (e.g., 'vocal' or 'guitar')
             const targetChannel = tab.getAttribute('data-channel');
-            const strip = document.querySelector(`.mixer-strip h3:contains('${targetChannel}')`)?.closest('.mixer-strip');
-            if(strip) strip.scrollIntoView({ behavior: 'smooth' });
+            
+            // Find the corresponding mixer strip and scroll to it
+            // We use a more robust way than :contains()
+            const strips = document.querySelectorAll('.mixer-strip h3');
+            strips.forEach(h3 => {
+                if (h3.innerText.toLowerCase().includes(targetChannel)) {
+                    const parentStrip = h3.closest('.mixer-strip');
+                    if (parentStrip) {
+                        parentStrip.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        
+                        // Highlight effect
+                        parentStrip.style.borderColor = '#40E0D0';
+                        setTimeout(() => {
+                            parentStrip.style.borderColor = ''; // Reset border color after highlight
+                        }, 500);
+                    }
+                }
+            });
         });
     });
 
@@ -53,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("   - State Management: Active");
             console.log("   - Bidirectional Sync: Enabled");
             console.log("   - Persistence: LocalStorage");
+            console.log("   - Navigation: Functional");
         } else {
             console.error("❌ Critical Components Missing. Check Console for errors.");
         }
