@@ -1,8 +1,8 @@
 /* ==================================================
 // FILE: layout.css
-// VERSION: v2.4.0-proto-layout-knob-fix
-// PURPOSE: Structural Layouts for App Shell, Nav, and Screens
-// NOTE: Adjusted Mixer parameters to ensure Canvas visibility.
+// VERSION: v2.4.0-proto-layout-force-visible
+// PURPOSE: Structural Layouts with Forced Visibility Handling
+// NOTE: Uses opacity/pointer-events instead of display:none to keep DOM active for Canvas drawing.
 // ================================================== */
 
 /* --- APP CONTAINER --- */
@@ -10,10 +10,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-width: 600px; /* Limit width on desktop for phone-like feel */
+    max-width: 600px;
     margin: 0 auto;
     background-color: var(--bg-app);
     position: relative;
+    overflow: hidden; /* Prevent body scroll issues */
 }
 
 /* --- HEADER --- */
@@ -36,19 +37,38 @@
 /* --- MAIN CONTENT AREA --- */
 #content-area {
     flex: 1;
-    overflow-y: auto;
-    padding-bottom: 70px; /* Space for bottom nav */
     position: relative;
+    overflow-y: auto;
+    padding-bottom: 70px; 
 }
 
+/* CRITICAL CHANGE: Use absolute positioning for screens to stack them */
 .screen-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: calc(100% - 70px); /* Subtract nav height */
     padding: var(--spacing-md);
-    animation: fadeIn 0.3s ease-in-out;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    pointer-events: none; /* Disable clicks when hidden */
+    z-index: 1;
+    background-color: var(--bg-app); /* Ensure opaque background so layers don't show through */
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.screen-section.visible {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 5;
+    transform: translateY(0);
+}
+
+.screen-section.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    transform: translateY(10px);
 }
 
 /* --- BOTTOM NAVIGATION BAR --- */
@@ -77,6 +97,8 @@
     color: var(--text-muted);
     transition: color 0.2s;
     cursor: pointer;
+    background: none;
+    border: none;
 }
 
 .nav-item .icon {
@@ -117,6 +139,7 @@
     background: transparent;
     transition: all 0.2s;
     cursor: pointer;
+    border: none;
 }
 
 .channel-tab.active {
@@ -150,14 +173,13 @@
     letter-spacing: 1px;
 }
 
-/* CRITICAL FIX FOR KNOB VISIBILITY */
 .mixer-param {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 140px; /* Ensure enough space for knob + label + value */
+    min-height: 160px; /* Increased height for safety */
     background: rgba(0,0,0,0.2);
     border-radius: var(--radius-md);
     padding: var(--spacing-sm);
@@ -181,13 +203,13 @@
 /* --- PEDAL BOARD SCREEN SPECIFICS --- */
 .board-grid {
     display: grid;
-    grid-template-columns: 1fr; /* Single column stack on mobile */
+    grid-template-columns: 1fr;
     gap: var(--spacing-lg);
 }
 
 @media (min-width: 500px) {
     .board-grid {
-        grid-template-columns: 1fr 1fr; /* Two columns on wider screens */
+        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -198,7 +220,7 @@
     padding: var(--spacing-md);
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     position: relative;
-    min-height: 300px;
+    min-height: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -283,19 +305,21 @@
     font-weight: bold;
 }
 
-/* Canvas sizing for knobs in Board */
+/* CRITICAL: Force Canvas Size in CSS as backup */
 .knob-canvas-board {
-    width: 80px;
-    height: 80px;
-    touch-action: none; /* Critical for preventing scroll while dragging */
-    display: block; /* Ensures no extra whitespace below canvas */
+    width: 80px !important;
+    height: 80px !important;
+    touch-action: none;
+    display: block;
+    background-color: transparent; /* Let the drawn panel show */
 }
 
 .knob-canvas-large {
-    width: 100px;
-    height: 100px;
+    width: 100px !important;
+    height: 100px !important;
     touch-action: none;
     display: block;
+    background-color: transparent;
 }
 
 /* --- LIBRARY SCREEN SPECIFICS --- */
@@ -321,6 +345,7 @@
     font-size: var(--font-size-sm);
     transition: all 0.2s;
     cursor: pointer;
+    border: none;
 }
 
 .action-btn.primary {
@@ -374,6 +399,7 @@
     font-size: var(--font-size-xs);
     font-weight: bold;
     cursor: pointer;
+    border: none;
 }
 
 /* --- SETTINGS & MORE --- */
