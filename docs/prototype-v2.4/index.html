@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Martodosko Audio Studio - Prototype v2.4</title>
+    
+    <!-- CSS STYLESHEETS -->
+    <link rel="stylesheet" href="./assets/css/theme.css">
+    <link rel="stylesheet" href="./assets/css/layout.css">
+</head>
+<body>
+
+    <!-- APP CONTAINER -->
+    <div id="app-container">
+        
+        <!-- HEADER / TITLE BAR -->
+        <header class="app-header">
+            <h1>MARTODOSKO STUDIO</h1>
+            <span id="user-role-badge" class="badge guest">GUEST MODE</span>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <!-- Ang mga section na ito ay mag-o-overlap o mapapalitan depende sa active tab -->
+        <main id="content-area">
+            
+            <!-- 1. MIXER MONITOR SECTION -->
+            <section id="screen-mixer" class="screen-section hidden">
+                <div class="tab-bar-inner">
+                    <button class="channel-tab active" data-channel="vocal">VOCAL CH</button>
+                    <button class="channel-tab" data-channel="guitar">GUITAR CH</button>
+                </div>
+                
+                <!-- Dynamic Container for Mixer Controls -->
+                <div id="mixer-content-wrapper">
+                    <!-- Injected by ui-mixer.js -->
+                    <p>Loading Mixer...</p>
+                </div>
+            </section>
+
+            <!-- 2. PRESET LIBRARY SECTION -->
+            <section id="screen-library" class="screen-section hidden">
+                <div class="library-header">
+                    <input type="text" id="preset-search" placeholder="Search presets...">
+                    <button id="btn-save-current" class="action-btn primary">SAVE CURRENT STATE</button>
+                </div>
+                
+                <!-- List of Presets -->
+                <div id="preset-list-container" class="scrollable-list">
+                    <!-- Injected by ui-library.js -->
+                    <p>No presets found.</p>
+                </div>
+            </section>
+
+            <!-- 3. PEDAL BOARD SECTION (DEFAULT VIEW) -->
+            <section id="screen-board" class="screen-section visible">
+                <div class="board-grid">
+                    
+                    <!-- VOCAL CARD PLACEHOLDER -->
+                    <div id="card-vocal" class="pedal-card">
+                        <!-- Injected by ui-board.js -->
+                        <div class="loading-spinner"></div>
+                    </div>
+
+                    <!-- GUITAR CARD PLACEHOLDER -->
+                    <div id="card-guitar" class="pedal-card">
+                        <!-- Injected by ui-board.js -->
+                        <div class="loading-spinner"></div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 4. SETTINGS SECTION -->
+            <section id="screen-settings" class="screen-section hidden">
+                <div class="settings-group">
+                    <h3>AUDIO OUTPUT</h3>
+                    <div class="setting-item">
+                        <label>Buffer Size</label>
+                        <select id="buffer-size-select">
+                            <option value="64">64 Samples (Low Latency)</option>
+                            <option value="128">128 Samples</option>
+                            <option value="256">256 Samples (Stable)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h3>ACCOUNT</h3>
+                    <button id="btn-toggle-role" class="action-btn secondary">SWITCH TO MEMBER MODE (TEST)</button>
+                </div>
+            </section>
+
+            <!-- 5. MORE MENU SECTION -->
+            <section id="screen-more" class="screen-section hidden">
+                <div class="menu-list">
+                    <a href="#" class="menu-item">Clans & Community</a>
+                    <a href="#" class="menu-item">Help Center</a>
+                    <a href="#" class="menu-item danger">Logout</a>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <nav id="bottom-nav">
+            <button class="nav-item" data-target="screen-mixer">
+                <span class="icon">🎚️</span>
+                <span class="label">Mixer</span>
+            </button>
+            <button class="nav-item" data-target="screen-library">
+                <span class="icon">📋</span>
+                <span class="label">Presets</span>
+            </button>
+            <button class="nav-item active" data-target="screen-board">
+                <span class="icon">🎛️</span>
+                <span class="label">Board</span>
+            </button>
+            <button class="nav-item" data-target="screen-settings">
+                <span class="icon">⚙️</span>
+                <span class="label">Settings</span>
+            </button>
+            <button class="nav-item" data-target="screen-more">
+                <span class="icon">☰</span>
+                <span class="label">More</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- JAVASCRIPT FILES -->
+    <!-- ORDER MATTERS: Core first, then Components, then UI Logic -->
+    <script src="./assets/js/core.js"></script>
+    <script src="./assets/js/storage.js"></script>
+    <script src="./assets/js/components/knob.js"></script>
+    <script src="./assets/js/ui-controller.js"></script>
+    <script src="./assets/js/ui-mixer.js"></script>
+    <script src="./assets/js/ui-board.js"></script>
+    <script src="./assets/js/ui-library.js"></script>
+    <script src="./assets/js/app.js"></script>
+
+</body>
+</html>
