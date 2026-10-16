@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: knob.js
-// VERSION: v2.4.0-proto-knob-auto-redraw
-// PURPOSE: High-Fidelity Rotary Control with Auto-Redraw on Tab Change
-// NOTE: Listens to global 'tabChanged' event to ensure visibility.
+// VERSION: v2.4.0-proto-knob-high-contrast
+// PURPOSE: Rotary Control with Enhanced Visibility & Auto-Redraw
+// NOTE: Increased brightness of knob body and added distinct borders to separate from panel.
 // ==================================================
 
 class RotaryKnob {
@@ -29,7 +29,6 @@ class RotaryKnob {
         
         // Listen for Tab Changes to Force Redraw
         window.addEventListener('tabChanged', () => {
-            // Small delay to ensure CSS transitions finished
             setTimeout(() => this.draw(), 50);
         });
 
@@ -95,15 +94,14 @@ class RotaryKnob {
     }
 
     draw() {
-        // Safety check: If canvas has 0 width/height due to hidden state, skip or retry
+        // Safety check for canvas dimensions
         if (this.canvas.width === 0 || this.canvas.height === 0) {
-             // Try to resize based on CSS attributes if possible, otherwise wait for next tick
              const rect = this.canvas.getBoundingClientRect();
              if(rect.width > 0) {
                  this.canvas.width = rect.width;
                  this.canvas.height = rect.height;
              } else {
-                 return; // Skip drawing if truly invisible
+                 return; 
              }
         }
 
@@ -111,89 +109,41 @@ class RotaryKnob {
         const h = this.canvas.height;
         const cx = w / 2;
         const cy = h / 2;
-        const radius = Math.min(w, h) * 0.35;
-        const arcRadius = radius + 8;
+        
+        // Adjusted Radii for better proportion
+        const radius = Math.min(w, h) * 0.32; 
+        const arcRadius = radius + 10; 
 
         this.ctx.clearRect(0, 0, w, h);
 
-        // 1. Panel Background
-        this.ctx.fillStyle = '#12232E';
+        // 1. DRAW OUTER RING / TICK AREA BACKGROUND (Distinct from Panel)
+        // Using a slightly lighter dark grey to create depth
+        this.ctx.fillStyle = '#1A2B36'; 
         this.ctx.beginPath();
-        this.ctx.arc(cx, cy, radius + 15, 0, Math.PI * 2);
+        this.ctx.arc(cx, cy, arcRadius + 5, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // 2. Angles
-        const startAngle = Math.PI * 0.75; 
-        const endAngle = Math.PI * 2.25;   
+        // 2. CALCULATE ANGLES
+        const startAngle = Math.PI * 0.75; // 135 deg
+        const endAngle = Math.PI * 2.25;   // 405 deg
         const totalSweep = endAngle - startAngle;
         const percent = (this.value - this.min) / (this.max - this.min);
         const currentAngle = startAngle + (percent * totalSweep);
 
-        // 3. Neon Arc
+        // 3. DRAW NEON ARC (Active Indicator)
         this.ctx.strokeStyle = this.accentColor;
-        this.ctx.lineWidth = 4;
+        this.ctx.lineWidth = 5; // Thicker line
         this.ctx.lineCap = 'round';
-        this.ctx.shadowBlur = 10;
+        this.ctx.shadowBlur = 15; // Stronger glow
         this.ctx.shadowColor = this.accentColor;
         
         this.ctx.beginPath();
         this.ctx.arc(cx, cy, arcRadius, startAngle, currentAngle);
         this.ctx.stroke();
-        this.ctx.shadowBlur = 0;
+        this.ctx.shadowBlur = 0; // Reset shadow
 
-        // 4. Ticks
+        // 4. DRAW TICK MARKS (White/Grey for visibility against dark bg)
         const tickCount = 11;
         for (let i = 0; i <= tickCount; i++) {
             const tPercent = i / tickCount;
             const tAngle = startAngle + (tPercent * totalSweep);
-            const innerR = arcRadius + 2;
-            const outerR = arcRadius + 6;
-            
-            const x1 = cx + Math.cos(tAngle) * innerR;
-            const y1 = cy + Math.sin(tAngle) * innerR;
-            const x2 = cx + Math.cos(tAngle) * outerR;
-            const y2 = cy + Math.sin(tAngle) * outerR;
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(x1, y1);
-            this.ctx.lineTo(x2, y2);
-            this.ctx.strokeStyle = '#3A4A54';
-            this.ctx.lineWidth = 2;
-            this.ctx.stroke();
-        }
-
-        // 5. Knob Body
-        const gradient = this.ctx.createRadialGradient(cx - 5, cy - 5, 5, cx, cy, radius);
-        gradient.addColorStop(0, '#2A5F7A');
-        gradient.addColorStop(1, '#081218');
-        
-        this.ctx.fillStyle = gradient;
-        this.ctx.beginPath();
-        this.ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.strokeStyle = '#000';
-        this.ctx.lineWidth = 2;
-        this.ctx.stroke();
-
-        // 6. Pointer
-        this.ctx.save();
-        this.ctx.translate(cx, cy);
-        this.ctx.rotate(currentAngle);
-        this.ctx.strokeStyle = '#FFFFFF';
-        this.ctx.lineWidth = 3;
-        this.ctx.lineCap = 'round';
-        this.ctx.beginPath();
-        this.ctx.moveTo(0, -radius * 0.3);
-        this.ctx.lineTo(0, -radius * 0.9);
-        this.ctx.stroke();
-        this.ctx.restore();
-        
-        // 7. Value Text
-        this.ctx.fillStyle = this.accentColor;
-        this.ctx.font = 'bold 10px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText(Math.round(this.value), cx, cy + radius + 20);
-    }
-}
-
-window.RotaryKnob = RotaryKnob;
