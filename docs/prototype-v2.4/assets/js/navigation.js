@@ -1,8 +1,8 @@
 // ==================================================
 // FILE: navigation.js
-// VERSION: v2.4.0-proto-nav-fix
-// PURPOSE: Handles Bottom Tab Switching and Screen Visibility
-// NOTE: Ensures clean separation of concerns for UI routing.
+// VERSION: v2.4.0-proto-nav-redraw-trigger
+// PURPOSE: Handles Bottom Tab Switching and Forces UI Refresh
+// NOTE: Dispatches 'tabChanged' event to allow Knobs to redraw themselves.
 // ==================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,20 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to switch active screen
     function showScreen(targetId) {
-        // 1. Hide all screens
+        // 1. Hide all screens (using classes defined in CSS)
         screens.forEach(screen => {
-            screen.classList.add('hidden');
-            screen.classList.remove('visible');
+            if (screen.id === targetId) {
+                screen.classList.remove('hidden');
+                screen.classList.add('visible');
+            } else {
+                screen.classList.remove('visible');
+                screen.classList.add('hidden');
+            }
         });
 
-        // 2. Show target screen
-        const targetScreen = document.getElementById(targetId);
-        if (targetScreen) {
-            targetScreen.classList.remove('hidden');
-            targetScreen.classList.add('visible');
-        }
-
-        // 3. Update Nav Item Active State
+        // 2. Update Nav Item Active State
         navItems.forEach(item => {
             item.classList.remove('active');
             if (item.getAttribute('data-target') === targetId) {
@@ -34,14 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Optional: Scroll to top when switching screens
-        window.scrollTo(0, 0);
+        // 3. FORCE REDRAW EVENT
+        // This tells the Knob widget to re-calculate its canvas size and draw again
+        window.dispatchEvent(new CustomEvent('tabChanged', { detail: { screenId: targetId } }));
+        
+        console.log(`Switched to: ${targetId}`);
     }
 
     // Attach Click Events to Nav Buttons
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default anchor behavior if any
+            e.preventDefault();
             const targetId = item.getAttribute('data-target');
             if (targetId) {
                 showScreen(targetId);
