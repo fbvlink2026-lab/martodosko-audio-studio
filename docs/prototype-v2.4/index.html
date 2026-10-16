@@ -21,7 +21,6 @@
         </header>
 
         <!-- MAIN CONTENT AREA -->
-        <!-- Ang mga section na ito ay mag-o-overlap o mapapalitan depende sa active tab -->
         <main id="content-area">
             
             <!-- 1. MIXER MONITOR SECTION -->
@@ -33,8 +32,41 @@
                 
                 <!-- Dynamic Container for Mixer Controls -->
                 <div id="mixer-content-wrapper">
-                    <!-- Injected by ui-mixer.js -->
-                    <p>Loading Mixer...</p>
+                    
+                    <!-- VOCAL CHANNEL STRIP -->
+                    <div class="mixer-strip">
+                        <h3>VOCAL CHANNEL</h3>
+                        
+                        <div class="mixer-param">
+                            <label>INPUT GAIN (Synced with Board FX)</label>
+                            <input type="range" id="input-mixer-vocal-gain" min="0" max="100" value="50" style="width:100%;">
+                            <span class="value-display" id="display-mixer-vocal-gain">50%</span>
+                        </div>
+                        
+                        <div class="mixer-param">
+                            <label>OUTPUT VOL (Synced with Board VOL)</label>
+                            <input type="range" id="slider-mixer-vocal-vol" min="0" max="100" value="80" style="width:100%;">
+                            <span class="value-display" id="display-mixer-vocal-vol">80%</span>
+                        </div>
+                    </div>
+
+                    <!-- GUITAR CHANNEL STRIP -->
+                    <div class="mixer-strip" style="border-color:#FF9800;">
+                        <h3>GUITAR CHANNEL</h3>
+                        
+                        <div class="mixer-param">
+                            <label>DRIVE AMOUNT (Synced with Board Drive)</label>
+                            <input type="range" id="input-mixer-guitar-drive" min="0" max="100" value="65" style="width:100%;">
+                            <span class="value-display" id="display-mixer-guitar-drive">65%</span>
+                        </div>
+                        
+                        <div class="mixer-param">
+                            <label>LEVEL (Synced with Board Level)</label>
+                            <input type="range" id="slider-mixer-guitar-level" min="0" max="100" value="75" style="width:100%;">
+                            <span class="value-display" id="display-mixer-guitar-level">75%</span>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
@@ -56,16 +88,56 @@
             <section id="screen-board" class="screen-section visible">
                 <div class="board-grid">
                     
-                    <!-- VOCAL CARD PLACEHOLDER -->
-                    <div id="card-vocal" class="pedal-card">
-                        <!-- Injected by ui-board.js -->
-                        <div class="loading-spinner"></div>
+                    <!-- VOCAL CARD -->
+                    <div class="pedal-card">
+                        <div class="card-header">
+                            <span class="card-title">VOCAL</span>
+                            <div id="switch-power-vocal" class="power-switch on"></div>
+                        </div>
+                        
+                        <div class="controls-row">
+                            <div class="control-slot">
+                                <canvas id="knob-board-vocal-fx" width="80" height="80" class="knob-canvas-board"></canvas>
+                                <label class="control-label">FX AMT</label>
+                            </div>
+                            <div class="control-slot">
+                                <canvas id="knob-board-vocal-ng" width="80" height="80" class="knob-canvas-board"></canvas>
+                                <label class="control-label">GATE</label>
+                            </div>
+                        </div>
+                        
+                        <div class="controls-row" style="margin-top:auto;">
+                             <div class="control-slot">
+                                <canvas id="knob-board-vocal-vol" width="100" height="100" class="knob-canvas-large"></canvas>
+                                <label class="control-label">VOL</label>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- GUITAR CARD PLACEHOLDER -->
-                    <div id="card-guitar" class="pedal-card">
-                        <!-- Injected by ui-board.js -->
-                        <div class="loading-spinner"></div>
+                    <!-- GUITAR CARD -->
+                    <div class="pedal-card" style="border-color:#FF9800;">
+                         <div class="card-header">
+                            <span class="card-title" style="color:#FF9800;">GUITAR</span>
+                            <div id="switch-power-guitar" class="power-switch on"></div>
+                        </div>
+                        
+                        <div class="controls-row">
+                            <div class="control-slot">
+                                <canvas id="knob-board-guitar-drive" width="80" height="80" class="knob-canvas-board"></canvas>
+                                <label class="control-label">DRIVE</label>
+                            </div>
+                            <div class="control-slot">
+                                <canvas id="knob-board-guitar-ng" width="80" height="80" class="knob-canvas-board"></canvas>
+                                <label class="control-label">GATE</label>
+                            </div>
+                        </div>
+                        
+                        <div class="controls-row" style="margin-top:auto;">
+                             <div class="control-slot">
+                                <canvas id="knob-board-guitar-level" width="100" height="100" class="knob-canvas-large"></canvas>
+                                <label class="control-label">LEVEL</label>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
